@@ -1,18 +1,21 @@
 <template>
-    <div id="#app">
+    <div id="app">
         <appNav/>
-        <router-view></router-view>
+        <router-view class="router-view"></router-view>
+        <playerBar/>
     </div>
 </template>
 
 <script>
 import store from 'renderer/vuex/store';
 import appNav from './components/appnav';
+import playerBar from './components/playerbar';
 
 export default {
     store,
     components: {
-        appNav
+        appNav,
+        playerBar
     }
 };
 </script>
@@ -24,7 +27,12 @@ export default {
 }
 
 html,
-body {
+body,
+#app {
     height: 100%;
+}
+
+.router-view {
+    height: calc(100% - 128px);
 }
 </style>
