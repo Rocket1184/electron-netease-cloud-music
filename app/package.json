@@ -5,6 +5,7 @@
     "main": "./dist/main.js",
     "dependencies": {
         "axios": "^0.16.0",
+        "keycode": "^2.1.8",
         "muse-ui": "^2.0.1",
         "vue": "^2.1.10",
         "vue-electron": "^1.0.6",
