@@ -1,7 +1,7 @@
 export default [
     {
         path: '/',
-        name: 'landing-page',
+        name: 'index',
         component: require('./page/index')
     }
 ];

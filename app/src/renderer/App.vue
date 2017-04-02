@@ -1,13 +1,19 @@
 <template>
     <div id="#app">
+        <appNav/>
         <router-view></router-view>
     </div>
 </template>
 
 <script>
 import store from 'renderer/vuex/store';
+import appNav from './components/appnav';
+
 export default {
-    store
+    store,
+    components: {
+        appNav
+    }
 };
 </script>
 

@@ -1,14 +1,5 @@
 <template>
     <div>
-        <appNav/>
+        <span>Index</span>
     </div>
 </template>
-
-<script>
-import appNav from '../components/appnav';
-export default {
-    components: {
-        appNav
-    }
-};
-</script>
