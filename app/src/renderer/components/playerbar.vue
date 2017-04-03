@@ -2,7 +2,8 @@
     <mu-paper class="player-bar-wrapper"
               :zDepth="2">
         <div class="cell">
-            <img src="http://p4.music.126.net/z5n1fddhag63zGKrqlEo2g==/7920881766765179.jpg?param=64y64">
+            <img :src="getImgAt(64)"
+                 :srcset="`${getImgAt(80)} 1.25x, ${getImgAt(96)} 1.5x, ${getImgAt(128)} 2x`">
         </div>
         <div class="cell info">
             <span class="song-name">{{songName}}</span>
@@ -52,8 +53,14 @@ export default {
             artistName: 'GUMI / 164',
             timeCurrent: 50,
             timeTotal: 100,
-            isFavorite: true
+            isFavorite: true,
+            imgSrc: 'http://p4.music.126.net/z5n1fddhag63zGKrqlEo2g==/7920881766765179.jpg'
         };
+    },
+    methods: {
+        getImgAt(size) {
+            return `${this.imgSrc}?param=${size}y${size}`;
+        }
     },
     filters: {
         time(value) {
