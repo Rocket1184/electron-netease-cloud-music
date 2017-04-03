@@ -11,16 +11,32 @@ client.setCookie({
     __remember_me: 'true'
 });
 
-async function login(username, pwd) {
+function getCookie(key = '') {
+    return client.getCookie(key);
+}
+
+async function login(acc, pwd) {
     const password = crypto.createHash('md5').update(pwd).digest('hex');
-    return await client.post({
-        url: 'http://music.163.com/weapi/login',
-        data: {
-            username,
-            password,
-            rememberLogin: true
-        }
-    });
+    if (/^1\d{10}$/.test(acc)) {
+        return await client.post({
+            url: 'http://music.163.com/weapi/login/cellphone',
+            data: {
+                phone: acc,
+                password,
+                rememberLogin: true
+            }
+        });
+    }
+    else {
+        return await client.post({
+            url: 'http://music.163.com/weapi/login',
+            data: {
+                username: acc,
+                password,
+                rememberLogin: true
+            }
+        });
+    }
 }
 
 async function getMusicRecord(uid) {
@@ -49,5 +65,8 @@ async function getDailySuggestions() {
 }
 
 export default {
-    login, getMusicRecord, getDailySuggestions
+    getCookie,
+    login,
+    getMusicRecord,
+    getDailySuggestions
 };
