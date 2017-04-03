@@ -5,6 +5,8 @@
     "main": "./dist/main.js",
     "dependencies": {
         "axios": "^0.16.0",
+        "big-integer": "^1.6.19",
+        "cookie": "^0.3.1",
         "keycode": "^2.1.8",
         "muse-ui": "^2.0.1",
         "vue": "^2.1.10",

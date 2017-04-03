@@ -8,6 +8,14 @@ axios@^0.16.0:
   dependencies:
     follow-redirects "1.0.0"
 
+big-integer@^1.6.19:
+  version "1.6.19"
+  resolved "http://registry.npm.taobao.org/big-integer/download/big-integer-1.6.19.tgz#4a5e915e3188c8708f254b356196f28542acc1e0"
+
+cookie@^0.3.1:
+  version "0.3.1"
+  resolved "http://registry.npm.taobao.org/cookie/download/cookie-0.3.1.tgz#e7e0a1f9ef43b4c8ba925c5c5a96e806d16873bb"
+
 debug@^2.2.0:
   version "2.6.3"
   resolved "http://registry.npm.taobao.org/debug/download/debug-2.6.3.tgz#0f7eb8c30965ec08c72accfa0130c8b79984141d"
