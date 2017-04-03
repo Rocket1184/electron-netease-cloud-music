@@ -32,15 +32,15 @@ class HttpClient {
 
     updateCookie(arg) {
         if (Array.isArray(arg))
-            arg = arg.join(' ').replace(/HttpOnly /g, '');
+            arg = arg.join('; ').replace(/HttpOnly /g, '');
         if (typeof arg == 'string')
             arg = Cookie.parse(arg);
         for (let key in arg) {
             this.cookie[key] = arg[key];
         }
-        delete this.cookie.EXPIRES;
-        delete this.cookie.DOMAIN;
-        delete this.cookie.PATH;
+        delete this.cookie.Expires;
+        delete this.cookie.Domain;
+        delete this.cookie.Path;
     }
 
     getCookie(key = '') {
