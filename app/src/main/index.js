@@ -2,6 +2,8 @@
 
 import { app, BrowserWindow } from 'electron';
 
+require('../util/apimain');
+
 let mainWindow;
 const winURL = process.env.NODE_ENV === 'development'
     ? `http://localhost:${require('../../../config').port}`

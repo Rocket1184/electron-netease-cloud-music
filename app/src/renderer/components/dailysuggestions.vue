@@ -23,17 +23,21 @@
 </template>
 
 <script>
-import ApiHost from '../../util/apihost';
+import ApiRenderer from '../../util/apirenderer';
+
 export default {
     data() {
         return {
-            dailyList: ApiHost.getDailySuggestions()
+            dailyList: []
         };
     },
     computed: {
         dayNumber() {
             return new Date().getDate();
         }
+    },
+    async created() {
+        this.dailyList = await ApiRenderer.getDailySuggestions();
     }
 };
 </script>
