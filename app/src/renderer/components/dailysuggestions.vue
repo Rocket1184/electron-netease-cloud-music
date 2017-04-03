@@ -8,8 +8,12 @@
             <mu-table>
                 <template v-for="song in dailyList">
                     <mu-tr>
-                        <mu-td :title="song.name"><span class="label">{{song.name}}</span></mu-td>
-                        <mu-td :title="song.artistName"><span class="label">{{song.artistName}}</span></mu-td>
+                        <mu-td :title="song.name">
+                            <span class="label">{{song.name}}</span>
+                        </mu-td>
+                        <mu-td :title="song.artistName">
+                            <span class="label">{{song.artists.map(a=>a.name).join('/')}}</span>
+                        </mu-td>
                         <mu-td>
                             <mu-icon-button icon="favorite_border" />
                             <mu-icon-button icon="photo_filter" />
@@ -37,7 +41,8 @@ export default {
         }
     },
     async created() {
-        this.dailyList = await ApiRenderer.getDailySuggestions();
+        const resp = await ApiRenderer.getDailySuggestions();
+        this.dailyList = resp.recommend;
     }
 };
 </script>
