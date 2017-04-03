@@ -1,7 +1,9 @@
 <template>
     <div id="app">
         <appNav/>
-        <router-view class="router-view"></router-view>
+        <div class="router-view">
+            <router-view/>
+        </div>
         <playerBar/>
     </div>
 </template>
@@ -35,5 +37,6 @@ body,
 
 .router-view {
     height: calc(100% - 128px);
+    overflow: auto;
 }
 </style>
