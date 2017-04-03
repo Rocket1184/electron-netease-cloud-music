@@ -13,13 +13,14 @@
                    :open="drawerOpen"
                    :docked="false"
                    @close="toggleDrawer()">
-            <mu-list class="drawer-list-wrapper">
-                <div class="drawer-header">
-                    <div class="drawer-header-user-info">
+            <mu-list class="appnav-drawer">
+                <div class="header">
+                    <div class="user-info">
                         <mu-avatar icon="music_note"
                                    :iconSize="40"
                                    :size="80" />
-                        <p class="drawer-header-user-name">UserName</p>
+                        <p class="user-name"
+                           @click="handleNameClick">{{userName}}</p>
                     </div>
                 </div>
                 <mu-list-item title="听歌排行">
@@ -40,6 +41,29 @@
                 </mu-list-item>
             </mu-list>
         </mu-drawer>
+        <mu-dialog dialogClass="nav-login-dlg"
+                   :open="dlgShow"
+                   title="登录"
+                   @close="dlgShow=false">
+            <mu-text-field label="用户名/邮箱/手机号"
+                           v-model="inputUsr"
+                           :errorText="errMsgUsr"
+                           fullWidth
+                           labelFloat/>
+            <br/>
+            <mu-text-field label="密码"
+                           type="password"
+                           v-model="inputPwd"
+                           :errorText="errMsgPwd"
+                           fullWidth
+                           labelFloat/>
+            <br/>
+            <br/>
+            <mu-raised-button label="登录"
+                              fullWidth
+                              primary
+                              @click="handleLogin" />
+        </mu-dialog>
     </div>
 </template>
 
@@ -47,12 +71,25 @@
 export default {
     data() {
         return {
-            drawerOpen: false
+            drawerOpen: false,
+            dlgShow: false,
+            userName: '点击登录',
+            inputUsr: '',
+            inputPwd: '',
+            errMsgUsr: '',
+            errMsgPwd: ''
         };
     },
     methods: {
         toggleDrawer() {
             this.drawerOpen = !this.drawerOpen;
+        },
+        handleNameClick() {
+            this.dlgShow = true;
+        },
+        async handleLogin() {
+            this.errMsgUsr = '';
+            this.errMsgPwd = '';
         }
     }
 };
@@ -76,38 +113,39 @@ export default {
     }
 }
 
-.drawer-list-wrapper {
+.appnav-drawer {
     padding-top: 0;
+    .header {
+        position: relative;
+        width: 100%;
+        height: 200px;
+        background-size: cover;
+        background-image: url(../../assets/TealRedYellow.png);
+        background-position-y: 50%;
+        &::before {
+            position: absolute;
+            content: "cnt";
+            color: transparent;
+            width: 100%;
+            height: 100%;
+            background-color: rgba(0, 0, 0, 0.2);
+        }
+        .user-info {
+            position: absolute;
+            padding: 2rem;
+            bottom: 0;
+            left: 0;
+        }
+        .user-name {
+            margin-top: 1rem;
+            color: white;
+            font-size: 2rem;
+            cursor: pointer;
+        }
+    }
 }
 
-.drawer-header {
-    position: relative;
-    width: 100%;
-    height: 200px;
-    background-size: cover;
-    background-image: url(../../assets/TealRedYellow.png);
-    background-position-y: 50%;
-}
-
-.drawer-header::before {
-    position: absolute;
-    content: "cnt";
-    color: transparent;
-    width: 100%;
-    height: 100%;
-    background-color: rgba(0, 0, 0, 0.2);
-}
-
-.drawer-header-user-info {
-    position: absolute;
-    padding: 2rem;
-    bottom: 0;
-    left: 0;
-}
-
-.drawer-header-user-name {
-    margin-top: 1rem;
-    color: white;
-    font-size: 2rem;
+.nav-login-dlg {
+    width: 400px;
 }
 </style>
