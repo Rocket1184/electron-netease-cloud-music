@@ -1,3 +1,5 @@
+import crypto from 'crypto';
+
 import Client from './httpclient';
 
 const client = new Client();
@@ -8,6 +10,18 @@ client.setCookie({
     channel: 'netease',
     __remember_me: 'true'
 });
+
+async function login(username, pwd) {
+    const password = crypto.createHash('md5').update(pwd).digest('hex');
+    return await client.post({
+        url: 'http://music.163.com/weapi/login',
+        data: {
+            username,
+            password,
+            rememberLogin: true
+        }
+    });
+}
 
 async function getMusicRecord(uid) {
     return await client.post({
@@ -35,5 +49,5 @@ async function getDailySuggestions() {
 }
 
 export default {
-    getMusicRecord, getDailySuggestions
+    login, getMusicRecord, getDailySuggestions
 };
