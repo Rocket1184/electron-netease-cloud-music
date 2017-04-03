@@ -114,14 +114,20 @@ export default {
             let resp = await ApiRenderer.login(this.inputUsr, this.inputPwd);
             switch (resp.code) {
                 case 200:
+                    const userCookie = await ApiRenderer.getCookie();
                     this.$store.commit({
                         type: types.UPDATE_USER_INFO,
                         ...resp
                     });
                     this.$store.commit({
-                        type: types.UPDATE_USER_COOKIES,
-                        cookie: ApiRenderer.getCookie()
+                        type: types.SET_LOGIN_VALID
                     });
+                    this.$store.commit({
+                        type: types.UPDATE_USER_COOKIES,
+                        cookie: userCookie
+                    });
+                    localStorage.setItem('cookie', JSON.stringify(userCookie));
+                    localStorage.setItem('uid', resp.account.id);
                     this.toggleDlg();
                     break;
                 case 501:
