@@ -36,11 +36,18 @@ jspm_packages
 # Optional REPL history
 .node_repl_history
 
+# IDE/OS files
 .DS_Store
+.idea/
+.vscode/
+thumbs.db
+
+# Build dist
 app/dist/index.html
 app/dist/main.js
 app/dist/renderer.js
 app/dist/styles.css
 builds/*
-thumbs.db
+
+# Keep Folders
 !.gitkeep
