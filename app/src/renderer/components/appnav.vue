@@ -14,9 +14,11 @@
                    :docked="false"
                    @close="toggleDrawer()">
             <mu-list class="appnav-drawer">
-                <div class="header">
+                <div class="header"
+                     :style="backgroundUrlStyle">
                     <div class="user-info">
-                        <mu-avatar icon="music_note"
+                        <mu-avatar :icon="avatarUrl ? null : 'music_note'"
+                                   :src="avatarUrl"
                                    :iconSize="40"
                                    :size="80" />
                         <p class="user-name"
@@ -44,7 +46,7 @@
         <mu-dialog dialogClass="nav-login-dlg"
                    :open="dlgShow"
                    title="登录"
-                   @close="dlgShow=false">
+                   @close="toggleDlg">
             <mu-text-field label="用户名/邮箱/手机号"
                            v-model="inputUsr"
                            :errorText="errMsgUsr"
@@ -68,28 +70,66 @@
 </template>
 
 <script>
+import ApiRenderer from '../../util/apirenderer';
+import * as types from '../vuex/mutation-types';
+
 export default {
     data() {
         return {
             drawerOpen: false,
             dlgShow: false,
-            userName: '点击登录',
             inputUsr: '',
             inputPwd: '',
             errMsgUsr: '',
             errMsgPwd: ''
         };
     },
+    computed: {
+        userName() {
+            return this.$store.state.user.loginValid ? this.$store.state.user.profile.nickname : '点击登录';
+        },
+        backgroundUrlStyle() {
+            if (this.$store.state.user.loginValid) {
+                return `background-image: url(${this.$store.state.user.profile.backgroundUrl})`;
+            }
+        },
+        avatarUrl() {
+            return this.$store.state.user.loginValid ? this.$store.state.user.profile.avatarUrl : null;
+        }
+    },
     methods: {
         toggleDrawer() {
             this.drawerOpen = !this.drawerOpen;
         },
         handleNameClick() {
-            this.dlgShow = true;
+            if (!this.$store.state.user.loginValid)
+                this.dlgShow = true;
+        },
+        toggleDlg() {
+            this.dlgShow = !this.dlgShow;
         },
         async handleLogin() {
             this.errMsgUsr = '';
             this.errMsgPwd = '';
+            let resp = await ApiRenderer.login(this.inputUsr, this.inputPwd);
+            switch (resp.code) {
+                case 200:
+                    this.$store.commit({
+                        type: types.UPDATE_USER_INFO,
+                        ...resp
+                    });
+                    this.$store.commit({
+                        type: types.UPDATE_USER_COOKIES,
+                        cookie: ApiRenderer.getCookie()
+                    });
+                    this.toggleDlg();
+                    break;
+                case 501:
+                    this.errMsgUsr = '用户不存在';
+                    break;
+                case 502:
+                    this.errMsgPwd = '密码错误';
+            }
         }
     }
 };
