@@ -2,7 +2,7 @@
 
 import { app, BrowserWindow } from 'electron';
 
-require('../util/apimain');
+require('./api/apihost');
 
 let mainWindow;
 const winURL = process.env.NODE_ENV === 'development'

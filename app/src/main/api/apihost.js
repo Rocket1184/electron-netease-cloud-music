@@ -1,11 +1,11 @@
 import { ipcMain } from 'electron';
-import ApiHost from './apihost';
+import Api from './api';
 
-const methodKeys = Object.getOwnPropertyNames(ApiHost);
+const methodKeys = Object.getOwnPropertyNames(Api);
 
 methodKeys.map(methodName => {
     ipcMain.on(methodName, async (event, ...args) => {
-        const data = await ApiHost[methodName](...args);
+        const data = await Api[methodName](...args);
         console.info(methodName, data);
         event.sender.send(methodName, data);
     });

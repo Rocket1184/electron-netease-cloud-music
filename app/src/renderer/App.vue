@@ -12,8 +12,8 @@
 import store from 'renderer/vuex/store';
 import appNav from './components/appnav';
 import playerBar from './components/playerbar';
-import ApiRenderer from '../util/apirenderer';
-import * as types from '../renderer/vuex/mutation-types';
+import ApiRenderer from './util/apirenderer';
+import * as types from './vuex/mutation-types';
 
 export default {
     store,

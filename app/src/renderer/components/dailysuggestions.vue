@@ -27,7 +27,7 @@
 </template>
 
 <script>
-import ApiRenderer from '../../util/apirenderer';
+import ApiRenderer from '../util/apirenderer';
 
 export default {
     data() {

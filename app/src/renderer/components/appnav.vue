@@ -70,7 +70,7 @@
 </template>
 
 <script>
-import ApiRenderer from '../../util/apirenderer';
+import ApiRenderer from '../util/apirenderer';
 import * as types from '../vuex/mutation-types';
 
 export default {

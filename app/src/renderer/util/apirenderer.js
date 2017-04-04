@@ -1,7 +1,7 @@
 import { ipcRenderer } from 'electron';
-import ApiHost from './apihost';
+import Api from '../../main/api/api';
 
-const methodKeys = Object.getOwnPropertyNames(ApiHost);
+const methodKeys = Object.getOwnPropertyNames(Api);
 const modules = {};
 
 methodKeys.forEach(methodName => {
