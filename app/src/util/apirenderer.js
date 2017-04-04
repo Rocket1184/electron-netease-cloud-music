@@ -2,11 +2,10 @@ import { ipcRenderer } from 'electron';
 import ApiHost from './apihost';
 
 const methodKeys = Object.getOwnPropertyNames(ApiHost);
-
-let xprts = {};
+const modules = {};
 
 methodKeys.forEach(methodName => {
-    xprts[methodName] = function (...args) {
+    modules[methodName] = function (...args) {
         return new Promise((resolve) => {
             ipcRenderer.once(methodName, (event, data) => {
                 console.info(methodName, data);
@@ -17,4 +16,4 @@ methodKeys.forEach(methodName => {
     };
 });
 
-export default xprts;
+export default modules;
