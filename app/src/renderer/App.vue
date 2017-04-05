@@ -9,7 +9,7 @@
 </template>
 
 <script>
-import store from 'renderer/vuex/store';
+import store from './vuex/store';
 import appNav from './components/appnav';
 import playerBar from './components/playerbar';
 import ApiRenderer from './util/apirenderer';
@@ -34,7 +34,7 @@ export default {
                 const info = await ApiRenderer.getUserInfo(uid);
                 this.$store.commit({
                     type: types.UPDATE_USER_INFO,
-                    profile: { ...info.playlist[0].creator }
+                    profile: info.playlist[0].creator
                 });
 
                 const sugg = await ApiRenderer.getDailySuggestions();
