@@ -2,8 +2,6 @@
 
 import { app, BrowserWindow } from 'electron';
 
-require('./api/apihost');
-
 let mainWindow;
 const winURL = process.env.NODE_ENV === 'development'
     ? `http://localhost:${require('../../../config').port}`
@@ -41,3 +39,6 @@ app.on('activate', () => {
         createWindow();
     }
 });
+
+// boot up ApiHost
+require('./api/apihost');
