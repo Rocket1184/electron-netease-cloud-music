@@ -48,6 +48,7 @@ app/dist/main.js
 app/dist/renderer.js
 app/dist/styles.css
 builds/*
+dist/
 
 # Keep Folders
 !.gitkeep
