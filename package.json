@@ -3,19 +3,11 @@
     "version": "0.1.0",
     "description": "UNOFFICAL client for music.163.com",
     "scripts": {
-        "build": "node tasks/release.js",
-        "build:clean": "cross-env PLATFORM_TARGET=clean node tasks/release.js",
-        "build:darwin": "cross-env PLATFORM_TARGET=darwin node tasks/release.js",
-        "build:linux": "cross-env PLATFORM_TARGET=linux node tasks/release.js",
-        "build:mas": "cross-env PLATFORM_TARGET=mas node tasks/release.js",
-        "build:win32": "cross-env PLATFORM_TARGET=win32 node tasks/release.js",
         "dev": "node tasks/runner.js",
+        "pack": "node script/webpack.js",
+        "build": "node script/packager.js",
         "lint": "eslint --ext .js,.vue -f ./node_modules/eslint-friendly-formatter app",
-        "lint:fix": "eslint --ext .js,.vue -f ./node_modules/eslint-friendly-formatter --fix app",
-        "pack": "npm run pack:main && npm run pack:renderer",
-        "pack:main": "cross-env NODE_ENV=production webpack -p --progress --colors --config webpack.main.config.js",
-        "pack:renderer": "cross-env NODE_ENV=production webpack -p --progress --colors --config webpack.renderer.config.js",
-        "postinstall": "npm run lint:fix && cd app && npm install"
+        "lint:fix": "eslint --ext .js,.vue -f ./node_modules/eslint-friendly-formatter --fix app"
     },
     "author": "rocka <i@rocka.me> (https://rocka.me)",
     "license": "GPL-3.0",
