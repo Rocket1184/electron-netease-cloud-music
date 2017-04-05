@@ -17,8 +17,9 @@
         "pack:renderer": "cross-env NODE_ENV=production webpack -p --progress --colors --config webpack.renderer.config.js",
         "postinstall": "npm run lint:fix && cd app && npm install"
     },
-    "author": "Greg Holguin <simulatedgreg@gmail.com>",
-    "license": "MIT",
+    "author": "rocka <i@rocka.me> (https://rocka.me)",
+    "license": "GPL-3.0",
+    "repository": "github:rocket1184/qq-bot-rebown",
     "devDependencies": {
         "babel-core": "^6.8.0",
         "babel-eslint": "^7.0.0",

@@ -15,5 +15,7 @@
         "vuex": "^2.1.1"
     },
     "devDependencies": {},
-    "author": "rocka <i@rocka.me> (https://rocka.me)"
+    "author": "rocka <i@rocka.me> (https://rocka.me)",
+    "license": "GPL-3.0",
+    "repository": "github:rocket1184/qq-bot-rebown"
 }
