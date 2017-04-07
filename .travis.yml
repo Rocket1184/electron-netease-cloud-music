@@ -1,0 +1,5 @@
+lanuage: node_js
+node_js:
+  - '7'
+script:
+  - 'script/install-and-build.sh'
