@@ -3,7 +3,10 @@ const path = require('path');
 const projectRoot = path.resolve('.');
 const packager = require('electron-packager');
 
-if (process.argv[2] === 'clean') {
+let argv = process.argv.slice(2);
+if (!argv.length) argv = 'all';
+
+if (argv[2] === 'clean') {
     const distPath = path.resolve(projectRoot, 'dist');
     const cnt = require('fs').readdirSync(distPath).filter(f => f[0] !== '.').length;;
     if (cnt) {
@@ -21,7 +24,7 @@ const options = {
     out: path.resolve(projectRoot, 'dist'),
     ignore: [/assets/, /index\.ejs/, /yarn.lock/],
     overwrite: true,
-    platform: process.argv.slice(2) || ['linux', 'win32', 'drawin']
+    platform: argv
 };
 
 packager(options, (err, appPaths) => {
