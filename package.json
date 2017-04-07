@@ -3,7 +3,7 @@
     "version": "0.1.0",
     "description": "UNOFFICAL client for music.163.com",
     "scripts": {
-        "dev": "node tasks/runner.js",
+        "dev": "node script/server.js",
         "pack": "node script/webpack.js",
         "build": "node script/packager.js",
         "lint": "eslint --ext .js,.vue -f ./node_modules/eslint-friendly-formatter app",

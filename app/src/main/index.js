@@ -4,7 +4,7 @@ import { app, BrowserWindow } from 'electron';
 
 let mainWindow;
 const winURL = process.env.NODE_ENV === 'development'
-    ? `http://localhost:${require('../../../config').port}`
+    ? `http://localhost:${require('../../../script/config').devPort}`
     : `file://${__dirname}/index.html`;
 
 function createWindow() {
