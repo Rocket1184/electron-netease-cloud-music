@@ -18,9 +18,8 @@ const options = {
     arch: 'x64',
     asar: true,
     dir: path.resolve(projectRoot, 'app'),
-    icon: path.resolve(projectRoot, 'app/icons/icon'),
-    ignore: /\b(src|index\.ejs|icons)\b/,
     out: path.resolve(projectRoot, 'dist'),
+    ignore: [/assets/, /index\.ejs/, /yarn.lock/],
     overwrite: true,
     platform: process.argv.slice(2) || ['linux', 'win32', 'drawin']
 };
