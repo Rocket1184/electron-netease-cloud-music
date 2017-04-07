@@ -8,7 +8,7 @@ if (!argv.length) argv = ['main', 'renderer'];
 
 if (argv[0] === 'clean') {
     const distPath = path.resolve(projectRoot, 'app/dist');
-    const cnt = require('fs').readdirSync(distPath).length;
+    const cnt = require('fs').readdirSync(distPath).filter(f => f[0] !== '.').length;
     if (cnt) {
         require('child_process').execSync(`rm -r ${distPath}/*`);
         console.log('Clean webpack bundle succeed.\n');

@@ -5,7 +5,7 @@ const packager = require('electron-packager');
 
 if (process.argv[2] === 'clean') {
     const distPath = path.resolve(projectRoot, 'dist');
-    const cnt = require('fs').readdirSync(distPath).length;
+    const cnt = require('fs').readdirSync(distPath).filter(f => f[0] !== '.').length;;
     if (cnt) {
         require('child_process').execSync(`rm -r ${distPath}/*`);
         console.log('Clean build dist succeed.\n');
