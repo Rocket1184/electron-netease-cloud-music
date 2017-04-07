@@ -23,7 +23,7 @@
         "devtron": "^1.4.0",
         "electron": "^1.6.2",
         "electron-debug": "^1.1.0",
-        "electron-devtools-installer": "^2.1.0",
+        "electron-devtools-installer": "^2.2.0",
         "electron-packager": "^8.6.0",
         "eslint": "^3.19.0",
         "eslint-loader": "^1.7.1",
