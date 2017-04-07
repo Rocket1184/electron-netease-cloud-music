@@ -1,5 +1,5 @@
-lanuage: node_js
+language: node_js
 node_js:
-  - '7'
+  - '7.8.0'
 script:
   - 'script/install-and-build.sh'
