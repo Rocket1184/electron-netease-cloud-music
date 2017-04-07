@@ -1,5 +1,7 @@
 language: node_js
 node_js:
-  - '7.8.0'
+  - '7'
+cache: yarn
 script:
   - 'script/install-and-build.sh'
+  - 'script/upload-build.sh'
