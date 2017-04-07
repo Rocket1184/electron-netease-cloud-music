@@ -40,18 +40,14 @@ muse-ui@^2.0.1:
   version "2.0.1"
   resolved "http://registry.npm.taobao.org/muse-ui/download/muse-ui-2.0.1.tgz#8b71b5f4f82a42fcf11cb1756a15128b3058cdf4"
 
-vue-electron@^1.0.6:
-  version "1.0.6"
-  resolved "http://registry.npm.taobao.org/vue-electron/download/vue-electron-1.0.6.tgz#e798e03180b8933539defe31f92e53b9242b9406"
-
-vue-router@^2.1.2:
+vue-router@^2.3.1:
   version "2.3.1"
   resolved "http://registry.npm.taobao.org/vue-router/download/vue-router-2.3.1.tgz#3135448cf57d4ca576906061a5a9d25fae0214d7"
 
-vue@^2.1.10:
+vue@^2.2.6:
   version "2.2.6"
   resolved "http://registry.npm.taobao.org/vue/download/vue-2.2.6.tgz#451714b394dd6d4eae7b773c40c2034a59621aed"
 
-vuex@^2.1.1:
+vuex@^2.2.1:
   version "2.2.1"
   resolved "http://registry.npm.taobao.org/vuex/download/vuex-2.2.1.tgz#a42d0ce18cb0e0359258f84bfd76835ed468c185"
