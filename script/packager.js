@@ -22,7 +22,7 @@ const options = {
     asar: true,
     dir: path.resolve(projectRoot, 'app'),
     out: path.resolve(projectRoot, 'dist'),
-    ignore: [/assets/, /index\.ejs/, /yarn.lock/],
+    ignore: [/assets/, /index\.ejs/, /yarn.lock/, /app\/src/],
     overwrite: true,
     platform: argv
 };
