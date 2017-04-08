@@ -87,12 +87,15 @@ module.exports = {
         new HtmlWebpackPlugin({
             filename: 'index.html',
             template: './index.ejs',
-            appModules: false
+            appModules: process.env.NODE_ENV !== 'production'
+                ? path.resolve(projectRoot, 'app/node_modules')
+                : false
         })
     ],
     resolve: {
         extensions: ['.js', '.vue', '.json', '.css', '.node'],
         modules: [
+            path.join(projectRoot, 'node_modules'),
             path.join(projectRoot, 'app/node_modules')
         ]
     },
