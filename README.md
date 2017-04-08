@@ -4,7 +4,7 @@
 
 [![build status](https://api.travis-ci.org/Rocket1184/electron-netease-cloud-music.svg?branch=dev)](https://travis-ci.org/Rocket1184/electron-netease-cloud-music/builds)
 [![dependencies staus](https://david-dm.org/rocket1184/electron-netease-cloud-music/status.svg)](https://david-dm.org/rocket1184/electron-netease-cloud-music/dev)
-[![devDependencies staus](https://david-dm.org/rocket1184/electron-netease-cloud-music/dev-status.svg)](https://david-dm.org/rocket1184/electron-netease-cloud-music/dev)
+[![devDependencies staus](https://david-dm.org/rocket1184/electron-netease-cloud-music/dev-status.svg)](https://david-dm.org/rocket1184/electron-netease-cloud-music/dev?type=dev)
 
 ## Build Setup
 
