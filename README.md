@@ -1,27 +1,29 @@
-# electron-netease-cloud-music
+# Electron Netease Cloud Music
 
-> UNOFFICAL client for music.163.com
+**UNOFFICAL** client for music.163.com
+
+[![build status](https://api.travis-ci.org/Rocket1184/electron-netease-cloud-music.svg?branch=dev)](https://travis-ci.org/Rocket1184/electron-netease-cloud-music/builds)
+[![dependencies staus](https://david-dm.org/rocket1184/electron-netease-cloud-music/status.svg)](https://david-dm.org/rocket1184/electron-netease-cloud-music)
 
 ## Build Setup
 
 ``` bash
-# install dependencies
-npm install
+# install dev dependencies
+yarn install
 
-# serve with hot reload at localhost:9080
+# install app dependencies
+cd app
+yarn install
+
+# serve with hot reload at localhost:24353
 npm run dev
+
+# run webpack in production
+npm run pack
 
 # build electron app for production
 npm run build
 
 # lint all JS/Vue component files in `app/src`
 npm run lint
-
-# run webpack in production
-npm run pack
 ```
-More information can be found [here](https://simulatedgreg.gitbooks.io/electron-vue/content/docs/npm_scripts.html).
-
----
-
-This project was generated from [electron-vue](https://github.com/SimulatedGREG/electron-vue) using [vue-cli](https://github.com/vuejs/vue-cli). Documentation about this project can be found [here](https://simulatedgreg.gitbooks.io/electron-vue/content/index.html).
