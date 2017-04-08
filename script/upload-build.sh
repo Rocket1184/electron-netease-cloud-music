@@ -6,7 +6,7 @@ unzip qshell.zip qshell_linux_amd64
 ./qshell_linux_amd64 account $QINIU_AK $QINIU_SK
 
 export APP_NAME=electron-netease-cloud-music
-export BUCKET_NAME=$APP_NAME-dev
+export BUCKET_NAME=$APP_NAME
 export VERSION_HASH=`git rev-parse --short HEAD`
 
 for ARCH in linux-x64 darwin-x64
