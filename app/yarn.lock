@@ -4,50 +4,50 @@
 
 axios@^0.16.0:
   version "0.16.0"
-  resolved "http://registry.npm.taobao.org/axios/download/axios-0.16.0.tgz#6ed9771d815f429e7510f2838262957c4953d3b6"
+  resolved "https://registry.yarnpkg.com/axios/-/axios-0.16.0.tgz#6ed9771d815f429e7510f2838262957c4953d3b6"
   dependencies:
     follow-redirects "1.0.0"
 
 big-integer@^1.6.19:
   version "1.6.19"
-  resolved "http://registry.npm.taobao.org/big-integer/download/big-integer-1.6.19.tgz#4a5e915e3188c8708f254b356196f28542acc1e0"
+  resolved "https://registry.yarnpkg.com/big-integer/-/big-integer-1.6.19.tgz#4a5e915e3188c8708f254b356196f28542acc1e0"
 
 cookie@^0.3.1:
   version "0.3.1"
-  resolved "http://registry.npm.taobao.org/cookie/download/cookie-0.3.1.tgz#e7e0a1f9ef43b4c8ba925c5c5a96e806d16873bb"
+  resolved "https://registry.yarnpkg.com/cookie/-/cookie-0.3.1.tgz#e7e0a1f9ef43b4c8ba925c5c5a96e806d16873bb"
 
 debug@^2.2.0:
   version "2.6.3"
-  resolved "http://registry.npm.taobao.org/debug/download/debug-2.6.3.tgz#0f7eb8c30965ec08c72accfa0130c8b79984141d"
+  resolved "https://registry.yarnpkg.com/debug/-/debug-2.6.3.tgz#0f7eb8c30965ec08c72accfa0130c8b79984141d"
   dependencies:
     ms "0.7.2"
 
 follow-redirects@1.0.0:
   version "1.0.0"
-  resolved "http://registry.npm.taobao.org/follow-redirects/download/follow-redirects-1.0.0.tgz#8e34298cbd2e176f254effec75a1c78cc849fd37"
+  resolved "https://registry.yarnpkg.com/follow-redirects/-/follow-redirects-1.0.0.tgz#8e34298cbd2e176f254effec75a1c78cc849fd37"
   dependencies:
     debug "^2.2.0"
 
 keycode@^2.1.8:
   version "2.1.8"
-  resolved "http://registry.npm.taobao.org/keycode/download/keycode-2.1.8.tgz#94d2b7098215eff0e8f9a8931d5a59076c4532fb"
+  resolved "https://registry.yarnpkg.com/keycode/-/keycode-2.1.8.tgz#94d2b7098215eff0e8f9a8931d5a59076c4532fb"
 
 ms@0.7.2:
   version "0.7.2"
-  resolved "http://registry.npm.taobao.org/ms/download/ms-0.7.2.tgz#ae25cf2512b3885a1d95d7f037868d8431124765"
+  resolved "https://registry.yarnpkg.com/ms/-/ms-0.7.2.tgz#ae25cf2512b3885a1d95d7f037868d8431124765"
 
 muse-ui@^2.0.1:
   version "2.0.1"
-  resolved "http://registry.npm.taobao.org/muse-ui/download/muse-ui-2.0.1.tgz#8b71b5f4f82a42fcf11cb1756a15128b3058cdf4"
+  resolved "https://registry.yarnpkg.com/muse-ui/-/muse-ui-2.0.1.tgz#8b71b5f4f82a42fcf11cb1756a15128b3058cdf4"
 
 vue-router@^2.3.1:
   version "2.3.1"
-  resolved "http://registry.npm.taobao.org/vue-router/download/vue-router-2.3.1.tgz#3135448cf57d4ca576906061a5a9d25fae0214d7"
+  resolved "https://registry.yarnpkg.com/vue-router/-/vue-router-2.3.1.tgz#3135448cf57d4ca576906061a5a9d25fae0214d7"
 
 vue@^2.2.6:
   version "2.2.6"
-  resolved "http://registry.npm.taobao.org/vue/download/vue-2.2.6.tgz#451714b394dd6d4eae7b773c40c2034a59621aed"
+  resolved "https://registry.yarnpkg.com/vue/-/vue-2.2.6.tgz#451714b394dd6d4eae7b773c40c2034a59621aed"
 
 vuex@^2.2.1:
   version "2.2.1"
-  resolved "http://registry.npm.taobao.org/vuex/download/vuex-2.2.1.tgz#a42d0ce18cb0e0359258f84bfd76835ed468c185"
+  resolved "https://registry.yarnpkg.com/vuex/-/vuex-2.2.1.tgz#a42d0ce18cb0e0359258f84bfd76835ed468c185"
