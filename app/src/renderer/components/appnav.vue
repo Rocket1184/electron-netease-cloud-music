@@ -17,8 +17,8 @@
                 <div class="header"
                      :style="backgroundUrlStyle">
                     <div class="user-info">
-                        <mu-avatar :icon="avatarUrl ? null : 'music_note'"
-                                   :src="avatarUrl"
+                        <mu-avatar :icon="userAvatarUrl ? null : 'music_note'"
+                                   :src="userAvatarUrl"
                                    :iconSize="40"
                                    :size="80" />
                         <p class="user-name"
@@ -70,6 +70,8 @@
 </template>
 
 <script>
+import { mapGetters } from 'vuex';
+
 import ApiRenderer from '../util/apirenderer';
 import * as types from '../vuex/mutation-types';
 
@@ -85,17 +87,14 @@ export default {
         };
     },
     computed: {
-        userName() {
-            return this.$store.state.user.loginValid ? this.$store.state.user.profile.nickname : '点击登录';
-        },
         backgroundUrlStyle() {
-            if (this.$store.state.user.loginValid) {
-                return `background-image: url(${this.$store.state.user.profile.backgroundUrl})`;
-            }
+            return this.userBkgUrl && `background-image: url(${this.userBkgUrl})`;
         },
-        avatarUrl() {
-            return this.$store.state.user.loginValid ? this.$store.state.user.profile.avatarUrl : null;
-        }
+        ...mapGetters([
+            'userName',
+            'userBkgUrl',
+            'userAvatarUrl'
+        ])
     },
     methods: {
         toggleDrawer() {
