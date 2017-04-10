@@ -17,11 +17,11 @@
                 <mu-icon-button tooltip="收藏到歌单"
                                 tooltipPosition="top-center"
                                 touch
-                                icon="photo_filter" />
-                <mu-icon-button tooltip="播放列表"
+                                icon="bookmark_border" />
+                <mu-icon-button tooltip="查看播放列表"
                                 tooltipPosition="top-center"
                                 touch
-                                icon="view_list" />
+                                icon="playlist_play" />
             </div>
             <div class="progress">
                 <mu-slider :value="songProgress"
