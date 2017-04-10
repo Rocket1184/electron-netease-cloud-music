@@ -5,28 +5,13 @@
             <p>每日推荐</p>
         </div>
         <div class="cell content">
-            <mu-table>
-                <template v-for="song in dailyList">
-                    <mu-tr>
-                        <mu-td :title="song.name">
-                            <span class="label">{{song.name}}</span>
-                        </mu-td>
-                        <mu-td :title="song.artistName">
-                            <span class="label">{{song.artists.map(a=>a.name).join('/')}}</span>
-                        </mu-td>
-                        <mu-td>
-                            <mu-icon-button icon="favorite_border" />
-                            <mu-icon-button icon="photo_filter" />
-                            <mu-icon-button icon="playlist_add" />
-                        </mu-td>
-                    </mu-tr>
-                </template>
-            </mu-table>
+            <PlayList :list="dailyList" />
         </div>
     </mu-paper>
 </template>
 
 <script>
+import PlayList from './playlist';
 import ApiRenderer from '../util/apirenderer';
 
 export default {
@@ -43,6 +28,9 @@ export default {
     async created() {
         const resp = await ApiRenderer.getDailySuggestions();
         this.dailyList = resp.recommend;
+    },
+    components: {
+        PlayList
     }
 };
 </script>
@@ -64,11 +52,6 @@ export default {
     }
     .content {
         flex: 7;
-        .label {
-            display: block;
-            overflow: hidden;
-            text-overflow: ellipsis;
-        }
     }
 }
 </style>
