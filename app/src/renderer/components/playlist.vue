@@ -26,6 +26,8 @@
 </template>
 
 <script>
+import { mapActions } from 'vuex';
+
 export default {
     props: ['list'],
     data() {
@@ -34,8 +36,11 @@ export default {
         };
     },
     methods: {
+        ...mapActions([
+            'playPlaylist'
+        ]),
         handlePlayAll() {
-            //TODO: add all songs to vuex playlist
+            this.playPlaylist({ list: this.list });
         }
     }
 };

@@ -25,3 +25,16 @@ export const playingMusic = state => {
         artist: state.playing.artists.map(i => i.name).join(' / ')
     };
 };
+
+export const playlist = state => {
+    return state.playlist;
+};
+
+export const playLoopMode = state => {
+    return state.playlist.loopMode;
+};
+
+export const nextTrackToPlay = state => {
+    const { currentIndex, list } = state.playlist;
+    return list[currentIndex + 1];
+};

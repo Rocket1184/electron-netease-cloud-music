@@ -35,21 +35,23 @@
             <mu-float-button icon="skip_previous"
                              mini
                              class="button"
-                             color="#FFF" />
+                             color="#FFF"
+                             @click="previousTrack" />
             <mu-float-button :icon="this.playing.playing ? 'pause' : 'play_arrow'"
                              class="button"
                              color="#FFF"
-                             @click="handlePlayOrPause()" />
+                             @click="handlePlayOrPause" />
             <mu-float-button icon="skip_next"
                              mini
                              class="button"
-                             color="#FFF" />
+                             color="#FFF"
+                             @click="nextTrack" />
         </div>
     </mu-paper>
 </template>
 
 <script>
-import { mapGetters } from 'vuex';
+import { mapActions, mapGetters } from 'vuex';
 
 import ApiRenderer from '../util/apirenderer';
 import * as types from '../vuex/mutation-types';
@@ -64,11 +66,13 @@ export default {
         };
     },
     async created() {
-        let oUrl = await ApiRenderer.getMusicUrl(30830838);
-        this.$store.commit({
-            ...oUrl.data[0],
-            type: types.SET_PLAYING_MUSIC,
-        });
+        if (this.playing.id) {
+            let oUrl = await ApiRenderer.getMusicUrl(this.playing.id);
+            this.$store.commit({
+                ...oUrl.data[0],
+                type: types.SET_PLAYING_MUSIC,
+            });
+        }
     },
     mounted() {
         const _updateTime = () => this.timeCurrent = this.audioEl.currentTime;
@@ -76,8 +80,9 @@ export default {
         let _playingIntervalId;
         this.audioEl = _audioEl;
         _audioEl.ondurationchange = () => {
+            clearInterval(_playingIntervalId);
             this.timeTotal = _audioEl.duration;
-            this.timeCurrent = _audioEl.currentTime;
+            this.timeCurrent = _audioEl.currentTime = 0;
         };
         _audioEl.onseeked = () => {
             this.playing.playing && _audioEl.play();
@@ -89,7 +94,7 @@ export default {
         };
         _audioEl.onplaying = () => {
             _updateTime();
-            _playingIntervalId = setInterval(() => _updateTime(), 17);
+            _playingIntervalId = setInterval(() => _updateTime(), 1000);
         };
         _audioEl.onpause = () => {
             _updateTime();
@@ -97,8 +102,12 @@ export default {
         };
     },
     methods: {
+        ...mapActions([
+            'nextTrack',
+            'previousTrack'
+        ]),
         getImgAt(size) {
-            return `${this.playing.url}?param=${size}y${size}`;
+            return `${this.playing.album.picUrl}?param=${size}y${size}`;
         },
         formatTime(value) {
             const dt = new Date(value * 1000);
