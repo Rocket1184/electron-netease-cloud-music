@@ -1,5 +1,5 @@
 <template>
-    <mu-paper class="paper">
+    <mu-paper class="daily-suggestions">
         <div class="cell title">
             <p>{{dayNumber}}</p>
             <p>每日推荐</p>
@@ -36,7 +36,8 @@ export default {
 </script>
 
 <style lang="less">
-.paper {
+.daily-suggestions {
+    min-height: 400px;
     display: flex;
     .cell {
         flex-direction: row;
