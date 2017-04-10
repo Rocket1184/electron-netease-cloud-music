@@ -13,7 +13,10 @@ function createWindow() {
      */
     mainWindow = new BrowserWindow({
         height: 700,
-        width: 1000
+        width: 1000,
+        webPreferences: {
+            blinkFeatures: 'OverlayScrollbars'
+        }
     });
 
     mainWindow.loadURL(winURL);
