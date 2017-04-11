@@ -1,5 +1,5 @@
 <template>
-    <div>
+    <div class="appbar">
         <mu-appbar title="Electron Netease Cloud Music">
             <mu-icon-button icon="menu"
                             slot="left"
@@ -141,6 +141,13 @@ export default {
 </script>
 
 <style lang="less">
+.appbar {
+    -webkit-app-region: drag;
+    .mu-appbar .left {
+        -webkit-app-region: no-drag;
+    }
+}
+
 .appbar-search-field {
     color: #FFF;
     margin-bottom: 0;

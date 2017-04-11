@@ -16,7 +16,8 @@ function createWindow() {
         width: 1000,
         webPreferences: {
             blinkFeatures: 'OverlayScrollbars'
-        }
+        },
+        frame: false
     });
 
     mainWindow.loadURL(winURL);
