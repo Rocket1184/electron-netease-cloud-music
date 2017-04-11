@@ -1,5 +1,14 @@
 <template>
     <div class="appbar">
+        <div id="appbar-window-control"
+             v-if="notDarwin">
+            <mu-icon-button @click="handleClose"
+                            icon="close" />
+            <mu-icon-button @click="handleMaximize"
+                            icon="keyboard_arrow_up" />
+            <mu-icon-button @click="handleMinimize"
+                            icon="keyboard_arrow_down" />
+        </div>
         <mu-appbar title="Electron Netease Cloud Music">
             <mu-icon-button icon="menu"
                             slot="left"
@@ -48,12 +57,14 @@
                    title="登录"
                    @close="toggleDlg">
             <mu-text-field label="用户名/邮箱/手机号"
+                           inputClass="app-nav-input-account"
                            v-model="inputUsr"
                            :errorText="errMsgUsr"
                            fullWidth
                            labelFloat/>
             <br/>
             <mu-text-field label="密码"
+                           id="app-nav-input-password"
                            type="password"
                            v-model="inputPwd"
                            :errorText="errMsgPwd"
@@ -71,6 +82,7 @@
 
 <script>
 import { mapGetters } from 'vuex';
+import { ipcRenderer } from 'electron';
 
 import ApiRenderer from '../util/apirenderer';
 import * as types from '../vuex/mutation-types';
@@ -78,6 +90,8 @@ import * as types from '../vuex/mutation-types';
 export default {
     data() {
         return {
+            _inputAccountRef: null,
+            notDarwin: process.platform !== 'darwin',
             drawerOpen: false,
             dlgShow: false,
             inputUsr: '',
@@ -97,12 +111,23 @@ export default {
         ])
     },
     methods: {
+        handleClose() {
+            ipcRenderer.send('closeMainWin');
+        },
+        handleMinimize() {
+            ipcRenderer.send('minimizeMainWin');
+        },
+        handleMaximize() {
+            ipcRenderer.send('toggleMaximizeMainWin');
+        },
         toggleDrawer() {
             this.drawerOpen = !this.drawerOpen;
         },
         handleNameClick() {
-            if (!this.$store.state.user.loginValid)
+            if (!this.$store.state.user.loginValid) {
                 this.dlgShow = true;
+                setTimeout(() => this._inputAccountRef.focus(), 200);
+            }
         },
         toggleDlg() {
             this.dlgShow = !this.dlgShow;
@@ -110,6 +135,8 @@ export default {
         async handleLogin() {
             this.errMsgUsr = '';
             this.errMsgPwd = '';
+            if (!this.inputUsr) return this.errMsgUsr = '用户名不能为空';
+            if (!this.inputPwd) return this.errMsgPwd = '密码不能为空';
             let resp = await ApiRenderer.login(this.inputUsr, this.inputPwd);
             switch (resp.code) {
                 case 200:
@@ -136,15 +163,37 @@ export default {
                     this.errMsgPwd = '密码错误';
             }
         }
+    },
+    mounted() {
+        this._inputAccountRef = document.getElementsByClassName('app-nav-input-account')[0];
+        const pwd = document.getElementById('app-nav-input-password');
+        pwd.addEventListener('keydown', e => e.key === 'Enter' && this.handleLogin());
     }
 };
 </script>
 
 <style lang="less">
 .appbar {
+    cursor: default;
+    user-select: none;
     -webkit-app-region: drag;
-    .mu-appbar .left {
-        -webkit-app-region: no-drag;
+    .mu-appbar {
+        padding-top: 12px;
+        .left {
+            cursor: pointer;
+            -webkit-app-region: no-drag;
+        }
+    }
+}
+
+#appbar-window-control {
+    transform: scale(0.6);
+    position: absolute;
+    left: -24px;
+    top: -10px;
+    color: white;
+    button {
+        margin-right: -6px;
     }
 }
 

@@ -1,6 +1,6 @@
 'use strict';
 
-import { app, BrowserWindow } from 'electron';
+import { app, BrowserWindow, ipcMain } from 'electron';
 
 let mainWindow;
 const winURL = process.env.NODE_ENV === 'development'
@@ -14,10 +14,12 @@ function createWindow() {
     mainWindow = new BrowserWindow({
         height: 700,
         width: 1000,
+        frame: false,
+        titleBarStyle: 'hidden',
+        name: 'Electron Netease Cloud Music',
         webPreferences: {
             blinkFeatures: 'OverlayScrollbars'
-        },
-        frame: false
+        }
     });
 
     mainWindow.loadURL(winURL);
@@ -26,8 +28,18 @@ function createWindow() {
         mainWindow = null;
     });
 
-    // eslint-disable-next-line no-console
-    console.log('mainWindow opened');
+    ipcMain.on('closeMainWin', () => {
+        mainWindow.close();
+    });
+
+    ipcMain.on('toggleMaximizeMainWin', () => {
+        if (mainWindow.isMaximized()) mainWindow.unmaximize();
+        else mainWindow.maximize();
+    });
+
+    ipcMain.on('minimizeMainWin', () => {
+        mainWindow.minimize();
+    });
 }
 
 app.on('ready', createWindow);
