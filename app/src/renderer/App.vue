@@ -21,28 +21,34 @@ export default {
         appNav,
         playerBar
     },
-    async created() {
+    methods: {
+        async checkLogin() {
+            const sugg = await ApiRenderer.getDailySuggestions();
+            if (sugg.code === 200) {
+                this.$store.commit({
+                    type: types.SET_LOGIN_VALID
+                });
+            } else return;
+        },
+        async getPlaylist(uid) {
+            const info = await ApiRenderer.getUserPlaylist(uid);
+            this.$store.commit({
+                type: types.UPDATE_USER_INFO,
+                profile: info.playlist[0].creator
+            });
+        }
+    },
+    created() {
         const oldUid = localStorage.getItem('uid');
         const oldCookie = localStorage.getItem('cookie');
 
-        if (oldCookie) {
+        if (oldUid && oldCookie) {
             try {
                 const uid = +oldUid;
                 const cookieObj = JSON.parse(oldCookie);
                 ApiRenderer.updateCookie(cookieObj);
-
-                const info = await ApiRenderer.getUserInfo(uid);
-                this.$store.commit({
-                    type: types.UPDATE_USER_INFO,
-                    profile: info.playlist[0].creator
-                });
-
-                const sugg = await ApiRenderer.getDailySuggestions();
-                if (sugg.code === 200) {
-                    this.$store.commit({
-                        type: types.SET_LOGIN_VALID
-                    });
-                }
+                this.getPlaylist(uid);
+                this.checkLogin();
             } catch (err) { console.error(err); }
         }
     }
