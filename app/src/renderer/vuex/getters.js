@@ -1,3 +1,5 @@
+export const loginValid = state => state.user.loginValid;
+
 export const userAvatarUrl = state => {
     return state.user.loginValid
         ? state.user.profile.avatarUrl

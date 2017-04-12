@@ -113,6 +113,7 @@ export default {
             return this.userBkgUrl && `background-image: url(${this.userBkgUrl})`;
         },
         ...mapGetters([
+            'loginValid',
             'userName',
             'userBkgUrl',
             'userAvatarUrl'
@@ -132,7 +133,7 @@ export default {
             this.drawerOpen = !this.drawerOpen;
         },
         handleNameClick() {
-            if (!this.$store.state.user.loginValid) {
+            if (!this.loginValid) {
                 this.dlgShow = true;
                 setTimeout(() => this._inputAccountRef.focus(), 200);
             }
