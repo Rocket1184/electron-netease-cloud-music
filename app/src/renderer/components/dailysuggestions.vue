@@ -11,6 +11,8 @@
 </template>
 
 <script>
+import { mapGetters } from 'vuex';
+
 import PlayList from './playlist';
 import ApiRenderer from '../util/apirenderer';
 
@@ -21,13 +23,23 @@ export default {
         };
     },
     computed: {
+        ...mapGetters([
+            'loginValid'
+        ]),
         dayNumber() {
             return new Date().getDate();
         }
     },
-    async created() {
-        const resp = await ApiRenderer.getDailySuggestions();
-        this.dailyList = resp.recommend;
+    methods: {
+        async getDailyList() {
+            const resp = await ApiRenderer.getDailySuggestions();
+            this.dailyList = resp.recommend;
+        }
+    },
+    watch: {
+        loginValid: function (val) {
+            if (val) this.getDailyList();
+        }
     },
     components: {
         PlayList
