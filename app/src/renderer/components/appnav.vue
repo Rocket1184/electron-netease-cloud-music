@@ -1,5 +1,6 @@
 <template>
-    <div class="appbar">
+    <div class="appbar"
+         :class="appbarDynamicClassName">
         <div id="appbar-window-control"
              v-if="notDarwin">
             <mu-icon-button @click="handleClose"
@@ -90,6 +91,7 @@ import * as types from '../vuex/mutation-types';
 export default {
     data() {
         return {
+            maximized: false,
             _inputAccountRef: null,
             notDarwin: process.platform !== 'darwin',
             drawerOpen: false,
@@ -101,6 +103,12 @@ export default {
         };
     },
     computed: {
+        appbarDynamicClassName() {
+            return [
+                this.notDarwin && 'appbar-with-ctl',
+                this.maximized && 'appbar-maximized'
+            ];
+        },
         backgroundUrlStyle() {
             return this.userBkgUrl && `background-image: url(${this.userBkgUrl})`;
         },
@@ -118,7 +126,7 @@ export default {
             ipcRenderer.send('minimizeMainWin');
         },
         handleMaximize() {
-            ipcRenderer.send('toggleMaximizeMainWin');
+            this.maximized = ipcRenderer.sendSync('toggleMaximizeMainWin');
         },
         toggleDrawer() {
             this.drawerOpen = !this.drawerOpen;
@@ -168,6 +176,9 @@ export default {
         this._inputAccountRef = document.getElementsByClassName('app-nav-input-account')[0];
         const pwd = document.getElementById('app-nav-input-password');
         pwd.addEventListener('keydown', e => e.key === 'Enter' && this.handleLogin());
+        window.onresize = () => {
+            this.maximized = ipcRenderer.sendSync('isMainWinMaximized');
+        };
     }
 };
 </script>
@@ -187,13 +198,38 @@ export default {
 }
 
 #appbar-window-control {
+    z-index: 10;
+    -webkit-app-region: no-drag;
     transform: scale(0.6);
     position: absolute;
-    left: -24px;
-    top: -10px;
+    left: -27px;
+    top: -9px;
     color: white;
     button {
-        margin-right: -6px;
+        cursor: default !important;
+        margin-right: -2px;
+        .mu-ripple-wrapper {
+            border-radius: 100%;
+            transition: background-color 0.2s;
+        }
+        &:hover .mu-ripple-wrapper {
+            background-color: rgba(0, 0, 0, 0.1);
+        }
+    }
+}
+
+.appbar-with-ctl {
+    .mu-appbar {
+        padding-top: 16px;
+    }
+}
+
+.appbar-maximized {
+    .mu-appbar {
+        padding-top: 0;
+    }
+    #appbar-window-control {
+        visibility: hidden;
     }
 }
 

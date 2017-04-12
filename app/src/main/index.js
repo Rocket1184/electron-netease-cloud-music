@@ -32,13 +32,18 @@ function createWindow() {
         mainWindow.close();
     });
 
-    ipcMain.on('toggleMaximizeMainWin', () => {
-        if (mainWindow.isMaximized()) mainWindow.unmaximize();
-        else mainWindow.maximize();
+    ipcMain.on('toggleMaximizeMainWin', event => {
+        const isMax = mainWindow.isMaximized();
+        isMax ? mainWindow.unmaximize() : mainWindow.maximize();
+        event.returnValue = !isMax;
     });
 
     ipcMain.on('minimizeMainWin', () => {
         mainWindow.minimize();
+    });
+
+    ipcMain.on('isMainWinMaximized', event => {
+        event.returnValue = mainWindow.isMaximized();
     });
 }
 
