@@ -39,7 +39,7 @@ async function login(acc, pwd) {
     }
 }
 
-async function getUserInfo(uid) {
+async function getUserPlaylist(uid) {
     return await client.post({
         url: `${BaseURL}/weapi/user/playlist`,
         data: {
@@ -106,7 +106,7 @@ export default {
     getCookie,
     updateCookie,
     login,
-    getUserInfo,
+    getUserPlaylist,
     getMusicRecord,
     getDailySuggestions,
     getListDetail,
