@@ -1,5 +1,3 @@
-export const mainCounter = state => state.counters.main;
-
 export const userAvatarUrl = state => {
     return state.user.loginValid
         ? state.user.profile.avatarUrl

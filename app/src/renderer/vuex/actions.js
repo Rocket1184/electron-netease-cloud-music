@@ -2,14 +2,6 @@ import * as types from './mutation-types';
 import { LOOP_TYPES } from './modules/playlist';
 import ApiRenderer from '../util/apirenderer';
 
-export const decrementMain = ({ commit }) => {
-    commit(types.DECREMENT_MAIN_COUNTER);
-};
-
-export const incrementMain = ({ commit }) => {
-    commit(types.INCREMENT_MAIN_COUNTER);
-};
-
 async function playThisTrack(commit, list, index) {
     const oUrl = await ApiRenderer.getMusicUrl(list[index].id);
     commit({
