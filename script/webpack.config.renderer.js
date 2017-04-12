@@ -13,7 +13,9 @@ let cfg = {
     target: 'electron-renderer',
     externals: Object.keys(packageJson.dependencies),
     entry: {
-        renderer: path.join(projectRoot, 'app/src/renderer/main.js')
+        renderer: [
+            path.join(projectRoot, 'app/src/renderer/main.js')
+        ]
     },
     output: {
         filename: '[name].js',
@@ -84,7 +86,7 @@ let cfg = {
             path.join(projectRoot, 'node_modules'),
             path.join(projectRoot, 'app/node_modules')
         ]
-    },
+    }
 };
 
 if (process.env.NODE_ENV === 'production') {
