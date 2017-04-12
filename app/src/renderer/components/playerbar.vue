@@ -100,6 +100,9 @@ export default {
             _updateTime();
             clearInterval(_playingIntervalId);
         };
+        _audioEl.onended = () => {
+            this.nextTrack();
+        };
     },
     methods: {
         ...mapActions([
