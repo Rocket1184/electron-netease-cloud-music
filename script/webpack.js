@@ -36,5 +36,5 @@ webpack(webpackCfg, (err, stats) => {
         chunks: false,
         chunkModules: false
     }));
-    console.log('\n\nPack for ' + argv.join() + ' succeed.\n');
+    console.log('\n\nPack for ' + argv.join(', ') + ' succeed.\n');
 });

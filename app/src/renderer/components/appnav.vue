@@ -1,5 +1,15 @@
 <template>
-    <div>
+    <div class="appbar"
+         :class="appbarDynamicClassName">
+        <div id="appbar-window-control"
+             v-if="notDarwin">
+            <mu-icon-button @click="handleClose"
+                            icon="close" />
+            <mu-icon-button @click="handleMaximize"
+                            icon="keyboard_arrow_up" />
+            <mu-icon-button @click="handleMinimize"
+                            icon="keyboard_arrow_down" />
+        </div>
         <mu-appbar title="Electron Netease Cloud Music">
             <mu-icon-button icon="menu"
                             slot="left"
@@ -17,8 +27,8 @@
                 <div class="header"
                      :style="backgroundUrlStyle">
                     <div class="user-info">
-                        <mu-avatar :icon="avatarUrl ? null : 'music_note'"
-                                   :src="avatarUrl"
+                        <mu-avatar :icon="userAvatarUrl ? null : 'music_note'"
+                                   :src="userAvatarUrl"
                                    :iconSize="40"
                                    :size="80" />
                         <p class="user-name"
@@ -48,12 +58,14 @@
                    title="登录"
                    @close="toggleDlg">
             <mu-text-field label="用户名/邮箱/手机号"
+                           inputClass="app-nav-input-account"
                            v-model="inputUsr"
                            :errorText="errMsgUsr"
                            fullWidth
                            labelFloat/>
             <br/>
             <mu-text-field label="密码"
+                           id="app-nav-input-password"
                            type="password"
                            v-model="inputPwd"
                            :errorText="errMsgPwd"
@@ -70,12 +82,18 @@
 </template>
 
 <script>
+import { mapGetters } from 'vuex';
+import { ipcRenderer } from 'electron';
+
 import ApiRenderer from '../util/apirenderer';
 import * as types from '../vuex/mutation-types';
 
 export default {
     data() {
         return {
+            maximized: false,
+            _inputAccountRef: null,
+            notDarwin: process.platform !== 'darwin',
             drawerOpen: false,
             dlgShow: false,
             inputUsr: '',
@@ -85,25 +103,40 @@ export default {
         };
     },
     computed: {
-        userName() {
-            return this.$store.state.user.loginValid ? this.$store.state.user.profile.nickname : '点击登录';
+        appbarDynamicClassName() {
+            return [
+                this.notDarwin && 'appbar-with-ctl',
+                this.maximized && 'appbar-maximized'
+            ];
         },
         backgroundUrlStyle() {
-            if (this.$store.state.user.loginValid) {
-                return `background-image: url(${this.$store.state.user.profile.backgroundUrl})`;
-            }
+            return this.userBkgUrl && `background-image: url(${this.userBkgUrl})`;
         },
-        avatarUrl() {
-            return this.$store.state.user.loginValid ? this.$store.state.user.profile.avatarUrl : null;
-        }
+        ...mapGetters([
+            'loginValid',
+            'userName',
+            'userBkgUrl',
+            'userAvatarUrl'
+        ])
     },
     methods: {
+        handleClose() {
+            ipcRenderer.send('closeMainWin');
+        },
+        handleMinimize() {
+            ipcRenderer.send('minimizeMainWin');
+        },
+        handleMaximize() {
+            this.maximized = ipcRenderer.sendSync('toggleMaximizeMainWin');
+        },
         toggleDrawer() {
             this.drawerOpen = !this.drawerOpen;
         },
         handleNameClick() {
-            if (!this.$store.state.user.loginValid)
+            if (!this.loginValid) {
                 this.dlgShow = true;
+                setTimeout(() => this._inputAccountRef.focus(), 200);
+            }
         },
         toggleDlg() {
             this.dlgShow = !this.dlgShow;
@@ -111,6 +144,8 @@ export default {
         async handleLogin() {
             this.errMsgUsr = '';
             this.errMsgPwd = '';
+            if (!this.inputUsr) return this.errMsgUsr = '用户名不能为空';
+            if (!this.inputPwd) return this.errMsgPwd = '密码不能为空';
             let resp = await ApiRenderer.login(this.inputUsr, this.inputPwd);
             switch (resp.code) {
                 case 200:
@@ -137,11 +172,68 @@ export default {
                     this.errMsgPwd = '密码错误';
             }
         }
+    },
+    mounted() {
+        this._inputAccountRef = document.getElementsByClassName('app-nav-input-account')[0];
+        const pwd = document.getElementById('app-nav-input-password');
+        pwd.addEventListener('keydown', e => e.key === 'Enter' && this.handleLogin());
+        window.onresize = () => {
+            this.maximized = ipcRenderer.sendSync('isMainWinMaximized');
+        };
     }
 };
 </script>
 
 <style lang="less">
+.appbar {
+    cursor: default;
+    user-select: none;
+    -webkit-app-region: drag;
+    .mu-appbar {
+        padding-top: 12px;
+        .left {
+            cursor: pointer;
+            -webkit-app-region: no-drag;
+        }
+    }
+}
+
+#appbar-window-control {
+    z-index: 10;
+    -webkit-app-region: no-drag;
+    transform: scale(0.6);
+    position: absolute;
+    left: -27px;
+    top: -9px;
+    color: white;
+    button {
+        cursor: default !important;
+        margin-right: -2px;
+        .mu-ripple-wrapper {
+            border-radius: 100%;
+            transition: background-color 0.2s;
+        }
+        &:hover .mu-ripple-wrapper {
+            background-color: rgba(0, 0, 0, 0.1);
+        }
+    }
+}
+
+.appbar-with-ctl {
+    .mu-appbar {
+        padding-top: 16px;
+    }
+}
+
+.appbar-maximized {
+    .mu-appbar {
+        padding-top: 0;
+    }
+    #appbar-window-control {
+        visibility: hidden;
+    }
+}
+
 .appbar-search-field {
     color: #FFF;
     margin-bottom: 0;
@@ -166,7 +258,7 @@ export default {
         width: 100%;
         height: 200px;
         background-size: cover;
-        background-image: url(../../../assets/TealRedYellow.png);
+        background-image: url(../../../assets/img/TealRedYellow.png);
         background-position-y: 50%;
         &::before {
             position: absolute;

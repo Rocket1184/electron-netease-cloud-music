@@ -2,6 +2,8 @@ import crypto from 'crypto';
 
 import Client from './httpclient';
 
+const BaseURL = 'http://music.163.com';
+
 const client = new Client();
 
 function updateCookie(cookie) {
@@ -17,7 +19,7 @@ async function login(acc, pwd) {
     const password = crypto.createHash('md5').update(pwd).digest('hex');
     if (/^1\d{10}$/.test(acc)) {
         return await client.post({
-            url: 'http://music.163.com/weapi/login/cellphone',
+            url: `${BaseURL}/weapi/login/cellphone`,
             data: {
                 phone: acc,
                 password,
@@ -27,7 +29,7 @@ async function login(acc, pwd) {
     }
     else {
         return await client.post({
-            url: 'http://music.163.com/weapi/login',
+            url: `${BaseURL}/weapi/login`,
             data: {
                 username: acc,
                 password,
@@ -37,9 +39,9 @@ async function login(acc, pwd) {
     }
 }
 
-async function getUserInfo(uid) {
+async function getUserPlaylist(uid) {
     return await client.post({
-        url: 'http://music.163.com/weapi/user/playlist',
+        url: `${BaseURL}/weapi/user/playlist`,
         data: {
             uid,
             offset: 0,
@@ -51,7 +53,7 @@ async function getUserInfo(uid) {
 
 async function getMusicRecord(uid) {
     return await client.post({
-        url: 'http://music.163.com/weapi/v1/play/record?csrf_token=',
+        url: `${BaseURL}/weapi/v1/play/record`,
         data: {
             uid,
             type: 0,
@@ -62,7 +64,7 @@ async function getMusicRecord(uid) {
 
 async function getDailySuggestions() {
     return await client.post({
-        url: 'http://music.163.com/weapi/v1/discovery/recommend/songs',
+        url: `${BaseURL}/weapi/v1/discovery/recommend/songs`,
         data: {
             offset: 0,
             total: true,
@@ -72,11 +74,41 @@ async function getDailySuggestions() {
     });
 }
 
+async function getListDetail(id) {
+    return client.post({
+        url: `${BaseURL}/weapi/v3/playlist/detail`,
+        data: {
+            id,
+            offset: 0,
+            total: true,
+            limit: 1000,
+            n: 1000,
+            csrf_token: ''
+        }
+    });
+}
+
+async function getMusicUrl(idOrIds, br = 320000) {
+    let ids;
+    if (Array.isArray(idOrIds)) ids = idOrIds;
+    else ids = [idOrIds];
+    return await client.post({
+        url: `${BaseURL}/weapi/song/enhance/player/url`,
+        data: {
+            ids,
+            br,
+            csrf_token: ''
+        }
+    });
+}
+
 export default {
     getCookie,
     updateCookie,
     login,
-    getUserInfo,
+    getUserPlaylist,
     getMusicRecord,
-    getDailySuggestions
+    getDailySuggestions,
+    getListDetail,
+    getMusicUrl
 };

@@ -1,32 +1,19 @@
 <template>
-    <mu-paper class="paper">
+    <mu-paper class="daily-suggestions">
         <div class="cell title">
             <p>{{dayNumber}}</p>
             <p>每日推荐</p>
         </div>
         <div class="cell content">
-            <mu-table>
-                <template v-for="song in dailyList">
-                    <mu-tr>
-                        <mu-td :title="song.name">
-                            <span class="label">{{song.name}}</span>
-                        </mu-td>
-                        <mu-td :title="song.artistName">
-                            <span class="label">{{song.artists.map(a=>a.name).join('/')}}</span>
-                        </mu-td>
-                        <mu-td>
-                            <mu-icon-button icon="favorite_border" />
-                            <mu-icon-button icon="photo_filter" />
-                            <mu-icon-button icon="playlist_add" />
-                        </mu-td>
-                    </mu-tr>
-                </template>
-            </mu-table>
+            <PlayList :list="dailyList" />
         </div>
     </mu-paper>
 </template>
 
 <script>
+import { mapGetters } from 'vuex';
+
+import PlayList from './playlist';
 import ApiRenderer from '../util/apirenderer';
 
 export default {
@@ -36,19 +23,33 @@ export default {
         };
     },
     computed: {
+        ...mapGetters([
+            'loginValid'
+        ]),
         dayNumber() {
             return new Date().getDate();
         }
     },
-    async created() {
-        const resp = await ApiRenderer.getDailySuggestions();
-        this.dailyList = resp.recommend;
+    methods: {
+        async getDailyList() {
+            const resp = await ApiRenderer.getDailySuggestions();
+            this.dailyList = resp.recommend;
+        }
+    },
+    watch: {
+        loginValid: function (val) {
+            if (val) this.getDailyList();
+        }
+    },
+    components: {
+        PlayList
     }
 };
 </script>
 
 <style lang="less">
-.paper {
+.daily-suggestions {
+    min-height: 400px;
     display: flex;
     .cell {
         flex-direction: row;
@@ -64,11 +65,6 @@ export default {
     }
     .content {
         flex: 7;
-        .label {
-            display: block;
-            overflow: hidden;
-            text-overflow: ellipsis;
-        }
     }
 }
 </style>

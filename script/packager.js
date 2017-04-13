@@ -27,13 +27,12 @@ const options = {
     platform: argv
 };
 
-packager(options, (err, appPaths) => {
+packager(options, (err, path) => {
     if (err) {
         console.error('\nBuild failed: ');
         console.error(err);
     } else {
-        console.log('\nBuild succeed! Output path(s):\n');
-        console.log(appPaths);
+        console.log('\nBuild succeed! Output path:\n');
+        console.log(`${path}\n`);
     }
-    console.log('\n');
 });

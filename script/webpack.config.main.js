@@ -2,10 +2,11 @@
 
 const path = require('path');
 const packageJson = require('../app/package.json');
+const BabiliPlugin = require('babili-webpack-plugin');
 
 const projectRoot = path.resolve('.');
 
-module.exports = {
+let cfg = {
     context: path.join(projectRoot, 'app/src'),
     target: 'electron',
     externals: Object.keys(packageJson.dependencies),
@@ -26,6 +27,7 @@ module.exports = {
             }
         ]
     },
+    plugins: [],
     node: {
         __dirname: false,
         __filename: false
@@ -36,3 +38,11 @@ module.exports = {
         ]
     }
 };
+
+if (process.env.NODE_ENV === 'production') {
+    cfg.plugins.push(
+        new BabiliPlugin()
+    );
+}
+
+module.exports = cfg;

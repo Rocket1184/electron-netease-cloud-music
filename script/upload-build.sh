@@ -9,6 +9,8 @@ APP_NAME=electron-netease-cloud-music
 BUCKET_NAME=$APP_NAME
 VERSION_HASH=`git rev-parse --short HEAD`
 
+./qshell_linux_amd64 listbucket $BUCKET_NAME stdout
+
 for ARCH in linux-x64 darwin-x64
 do
     TAR_NAME=$ARCH-$VERSION_HASH.tar.gz

@@ -18,7 +18,9 @@
         "babel-loader": "^6.4.1",
         "babel-plugin-transform-es2015-modules-commonjs": "^6.24.1",
         "babel-plugin-transform-object-rest-spread": "^6.23.0",
+        "babel-preset-babili": "^0.0.12",
         "babel-register": "^6.24.1",
+        "babili-webpack-plugin": "^0.0.11",
         "css-loader": "^0.28.0",
         "devtron": "^1.4.0",
         "electron": "1.6.2",
@@ -37,7 +39,7 @@
         "url-loader": "^0.5.8",
         "vue-hot-reload-api": "^2.0.11",
         "vue-loader": "^11.3.4",
-        "vue-style-loader": "^2.0.5",
+        "vue-style-loader": "3",
         "vue-template-compiler": "^2.2.6",
         "webpack": "^2.3.3",
         "webpack-dev-server": "^2.4.2"

@@ -4,15 +4,19 @@ const path = require('path');
 const packageJson = require('../app/package.json');
 const ExtractTextPlugin = require('extract-text-webpack-plugin');
 const HtmlWebpackPlugin = require('html-webpack-plugin');
+const BabiliPlugin = require('babili-webpack-plugin');
 
 const projectRoot = path.resolve('.');
 
-module.exports = {
+let cfg = {
     context: path.join(projectRoot, 'app'),
     target: 'electron-renderer',
+    devtool: '#eval-source-map',
     externals: Object.keys(packageJson.dependencies),
     entry: {
-        renderer: path.join(projectRoot, 'app/src/renderer/main.js')
+        renderer: [
+            path.join(projectRoot, 'app/src/renderer/main.js')
+        ]
     },
     output: {
         filename: '[name].js',
@@ -35,13 +39,6 @@ module.exports = {
             {
                 test: /\.js$/,
                 loader: 'babel-loader',
-                options: {
-                    plugins: [
-                        'syntax-object-rest-spread',
-                        'transform-object-rest-spread',
-                        'transform-es2015-modules-commonjs'
-                    ]
-                },
                 exclude: /node_modules/
             },
             {
@@ -50,15 +47,7 @@ module.exports = {
             },
             {
                 test: /\.vue$/,
-                use: {
-                    loader: 'vue-loader',
-                    options: {
-                        loaders: {
-                            sass: 'vue-style-loader!css-loader!sass-loader?indentedSyntax=1',
-                            scss: 'vue-style-loader!css-loader!sass-loader'
-                        }
-                    }
-                }
+                use: 'vue-loader'
             },
             {
                 test: /\.(png|jpe?g|gif|svg)(\?.*)?$/,
@@ -87,13 +76,24 @@ module.exports = {
         new HtmlWebpackPlugin({
             filename: 'index.html',
             template: './index.ejs',
-            appModules: false
+            appModules: process.env.NODE_ENV !== 'production'
+                ? path.resolve(projectRoot, 'app/node_modules')
+                : false
         })
     ],
     resolve: {
         extensions: ['.js', '.vue', '.json', '.css', '.node'],
         modules: [
+            path.join(projectRoot, 'node_modules'),
             path.join(projectRoot, 'app/node_modules')
         ]
-    },
+    }
 };
+
+if (process.env.NODE_ENV === 'production') {
+    cfg.plugins.push(
+        new BabiliPlugin()
+    );
+}
+
+module.exports = cfg;
