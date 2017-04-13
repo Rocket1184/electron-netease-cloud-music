@@ -30,6 +30,11 @@ const mutations = {
     },
     [types.SET_LOOP_MODE_RANDOM](state) {
         state.loopMode = LOOP_TYPES.RANDOM;
+    },
+    [types.RESTORE_PLAYLIST](state, payload) {
+        state.currentIndex = payload.currentIndex;
+        state.loopMode = payload.loopMode;
+        state.list = payload.list;
     }
 };
 

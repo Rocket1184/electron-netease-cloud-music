@@ -53,7 +53,6 @@
 <script>
 import { mapActions, mapGetters } from 'vuex';
 
-import ApiRenderer from '../util/apirenderer';
 import * as types from '../vuex/mutation-types';
 
 export default {
@@ -65,14 +64,74 @@ export default {
             isFavorite: true
         };
     },
-    async created() {
-        if (this.playing.id) {
-            let oUrl = await ApiRenderer.getMusicUrl(this.playing.id);
-            this.$store.commit({
-                ...oUrl.data[0],
-                type: types.SET_PLAYING_MUSIC,
-            });
+    methods: {
+        ...mapActions([
+            'nextTrack',
+            'previousTrack'
+        ]),
+        getImgAt(size) {
+            return `${this.playing.album.picUrl}?param=${size}y${size}`;
+        },
+        formatTime(value) {
+            const dt = new Date(value * 1000);
+            const h = dt.getUTCHours();
+            const m = dt.getMinutes();
+            const s = dt.getSeconds();
+            let res = '';
+            h && (res += `${h}:`);
+            res += m < 10 ? `0${m}:` : `${m}:`;
+            res += s < 10 ? `0${s}` : `${s}`;
+            return res;
+        },
+        play() {
+            this.$store.commit(types.RESUME_PLAYING_MUSIC);
+            this.audioEl.play();
+        },
+        pause() {
+            this.$store.commit(types.PAUSE_PLAYING_MUSIC);
+            this.audioEl.pause();
+        },
+        handlePlayOrPause() {
+            this.playing.url && this.playing.playing ? this.pause() : this.play();
+        },
+        handleProgressDrag(value) {
+            this.audioEl.currentTime = this.timeTotal * value / 100;
+        },
+        storePlayingState() {
+            localStorage.setItem('playing', JSON.stringify(this.playing));
+            localStorage.setItem('playlist', JSON.stringify(this.playlist));
+        },
+        restorePlayingState() {
+            try {
+                const playing = JSON.parse(localStorage.getItem('playing'));
+                const playlist = JSON.parse(localStorage.getItem('playlist'));
+                this.$store.commit({
+                    type: types.SET_PLAYING_MUSIC,
+                    ...playing
+                });
+                this.$store.commit({
+                    type: types.RESTORE_PLAYLIST,
+                    ...playlist
+                });
+                this.$store.dispatch('refreshCurrentTrack');
+            } catch (e) { }
         }
+    },
+    computed: {
+        ...mapGetters({
+            playlist: 'playlist',
+            playing: 'playingMusic'
+        }),
+        songProgress() {
+            return 100 * this.timeCurrent / this.timeTotal || 0;
+        }
+    },
+    created() {
+        this.restorePlayingState();
+        window.onbeforeunload = () => {
+            this.pause();
+            this.storePlayingState();
+        };
     },
     mounted() {
         const _updateTime = () => this.timeCurrent = this.audioEl.currentTime;
@@ -104,48 +163,6 @@ export default {
             this.nextTrack();
         };
     },
-    methods: {
-        ...mapActions([
-            'nextTrack',
-            'previousTrack'
-        ]),
-        getImgAt(size) {
-            return `${this.playing.album.picUrl}?param=${size}y${size}`;
-        },
-        formatTime(value) {
-            const dt = new Date(value * 1000);
-            const h = dt.getUTCHours();
-            const m = dt.getMinutes();
-            const s = dt.getSeconds();
-            let res = '';
-            h && (res += `${h}:`);
-            res += m < 10 ? `0${m}:` : `${m}:`;
-            res += s < 10 ? `0${s}` : `${s}`;
-            return res;
-        },
-        play() {
-            this.$store.commit(types.RESUME_PLAYING_MUSIC);
-            this.audioEl.play();
-        },
-        pause() {
-            this.$store.commit(types.PAUSE_PLAYING_MUSIC);
-            this.audioEl.pause();
-        },
-        handlePlayOrPause() {
-            this.playing.playing ? this.pause() : this.play();
-        },
-        handleProgressDrag(value) {
-            this.audioEl.currentTime = this.timeTotal * value / 100;
-        }
-    },
-    computed: {
-        ...mapGetters({
-            playing: 'playingMusic'
-        }),
-        songProgress() {
-            return 100 * this.timeCurrent / this.timeTotal || 0;
-        }
-    }
 };
 </script>
 

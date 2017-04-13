@@ -18,6 +18,14 @@ async function playThisTrack(commit, list, index) {
     });
 }
 
+export const refreshCurrentTrack = async ({ state, commit }) => {
+    const oUrl = await ApiRenderer.getMusicUrl(state.playing.id);
+    commit({
+        ...oUrl.data[0],
+        type: types.SET_PLAYING_MUSIC,
+    });
+};
+
 export const nextTrack = ({ commit, state }) => {
     const { currentIndex, list } = state.playlist;
     let nextIndex = (currentIndex + 1) % list.length;
