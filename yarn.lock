@@ -4722,7 +4722,14 @@ vue-loader@^11.3.4:
     vue-style-loader "^2.0.0"
     vue-template-es2015-compiler "^1.2.2"
 
-vue-style-loader@^2.0.0, vue-style-loader@^2.0.5:
+vue-style-loader@3:
+  version "3.0.0"
+  resolved "https://registry.yarnpkg.com/vue-style-loader/-/vue-style-loader-3.0.0.tgz#edeaee3b529d5796ef0b01bb7142a8a7e0025353"
+  dependencies:
+    hash-sum "^1.0.2"
+    loader-utils "^1.0.2"
+
+vue-style-loader@^2.0.0:
   version "2.0.5"
   resolved "https://registry.yarnpkg.com/vue-style-loader/-/vue-style-loader-2.0.5.tgz#f0efac992febe3f12e493e334edb13cd235a3d22"
   dependencies:
