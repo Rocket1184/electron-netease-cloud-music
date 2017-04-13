@@ -11,6 +11,7 @@ const projectRoot = path.resolve('.');
 let cfg = {
     context: path.join(projectRoot, 'app'),
     target: 'electron-renderer',
+    devtool: '#eval-source-map',
     externals: Object.keys(packageJson.dependencies),
     entry: {
         renderer: [
