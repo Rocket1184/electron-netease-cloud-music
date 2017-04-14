@@ -160,6 +160,7 @@ export default {
     font-size: 0;
     height: 64px;
     .cell {
+        overflow: hidden;
         min-width: 64px;
         vertical-align: top;
         height: 100%;
@@ -168,7 +169,7 @@ export default {
     .info {
         position: relative;
         font-size: 14px;
-        padding: 10px;
+        padding: 10px 14px;
         width: calc(~"100% - 244px");
         .artist-name {
             margin-left: 14px;
@@ -176,23 +177,20 @@ export default {
         }
         .quick-actions {
             position: absolute;
-            top: 0;
+            top: -5px;
             right: 0;
             .favorite {
                 color: red;
             }
         }
         .progress {
-            padding-top: 4px;
+            margin-top: 5px;
             display: flex;
             .silder {
-                flex: 100;
-                flex-grow: 1;
+                flex: 1;
             }
             .text {
-                flex: 1;
-                max-width: 120px;
-                padding-left: 10px;
+                margin-left: 10px;
             }
         }
     }
