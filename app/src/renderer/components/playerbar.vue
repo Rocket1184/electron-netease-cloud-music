@@ -61,7 +61,8 @@ export default {
             audioEl: {},
             timeTotal: 0,
             timeCurrent: 0,
-            isFavorite: true
+            isFavorite: true,
+            fallbackImg: 'http://p3.music.126.net/Dev8qwDRGjIxAtopFG0uxg==/3263350512830591.jpg'
         };
     },
     methods: {
@@ -71,7 +72,8 @@ export default {
             'restorePlaylist'
         ]),
         getImgAt(size) {
-            return `${this.playing.album.picUrl}?param=${size}y${size}`;
+            const url = this.playing.album.picUrl || this.fallbackImg;
+            return `${url}?param=${size}y${size}`;
         },
         formatTime(value) {
             const dt = new Date(value * 1000);
