@@ -51,3 +51,17 @@ export const playPlaylist = async ({ commit, state }, payload) => {
         : 0;
     playThisTrack(commit, state.playlist.list, firstIndex);
 };
+
+export const restorePlaylist = async ({ commit, state }, payload) => {
+    const { playing, playlist } = payload;
+    commit({
+        type: types.RESTORE_PLAYLIST,
+        ...playlist
+    });
+    const oUrl = await ApiRenderer.getMusicUrl(playing.id);
+    commit({
+        ...playing,
+        ...oUrl.data[0],
+        type: types.SET_PLAYING_MUSIC,
+    });
+};

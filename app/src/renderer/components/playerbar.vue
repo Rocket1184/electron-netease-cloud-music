@@ -67,7 +67,8 @@ export default {
     methods: {
         ...mapActions([
             'nextTrack',
-            'previousTrack'
+            'previousTrack',
+            'restorePlaylist'
         ]),
         getImgAt(size) {
             return `${this.playing.album.picUrl}?param=${size}y${size}`;
@@ -92,29 +93,10 @@ export default {
             this.audioEl.pause();
         },
         handlePlayOrPause() {
-            this.playing.url && this.playing.playing ? this.pause() : this.play();
+            this.playing.url && (this.playing.playing ? this.pause() : this.play());
         },
         handleProgressDrag(value) {
             this.audioEl.currentTime = this.timeTotal * value / 100;
-        },
-        storePlayingState() {
-            localStorage.setItem('playing', JSON.stringify(this.playing));
-            localStorage.setItem('playlist', JSON.stringify(this.playlist));
-        },
-        restorePlayingState() {
-            try {
-                const playing = JSON.parse(localStorage.getItem('playing'));
-                const playlist = JSON.parse(localStorage.getItem('playlist'));
-                this.$store.commit({
-                    type: types.SET_PLAYING_MUSIC,
-                    ...playing
-                });
-                this.$store.commit({
-                    type: types.RESTORE_PLAYLIST,
-                    ...playlist
-                });
-                this.$store.dispatch('refreshCurrentTrack');
-            } catch (e) { }
         }
     },
     computed: {
@@ -127,10 +109,15 @@ export default {
         }
     },
     created() {
-        this.restorePlayingState();
+        try {
+            const playing = JSON.parse(localStorage.getItem('playing'));
+            const playlist = JSON.parse(localStorage.getItem('playlist'));
+            this.restorePlaylist({ playing, playlist });
+        } catch (e) { }
         window.onbeforeunload = () => {
             this.pause();
-            this.storePlayingState();
+            localStorage.setItem('playing', JSON.stringify(this.playing));
+            localStorage.setItem('playlist', JSON.stringify(this.playlist));
         };
     },
     mounted() {
