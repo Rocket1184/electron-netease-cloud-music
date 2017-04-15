@@ -110,7 +110,6 @@ export default {
             return 100 * this.timeCurrent / this.timeTotal || 0;
         }
     },
-    //FIXME: why dose the audio autoplay when page load ?
     created() {
         try {
             const playing = JSON.parse(localStorage.getItem('playing'));
@@ -125,27 +124,24 @@ export default {
     },
     mounted() {
         const _audioEl = document.getElementsByTagName('audio')[0];
+        const _slider = document.querySelector('.progress .silder');
         let _playingIntervalId;
         this.audioEl = _audioEl;
 
         const _updateTime = () => this.timeCurrent = this.audioEl.currentTime;
         const _unsetInterval = () => _playingIntervalId = clearInterval(_playingIntervalId);
 
+        _slider.onpointerdown = () => _audioEl.pause();
+        _slider.onpointerup = () => this.playing.playing && _audioEl.play();
+
         _audioEl.ondurationchange = () => {
             _unsetInterval();
             this.timeTotal = _audioEl.duration;
             this.timeCurrent = _audioEl.currentTime = 0;
+            if (this.playing.playing) _audioEl.play();
         };
 
-        _audioEl.onseeked = () => {
-            if (_audioEl.paused) _audioEl.play();
-            _updateTime();
-        };
-
-        _audioEl.onseeking = () => {
-            if (!_audioEl.paused) _audioEl.pause();
-            _updateTime();
-        };
+        _audioEl.onseeking = _updateTime;
 
         _audioEl.onplaying = () => {
             _updateTime();
@@ -160,14 +156,9 @@ export default {
             }, timeOut);
         };
 
-        _audioEl.onpause = () => {
-            _updateTime();
-            _unsetInterval();
-        };
+        _audioEl.onpause = () => _updateTime() && _unsetInterval();
 
-        _audioEl.onended = () => {
-            this.nextTrack();
-        };
+        _audioEl.onended = () => this.nextTrack();
     },
 };
 </script>
