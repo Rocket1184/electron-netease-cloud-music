@@ -37,7 +37,7 @@
                              class="button"
                              color="#FFF"
                              @click="previousTrack" />
-            <mu-float-button :icon="this.playing.playing ? 'pause' : 'play_arrow'"
+            <mu-float-button :icon="this.audioEl.paused ? 'play_arrow' : 'pause'"
                              class="button"
                              color="#FFF"
                              @click="handlePlayOrPause" />
@@ -95,7 +95,7 @@ export default {
             this.audioEl.pause();
         },
         handlePlayOrPause() {
-            this.playing.url && (this.playing.playing ? this.pause() : this.play());
+            this.playing.url && (this.audioEl.paused ? this.play() : this.pause());
         },
         handleProgressDrag(value) {
             this.audioEl.currentTime = this.timeTotal * value / 100;
@@ -110,6 +110,7 @@ export default {
             return 100 * this.timeCurrent / this.timeTotal || 0;
         }
     },
+    //FIXME: why dose the audio autoplay when page load ?
     created() {
         try {
             const playing = JSON.parse(localStorage.getItem('playing'));
@@ -123,31 +124,47 @@ export default {
         };
     },
     mounted() {
-        const _updateTime = () => this.timeCurrent = this.audioEl.currentTime;
         const _audioEl = document.getElementsByTagName('audio')[0];
         let _playingIntervalId;
         this.audioEl = _audioEl;
+
+        const _updateTime = () => this.timeCurrent = this.audioEl.currentTime;
+        const _unsetInterval = () => _playingIntervalId = clearInterval(_playingIntervalId);
+
         _audioEl.ondurationchange = () => {
-            clearInterval(_playingIntervalId);
+            _unsetInterval();
             this.timeTotal = _audioEl.duration;
             this.timeCurrent = _audioEl.currentTime = 0;
         };
+
         _audioEl.onseeked = () => {
-            this.playing.playing && _audioEl.play();
+            if (_audioEl.paused) _audioEl.play();
             _updateTime();
         };
+
         _audioEl.onseeking = () => {
-            !_audioEl.paused && _audioEl.pause();
+            if (!_audioEl.paused) _audioEl.pause();
             _updateTime();
         };
+
         _audioEl.onplaying = () => {
             _updateTime();
-            _playingIntervalId = setInterval(() => _updateTime(), 1000);
+            // update playing process time after the time reachs a 'integer' second
+            // why use 1.1 not 1 ? maybe there is a little lag in event loop... I dont know
+            const timeOut = (1.1 - _audioEl.currentTime % 1) * 1000;
+            setTimeout(() => {
+                _updateTime();
+                // only set interval when it's not set, to avoid massive events
+                if (!_playingIntervalId)
+                    _playingIntervalId = setInterval(() => _updateTime(), 1000);
+            }, timeOut);
         };
+
         _audioEl.onpause = () => {
             _updateTime();
-            clearInterval(_playingIntervalId);
+            _unsetInterval();
         };
+
         _audioEl.onended = () => {
             this.nextTrack();
         };
