@@ -237,6 +237,7 @@ export default {
 .appbar-search-field {
     color: #FFF;
     margin-bottom: 0;
+    -webkit-app-region: no-drag;
     &.focus-state {
         color: #FFF;
     }
