@@ -52,6 +52,10 @@ export const playPlaylist = async ({ commit, state }, payload) => {
     playThisTrack(commit, state.playlist.list, firstIndex);
 };
 
+export const playTrackIndex = ({ commit, state }, payload) => {
+    playThisTrack(commit, state.playlist.list, payload.index);
+};
+
 export const restorePlaylist = async ({ commit, state }, payload) => {
     const { playing, playlist } = payload;
     commit({
