@@ -11,17 +11,18 @@
             <div class="quick-actions">
                 <mu-icon-button tooltip="喜欢"
                                 tooltipPosition="top-center"
-                                touch
                                 :iconClass="isFavorite && 'favorite'"
                                 :icon="isFavorite? 'favorite' :'favorite_border'" />
                 <mu-icon-button tooltip="收藏到歌单"
                                 tooltipPosition="top-center"
-                                touch
                                 icon="bookmark_border" />
-                <mu-icon-button tooltip="查看播放列表"
-                                tooltipPosition="top-center"
-                                touch
-                                icon="playlist_play" />
+                <mu-icon-menu tooltip="播放列表"
+                              tooltipPosition="top-center"
+                              icon="playlist_play"
+                              :maxHeight="400"
+                              :targetOrigin="{ vertical: 'bottom', horizontal: 'left' }">
+                    <CurrentList/>
+                </mu-icon-menu>
             </div>
             <div class="progress">
                 <mu-slider :value="songProgress"
@@ -53,6 +54,7 @@
 <script>
 import { mapActions, mapGetters } from 'vuex';
 
+import CurrentList from '../components/currentlist';
 import * as types from '../vuex/mutation-types';
 
 export default {
@@ -160,6 +162,9 @@ export default {
 
         _audioEl.onended = () => this.nextTrack();
     },
+    components: {
+        CurrentList
+    }
 };
 </script>
 
@@ -168,7 +173,6 @@ export default {
     font-size: 0;
     height: 64px;
     .cell {
-        overflow: hidden;
         min-width: 64px;
         vertical-align: top;
         height: 100%;
