@@ -102,6 +102,18 @@ async function getMusicUrl(idOrIds, br = 320000) {
     });
 }
 
+async function getMusicComments(rid, limit = 20, offset = 0) {
+    return await client.post({
+        url: `${BaseURL}/weapi/v1/resource/comments/R_SO_4_${rid}`,
+        data: {
+            rid,
+            offset,
+            limit,
+            csrf_token: ''
+        }
+    });
+}
+
 export default {
     getCookie,
     updateCookie,
@@ -110,5 +122,6 @@ export default {
     getMusicRecord,
     getDailySuggestions,
     getListDetail,
-    getMusicUrl
+    getMusicUrl,
+    getMusicComments
 };
