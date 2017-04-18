@@ -2,8 +2,10 @@
     <mu-paper class="player-bar-wrapper"
               :zDepth="2">
         <div class="cell">
-            <img :src="getImgAt(64)"
-                 :srcset="`${getImgAt(80)} 1.25x, ${getImgAt(96)} 1.5x, ${getImgAt(128)} 2x`">
+            <router-link :to='`/song/${this.playing.id}`'>
+                <img :src="getImgAt(64)"
+                     :srcset="`${getImgAt(80)} 1.25x, ${getImgAt(96)} 1.5x, ${getImgAt(128)} 2x`">
+            </router-link>
         </div>
         <div class="cell info">
             <span class="song-name">{{playing.name}}</span>
