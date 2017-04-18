@@ -5,8 +5,8 @@ export default [
         component: require('./page/index')
     },
     {
-        path: '/song/:id',
-        name: 'song',
-        component: resolve => require(['./page/song'], resolve)
+        path: '/player',
+        name: 'player',
+        component: resolve => require(['./page/player'], resolve)
     }
 ];

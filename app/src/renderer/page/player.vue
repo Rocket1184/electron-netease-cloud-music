@@ -11,9 +11,11 @@
             <div class="needle"></div>
         </div>
         <div class="info">
-            <p>
-                Info here
-            </p>
+            <h1>{{playing.name}}</h1>
+            <p>歌手：{{playing.artist}} 专辑：{{playing.album.name}}</p>
+            <div class="lyric">
+    
+            </div>
         </div>
     </div>
 </template>
@@ -42,7 +44,7 @@ export default {
         }
     },
     created() {
-        this.id = this.$route.params.id;
+        this.id = this.playing.id;
     }
 };
 </script>
@@ -110,6 +112,8 @@ export default {
     }
     .info {
         flex: 1;
+        padding: 10px 0;
+        box-sizing: border-box;
     }
 }
 
