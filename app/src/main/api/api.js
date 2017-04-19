@@ -114,6 +114,12 @@ async function getMusicComments(rid, limit = 20, offset = 0) {
     });
 }
 
+async function getMusicLyric(id) {
+    return await client.get({
+        url: `${BaseURL}/api/song/lyric?os=osx&id=${id}&lv=-1&kv=-1&tv=-1`
+    });
+}
+
 export default {
     getCookie,
     updateCookie,
@@ -123,5 +129,6 @@ export default {
     getDailySuggestions,
     getListDetail,
     getMusicUrl,
-    getMusicComments
+    getMusicComments,
+    getMusicLyric
 };
