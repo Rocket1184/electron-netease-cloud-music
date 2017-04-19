@@ -34,7 +34,8 @@ export default {
             playing: 'playingMusic'
         }),
         styleBkgImg() {
-            return `background-image:url(${this.playing.picUrl});`;
+            const len = window.devicePixelRatio * 220;
+            return `background-image:url(${this.playing.picUrl}?param=${len}y${len});`;
         },
         diskClass() {
             return [
@@ -76,13 +77,14 @@ export default {
             border-radius: 50%;
             animation: disk-playing 25s linear infinite;
             animation-play-state: paused;
+            transform: translate3d(0, 0, 0);
             .border {
                 right: 65px;
                 bottom: 65px;
                 width: 350px;
                 height: 350px;
                 background-image: url(../../../assets/img/disc.png);
-                background-size: cover;
+                background-size: contain;
                 position: relative;
             }
         }
