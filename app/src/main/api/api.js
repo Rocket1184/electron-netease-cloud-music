@@ -1,4 +1,5 @@
 import crypto from 'crypto';
+import { Lrc } from 'lrc-kit';
 
 import Client from './httpclient';
 
@@ -115,9 +116,19 @@ async function getMusicComments(rid, limit = 20, offset = 0) {
 }
 
 async function getMusicLyric(id) {
-    return await client.get({
+    const tmp = await client.get({
         url: `${BaseURL}/api/song/lyric?os=osx&id=${id}&lv=-1&kv=-1&tv=-1`
     });
+    let result = {};
+    if (tmp.lrc && tmp.lrc.version) {
+        result.lrc = Lrc.parse(tmp.lrc.lyric);
+        result.lyricUser = tmp.lyricUser;
+    }
+    if (tmp.tlyric && tmp.tlyric.version) {
+        result.tlrc = Lrc.parse(tmp.tlyric.lyric);
+        result.transUser = tmp.transUser;
+    }
+    return result;
 }
 
 export default {
