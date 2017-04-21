@@ -21,7 +21,8 @@ const BlankState = {
             name: null,
             tns: []
         }
-    ]
+    ],
+    lyrics: {}
 };
 
 let state = BlankState;

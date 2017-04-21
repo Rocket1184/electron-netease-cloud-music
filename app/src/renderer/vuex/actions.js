@@ -3,10 +3,15 @@ import { LOOP_TYPES } from './modules/playlist';
 import ApiRenderer from '../util/apirenderer';
 
 async function playThisTrack(commit, list, index) {
-    const oUrl = await ApiRenderer.getMusicUrl(list[index].id);
+    const [oUrl, lyrics] = await Promise.all([
+        ApiRenderer.getMusicUrl(list[index].id),
+        ApiRenderer.getMusicLyric(list[index].id)
+    ]);
+    console.log(oUrl, lyrics);
     commit({
         ...list[index],
         ...oUrl.data[0],
+        lyrics,
         type: types.SET_PLAYING_MUSIC,
     });
     commit({
