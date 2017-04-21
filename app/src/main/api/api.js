@@ -125,8 +125,26 @@ async function getMusicLyric(id) {
         result.lyricUser = tmp.lyricUser;
     }
     if (tmp.tlyric && tmp.tlyric.version) {
-        result.tlrc = Lrc.parse(tmp.tlyric.lyric);
         result.transUser = tmp.transUser;
+        const tlrc = Lrc.parse(tmp.tlyric.lyric);
+        let mlrc = {
+            info: result.lrc.info,
+            transInfo: tlrc.info,
+            lyrics: result.lrc.lyrics.slice()
+        };
+        let i = 0;
+        let j = 0;
+        while (i < mlrc.lyrics.length && j < tlrc.lyrics.length) {
+            if (mlrc.lyrics[i].timestamp === tlrc.lyrics[j].timestamp) {
+                mlrc.lyrics[i].trans = tlrc.lyrics[j].content;
+                i++; j++;
+            } else if (mlrc.lyrics[i].timestamp < tlrc.lyrics[j].timestamp) {
+                i++;
+            } else {
+                j++;
+            }
+        }
+        result.mlrc = mlrc;
     }
     return result;
 }
