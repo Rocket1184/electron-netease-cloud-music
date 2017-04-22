@@ -1,25 +1,27 @@
 <template>
     <div id="app">
-        <appNav/>
+        <AppNav/>
         <div class="router-view">
-            <router-view/>
+            <keep-alive>
+                <router-view/>
+            </keep-alive>
         </div>
-        <playerBar/>
+        <PlayerBar/>
     </div>
 </template>
 
 <script>
 import store from './vuex/store';
-import appNav from './components/appnav';
-import playerBar from './components/playerbar';
+import AppNav from './components/appnav';
+import PlayerBar from './components/playerbar';
 import ApiRenderer from './util/apirenderer';
 import * as types from './vuex/mutation-types';
 
 export default {
     store,
     components: {
-        appNav,
-        playerBar
+        AppNav,
+        PlayerBar
     },
     methods: {
         async checkLogin() {

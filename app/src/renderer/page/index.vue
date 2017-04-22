@@ -1,14 +1,15 @@
 <template>
     <div class="index-wrapper">
-        <dailySuggestions/>
+        <DailySuggestions/>
     </div>
 </template>
 
 <script>
-import dailySuggestions from '../components/dailysuggestions';
+import DailySuggestions from '../components/dailysuggestions';
+
 export default {
     components: {
-        dailySuggestions
+        DailySuggestions
     }
 };
 </script>

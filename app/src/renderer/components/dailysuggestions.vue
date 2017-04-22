@@ -41,6 +41,9 @@ export default {
             if (val) this.getDailyList();
         }
     },
+    created() {
+        if (this.loginValid) this.getDailyList();
+    },
     components: {
         PlayList
     }

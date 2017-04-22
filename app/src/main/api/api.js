@@ -1,4 +1,5 @@
 import crypto from 'crypto';
+import { Lrc } from 'lrc-kit';
 
 import Client from './httpclient';
 
@@ -102,6 +103,52 @@ async function getMusicUrl(idOrIds, br = 320000) {
     });
 }
 
+async function getMusicComments(rid, limit = 20, offset = 0) {
+    return await client.post({
+        url: `${BaseURL}/weapi/v1/resource/comments/R_SO_4_${rid}`,
+        data: {
+            rid,
+            offset,
+            limit,
+            csrf_token: ''
+        }
+    });
+}
+
+async function getMusicLyric(id) {
+    const tmp = await client.get({
+        url: `${BaseURL}/api/song/lyric?os=osx&id=${id}&lv=-1&kv=-1&tv=-1`
+    });
+    let result = {};
+    if (tmp.lrc && tmp.lrc.version) {
+        result.lrc = Lrc.parse(tmp.lrc.lyric);
+        result.lyricUser = tmp.lyricUser;
+    }
+    if (tmp.tlyric && tmp.tlyric.version) {
+        result.transUser = tmp.transUser;
+        const tlrc = Lrc.parse(tmp.tlyric.lyric);
+        let mlrc = {
+            info: result.lrc.info,
+            transInfo: tlrc.info,
+            lyrics: result.lrc.lyrics.slice()
+        };
+        let i = 0;
+        let j = 0;
+        while (i < mlrc.lyrics.length && j < tlrc.lyrics.length) {
+            if (mlrc.lyrics[i].timestamp === tlrc.lyrics[j].timestamp) {
+                mlrc.lyrics[i].trans = tlrc.lyrics[j].content;
+                i++; j++;
+            } else if (mlrc.lyrics[i].timestamp < tlrc.lyrics[j].timestamp) {
+                i++;
+            } else {
+                j++;
+            }
+        }
+        result.mlrc = mlrc;
+    }
+    return result;
+}
+
 export default {
     getCookie,
     updateCookie,
@@ -110,5 +157,7 @@ export default {
     getMusicRecord,
     getDailySuggestions,
     getListDetail,
-    getMusicUrl
+    getMusicUrl,
+    getMusicComments,
+    getMusicLyric
 };

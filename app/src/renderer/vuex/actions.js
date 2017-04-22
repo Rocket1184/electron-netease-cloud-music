@@ -3,10 +3,15 @@ import { LOOP_TYPES } from './modules/playlist';
 import ApiRenderer from '../util/apirenderer';
 
 async function playThisTrack(commit, list, index) {
-    const oUrl = await ApiRenderer.getMusicUrl(list[index].id);
+    const [oUrl, lyrics] = await Promise.all([
+        ApiRenderer.getMusicUrl(list[index].id),
+        ApiRenderer.getMusicLyric(list[index].id)
+    ]);
+    console.log(oUrl, lyrics);
     commit({
         ...list[index],
         ...oUrl.data[0],
+        lyrics,
         type: types.SET_PLAYING_MUSIC,
     });
     commit({
@@ -50,4 +55,22 @@ export const playPlaylist = async ({ commit, state }, payload) => {
         ? parseInt(Math.random() * 100000) % list.length
         : 0;
     playThisTrack(commit, state.playlist.list, firstIndex);
+};
+
+export const playTrackIndex = ({ commit, state }, payload) => {
+    playThisTrack(commit, state.playlist.list, payload.index);
+};
+
+export const restorePlaylist = async ({ commit, state }, payload) => {
+    const { playing, playlist } = payload;
+    commit({
+        type: types.RESTORE_PLAYLIST,
+        ...playlist
+    });
+    const oUrl = await ApiRenderer.getMusicUrl(playing.id);
+    commit({
+        ...playing,
+        ...oUrl.data[0],
+        type: types.SET_PLAYING_MUSIC,
+    });
 };

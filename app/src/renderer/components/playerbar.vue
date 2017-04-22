@@ -2,8 +2,10 @@
     <mu-paper class="player-bar-wrapper"
               :zDepth="2">
         <div class="cell">
-            <img :src="getImgAt(64)"
-                 :srcset="`${getImgAt(80)} 1.25x, ${getImgAt(96)} 1.5x, ${getImgAt(128)} 2x`">
+            <router-link :to='`/player`'>
+                <img :src="getImgAt(64)"
+                     :srcset="`${getImgAt(80)} 1.25x, ${getImgAt(96)} 1.5x, ${getImgAt(128)} 2x`">
+            </router-link>
         </div>
         <div class="cell info">
             <span class="song-name">{{playing.name}}</span>
@@ -11,17 +13,18 @@
             <div class="quick-actions">
                 <mu-icon-button tooltip="喜欢"
                                 tooltipPosition="top-center"
-                                touch
                                 :iconClass="isFavorite && 'favorite'"
                                 :icon="isFavorite? 'favorite' :'favorite_border'" />
                 <mu-icon-button tooltip="收藏到歌单"
                                 tooltipPosition="top-center"
-                                touch
                                 icon="bookmark_border" />
-                <mu-icon-button tooltip="查看播放列表"
-                                tooltipPosition="top-center"
-                                touch
-                                icon="playlist_play" />
+                <mu-icon-menu tooltip="播放列表"
+                              tooltipPosition="top-center"
+                              icon="playlist_play"
+                              :maxHeight="400"
+                              :targetOrigin="{ vertical: 'bottom', horizontal: 'left' }">
+                    <CurrentList/>
+                </mu-icon-menu>
             </div>
             <div class="progress">
                 <mu-slider :value="songProgress"
@@ -37,7 +40,7 @@
                              class="button"
                              color="#FFF"
                              @click="previousTrack" />
-            <mu-float-button :icon="this.playing.playing ? 'pause' : 'play_arrow'"
+            <mu-float-button :icon="this.audioEl.paused ? 'play_arrow' : 'pause'"
                              class="button"
                              color="#FFF"
                              @click="handlePlayOrPause" />
@@ -53,6 +56,7 @@
 <script>
 import { mapActions, mapGetters } from 'vuex';
 
+import CurrentList from '../components/currentlist';
 import * as types from '../vuex/mutation-types';
 
 export default {
@@ -61,16 +65,19 @@ export default {
             audioEl: {},
             timeTotal: 0,
             timeCurrent: 0,
-            isFavorite: true
+            isFavorite: true,
+            fallbackImg: 'http://p3.music.126.net/Dev8qwDRGjIxAtopFG0uxg==/3263350512830591.jpg'
         };
     },
     methods: {
         ...mapActions([
             'nextTrack',
-            'previousTrack'
+            'previousTrack',
+            'restorePlaylist'
         ]),
         getImgAt(size) {
-            return `${this.playing.album.picUrl}?param=${size}y${size}`;
+            const url = this.playing.album.picUrl || this.fallbackImg;
+            return `${url}?param=${size}y${size}`;
         },
         formatTime(value) {
             const dt = new Date(value * 1000);
@@ -92,29 +99,10 @@ export default {
             this.audioEl.pause();
         },
         handlePlayOrPause() {
-            this.playing.url && this.playing.playing ? this.pause() : this.play();
+            this.playing.url && (this.audioEl.paused ? this.play() : this.pause());
         },
         handleProgressDrag(value) {
             this.audioEl.currentTime = this.timeTotal * value / 100;
-        },
-        storePlayingState() {
-            localStorage.setItem('playing', JSON.stringify(this.playing));
-            localStorage.setItem('playlist', JSON.stringify(this.playlist));
-        },
-        restorePlayingState() {
-            try {
-                const playing = JSON.parse(localStorage.getItem('playing'));
-                const playlist = JSON.parse(localStorage.getItem('playlist'));
-                this.$store.commit({
-                    type: types.SET_PLAYING_MUSIC,
-                    ...playing
-                });
-                this.$store.commit({
-                    type: types.RESTORE_PLAYLIST,
-                    ...playlist
-                });
-                this.$store.dispatch('refreshCurrentTrack');
-            } catch (e) { }
         }
     },
     computed: {
@@ -127,42 +115,58 @@ export default {
         }
     },
     created() {
-        this.restorePlayingState();
+        try {
+            const playing = JSON.parse(localStorage.getItem('playing'));
+            const playlist = JSON.parse(localStorage.getItem('playlist'));
+            this.restorePlaylist({ playing, playlist });
+        } catch (e) { }
         window.onbeforeunload = () => {
             this.pause();
-            this.storePlayingState();
+            localStorage.setItem('playing', JSON.stringify(this.playing));
+            localStorage.setItem('playlist', JSON.stringify(this.playlist));
         };
     },
     mounted() {
-        const _updateTime = () => this.timeCurrent = this.audioEl.currentTime;
         const _audioEl = document.getElementsByTagName('audio')[0];
+        const _slider = document.querySelector('.progress .silder');
         let _playingIntervalId;
         this.audioEl = _audioEl;
+
+        const _updateTime = () => this.timeCurrent = this.audioEl.currentTime;
+        const _unsetInterval = () => _playingIntervalId = clearInterval(_playingIntervalId);
+
+        _slider.onpointerdown = () => _audioEl.pause();
+        _slider.onpointerup = () => this.playing.playing && _audioEl.play();
+
         _audioEl.ondurationchange = () => {
-            clearInterval(_playingIntervalId);
+            _unsetInterval();
             this.timeTotal = _audioEl.duration;
             this.timeCurrent = _audioEl.currentTime = 0;
+            if (this.playing.playing) _audioEl.play();
         };
-        _audioEl.onseeked = () => {
-            this.playing.playing && _audioEl.play();
-            _updateTime();
-        };
-        _audioEl.onseeking = () => {
-            !_audioEl.paused && _audioEl.pause();
-            _updateTime();
-        };
+
+        _audioEl.onseeking = _updateTime;
+
         _audioEl.onplaying = () => {
             _updateTime();
-            _playingIntervalId = setInterval(() => _updateTime(), 1000);
+            // update playing process time after the time reachs a 'integer' second
+            // why use 1.1 not 1 ? maybe there is a little lag in event loop... I dont know
+            const timeOut = (1.1 - _audioEl.currentTime % 1) * 1000;
+            setTimeout(() => {
+                _updateTime();
+                // only set interval when it's not set, to avoid massive events
+                if (!_playingIntervalId)
+                    _playingIntervalId = setInterval(() => _updateTime(), 1000);
+            }, timeOut);
         };
-        _audioEl.onpause = () => {
-            _updateTime();
-            clearInterval(_playingIntervalId);
-        };
-        _audioEl.onended = () => {
-            this.nextTrack();
-        };
+
+        _audioEl.onpause = () => _updateTime() && _unsetInterval();
+
+        _audioEl.onended = () => this.nextTrack();
     },
+    components: {
+        CurrentList
+    }
 };
 </script>
 
@@ -179,7 +183,7 @@ export default {
     .info {
         position: relative;
         font-size: 14px;
-        padding: 10px;
+        padding: 10px 14px;
         width: calc(~"100% - 244px");
         .artist-name {
             margin-left: 14px;
@@ -187,23 +191,20 @@ export default {
         }
         .quick-actions {
             position: absolute;
-            top: 0;
+            top: -5px;
             right: 0;
             .favorite {
                 color: red;
             }
         }
         .progress {
-            padding-top: 4px;
+            margin-top: 5px;
             display: flex;
             .silder {
-                flex: 100;
-                flex-grow: 1;
+                flex: 1;
             }
             .text {
-                flex: 1;
-                max-width: 120px;
-                padding-left: 10px;
+                margin-left: 10px;
             }
         }
     }

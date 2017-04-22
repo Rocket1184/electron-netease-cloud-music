@@ -6,7 +6,7 @@ const packager = require('electron-packager');
 let argv = process.argv.slice(2);
 if (!argv.length) argv = 'all';
 
-if (argv[2] === 'clean') {
+if (argv[0] === 'clean') {
     const distPath = path.resolve(projectRoot, 'dist');
     const cnt = require('fs').readdirSync(distPath).filter(f => f[0] !== '.').length;;
     if (cnt) {

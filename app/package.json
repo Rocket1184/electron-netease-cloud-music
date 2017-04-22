@@ -4,14 +4,15 @@
     "description": "UNOFFICAL client for music.163.com",
     "main": "./dist/main.js",
     "dependencies": {
-        "axios": "^0.16.0",
-        "big-integer": "^1.6.19",
+        "axios": "^0.16.1",
+        "big-integer": "^1.6.21",
         "cookie": "^0.3.1",
         "keycode": "^2.1.8",
-        "muse-ui": "^2.0.1",
+        "lrc-kit": "^0.2.2",
+        "muse-ui": "^2.0.2",
         "vue": "^2.2.6",
-        "vue-router": "^2.3.1",
-        "vuex": "^2.2.1"
+        "vue-router": "^2.4.0",
+        "vuex": "^2.3.1"
     },
     "devDependencies": {},
     "author": "rocka <i@rocka.me> (https://rocka.me)",
