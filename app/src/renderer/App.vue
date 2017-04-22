@@ -2,7 +2,9 @@
     <div id="app">
         <AppNav/>
         <div class="router-view">
-            <router-view/>
+            <keep-alive>
+                <router-view/>
+            </keep-alive>
         </div>
         <PlayerBar/>
     </div>
