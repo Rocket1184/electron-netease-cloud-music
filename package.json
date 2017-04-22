@@ -15,7 +15,7 @@
     "devDependencies": {
         "babel-core": "^6.24.1",
         "babel-eslint": "^7.2.1",
-        "babel-loader": "^6.4.1",
+        "babel-loader": "7",
         "babel-plugin-transform-es2015-modules-commonjs": "^6.24.1",
         "babel-plugin-transform-object-rest-spread": "^6.23.0",
         "babel-preset-babili": "^0.0.12",
@@ -23,7 +23,7 @@
         "babili-webpack-plugin": "^0.0.11",
         "css-loader": "^0.28.0",
         "devtron": "^1.4.0",
-        "electron": "1.6.2",
+        "electron": "1.6.5",
         "electron-debug": "^1.1.0",
         "electron-devtools-installer": "^2.2.0",
         "electron-packager": "^8.6.0",
@@ -41,7 +41,7 @@
         "vue-loader": "^11.3.4",
         "vue-style-loader": "3",
         "vue-template-compiler": "^2.2.6",
-        "webpack": "^2.3.3",
+        "webpack": "2",
         "webpack-dev-server": "^2.4.2"
     },
     "dependencies": {}
