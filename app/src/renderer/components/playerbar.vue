@@ -1,8 +1,10 @@
 <template>
     <mu-paper class="player-bar-wrapper"
               :zDepth="2">
+        <audio id="playerbar-audio"
+               :src="playing.url"></audio>
         <div class="cell">
-            <router-link :to='`/player`'>
+            <router-link to='/player'>
                 <img :src="getImgAt(64)"
                      :srcset="`${getImgAt(80)} 1.25x, ${getImgAt(96)} 1.5x, ${getImgAt(128)} 2x`">
             </router-link>
@@ -11,14 +13,14 @@
             <span class="song-name">{{playing.name}}</span>
             <span class="artist-name">{{playing.artist}}</span>
             <div class="quick-actions">
-                <mu-icon-button tooltip="喜欢"
+                <mu-icon-button title="喜欢"
                                 tooltipPosition="top-center"
                                 :iconClass="isFavorite && 'favorite'"
                                 :icon="isFavorite? 'favorite' :'favorite_border'" />
-                <mu-icon-button tooltip="收藏到歌单"
+                <mu-icon-button title="收藏到歌单"
                                 tooltipPosition="top-center"
                                 icon="bookmark_border" />
-                <mu-icon-menu tooltip="播放列表"
+                <mu-icon-menu title="播放列表"
                               tooltipPosition="top-center"
                               icon="playlist_play"
                               :maxHeight="400"
@@ -27,11 +29,11 @@
                 </mu-icon-menu>
             </div>
             <div class="progress">
-                <mu-slider :value="songProgress"
-                           @change="handleProgressDrag"
-                           class="silder" />
-                <span class="text">{{ formatTime(timeCurrent) }} / {{ formatTime(timeTotal) }}</span>
-                <audio :src="playing.url"></audio>
+                <mu-slider id="playerbar-progress"
+                           class="slider"
+                           :value="songProgress"
+                           @change="handleProgressDrag" />
+                <span class="text">{{ timeCurrent | time }} / {{ timeTotal | time }}</span>
             </div>
         </div>
         <div class="cell control">
@@ -114,6 +116,19 @@ export default {
             return 100 * this.timeCurrent / this.timeTotal || 0;
         }
     },
+    filters: {
+        time(value) {
+            const dt = new Date(value * 1000);
+            const h = dt.getUTCHours();
+            const m = dt.getMinutes();
+            const s = dt.getSeconds();
+            let res = '';
+            h && (res += `${h}:`);
+            res += m < 10 ? `0${m}:` : `${m}:`;
+            res += s < 10 ? `0${s}` : `${s}`;
+            return res;
+        }
+    },
     created() {
         try {
             const playing = JSON.parse(localStorage.getItem('playing'));
@@ -127,8 +142,8 @@ export default {
         };
     },
     mounted() {
-        const _audioEl = document.getElementsByTagName('audio')[0];
-        const _slider = document.querySelector('.progress .silder');
+        const _audioEl = document.getElementById('playerbar-audio');
+        const _slider = document.getElementById('playerbar-progress');
         let _playingIntervalId;
         this.audioEl = _audioEl;
 
@@ -174,6 +189,7 @@ export default {
 .player-bar-wrapper {
     font-size: 0;
     height: 64px;
+    position: relative;
     .cell {
         min-width: 64px;
         vertical-align: top;
@@ -181,7 +197,6 @@ export default {
         display: inline-block;
     }
     .info {
-        position: relative;
         font-size: 14px;
         padding: 10px 14px;
         width: calc(~"100% - 244px");
@@ -192,19 +207,23 @@ export default {
         .quick-actions {
             position: absolute;
             top: -5px;
-            right: 0;
+            right: 180px;
             .favorite {
                 color: red;
             }
         }
         .progress {
             margin-top: 5px;
-            display: flex;
-            .silder {
-                flex: 1;
+            position: relative;
+            .slider {
+                width: calc(~"100% - 100px");
             }
             .text {
-                margin-left: 10px;
+                position: absolute;
+                right: 0;
+                top: 0;
+                width: 100px;
+                text-align: right;
             }
         }
     }
