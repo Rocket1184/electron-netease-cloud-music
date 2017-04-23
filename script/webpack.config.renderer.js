@@ -9,7 +9,7 @@ const BabiliPlugin = require('babili-webpack-plugin');
 const projectRoot = path.resolve('.');
 
 let cfg = {
-    context: path.join(projectRoot, 'app'),
+    context: path.join(projectRoot, 'app/src'),
     target: 'electron-renderer',
     devtool: '#eval-source-map',
     externals: Object.keys(packageJson.dependencies),
@@ -75,7 +75,7 @@ let cfg = {
         new ExtractTextPlugin('styles.css'),
         new HtmlWebpackPlugin({
             filename: 'index.html',
-            template: './index.ejs',
+            template: path.resolve(projectRoot, 'app/index.ejs'),
             appModules: process.env.NODE_ENV !== 'production'
                 ? path.resolve(projectRoot, 'app/node_modules')
                 : false
@@ -91,6 +91,7 @@ let cfg = {
 };
 
 if (process.env.NODE_ENV === 'production') {
+    delete cfg.devtool;
     cfg.plugins.push(
         new BabiliPlugin()
     );
