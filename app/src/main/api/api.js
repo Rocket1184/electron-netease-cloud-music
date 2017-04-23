@@ -115,6 +115,10 @@ async function getMusicComments(rid, limit = 20, offset = 0) {
     });
 }
 
+function byTimestamp(a, b) {
+    return a.timestamp - b.timestamp;
+}
+
 async function getMusicLyric(id) {
     const tmp = await client.get({
         url: `${BaseURL}/api/song/lyric?os=osx&id=${id}&lv=-1&kv=-1&tv=-1`
@@ -122,11 +126,13 @@ async function getMusicLyric(id) {
     let result = {};
     if (tmp.lrc && tmp.lrc.version) {
         result.lrc = Lrc.parse(tmp.lrc.lyric);
+        result.lrc.lyrics = result.lrc.lyrics.sort(byTimestamp);
         result.lyricUser = tmp.lyricUser;
     }
     if (tmp.tlyric && tmp.tlyric.version) {
         result.transUser = tmp.transUser;
-        const tlrc = Lrc.parse(tmp.tlyric.lyric);
+        let tlrc = Lrc.parse(tmp.tlyric.lyric);
+        tlrc.lyrics = tlrc.lyrics.sort(byTimestamp);
         let mlrc = {
             info: result.lrc.info,
             transInfo: tlrc.info,
