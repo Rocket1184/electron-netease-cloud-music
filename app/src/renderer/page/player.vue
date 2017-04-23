@@ -60,7 +60,7 @@ export default {
             _audioEl: {},
             lyricElemMap: [],
             lyricTimeMap: [],
-            currentLyricIndex: 0,
+            currentLyricIndex: -1
         };
     },
     computed: {
@@ -77,7 +77,8 @@ export default {
         },
         lyricScrollerStyle() {
             if (!this.lyricElemMap.length) return '';
-            const offset = 200 - this.lyricElemMap[this.currentLyricIndex].offsetTop;
+            if (this.currentLyricIndex === -1) return 'transform: translateY(200px);';
+            const offset = 200 - this.lyricElemMap[this.currentLyricIndex].offsetTop - this.lyricElemMap[this.currentLyricIndex].clientHeight;
             return `transform: translateY(${offset}px);`;
         }
     },
@@ -94,8 +95,8 @@ export default {
         }
     },
     watch: {
-        'playing.lyrics': function () {
-            this.currentLyricIndex = 0;
+        'playing.id': function () {
+            this.currentLyricIndex = -1;
             this.createLyricTimeMap();
             this.createLyricElemMap();
         }
@@ -105,13 +106,17 @@ export default {
         this.lyricTimeMap = this.playing.lyrics.lrc.lyrics.map(i => +i.timestamp);
         this._audioEl = document.getElementById('playerbar-audio');
         this._audioEl.ontimeupdate = ev => {
-            // TODO: don't always count current index form zero
+            let loopStart = this.currentLyricIndex < 0 ? 0 : this.currentLyricIndex;
+            if (ev.target.currentTime < +this.lyricElemMap[loopStart].getAttribute('data-time')) {
+                loopStart = 0;
+            }
             for (let i = 0; i < this.lyricElemMap.length; i++) {
-                if (ev.target.currentTime < +this.lyricElemMap[i + 1].getAttribute('data-time')) {
-                    this.currentLyricIndex = i;
-                    break;
+                if (ev.target.currentTime < +this.lyricElemMap[i].getAttribute('data-time')) {
+                    this.currentLyricIndex = i - 1;
+                    return;
                 }
             }
+            this.currentLyricIndex = this.lyricElemMap.length - 1;
         };
     },
     mounted() {
@@ -223,7 +228,8 @@ export default {
         }
         .lyric {
             height: 400px;
-            overflow: scroll;
+            overflow: hidden;
+            margin-top: 20px;
             .scroller {
                 transition: transform 0.7s;
                 .line {
