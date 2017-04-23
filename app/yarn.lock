@@ -2,13 +2,13 @@
 # yarn lockfile v1
 
 
-axios@0:
+axios@^0.16.1:
   version "0.16.1"
   resolved "https://registry.yarnpkg.com/axios/-/axios-0.16.1.tgz#c0b6d26600842384b8f509e57111f0d2df8223ca"
   dependencies:
     follow-redirects "^1.2.3"
 
-big-integer@1:
+big-integer@^1.6.21:
   version "1.6.21"
   resolved "https://registry.yarnpkg.com/big-integer/-/big-integer-1.6.21.tgz#ac7b4fd2d635d3cc7c337bf1bab9762e690e8e45"
 
@@ -16,7 +16,7 @@ clone@^1.0.2:
   version "1.0.2"
   resolved "https://registry.yarnpkg.com/clone/-/clone-1.0.2.tgz#260b7a99ebb1edfe247538175f783243cb19d149"
 
-cookie@0:
+cookie@^0.3.1:
   version "0.3.1"
   resolved "https://registry.yarnpkg.com/cookie/-/cookie-0.3.1.tgz#e7e0a1f9ef43b4c8ba925c5c5a96e806d16873bb"
 
@@ -36,11 +36,11 @@ is_js@^0.8.0:
   version "0.8.0"
   resolved "https://registry.yarnpkg.com/is_js/-/is_js-0.8.0.tgz#9023ac8e1739a396fbf0aa0fefd46264eaf0f9a2"
 
-keycode@2:
+keycode@^2.1.8:
   version "2.1.8"
   resolved "https://registry.yarnpkg.com/keycode/-/keycode-2.1.8.tgz#94d2b7098215eff0e8f9a8931d5a59076c4532fb"
 
-lrc-kit@0:
+lrc-kit@^0.2.2:
   version "0.2.2"
   resolved "https://registry.yarnpkg.com/lrc-kit/-/lrc-kit-0.2.2.tgz#2fd045c70d0b38846f693ccff82c1c7595705c23"
   dependencies:
@@ -51,18 +51,18 @@ ms@0.7.3:
   version "0.7.3"
   resolved "https://registry.yarnpkg.com/ms/-/ms-0.7.3.tgz#708155a5e44e33f5fd0fc53e81d0d40a91be1fff"
 
-muse-ui@2:
+muse-ui@^2.0.2:
   version "2.0.2"
   resolved "https://registry.yarnpkg.com/muse-ui/-/muse-ui-2.0.2.tgz#4b74b5c46ced00b34b912dd3fa44280052dd690c"
 
-vue-router@2:
+vue-router@^2.4.0:
   version "2.4.0"
   resolved "https://registry.yarnpkg.com/vue-router/-/vue-router-2.4.0.tgz#56a635e1434a1966ac095f2a485bebdcfc36cec5"
 
-vue@2:
+vue@^2.2.6:
   version "2.2.6"
   resolved "https://registry.yarnpkg.com/vue/-/vue-2.2.6.tgz#451714b394dd6d4eae7b773c40c2034a59621aed"
 
-vuex@2:
+vuex@^2.3.1:
   version "2.3.1"
   resolved "https://registry.yarnpkg.com/vuex/-/vuex-2.3.1.tgz#cde8e997c1f9957719bc7dea154f9aa691d981a6"
