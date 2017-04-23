@@ -19,25 +19,32 @@
                 <span class="album">{{playing.album.name}}</span>
             </p>
             <div class="lyric">
-                <template v-if="playing.lyrics.mlrc">
-                    <template v-for="line in playing.lyrics.mlrc.lyrics">
-                        <p class="line">
-                            <span>{{line.content}}</span>
-                            <br>
-                            <span>{{line.trans}}</span>
-                        </p>
+                <div class="scroller"
+                     :style="lyricScrollerStyle">
+                    <template v-if="playing.lyrics.mlrc">
+                        <template v-for="(line, index) in playing.lyrics.mlrc.lyrics">
+                            <p class="line"
+                               :class="{active: index == currentLyricIndex}"
+                               :data-time="line.timestamp">
+                                <span>{{line.content}}</span>
+                                <br>
+                                <span>{{line.trans}}</span>
+                            </p>
+                        </template>
                     </template>
-                </template>
-                <template v-else-if="playing.lyrics.lrc">
-                    <template v-for="line in playing.lyrics.lrc.lyrics">
-                        <p class="line">
-                            <span>{{line.content}}</span>
-                        </p>
+                    <template v-else-if="playing.lyrics.lrc">
+                        <template v-for="(line, index) in playing.lyrics.lrc.lyrics">
+                            <p class="line"
+                               :class="{active: index == currentLyricIndex}"
+                               :data-time="line.timestamp">
+                                <span>{{line.content}}</span>
+                            </p>
+                        </template>
                     </template>
-                </template>
-                <template v-else>
-                    <p>暂无歌词</p>
-                </template>
+                    <template v-else>
+                        <p>暂无歌词</p>
+                    </template>
+                </div>
             </div>
         </div>
     </div>
@@ -49,7 +56,11 @@ import { mapGetters } from 'vuex';
 export default {
     data() {
         return {
-            id: null
+            id: null,
+            _audioEl: {},
+            lyricElemMap: [],
+            lyricTimeMap: [],
+            currentLyricIndex: 0,
         };
     },
     computed: {
@@ -63,7 +74,48 @@ export default {
         styleAlbumImg() {
             const len = window.devicePixelRatio * 220;
             return `background-image:url(${this.playing.picUrl}?param=${len}y${len});`;
+        },
+        lyricScrollerStyle() {
+            if (!this.lyricElemMap.length) return '';
+            const offset = 200 - this.lyricElemMap[this.currentLyricIndex].offsetTop;
+            return `transform: translateY(${offset}px);`;
         }
+    },
+    methods: {
+        createLyricElemMap() {
+            if (this.playing.lyrics.lrc.lyrics) {
+                this.lyricElemMap = Array.from(document.getElementsByClassName('line'));
+            }
+        },
+        createLyricTimeMap() {
+            if (this.playing.lyrics.lrc.lyrics) {
+                this.lyricTimeMap = this.playing.lyrics.lrc.lyrics.map(i => +i.timestamp);
+            }
+        }
+    },
+    watch: {
+        'playing.lyrics': function () {
+            this.currentLyricIndex = 0;
+            this.createLyricTimeMap();
+            this.createLyricElemMap();
+        }
+    },
+    created() {
+        this.createLyricTimeMap();
+        this.lyricTimeMap = this.playing.lyrics.lrc.lyrics.map(i => +i.timestamp);
+        this._audioEl = document.getElementById('playerbar-audio');
+        this._audioEl.ontimeupdate = ev => {
+            // TODO: don't always count current index form zero
+            for (let i = 0; i < this.lyricElemMap.length; i++) {
+                if (ev.target.currentTime < +this.lyricElemMap[i + 1].getAttribute('data-time')) {
+                    this.currentLyricIndex = i;
+                    break;
+                }
+            }
+        };
+    },
+    mounted() {
+        this.createLyricElemMap();
     }
 };
 </script>
@@ -172,11 +224,14 @@ export default {
         .lyric {
             height: 400px;
             overflow: scroll;
-            .line {
-                margin: 12px 0;
-            }
-            .active {
-                .shadow-text;
+            .scroller {
+                transition: transform 0.7s;
+                .line {
+                    margin: 12px 0;
+                }
+                .active {
+                    .shadow-text;
+                }
             }
         }
     }
