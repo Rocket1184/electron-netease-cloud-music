@@ -149,6 +149,28 @@ async function getMusicLyric(id) {
     return result;
 }
 
+async function submitWebLog(action, json) {
+    return await client.post({
+        url: `${BaseURL}/weapi/log/web`,
+        data: {
+            action,
+            json: JSON.stringify(json),
+            csrf_token: ''
+        }
+    });
+}
+
+async function submitListened(id, time) {
+    return await submitWebLog('play', {
+        id,
+        type: 'song',
+        wifi: 0,
+        download: 0,
+        time: Math.round(time),
+        end: 'playend',
+    });
+}
+
 export default {
     getCookie,
     updateCookie,
@@ -159,5 +181,6 @@ export default {
     getListDetail,
     getMusicUrl,
     getMusicComments,
-    getMusicLyric
+    getMusicLyric,
+    submitListened
 };
