@@ -2,7 +2,7 @@
     <div class="song-detail">
         <div class="bkg"
              :style="styleAlbumImg"></div>
-        <div :class="diskClass">
+        <div :class="['disk', { play: playing.playing }]">
             <div class="container">
                 <div class="img"
                      :style="styleAlbumImg">
@@ -63,12 +63,6 @@ export default {
         styleAlbumImg() {
             const len = window.devicePixelRatio * 220;
             return `background-image:url(${this.playing.picUrl}?param=${len}y${len});`;
-        },
-        diskClass() {
-            return [
-                'disk',
-                this.playing.playing ? 'play' : ''
-            ];
         }
     }
 };
@@ -79,6 +73,15 @@ export default {
     color: white;
     text-shadow: 1px 1px 2px rgba(0, 0, 0, 0.8),
     0px 0px 2px rgba(0, 0, 0, 0.5);
+}
+
+.ellipsis-text(@width: 200px) {
+    display: inline-block;
+    max-width: @width;
+    overflow: hidden;
+    text-overflow: ellipsis;
+    white-space: nowrap;
+    vertical-align: bottom;
 }
 
 .song-detail {
@@ -162,19 +165,9 @@ export default {
             font-size: 32px;
             margin: 8px 0;
         }
-        .ellipsis-text(@width: 200px) {
-            display: inline-block;
-            max-width: @width;
-            overflow: hidden;
-            text-overflow: ellipsis;
-            white-space: nowrap;
-            vertical-align: bottom;
-        }
-        .artists {
-            .ellipsis-text();
-        }
+        .artists,
         .album {
-            .ellipsis-text();
+            .ellipsis-text;
         }
         .lyric {
             height: 400px;
