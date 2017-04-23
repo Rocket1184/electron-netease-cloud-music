@@ -58,6 +58,7 @@
 <script>
 import { mapActions, mapGetters } from 'vuex';
 
+import ApiRenderer from '../util/apirenderer';
 import CurrentList from '../components/currentlist';
 import * as types from '../vuex/mutation-types';
 
@@ -105,6 +106,9 @@ export default {
         },
         handleProgressDrag(value) {
             this.audioEl.currentTime = this.timeTotal * value / 100;
+        },
+        submitListened() {
+            ApiRenderer.submitListened(this.playing.id, this.timeTotal);
         }
     },
     computed: {
@@ -177,7 +181,10 @@ export default {
 
         _audioEl.onpause = () => _updateTime() && _unsetInterval();
 
-        _audioEl.onended = () => this.nextTrack();
+        _audioEl.onended = () => {
+            this.submitListened();
+            this.nextTrack();
+        };
     },
     components: {
         CurrentList
