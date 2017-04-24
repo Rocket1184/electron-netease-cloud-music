@@ -36,6 +36,7 @@ export default {
             const info = await ApiRenderer.getUserPlaylist(uid);
             this.$store.commit({
                 type: types.UPDATE_USER_INFO,
+                playlist: info.playlist,
                 profile: info.playlist[0].creator
             });
         }

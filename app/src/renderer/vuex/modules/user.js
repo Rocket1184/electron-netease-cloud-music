@@ -6,7 +6,8 @@ const state = {
     loginType: null,
     account: null,
     profile: null,
-    bindings: []
+    bindings: [],
+    playlist: []
 };
 
 const mutations = {
@@ -21,6 +22,7 @@ const mutations = {
         state.account = payload.account;
         state.profile = payload.profile;
         state.bindings = payload.bindings;
+        state.playlist = payload.playlist;
     }
 };
 
