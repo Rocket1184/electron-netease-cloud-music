@@ -6,7 +6,7 @@
             <p>每日歌曲推荐</p>
         </div>
         <div class="cell content">
-            <SongList :list="dailyList" />
+            <TrackList :list="dailyList" />
         </div>
     </mu-paper>
 </template>
@@ -14,7 +14,7 @@
 <script>
 import { mapGetters } from 'vuex';
 
-import SongList from './songlist';
+import TrackList from './tracklist';
 import ApiRenderer from '../util/apirenderer';
 
 export default {
@@ -46,7 +46,7 @@ export default {
         if (this.loginValid) this.getDailyList();
     },
     components: {
-        SongList
+        TrackList
     }
 };
 </script>

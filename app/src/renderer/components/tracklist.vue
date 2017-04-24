@@ -7,13 +7,13 @@
         </mu-list-item>
         <mu-divider />
         <mu-table class="playlist">
-            <template v-for="song in list">
+            <template v-for="track in list">
                 <mu-tr>
-                    <mu-td :title="song.name">
-                        <span class="label">{{song.name}}</span>
+                    <mu-td :title="track.name">
+                        <span class="label">{{track.name}}</span>
                     </mu-td>
-                    <mu-td :title="song.artistName">
-                        <span class="label">{{song.artists.map(a=>a.name).join('/')}}</span>
+                    <mu-td :title="track.artistName">
+                        <span class="label">{{track | formatArtists}}</span>
                     </mu-td>
                     <mu-td>
                         <mu-icon-button icon="favorite_border" />
@@ -34,6 +34,12 @@ export default {
         return {
 
         };
+    },
+    filters: {
+        formatArtists(track) {
+            const ar = track.ar || track.artists;
+            return ar.map(a => a.name).join('/');
+        }
     },
     methods: {
         ...mapActions([
