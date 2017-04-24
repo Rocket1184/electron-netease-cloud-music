@@ -11,7 +11,7 @@ const projectRoot = path.resolve('.');
 let cfg = {
     context: path.join(projectRoot, 'app/src'),
     target: 'electron-renderer',
-    devtool: '#eval-source-map',
+    devtool: 'source-map',
     externals: Object.keys(packageJson.dependencies),
     entry: {
         renderer: [
@@ -91,7 +91,6 @@ let cfg = {
 };
 
 if (process.env.NODE_ENV === 'production') {
-    delete cfg.devtool;
     cfg.plugins.push(
         new BabiliPlugin()
     );

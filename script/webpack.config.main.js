@@ -9,6 +9,7 @@ const projectRoot = path.resolve('.');
 let cfg = {
     context: path.join(projectRoot, 'app/src'),
     target: 'electron',
+    devtool: 'source-map',
     externals: Object.keys(packageJson.dependencies),
     entry: {
         main: path.join(projectRoot, 'app/src/main/index.js')
