@@ -84,12 +84,12 @@ export default {
     },
     methods: {
         createLyricElemMap() {
-            if (this.playing.lyrics.lrc.lyrics) {
+            if (this.playing.lyrics.lrc) {
                 this.lyricElemMap = Array.from(document.getElementsByClassName('line'));
             }
         },
         createLyricTimeMap() {
-            if (this.playing.lyrics.lrc.lyrics) {
+            if (this.playing.lyrics.lrc) {
                 this.lyricTimeMap = this.playing.lyrics.lrc.lyrics.map(i => +i.timestamp);
             }
         }
@@ -98,7 +98,8 @@ export default {
         'playing.id': function () {
             this.currentLyricIndex = -1;
             this.createLyricTimeMap();
-            this.createLyricElemMap();
+            // query lyric elements after they are created
+            this.$nextTick(() => this.createLyricElemMap());
         }
     },
     created() {
