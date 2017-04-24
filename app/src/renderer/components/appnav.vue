@@ -41,10 +41,12 @@
                                  value="polymer" />
                     </mu-list-item>
                 </router-link>
-                <mu-list-item title="我的歌单">
-                    <mu-icon slot="left"
-                             value="library_music" />
-                </mu-list-item>
+                <router-link to="/myplaylist">
+                    <mu-list-item title="我的歌单">
+                        <mu-icon slot="left"
+                                 value="library_music" />
+                    </mu-list-item>
+                </router-link>
                 <mu-list-item title="听歌排行">
                     <mu-icon slot="left"
                              value="equalizer" />
