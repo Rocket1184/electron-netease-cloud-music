@@ -78,7 +78,8 @@ export default {
         lyricScrollerStyle() {
             if (!this.lyricElemMap.length) return '';
             if (this.currentLyricIndex === -1) return 'transform: translateY(200px);';
-            const offset = 200 - this.lyricElemMap[this.currentLyricIndex].offsetTop - this.lyricElemMap[this.currentLyricIndex].clientHeight;
+            const currentLyricElem = this.lyricElemMap[this.currentLyricIndex];
+            const offset = 200 - currentLyricElem.offsetTop - currentLyricElem.clientHeight;
             return `transform: translateY(${offset}px);`;
         }
     },
