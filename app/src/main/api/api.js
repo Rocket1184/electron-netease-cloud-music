@@ -120,8 +120,16 @@ function byTimestamp(a, b) {
 }
 
 async function getMusicLyric(id) {
-    const tmp = await client.get({
-        url: `${BaseURL}/api/song/lyric?os=osx&id=${id}&lv=-1&kv=-1&tv=-1`
+    const tmp = await client.post({
+        url: `${BaseURL}/weapi/song/lyric`,
+        data: {
+            id,
+            os: 'pc',
+            lv: -1,
+            kv: -1,
+            tv: -1,
+            csrf_token: ''
+        }
     });
     let result = {};
     if (tmp.lrc && tmp.lrc.version) {
