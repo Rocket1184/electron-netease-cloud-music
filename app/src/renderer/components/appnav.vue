@@ -35,13 +35,19 @@
                            @click="handleNameClick">{{userName}}</p>
                     </div>
                 </div>
-                <mu-list-item title="听歌排行">
-                    <mu-icon slot="left"
-                             value="equalizer" />
-                </mu-list-item>
+                <router-link to='/'>
+                    <mu-list-item title="个性推荐">
+                        <mu-icon slot="left"
+                                 value="polymer" />
+                    </mu-list-item>
+                </router-link>
                 <mu-list-item title="我的歌单">
                     <mu-icon slot="left"
                              value="library_music" />
+                </mu-list-item>
+                <mu-list-item title="听歌排行">
+                    <mu-icon slot="left"
+                             value="equalizer" />
                 </mu-list-item>
                 <mu-list-item title="本地音乐">
                     <mu-icon slot="left"
@@ -172,6 +178,9 @@ export default {
                     this.errMsgPwd = '密码错误';
             }
         }
+    },
+    created() {
+        this.$router.afterEach(() => this.drawerOpen = false);
     },
     mounted() {
         this._inputAccountRef = document.getElementsByClassName('app-nav-input-account')[0];
