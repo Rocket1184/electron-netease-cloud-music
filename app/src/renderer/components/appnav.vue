@@ -169,9 +169,10 @@ export default {
                         type: types.UPDATE_USER_COOKIES,
                         cookie: userCookie
                     });
-                    localStorage.setItem('cookie', JSON.stringify(userCookie));
-                    localStorage.setItem('uid', resp.account.id);
                     this.toggleDlg();
+                    localStorage.setItem('cookie', JSON.stringify(userCookie));
+                    localStorage.setItem('user', JSON.stringify(resp));
+                    localStorage.setItem('uid', resp.account.id);
                     break;
                 case 501:
                     this.errMsgUsr = '用户不存在';
