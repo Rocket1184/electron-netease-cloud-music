@@ -56,7 +56,7 @@ import { mapGetters } from 'vuex';
 export default {
     data() {
         return {
-            id: null,
+            isActive: false,
             _audioEl: {},
             lyricElemMap: [],
             lyricTimeMap: [],
@@ -105,24 +105,42 @@ export default {
     },
     created() {
         this.createLyricTimeMap();
-        this.lyricTimeMap = this.playing.lyrics.lrc.lyrics.map(i => +i.timestamp);
         this._audioEl = document.getElementById('playerbar-audio');
         this._audioEl.ontimeupdate = ev => {
-            let loopStart = this.currentLyricIndex < 0 ? 0 : this.currentLyricIndex;
+            // do nothing if element map is empty or compo not acitve
+            // it's empty in case:
+            // 1. no lyric for this track
+            // 2. the component is mounted but not active yet e.g. it's in <keep-alive/> background
+            if (!this.isActive || !this.lyricElemMap.length) return;
+            // do not loop from 0 every time
+            // loop form curren index. if current index equals -1, loop from 0
+            let loopStart = this.currentLyricIndex === -1 ? 0 : this.currentLyricIndex;
+            // the process was darged backword, loop from 0
             if (ev.target.currentTime < +this.lyricElemMap[loopStart].getAttribute('data-time')) {
                 loopStart = 0;
             }
-            for (let i = 0; i < this.lyricElemMap.length; i++) {
+            // loop and find the smallest whose time larger than currentTime
+            for (let i = loopStart; i < this.lyricElemMap.length; i++) {
                 if (ev.target.currentTime < +this.lyricElemMap[i].getAttribute('data-time')) {
                     this.currentLyricIndex = i - 1;
                     return;
                 }
             }
+            // not found any, point to the last element
             this.currentLyricIndex = this.lyricElemMap.length - 1;
         };
     },
     mounted() {
         this.createLyricElemMap();
+    },
+    activated() {
+        this.isActive = true;
+        if (!this.lyricElemMap.length) {
+            this.createLyricElemMap();
+        }
+    },
+    deactivated() {
+        this.isActive = false;
     }
 };
 </script>
