@@ -14,8 +14,8 @@ const mutations = {
     [types.UPDATE_USER_COOKIES](state, payload) {
         state.cookie = payload.cookie;
     },
-    [types.SET_LOGIN_VALID](state) {
-        state.loginValid = true;
+    [types.SET_LOGIN_VALID](state, payload) {
+        state.loginValid = payload.valid === undefined ? true : payload.valid;
     },
     [types.UPDATE_USER_INFO](state, payload) {
         state.loginType = payload.loginType;
