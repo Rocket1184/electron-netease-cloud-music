@@ -76,7 +76,7 @@ async function getDailySuggestions() {
 }
 
 async function getListDetail(id) {
-    return client.post({
+    return await client.post({
         url: `${BaseURL}/weapi/v3/playlist/detail`,
         data: {
             id,
