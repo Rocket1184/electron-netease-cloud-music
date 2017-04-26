@@ -1,5 +1,7 @@
+import url from 'url';
 import crypto from 'crypto';
 import { Lrc } from 'lrc-kit';
+import { http, https } from 'follow-redirects';
 
 import Client from './httpclient';
 
@@ -185,6 +187,28 @@ async function submitListened(id, time) {
     });
 }
 
+function checkUrlStatus(u) {
+    const opt = url.parse(u);
+    let request;
+    switch (opt.protocol) {
+        case 'https:':
+            request = https;
+            break;
+        case 'http:':
+        default:
+            request = http;
+    }
+    console.log(opt);
+    return new Promise(resolve => {
+        request.request({
+            host: opt.host,
+            path: opt.path + opt.search
+        }, resp => {
+            resolve(resp.statusCode);
+        }).end();
+    });
+}
+
 export default {
     getCookie,
     updateCookie,
@@ -196,5 +220,6 @@ export default {
     getMusicUrl,
     getMusicComments,
     getMusicLyric,
-    submitListened
+    submitListened,
+    checkUrlStatus
 };
