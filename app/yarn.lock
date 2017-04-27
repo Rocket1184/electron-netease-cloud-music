@@ -8,9 +8,9 @@ axios@^0.16.1:
   dependencies:
     follow-redirects "^1.2.3"
 
-big-integer@^1.6.21:
-  version "1.6.21"
-  resolved "https://registry.yarnpkg.com/big-integer/-/big-integer-1.6.21.tgz#ac7b4fd2d635d3cc7c337bf1bab9762e690e8e45"
+big-integer@^1.6.22:
+  version "1.6.22"
+  resolved "https://registry.yarnpkg.com/big-integer/-/big-integer-1.6.22.tgz#487c95fce886022ea48ff5f19e388932df46dd2e"
 
 clone@^1.0.2:
   version "1.0.2"
@@ -55,13 +55,13 @@ muse-ui@^2.0.2:
   version "2.0.2"
   resolved "https://registry.yarnpkg.com/muse-ui/-/muse-ui-2.0.2.tgz#4b74b5c46ced00b34b912dd3fa44280052dd690c"
 
-vue-router@^2.4.0:
-  version "2.4.0"
-  resolved "https://registry.yarnpkg.com/vue-router/-/vue-router-2.4.0.tgz#56a635e1434a1966ac095f2a485bebdcfc36cec5"
+vue-router@^2.5.2:
+  version "2.5.2"
+  resolved "https://registry.yarnpkg.com/vue-router/-/vue-router-2.5.2.tgz#870db3b63ead0aab4cd0bac63a7b81341c593f56"
 
-vue@^2.2.6:
-  version "2.2.6"
-  resolved "https://registry.yarnpkg.com/vue/-/vue-2.2.6.tgz#451714b394dd6d4eae7b773c40c2034a59621aed"
+vue@^2.3.0:
+  version "2.3.0"
+  resolved "https://registry.yarnpkg.com/vue/-/vue-2.3.0.tgz#bc44db0488c5245c788304c7683efe7b4c862d82"
 
 vuex@^2.3.1:
   version "2.3.1"
