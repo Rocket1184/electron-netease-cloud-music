@@ -7,7 +7,6 @@ async function playThisTrack(commit, list, index) {
         ApiRenderer.getMusicUrl(list[index].id),
         ApiRenderer.getMusicLyric(list[index].id)
     ]);
-    console.log(oUrl, lyrics);
     commit({
         ...list[index],
         ...oUrl.data[0],
@@ -67,10 +66,16 @@ export const restorePlaylist = async ({ commit, state }, payload) => {
         type: types.RESTORE_PLAYLIST,
         ...playlist
     });
-    const oUrl = await ApiRenderer.getMusicUrl(playing.id);
+    let url = playing.url;
+    const oldUrl = playing.url;
+    const status = await ApiRenderer.checkUrlStatus(oldUrl);
+    if (status >= 400) {
+        const oUrl = await ApiRenderer.getMusicUrl(playing.id);
+        url = oUrl.data[0].url;
+    }
     commit({
         ...playing,
-        ...oUrl.data[0],
+        url,
         type: types.SET_PLAYING_MUSIC,
     });
 };
