@@ -198,11 +198,10 @@ function checkUrlStatus(u) {
         default:
             request = http;
     }
-    console.log(opt);
     return new Promise(resolve => {
         request.request({
             host: opt.host,
-            path: opt.path + opt.search
+            path: opt.path + (opt.search || '')
         }, resp => {
             resolve(resp.statusCode);
         }).end();
