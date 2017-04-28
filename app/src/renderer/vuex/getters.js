@@ -19,10 +19,15 @@ export const userBkgUrl = state => {
 };
 
 export const playingMusic = state => {
+    const { al, album } = state.playing;
+    const alb = al || album;
+    const { ar, artists } = state.playing;
+    const art = ar || artists;
     return {
         ...state.playing,
-        picUrl: state.playing.album.picUrl,
-        artist: state.playing.artists.map(i => i.name).join(' / ')
+        picUrl: alb.picUrl,
+        artist: art.map(a => a.name).join('/'),
+        album: alb
     };
 };
 

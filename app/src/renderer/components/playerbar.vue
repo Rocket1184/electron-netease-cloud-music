@@ -79,7 +79,7 @@ export default {
             'restorePlaylist'
         ]),
         getImgAt(size) {
-            const url = this.playing.album.picUrl || this.fallbackImg;
+            const url = this.playing.picUrl || this.fallbackImg;
             return `${url}?param=${size}y${size}`;
         },
         formatTime(value) {

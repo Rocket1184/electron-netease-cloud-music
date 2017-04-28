@@ -29,6 +29,15 @@ let state = BlankState;
 
 const mutations = {
     [types.SET_PLAYING_MUSIC](state, payload) {
+        //FIXME: tooooo hacky, refactor needed!!!
+        if (payload.al || payload.album) {
+            delete state.al;
+            delete state.album;
+        }
+        if (payload.ar || payload.artists) {
+            delete state.ar;
+            delete state.artists;
+        }
         for (let key in payload) {
             if (key !== 'type') state[key] = payload[key];
         }
