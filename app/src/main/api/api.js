@@ -187,7 +187,7 @@ async function submitListened(id, time) {
     });
 }
 
-function checkUrlStatus(u) {
+function checkUrlStatus(u = 'http://m10.music.126.net') {
     const opt = url.parse(u);
     let request;
     switch (opt.protocol) {
