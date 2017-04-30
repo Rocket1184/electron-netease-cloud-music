@@ -9,7 +9,7 @@ export const setUserInfo = async ({ state, commit }, payload) => {
         cookie
     });
     commit({
-        type: types.UPDATE_USER_INFO,
+        type: types.SET_USER_INFO,
         info
     });
     commit(types.SET_LOGIN_VALID);
