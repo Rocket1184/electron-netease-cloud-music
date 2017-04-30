@@ -11,6 +11,8 @@ const Models = {
             signature: '',
             province: -1,
             city: -1,
+            // blew are raw data from netease login api
+            account: {},
             profile: {},
             bindings: []
         };
@@ -19,7 +21,12 @@ const Models = {
         return {
             id: -1,
             name: '',
-            album: {},
+            album: {
+                id: -1,
+                name: '',
+                pic: -1,
+                picUrl: ''
+            },
             artists: [],
             lyrics: {},
             urls: {},
@@ -43,26 +50,20 @@ const Models = {
 export class User {
     constructor(o) {
         if (!o) return Models.User;
-        this.id = o.id;
-        this.nickname = o.nickname;
-        this.avatarUrl = o.avatarUrl;
-        this.bkgUrl = o.bkgUrl;
-        this.gender = o.gender;
-        this.description = o.description;
-        this.detailDescription = o.detailDescription;
-        this.signature = o.signature;
-        this.province = o.province;
-        this.city = o.city;
-        this.profile = o.profile;
-        this.bindings = o.bindings;
-    }
-
-    get avatarUrl() {
-        return this.avatarUrl || this.profile.avatarUrl;
-    }
-
-    get bkgUrl() {
-        return this.bkgUrl || this.profile.backgroundUrl;
+        console.log('creating new user using:', o);
+        this.account = o.account || {};
+        this.profile = o.profile || {};
+        this.bindings = o.bindings || [];
+        this.id = o.id || o.userId || o.account.id;
+        this.nickname = o.nickname || o.profile.nickname;
+        this.avatarUrl = o.avatarUrl || o.profile.avatarUrl;
+        this.bkgUrl = o.backgroundUrl || o.profile.backgroundUrl;
+        this.gender = o.gender || o.profile.gender;
+        this.description = o.description || o.profile.description;
+        this.detailDescription = o.detailDescription || o.profile.detailDescription;
+        this.signature = o.signature || o.profile.signature;
+        this.province = o.province || o.profile.province;
+        this.city = o.city || o.profile.city;
     }
 }
 
@@ -74,11 +75,11 @@ export class Track {
         this.album = o.al || o.album;
         this.artists = o.ar || o.artists;
         this.lyrics = o.lyrics;
-        this.urls = {
+        this.urls = Object.assign({
             h: '',
             m: '',
             l: ''
-        };
+        }, o.urls || {});
         this.commentThreadId = o.commentThreadId;
     }
 
@@ -107,7 +108,7 @@ export class PlayList {
         this.playCount = o.playCount;
         this.coverImgId = o.coverImgId;
         this.coverImgUrl = o.coverImgUrl;
-        const tracks = o.tracks || o.recommend;
+        const tracks = o.tracks || o.recommend || [];
         this.tracks = tracks.map(t => new Track(t));
     }
 }
