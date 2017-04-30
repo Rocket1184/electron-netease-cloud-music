@@ -91,7 +91,14 @@ async function getListDetail(id) {
     });
 }
 
-async function getMusicUrl(idOrIds, br = 320000) {
+const QualityMap = {
+    h: 320000,
+    m: 160000,
+    l: 96000
+};
+
+async function getMusicUrl(idOrIds, quality = 'h') {
+    if (!QualityMap[quality]) throw new Error(`Quality type '${quality}' is not in [h,m,l]`);
     let ids;
     if (Array.isArray(idOrIds)) ids = idOrIds;
     else ids = [idOrIds];
@@ -99,7 +106,7 @@ async function getMusicUrl(idOrIds, br = 320000) {
         url: `${BaseURL}/weapi/song/enhance/player/url`,
         data: {
             ids,
-            br,
+            br: QualityMap[quality],
             csrf_token: ''
         }
     });

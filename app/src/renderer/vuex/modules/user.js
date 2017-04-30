@@ -1,13 +1,11 @@
 import * as types from '../mutation-types';
+import { User, PlayList } from '../../util/models';
 
 const state = {
     loginValid: false,
     cookie: {},
-    loginType: null,
-    account: null,
-    profile: null,
-    bindings: [],
-    playlist: []
+    playlist: [],
+    info: new User()
 };
 
 const mutations = {
@@ -15,14 +13,20 @@ const mutations = {
         state.cookie = payload.cookie;
     },
     [types.SET_LOGIN_VALID](state, payload) {
-        state.loginValid = payload.valid === undefined ? true : payload.valid;
+        if (!payload || payload.valid) {
+            state.loginValid = true;
+        } else {
+            state.loginValid = false;
+        }
+    },
+    [types.SET_USER_INFO](state, payload) {
+        state.info = new User(payload.info);
     },
     [types.UPDATE_USER_INFO](state, payload) {
-        state.loginType = payload.loginType;
-        state.account = payload.account;
-        state.profile = payload.profile;
-        state.bindings = payload.bindings;
-        state.playlist = payload.playlist;
+        Object.assign(state.info, payload.info);
+    },
+    [types.SET_USER_PLAYLIST](state, payload) {
+        state.playlist = payload.playlist.map(l => new PlayList(l));
     }
 };
 

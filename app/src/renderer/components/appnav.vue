@@ -90,11 +90,10 @@
 </template>
 
 <script>
-import { mapGetters } from 'vuex';
+import { mapActions, mapGetters } from 'vuex';
 import { ipcRenderer } from 'electron';
 
 import ApiRenderer from '../util/apirenderer';
-import * as types from '../vuex/mutation-types';
 
 export default {
     data() {
@@ -128,6 +127,9 @@ export default {
         ])
     },
     methods: {
+        ...mapActions([
+            'setUserInfo'
+        ]),
         handleClose() {
             ipcRenderer.send('closeMainWin');
         },
@@ -157,20 +159,10 @@ export default {
             let resp = await ApiRenderer.login(this.inputUsr, this.inputPwd);
             switch (resp.code) {
                 case 200:
-                    const userCookie = await ApiRenderer.getCookie();
-                    this.$store.commit({
-                        type: types.UPDATE_USER_INFO,
-                        ...resp
-                    });
-                    this.$store.commit({
-                        type: types.SET_LOGIN_VALID
-                    });
-                    this.$store.commit({
-                        type: types.UPDATE_USER_COOKIES,
-                        cookie: userCookie
-                    });
+                    const cookie = await ApiRenderer.getCookie();
+                    this.setUserInfo({ cookie, info: resp });
                     this.toggleDlg();
-                    localStorage.setItem('cookie', JSON.stringify(userCookie));
+                    localStorage.setItem('cookie', JSON.stringify(cookie));
                     localStorage.setItem('user', JSON.stringify(resp));
                     localStorage.setItem('uid', resp.account.id);
                     break;

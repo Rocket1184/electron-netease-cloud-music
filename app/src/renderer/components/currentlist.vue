@@ -2,11 +2,11 @@
     <mu-list>
         <template v-for="(track, index) in playlist.list">
             <mu-list-item :title="track.name"
-                          :afterText="track | formatArtists"
+                          :afterText="track.artistName"
                           @click="handleListClick(index)">
                 <mu-icon v-if=""
                          slot="left"
-                         :value="track.id==playingMusic.id ? 'volume_up' : ''" />
+                         :value="track.id==playing.id ? 'volume_up' : ''" />
             </mu-list-item>
         </template>
     </mu-list>
@@ -22,14 +22,8 @@ export default {
     computed: {
         ...mapGetters([
             'playlist',
-            'playingMusic'
+            'playing'
         ])
-    },
-    filters: {
-        formatArtists(track) {
-            const ar = track.ar || track.artists;
-            return ar.map(a => a.name).join('/');
-        }
     },
     methods: {
         ...mapActions([

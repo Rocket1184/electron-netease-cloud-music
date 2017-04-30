@@ -15,13 +15,13 @@
         <div class="info">
             <p class="name">{{playing.name}}</p>
             <p>
-                歌手：<span class="artists">{{playing.artist}}</span> 专辑：
+                歌手：<span class="artists">{{playing.artistName}}</span> 专辑：
                 <span class="album">{{playing.album.name}}</span>
             </p>
             <div class="lyric">
                 <div class="scroller"
                      :style="lyricScrollerStyle">
-                    <template v-if="playing.lyrics.mlrc">
+                    <template v-if="playing.lyrics && playing.lyrics.mlrc">
                         <template v-for="(line, index) in playing.lyrics.mlrc.lyrics">
                             <p class="line"
                                :class="{active: index == currentLyricIndex}"
@@ -32,7 +32,7 @@
                             </p>
                         </template>
                     </template>
-                    <template v-else-if="playing.lyrics.lrc">
+                    <template v-else-if="playing.lyrics && playing.lyrics.lrc">
                         <template v-for="(line, index) in playing.lyrics.lrc.lyrics">
                             <p class="line"
                                :class="{active: index == currentLyricIndex}"
@@ -64,16 +64,16 @@ export default {
         };
     },
     computed: {
-        ...mapGetters({
-            playing: 'playingMusic'
-        }),
+        ...mapGetters([
+            'playing'
+        ]),
         styleBlurImg() {
             // maybe useful later...
             return `background-image:url(http://music.163.com/api/img/blur/${this.playing.album.pic});`;
         },
         styleAlbumImg() {
             const len = window.devicePixelRatio * 220;
-            return `background-image:url(${this.playing.picUrl}?param=${len}y${len});`;
+            return `background-image:url(${this.playing.album.picUrl}?param=${len}y${len});`;
         },
         lyricScrollerStyle() {
             if (!this.lyricElemMap.length) return '';
@@ -85,12 +85,12 @@ export default {
     },
     methods: {
         createLyricElemMap() {
-            if (this.playing.lyrics.lrc) {
+            if (this.playing.lyrics && this.playing.lyrics.lrc) {
                 this.lyricElemMap = Array.from(document.getElementsByClassName('line'));
             }
         },
         createLyricTimeMap() {
-            if (this.playing.lyrics.lrc) {
+            if (this.playing.lyrics && this.playing.lyrics.lrc) {
                 this.lyricTimeMap = this.playing.lyrics.lrc.lyrics.map(i => +i.timestamp);
             }
         }

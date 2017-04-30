@@ -43,25 +43,27 @@ export default {
                 const cookieObj = JSON.parse(oldCookie);
                 ApiRenderer.updateCookie(cookieObj);
                 const userObj = JSON.parse(oldUser);
-                this.$store.commit({
-                    type: types.SET_LOGIN_VALID
-                });
+                this.$store.commit(types.SET_LOGIN_VALID);
                 this.$store.commit({
                     type: types.UPDATE_USER_INFO,
-                    ...userObj
+                    info: userObj
                 });
                 if (await this.checkLogin()) {
-                    let info = await this.getPlaylist(uid);
+                    let resp = await this.getPlaylist(uid);
                     this.$store.commit({
                         type: types.UPDATE_USER_INFO,
-                        playlist: info.playlist,
-                        profile: info.playlist[0].creator
+                        info: resp.playlist[0].creator
+                    });
+                    this.$store.commit({
+                        type: types.SET_USER_PLAYLIST,
+                        playlist: resp.playlist
                     });
                 } else {
                     this.$store.commit({
                         type: types.SET_LOGIN_VALID,
                         valid: false
                     });
+                    ApiRenderer.updateCookie({});
                 }
             } catch (err) { console.error(err); }
         }

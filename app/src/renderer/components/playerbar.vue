@@ -11,7 +11,7 @@
         </div>
         <div class="cell info">
             <span class="song-name">{{playing.name}}</span>
-            <span class="artist-name">{{playing.artist}}</span>
+            <span class="artist-name">{{playing.artistName}}</span>
             <div class="quick-actions">
                 <mu-icon-button title="喜欢"
                                 tooltipPosition="top-center"
@@ -41,7 +41,7 @@
                              mini
                              class="button"
                              color="#FFF"
-                             @click="previousTrack" />
+                             @click="playPreviousTrack" />
             <mu-float-button :icon="this.audioEl.paused ? 'play_arrow' : 'pause'"
                              class="button"
                              color="#FFF"
@@ -50,7 +50,7 @@
                              mini
                              class="button"
                              color="#FFF"
-                             @click="nextTrack" />
+                             @click="playNextTrack" />
         </div>
     </mu-paper>
 </template>
@@ -74,12 +74,12 @@ export default {
     },
     methods: {
         ...mapActions([
-            'nextTrack',
-            'previousTrack',
+            'playNextTrack',
+            'playPreviousTrack',
             'restorePlaylist'
         ]),
         getImgAt(size) {
-            const url = this.playing.picUrl || this.fallbackImg;
+            const url = this.playing.album.picUrl || this.fallbackImg;
             return `${url}?param=${size}y${size}`;
         },
         formatTime(value) {
@@ -112,10 +112,10 @@ export default {
         }
     },
     computed: {
-        ...mapGetters({
-            playlist: 'playlist',
-            playing: 'playingMusic'
-        }),
+        ...mapGetters([
+            'playlist',
+            'playing'
+        ]),
         songProgress() {
             return 100 * this.timeCurrent / this.timeTotal || 0;
         }
@@ -135,13 +135,11 @@ export default {
     },
     created() {
         try {
-            const playing = JSON.parse(localStorage.getItem('playing'));
             const playlist = JSON.parse(localStorage.getItem('playlist'));
-            this.restorePlaylist({ playing, playlist });
+            this.restorePlaylist({ playlist });
         } catch (e) { }
         window.onbeforeunload = () => {
             this.pause();
-            localStorage.setItem('playing', JSON.stringify(this.playing));
             localStorage.setItem('playlist', JSON.stringify(this.playlist));
         };
     },
@@ -183,7 +181,7 @@ export default {
 
         _audioEl.onended = () => {
             this.submitListened();
-            this.nextTrack();
+            this.playNextTrack();
         };
     },
     components: {

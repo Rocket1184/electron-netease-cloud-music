@@ -14,7 +14,7 @@
                             <span class="label">{{track.name}}</span>
                         </mu-td>
                         <mu-td :title="track.artistName">
-                            <span class="label">{{track | formatArtists}}</span>
+                            <span class="label">{{track.artistName}}</span>
                         </mu-td>
                         <mu-td>
                             <mu-icon-button icon="favorite_border" />
@@ -41,12 +41,6 @@ export default {
         return {
 
         };
-    },
-    filters: {
-        formatArtists(track) {
-            const ar = track.ar || track.artists;
-            return ar.map(a => a.name).join('/');
-        }
     },
     methods: {
         ...mapActions([
