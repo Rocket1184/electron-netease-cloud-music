@@ -195,6 +195,8 @@ async function submitListened(id, time) {
 }
 
 function checkUrlStatus(u = 'http://m10.music.126.net') {
+    u = String(u);
+    if (!~u.indexOf('http')) return new Promise(resolve => resolve(-1));
     const opt = url.parse(u);
     let request;
     switch (opt.protocol) {
@@ -202,7 +204,6 @@ function checkUrlStatus(u = 'http://m10.music.126.net') {
             request = https;
             break;
         case 'http:':
-        default:
             request = http;
     }
     return new Promise(resolve => {
