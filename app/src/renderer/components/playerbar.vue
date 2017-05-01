@@ -82,17 +82,6 @@ export default {
             const url = this.playing.album.picUrl || this.fallbackImg;
             return `${url}?param=${size}y${size}`;
         },
-        formatTime(value) {
-            const dt = new Date(value * 1000);
-            const h = dt.getUTCHours();
-            const m = dt.getMinutes();
-            const s = dt.getSeconds();
-            let res = '';
-            h && (res += `${h}:`);
-            res += m < 10 ? `0${m}:` : `${m}:`;
-            res += s < 10 ? `0${s}` : `${s}`;
-            return res;
-        },
         play() {
             this.$store.commit(types.RESUME_PLAYING_MUSIC);
             this.audioEl.play();
