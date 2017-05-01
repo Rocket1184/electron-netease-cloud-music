@@ -55,10 +55,12 @@
                     <mu-icon slot="left"
                              value="desktop_mac" />
                 </mu-list-item>
-                <mu-list-item title="应用设置">
-                    <mu-icon slot="left"
-                             value="settings" />
-                </mu-list-item>
+                <router-link to="/settings">
+                    <mu-list-item title="应用设置">
+                        <mu-icon slot="left"
+                                 value="settings" />
+                    </mu-list-item>
+                </router-link>
             </mu-list>
         </mu-drawer>
         <mu-dialog dialogClass="nav-login-dlg"

@@ -13,5 +13,10 @@ export default [
         path: '/myplaylist',
         name: 'myplaylist',
         component: resolve => require(['./page/myplaylist'], resolve)
+    },
+    {
+        path: '/settings',
+        name: 'settings',
+        component: resolve => require(['./page/settings'], resolve)
     }
 ];
