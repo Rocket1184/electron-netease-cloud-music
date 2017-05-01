@@ -1,3 +1,5 @@
+import { Track } from '../util/models';
+
 export const loginValid = state => state.user.loginValid;
 
 export const userAvatarUrl = state => {
@@ -21,11 +23,10 @@ export const userBkgUrl = state => {
 export const playing = state => {
     const { list, currentIndex, quality, playing } = state.playlist;
     const track = list[currentIndex];
-    return {
+    return Object.assign(new Track(track), {
         playing,
-        ...track,
         url: track.urls[quality]
-    };
+    });
 };
 
 export const playlist = state => {
