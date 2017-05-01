@@ -50,7 +50,6 @@ const Models = {
 export class User {
     constructor(o) {
         if (!o) return Models.User;
-        console.log('creating new user using:', o);
         this.account = o.account || {};
         this.profile = o.profile || {};
         this.bindings = o.bindings || [];

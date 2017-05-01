@@ -36,7 +36,6 @@ const mutations = {
         state.playing = true;
     },
     [types.SET_PLAY_LIST](state, payload) {
-        console.log(types.SET_PLAY_LIST, payload);
         const { list } = payload;
         state.list = list.map(t => (t instanceof Track) ? t : new Track(t));
     },

@@ -35,8 +35,3 @@ export const playlist = state => {
 export const playLoopMode = state => {
     return state.playlist.loopMode;
 };
-
-export const nextTrackToPlay = state => {
-    const { currentIndex, list } = state.playlist;
-    return list[currentIndex + 1];
-};
