@@ -1,4 +1,6 @@
+import fs from 'fs';
 import url from 'url';
+import path from 'path';
 import crypto from 'crypto';
 import { Lrc } from 'lrc-kit';
 import { http, https } from 'follow-redirects';
@@ -216,6 +218,37 @@ function checkUrlStatus(u = 'http://m10.music.126.net') {
     });
 }
 
+function getDirSize(dirPath) {
+    let totalSize = 0;
+    const files = fs.readdirSync(dirPath);
+    files.forEach(file => {
+        const stat = fs.statSync(path.join(dirPath, file));
+        if (stat.isFile()) {
+            totalSize += stat.size;
+        } else if (stat.isDirectory) {
+            totalSize += getDirSize(path.join(dirPath, file));
+        }
+    });
+    return totalSize;
+}
+
+const dataDirMap = {
+    app: '',
+    cache: 'Cache'
+};
+
+function getDataSize(name = 'app') {
+    const appData = require('electron').app.getPath('appData');
+    const cachePath = path.join(appData, 'electron-netease-cloud-music', dataDirMap[name]);
+    let size;
+    try {
+        size = getDirSize(cachePath);
+    } catch (err) {
+        size = 0;
+    }
+    return size;
+}
+
 export default {
     getCookie,
     updateCookie,
@@ -228,5 +261,6 @@ export default {
     getMusicComments,
     getMusicLyric,
     submitListened,
-    checkUrlStatus
+    checkUrlStatus,
+    getDataSize
 };
