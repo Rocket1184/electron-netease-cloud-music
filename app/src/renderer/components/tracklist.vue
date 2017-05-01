@@ -37,11 +37,6 @@ import { mapActions } from 'vuex';
 
 export default {
     props: ['list'],
-    data() {
-        return {
-
-        };
-    },
     methods: {
         ...mapActions([
             'playPlaylist'

@@ -14,6 +14,7 @@
 <script>
 import { mapGetters } from 'vuex';
 
+import { Track } from '../util/models';
 import TrackList from './tracklist';
 import ApiRenderer from '../util/apirenderer';
 
@@ -34,7 +35,7 @@ export default {
     methods: {
         async getDailyList() {
             const resp = await ApiRenderer.getDailySuggestions();
-            this.dailyList = resp.recommend;
+            this.dailyList = resp.recommend.map(t => new Track(t));
         }
     },
     watch: {

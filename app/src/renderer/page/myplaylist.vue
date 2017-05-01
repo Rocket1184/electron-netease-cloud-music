@@ -18,6 +18,7 @@
 <script>
 import { mapState } from 'vuex';
 
+import { Track } from '../util/models';
 import ApiRenderer from '../util/apirenderer';
 import TrackList from '../components/tracklist';
 
@@ -36,7 +37,7 @@ export default {
         async loadPlaylist(index) {
             this.list = [];
             const raw = await ApiRenderer.getListDetail(this.playlist[index].id);
-            this.list = raw.playlist.tracks;
+            this.list = raw.playlist.tracks.map(t => new Track(t));
         }
     },
     created() {
