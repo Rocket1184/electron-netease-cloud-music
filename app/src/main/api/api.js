@@ -249,6 +249,17 @@ function getDataSize(name = 'app') {
     return size;
 }
 
+function clearAppData(name = 'cache') {
+    const appData = require('electron').app.getPath('appData');
+    const delPath = path.join(appData, 'electron-netease-cloud-music', dataDirMap[name]);
+    try {
+        require('child_process').execSync(`rm -rf ${delPath}`);
+    } catch (err) {
+        return err;
+    }
+    return false;
+}
+
 export default {
     getCookie,
     updateCookie,
@@ -262,5 +273,6 @@ export default {
     getMusicLyric,
     submitListened,
     checkUrlStatus,
-    getDataSize
+    getDataSize,
+    clearAppData
 };
