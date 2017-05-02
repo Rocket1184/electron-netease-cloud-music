@@ -16,7 +16,7 @@ export const userName = state => {
 
 export const userBkgUrl = state => {
     return state.user.loginValid
-        ? state.user.info.backgroundUrl
+        ? state.user.info.bkgUrl
         : null;
 };
 

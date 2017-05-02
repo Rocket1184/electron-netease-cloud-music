@@ -23,7 +23,7 @@ const mutations = {
         state.info = new User(payload.info);
     },
     [types.UPDATE_USER_INFO](state, payload) {
-        Object.assign(state.info, payload.info);
+        Object.assign(state.info, new User(payload.info));
     },
     [types.SET_USER_PLAYLIST](state, payload) {
         state.playlist = payload.playlist.map(l => new PlayList(l));
