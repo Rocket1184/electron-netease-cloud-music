@@ -8,6 +8,7 @@ import { app } from 'electron';
 import { http, https } from 'follow-redirects';
 
 import Client from './httpclient';
+import * as Settings from '../settings';
 
 const BaseURL = 'http://music.163.com';
 
@@ -276,13 +277,20 @@ function getVersionName() {
     } else {
         let hash;
         try {
-            const versionFilePath = path.join(app.getPath('exe'), '../ncm_hash');
-            console.log(versionFilePath);
-            hash = fs.readFileSync(versionFilePath).toString().trim();
+            const hashFilePath = path.join(app.getPath('exe'), '../ncm_hash');
+            hash = fs.readFileSync(hashFilePath).toString().trim();
             version += `.dev-${hash}`;
         } catch (err) { }
     }
     return version;
+}
+
+function getCurrentSettings() {
+    return Settings.getCurrent();
+}
+
+function writeSettings(target) {
+    Settings.set(target);
 }
 
 export default {
@@ -300,5 +308,7 @@ export default {
     checkUrlStatus,
     getDataSize,
     clearAppData,
-    getVersionName
+    getVersionName,
+    getCurrentSettings,
+    writeSettings
 };

@@ -1,7 +1,6 @@
 import { ipcRenderer } from 'electron';
-import Api from '../../main/api/api';
 
-const methodKeys = Object.getOwnPropertyNames(Api);
+const methodKeys = ipcRenderer.sendSync('getApiKeys');
 const modules = {};
 
 methodKeys.forEach(methodName => {

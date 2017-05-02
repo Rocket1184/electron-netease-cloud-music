@@ -23,3 +23,7 @@ methodKeys.map(methodName => {
         });
     });
 });
+
+ipcMain.on('getApiKeys', event => {
+    event.returnValue = methodKeys;
+});

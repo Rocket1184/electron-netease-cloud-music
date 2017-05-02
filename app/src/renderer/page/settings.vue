@@ -19,19 +19,12 @@
                       nativeValue="l"
                       v-model="settings.bitRate" />
         </div>
-        <mu-list-item title="窗口边框"
-                      disableRipple />
-        <div class="margin-block">
-            <mu-radio label="系统边框"
-                      name="windowBorder"
-                      nativeValue="1"
-                      v-model="settings.windowBorder" />
-            <br/>
-            <mu-radio label="融合边框"
-                      name="windowBorder"
-                      nativeValue="0"
-                      v-model="settings.windowBorder" />
-        </div>
+        <mu-list-item title="使用系统标题栏"
+                      @click="toggleByName('windowBorder')"
+                      disableRipple>
+            <mu-switch v-model="settings.windowBorder"
+                       slot="right" />
+        </mu-list-item>
         <mu-list-item title="启动时自动开始播放"
                       @click="toggleByName('autoPlay')"
                       disableRipple>
@@ -85,7 +78,7 @@
 
 <script>
 import qs from 'child_process';
-import { remote } from 'electron';
+import { ipcRenderer, remote } from 'electron';
 
 import * as types from '../vuex/mutation-types';
 import ApiRenderer from '../util/apirenderer';
@@ -103,11 +96,7 @@ export default {
             cacheSize: 0,
             dataSize: 0,
             versionName: '',
-            settings: {
-                bitRate: 'h',
-                windowBorder: '0',
-                autoPlay: false
-            }
+            settings: {}
         };
     },
     methods: {
@@ -157,10 +146,13 @@ export default {
             }
         },
         showToast(msg, timeOut = 1500) {
-            if (this.toast) clearTimeout(this.toastTimer);
+            if (this.toast) {
+                this.toast = false;
+                clearTimeout(this.toastTimer);
+            }
             this.toastMsg = String(msg);
-            this.toast = true;
             this.toastTimer = setTimeout(() => this.toast = false, timeOut);
+            this.$nextTick(() => this.toast = true);
         },
         showPrompt(cfg) {
             this.prompt = true;
@@ -186,16 +178,26 @@ export default {
     watch: {
         settings: {
             deep: true,
-            handler: function (val) {
-                console.log(val);
-                this.$store.commit(types.UPDATE_SETTINGS, val);
-                this.showToast('设置已保存');
+            handler: function (val, oldVal) {
+                if (Object.keys(oldVal).length !== 0) {
+                    this.$store.commit(types.UPDATE_SETTINGS, val);
+                    this.showToast('设置已保存');
+                }
+            }
+        },
+        ['settings.windowBorder'](val, oldVal) {
+            if (oldVal !== undefined) {
+                this.$store.commit(types.WRITE_SETTINGS);
+                this.$nextTick(() => ipcRenderer.send('recreateWindow', location.href));
             }
         }
     },
+    beforeCreate() {
+        ApiRenderer.getCurrentSettings().then(s => this.settings = s);
+        ApiRenderer.getVersionName().then(v => this.versionName = v);
+    },
     async created() {
         this.refreshSize();
-        this.versionName = await ApiRenderer.getVersionName();
     },
     activated() {
         this.refreshSize();

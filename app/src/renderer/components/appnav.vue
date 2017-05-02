@@ -2,7 +2,7 @@
     <div class="appbar"
          :class="appbarDynamicClassName">
         <div id="appbar-window-control"
-             v-if="notDarwin">
+             v-if="shouldWindowCtlShow">
             <mu-icon-button @click="handleClose"
                             icon="close" />
             <mu-icon-button @click="handleMaximize"
@@ -93,16 +93,16 @@
 
 <script>
 import { mapActions, mapGetters } from 'vuex';
-import { ipcRenderer } from 'electron';
+import { remote } from 'electron';
 
 import ApiRenderer from '../util/apirenderer';
 
 export default {
     data() {
         return {
-            maximized: false,
+            currentWindow: remote.getCurrentWindow(),
             _inputAccountRef: null,
-            notDarwin: process.platform !== 'darwin',
+            isDarwin: process.platform === 'darwin',
             drawerOpen: false,
             dlgShow: false,
             inputUsr: '',
@@ -112,11 +112,21 @@ export default {
         };
     },
     computed: {
+        currentSettings() {
+            return this.$store.state.settings;
+        },
         appbarDynamicClassName() {
             return [
-                this.notDarwin && 'appbar-with-ctl',
+                this.isDarwin && 'appbar-darwin',
+                this.shouldWindowCtlShow && 'appbar-with-ctl',
                 this.maximized && 'appbar-maximized'
             ];
+        },
+        shouldWindowCtlShow() {
+            return !this.isDarwin && !this.currentSettings.windowBorder;
+        },
+        maximized() {
+            return this.currentWindow.isMaximized();
         },
         backgroundUrlStyle() {
             return this.userBkgUrl && `background-image: url(${this.userBkgUrl})`;
@@ -133,13 +143,13 @@ export default {
             'setUserInfo'
         ]),
         handleClose() {
-            ipcRenderer.send('closeMainWin');
+            this.currentWindow.close();
         },
         handleMinimize() {
-            ipcRenderer.send('minimizeMainWin');
+            this.currentWindow.minimize();
         },
         handleMaximize() {
-            this.maximized = ipcRenderer.sendSync('toggleMaximizeMainWin');
+            this.maximized ? this.currentWindow.unmaximize() : this.currentWindow.maximize();
         },
         toggleDrawer() {
             this.drawerOpen = !this.drawerOpen;
@@ -183,9 +193,6 @@ export default {
         this._inputAccountRef = document.getElementsByClassName('app-nav-input-account')[0];
         const pwd = document.getElementById('app-nav-input-password');
         pwd.addEventListener('keydown', e => e.key === 'Enter' && this.handleLogin());
-        window.onresize = () => {
-            this.maximized = ipcRenderer.sendSync('isMainWinMaximized');
-        };
     }
 };
 </script>
@@ -196,7 +203,6 @@ export default {
     user-select: none;
     -webkit-app-region: drag;
     .mu-appbar {
-        padding-top: 12px;
         .left {
             cursor: pointer;
             -webkit-app-region: no-drag;
@@ -231,13 +237,17 @@ export default {
     }
 }
 
-.appbar-maximized {
+.appbar-no-ctl {
     .mu-appbar {
         padding-top: 0;
     }
     #appbar-window-control {
-        visibility: hidden;
+        display: none;
     }
+}
+
+.appbar-darwin {
+    padding-top: 12px;
 }
 
 .appbar-search-field {

@@ -32,6 +32,10 @@ export default {
             return await ApiRenderer.getUserPlaylist(uid);
         }
     },
+    async beforeCreate() {
+        const st = await ApiRenderer.getCurrentSettings();
+        this.$store.commit(types.UPDATE_SETTINGS, st);
+    },
     async created() {
         const oldUid = localStorage.getItem('uid');
         const oldUser = localStorage.getItem('user');
