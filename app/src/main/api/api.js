@@ -3,6 +3,8 @@ import url from 'url';
 import path from 'path';
 import crypto from 'crypto';
 import { Lrc } from 'lrc-kit';
+import qs from 'child_process';
+import { app } from 'electron';
 import { http, https } from 'follow-redirects';
 
 import Client from './httpclient';
@@ -238,7 +240,7 @@ const dataDirMap = {
 };
 
 function getDataSize(name = 'app') {
-    const appData = require('electron').app.getPath('appData');
+    const appData = app.getPath('appData');
     const cachePath = path.join(appData, 'electron-netease-cloud-music', dataDirMap[name]);
     let size;
     try {
@@ -250,14 +252,37 @@ function getDataSize(name = 'app') {
 }
 
 function clearAppData(name = 'cache') {
-    const appData = require('electron').app.getPath('appData');
+    const appData = app.getPath('appData');
     const delPath = path.join(appData, 'electron-netease-cloud-music', dataDirMap[name]);
     try {
-        require('child_process').execSync(`rm -rf ${delPath}`);
+        qs.execSync(`rm -rf ${delPath}`);
     } catch (err) {
         return err;
     }
     return false;
+}
+
+function getVersionName() {
+    let version = require('../../../package.json').version;
+    if (process.env.NODE_ENV === 'development') {
+        version += '.hot';
+        let hash;
+        try {
+            hash = qs.execSync('git rev-parse --short HEAD').toString().trim();
+        } catch (err) {
+            hash = '';
+        }
+        version += `-${hash}+`;
+    } else {
+        let hash;
+        try {
+            const versionFilePath = path.join(app.getPath('exe'), '../ncm_hash');
+            console.log(versionFilePath);
+            hash = fs.readFileSync(versionFilePath).toString().trim();
+            version += `.dev-${hash}`;
+        } catch (err) { }
+    }
+    return version;
 }
 
 export default {
@@ -274,5 +299,6 @@ export default {
     submitListened,
     checkUrlStatus,
     getDataSize,
-    clearAppData
+    clearAppData,
+    getVersionName
 };
