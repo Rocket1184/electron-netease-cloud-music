@@ -1,4 +1,4 @@
-#!/bin/sh
+#!/bin/bash
 
 cd dist
 wget http://devtools.qiniu.com/qshell-v2.0.5.zip -O qshell.zip
