@@ -51,18 +51,18 @@ export class User {
     constructor(o) {
         if (!o) return Models.User;
         this.account = o.account || {};
-        this.profile = o.profile || {};
         this.bindings = o.bindings || [];
+        this.profile = o.profile || o || {};
         this.id = o.id || o.userId || o.account.id;
-        this.nickname = o.nickname || o.profile.nickname;
-        this.avatarUrl = o.avatarUrl || o.profile.avatarUrl;
-        this.bkgUrl = o.backgroundUrl || o.profile.backgroundUrl;
-        this.gender = o.gender || o.profile.gender;
-        this.description = o.description || o.profile.description;
-        this.detailDescription = o.detailDescription || o.profile.detailDescription;
-        this.signature = o.signature || o.profile.signature;
-        this.province = o.province || o.profile.province;
-        this.city = o.city || o.profile.city;
+        this.nickname = this.profile.nickname || o.nickname;
+        this.avatarUrl = this.profile.avatarUrl || o.avatarUrl;
+        this.bkgUrl = this.profile.backgroundUrl || o.backgroundUrl;
+        this.gender = this.profile.gender || o.gender;
+        this.description = this.profile.description || o.description;
+        this.detailDescription = this.profile.detailDescription || o.detailDescription;
+        this.signature = this.profile.signature || o.signature;
+        this.province = this.profile.province || o.province;
+        this.city = this.profile.city || o.city;
     }
 }
 
