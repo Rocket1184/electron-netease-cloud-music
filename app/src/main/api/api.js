@@ -239,10 +239,13 @@ const dataDirMap = {
     app: '',
     cache: 'Cache'
 };
+const appData = app.getPath('appData');
+const appName = process.env.NODE_ENV === 'development'
+    ? 'Electron'
+    : require('../../../package.json').name;
 
 function getDataSize(name = 'app') {
-    const appData = app.getPath('appData');
-    const cachePath = path.join(appData, 'electron-netease-cloud-music', dataDirMap[name]);
+    const cachePath = path.join(appData, appName, dataDirMap[name]);
     let size;
     try {
         size = getDirSize(cachePath);
@@ -253,8 +256,7 @@ function getDataSize(name = 'app') {
 }
 
 function clearAppData(name = 'cache') {
-    const appData = app.getPath('appData');
-    const delPath = path.join(appData, 'electron-netease-cloud-music', dataDirMap[name]);
+    const delPath = path.join(appData, appName, dataDirMap[name]);
     try {
         qs.execSync(`rm -rf ${delPath}`);
     } catch (err) {
