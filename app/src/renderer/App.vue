@@ -42,34 +42,32 @@ export default {
         const oldCookie = localStorage.getItem('cookie');
 
         if (oldUid && oldUser && oldCookie) {
-            try {
-                const uid = +oldUid;
-                const cookieObj = JSON.parse(oldCookie);
-                ApiRenderer.updateCookie(cookieObj);
-                const userObj = JSON.parse(oldUser);
-                this.$store.commit(types.SET_LOGIN_VALID);
+            const uid = +oldUid;
+            const cookieObj = JSON.parse(oldCookie);
+            ApiRenderer.updateCookie(cookieObj);
+            const userObj = JSON.parse(oldUser);
+            this.$store.commit(types.SET_LOGIN_VALID);
+            this.$store.commit({
+                type: types.UPDATE_USER_INFO,
+                info: userObj
+            });
+            if (await this.checkLogin()) {
+                let resp = await this.getPlaylist(uid);
                 this.$store.commit({
                     type: types.UPDATE_USER_INFO,
-                    info: userObj
+                    info: resp.playlist[0].creator
                 });
-                if (await this.checkLogin()) {
-                    let resp = await this.getPlaylist(uid);
-                    this.$store.commit({
-                        type: types.UPDATE_USER_INFO,
-                        info: resp.playlist[0].creator
-                    });
-                    this.$store.commit({
-                        type: types.SET_USER_PLAYLIST,
-                        playlist: resp.playlist
-                    });
-                } else {
-                    this.$store.commit({
-                        type: types.SET_LOGIN_VALID,
-                        valid: false
-                    });
-                    ApiRenderer.updateCookie({});
-                }
-            } catch (err) { console.error(err); }
+                this.$store.commit({
+                    type: types.SET_USER_PLAYLIST,
+                    playlist: resp.playlist
+                });
+            } else {
+                this.$store.commit({
+                    type: types.SET_LOGIN_VALID,
+                    valid: false
+                });
+                ApiRenderer.updateCookie({});
+            }
         }
     }
 };
