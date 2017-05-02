@@ -22,7 +22,7 @@ const serverCfg = {
     hot: true,
     stats: 'minimal',
     overlay: true,
-    contentBase: path.resolve(projectRoot, 'app/dist')
+    contentBase: path.join(projectRoot, 'app/dist')
 };
 
 const devServer = new WebpackDevServer(compiler, serverCfg);

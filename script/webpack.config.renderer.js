@@ -75,9 +75,9 @@ let cfg = {
         new ExtractTextPlugin('styles.css'),
         new HtmlWebpackPlugin({
             filename: 'index.html',
-            template: path.resolve(projectRoot, 'app/index.ejs'),
+            template: path.join(projectRoot, 'app/index.ejs'),
             appModules: process.env.NODE_ENV !== 'production'
-                ? path.resolve(projectRoot, 'app/node_modules')
+                ? path.join(projectRoot, 'app/node_modules')
                 : false
         })
     ],
