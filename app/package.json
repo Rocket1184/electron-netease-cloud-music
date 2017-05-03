@@ -1,21 +1,21 @@
 {
-    "name": "electron-netease-cloud-music",
-    "version": "0.1.0",
-    "description": "UNOFFICAL client for music.163.com",
-    "main": "./dist/main.js",
-    "dependencies": {
-        "axios": "^0.16.1",
-        "big-integer": "^1.6.22",
-        "cookie": "^0.3.1",
-        "keycode": "^2.1.8",
-        "lrc-kit": "^0.2.2",
-        "muse-ui": "^2.0.2",
-        "vue": "^2.3.0",
-        "vue-router": "^2.5.2",
-        "vuex": "^2.3.1"
-    },
-    "devDependencies": {},
-    "author": "rocka <i@rocka.me> (https://rocka.me)",
-    "license": "GPL-3.0",
-    "repository": "github:rocket1184/electron-netease-cloud-music"
+  "name": "electron-netease-cloud-music",
+  "version": "0.1.0",
+  "description": "UNOFFICAL client for music.163.com",
+  "main": "./dist/main.js",
+  "dependencies": {
+    "axios": "^0.16.1",
+    "big-integer": "^1.6.22",
+    "cookie": "^0.3.1",
+    "keycode": "^2.1.9",
+    "lrc-kit": "^0.2.2",
+    "muse-ui": "^2.0.2",
+    "vue": "^2.3.2",
+    "vue-router": "^2.5.3",
+    "vuex": "^2.3.1"
+  },
+  "devDependencies": {},
+  "author": "rocka <i@rocka.me> (https://rocka.me)",
+  "license": "GPL-3.0",
+  "repository": "github:rocket1184/electron-netease-cloud-music"
 }
