@@ -47,13 +47,23 @@ async function login(acc, pwd) {
     }
 }
 
+async function refreshLogin() {
+    let csrf = client.getCookie('__csrf');
+    return await client.post({
+        url: `${BaseURL}/weapi/login/token/refresh?csrf_token=${csrf}`,
+        data: {
+            csrf_token: csrf
+        }
+    });
+}
+
 async function getUserPlaylist(uid) {
     return await client.post({
         url: `${BaseURL}/weapi/user/playlist`,
         data: {
             uid,
             offset: 0,
-            limit: 1,
+            limit: 1000,
             csrf_token: ''
         }
     });
@@ -299,6 +309,7 @@ export default {
     getCookie,
     updateCookie,
     login,
+    refreshLogin,
     getUserPlaylist,
     getMusicRecord,
     getDailySuggestions,
