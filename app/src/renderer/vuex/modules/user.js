@@ -13,10 +13,11 @@ const mutations = {
         state.cookie = payload.cookie;
     },
     [types.SET_LOGIN_VALID](state, payload) {
-        if (!payload || payload.valid) {
-            state.loginValid = true;
-        } else {
+        console.warn(types.SET_LOGIN_VALID, payload);
+        if (payload === false || payload.valid === false) {
             state.loginValid = false;
+        } else {
+            state.loginValid = true;
         }
     },
     [types.SET_USER_INFO](state, payload) {
