@@ -1,7 +1,10 @@
 language: node_js
-node_js:
-  - '7'
-cache: yarn
+node_js: node # install the latest release of node
+cache:
+  yarn: true
+  directories:
+  - node_modules
+  - app/node_modules
 script:
-  - 'script/install-and-build.sh'
-  - 'script/upload-build.sh'
+  - script/install-and-build.sh
+  - script/upload-build.sh
