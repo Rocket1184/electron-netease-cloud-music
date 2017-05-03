@@ -32,21 +32,27 @@ export default {
     },
     methods: {
         async checkLogin() {
-            const sugg = await ApiRenderer.login();
-            return sugg.code === 200;
+            const resp = await ApiRenderer.refreshLogin();
+            return resp.code === 200;
         }
     },
     watch: {
-        async loginValid(val) {
+        loginValid(val) {
             if (val === true) {
+                // it needs concurrency here
+                // but how to do it with async ??? maybe cannot
                 const { id } = this.$store.state.user.info;
-                const resp = await ApiRenderer.getUserPlaylist(id);
-                this.$store.commit(types.UPDATE_USER_INFO, {
-                    info: resp.playlist[0].creator
-                });
-                this.$store.commit(types.SET_USER_PLAYLIST, {
-                    playlist: resp.playlist
-                });
+                ApiRenderer.getCookie()
+                    .then(cookie => localStorage.setItem('cookie', JSON.stringify(cookie)));
+                ApiRenderer.getUserPlaylist(id)
+                    .then(resp => {
+                        this.$store.commit(types.UPDATE_USER_INFO, {
+                            info: resp.playlist[0].creator
+                        });
+                        this.$store.commit(types.SET_USER_PLAYLIST, {
+                            playlist: resp.playlist
+                        });
+                    });
             }
         }
     },
@@ -69,7 +75,6 @@ export default {
             if (await this.checkLogin()) {
                 this.$store.commit(types.SET_LOGIN_VALID);
             } else {
-                this.$store.commit(types.SET_LOGIN_VALID, false);
                 ApiRenderer.updateCookie({});
             }
         }
