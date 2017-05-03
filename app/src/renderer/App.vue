@@ -11,6 +11,8 @@
 </template>
 
 <script>
+import { mapGetters } from 'vuex';
+
 import store from './vuex/store';
 import AppNav from './components/appnav';
 import PlayerBar from './components/playerbar';
@@ -23,13 +25,29 @@ export default {
         AppNav,
         PlayerBar
     },
+    computed: {
+        ...mapGetters([
+            'loginValid'
+        ])
+    },
     methods: {
         async checkLogin() {
-            const sugg = await ApiRenderer.getDailySuggestions();
-            return sugg.code !== 301;
-        },
-        async getPlaylist(uid) {
-            return await ApiRenderer.getUserPlaylist(uid);
+            const sugg = await ApiRenderer.login();
+            return sugg.code === 200;
+        }
+    },
+    watch: {
+        async loginValid(val) {
+            if (val === true) {
+                const { id } = this.$store.state.user.info;
+                const resp = await ApiRenderer.getUserPlaylist(id);
+                this.$store.commit(types.UPDATE_USER_INFO, {
+                    info: resp.playlist[0].creator
+                });
+                this.$store.commit(types.SET_USER_PLAYLIST, {
+                    playlist: resp.playlist
+                });
+            }
         }
     },
     async beforeCreate() {
@@ -42,30 +60,16 @@ export default {
         const oldCookie = localStorage.getItem('cookie');
 
         if (oldUid && oldUser && oldCookie) {
-            const uid = +oldUid;
             const cookieObj = JSON.parse(oldCookie);
             ApiRenderer.updateCookie(cookieObj);
             const userObj = JSON.parse(oldUser);
-            this.$store.commit(types.SET_LOGIN_VALID);
-            this.$store.commit({
-                type: types.UPDATE_USER_INFO,
+            this.$store.commit(types.UPDATE_USER_INFO, {
                 info: userObj
             });
             if (await this.checkLogin()) {
-                let resp = await this.getPlaylist(uid);
-                this.$store.commit({
-                    type: types.UPDATE_USER_INFO,
-                    info: resp.playlist[0].creator
-                });
-                this.$store.commit({
-                    type: types.SET_USER_PLAYLIST,
-                    playlist: resp.playlist
-                });
+                this.$store.commit(types.SET_LOGIN_VALID);
             } else {
-                this.$store.commit({
-                    type: types.SET_LOGIN_VALID,
-                    valid: false
-                });
+                this.$store.commit(types.SET_LOGIN_VALID, false);
                 ApiRenderer.updateCookie({});
             }
         }
