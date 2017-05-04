@@ -100,17 +100,24 @@ export default {
         };
     },
     methods: {
-        async refreshSize() {
-            this.cacheSize = await ApiRenderer.getDataSize('cache');
-            this.dataSize = await ApiRenderer.getDataSize('app');
+        refreshSize() {
+            ApiRenderer.getDataSize('cache').then(s => this.cacheSize = s);
+            ApiRenderer.getDataSize('app').then(s => this.dataSize = s);
         },
         toggleByName(name) {
             if (typeof this.settings[name] === 'boolean') {
                 this.settings[name] = !this.settings[name];
             }
         },
+        async clearSessionCache() {
+            const { session } = remote.getCurrentWindow().webContents;
+            new Promise(resolve => session.clearCache(resolve));
+        },
         async clearCache() {
-            await ApiRenderer.clearAppData('cache');
+            await Promise.all([
+                this.clearSessionCache(),
+                ApiRenderer.clearAppData('cache')
+            ]);
             this.refreshSize();
             this.showToast('成功清除缓存');
         },
@@ -118,9 +125,15 @@ export default {
             this.showPrompt({
                 title: '提示',
                 text: '这将清除所有应用数据，包括缓存以及账号登录状态，确定吗？',
-                async action() {
-                    await ApiRenderer.clearAppData('app');
-                    this.reloadWindow();
+                action: async () => {
+                    ApiRenderer.updateCookie({});
+                    window.onbeforeunload = null;
+                    localStorage.clear();
+                    await Promise.all([
+                        this.clearSessionCache(),
+                        ApiRenderer.clearAppData('app')
+                    ]);
+                    ipcRenderer.send('recreateWindow');
                 }
             });
         },
