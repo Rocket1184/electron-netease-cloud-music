@@ -305,6 +305,15 @@ function writeSettings(target) {
     Settings.set(target);
 }
 
+async function postDailyTask(type) {
+    return await client.post({
+        url: `${BaseURL}/weapi/point/dailyTask?type=${type}`,
+        data: {
+            csrf_token: ''
+        }
+    });
+}
+
 export default {
     getCookie,
     updateCookie,
@@ -323,5 +332,6 @@ export default {
     clearAppData,
     getVersionName,
     getCurrentSettings,
-    writeSettings
+    writeSettings,
+    postDailyTask
 };
