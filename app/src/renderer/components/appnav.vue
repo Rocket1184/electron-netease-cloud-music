@@ -31,8 +31,13 @@
                                    :src="userAvatarUrl"
                                    :iconSize="40"
                                    :size="80" />
-                        <p class="user-name"
-                           @click="handleNameClick">{{userName}}</p>
+                        <span class="user-name"
+                              @click="handleNameClick">{{userName}}</span>
+                        <mu-flat-button v-if="loginValid"
+                                        label="签到"
+                                        class="button-checkin"
+                                        color="white"
+                                        @click="handleCheckIn" />
                     </div>
                 </div>
                 <router-link to='/'>
@@ -88,6 +93,8 @@
                               primary
                               @click="handleLogin" />
         </mu-dialog>
+        <mu-toast v-if="toast"
+                  :message="toastMsg" />
     </div>
 </template>
 
@@ -100,6 +107,8 @@ import ApiRenderer from '../util/apirenderer';
 export default {
     data() {
         return {
+            toast: false,
+            toastMsg: '',
             currentWindow: remote.getCurrentWindow(),
             _inputAccountRef: null,
             isDarwin: process.platform === 'darwin',
@@ -163,6 +172,15 @@ export default {
         toggleDlg() {
             this.dlgShow = !this.dlgShow;
         },
+        showToast(msg, timeOut = 1500) {
+            if (this.toast) {
+                this.toast = false;
+                clearTimeout(this.toastTimer);
+            }
+            this.toastMsg = String(msg);
+            this.toastTimer = setTimeout(() => this.toast = false, timeOut);
+            this.$nextTick(() => this.toast = true);
+        },
         async handleLogin() {
             this.errMsgUsr = '';
             this.errMsgPwd = '';
@@ -183,6 +201,19 @@ export default {
                     break;
                 case 502:
                     this.errMsgPwd = '密码错误';
+            }
+        },
+        async handleCheckIn() {
+            const results = await Promise.all([
+                ApiRenderer.postDailyTask(0),
+                ApiRenderer.postDailyTask(1)
+            ]);
+            let points = 0;
+            results.forEach(e => e.code === 200 ? points += e.point : null);
+            if (points) {
+                this.showToast(`签到成功，获得 ${points} 点积分`);
+            } else {
+                this.showToast('是不是已经签到过了呢 ：）');
             }
         }
     },
@@ -290,12 +321,25 @@ export default {
             padding: 2rem;
             bottom: 0;
             left: 0;
-        }
-        .user-name {
-            margin-top: 1rem;
-            color: white;
-            font-size: 2rem;
-            cursor: pointer;
+            .mu-avatar {
+                display: block;
+            }
+            .user-name {
+                margin-top: 1rem;
+                color: white;
+                font-size: 2rem;
+                cursor: pointer;
+                display: inline-block;
+                line-height: 36px;
+                width: 160px;
+                white-space: nowrap;
+                overflow: hidden;
+                text-overflow: ellipsis;
+                vertical-align: bottom;
+            }
+            .button-checkin {
+                display: inline-block;
+            }
         }
     }
 }
