@@ -149,8 +149,7 @@ export default {
 <style lang="less">
 .shadow-text {
     color: white;
-    text-shadow: 1px 1px 2px rgba(0, 0, 0, 0.8),
-    0px 0px 2px rgba(0, 0, 0, 0.5);
+    text-shadow: 1px 1px 3px rgba(0, 0, 0, 1);
 }
 
 .ellipsis-text(@width: 200px) {
@@ -177,7 +176,8 @@ export default {
         background-size: 80% 450px;
         background-repeat: no-repeat;
         background-position: 50% 0%;
-        filter: blur(60px) opacity(0.7);
+        filter: blur(60px);
+        opacity: 0.8;
         transform: translate3d(0, 0, 0); // magic!!! this enables GPU acceleration!!!!
     }
     .disk {
@@ -248,7 +248,7 @@ export default {
             .ellipsis-text;
         }
         .lyric {
-            height: 400px;
+            height: 350px;
             overflow: hidden;
             margin-top: 20px;
             .scroller {
