@@ -13,7 +13,6 @@ let cfg = {
     context: path.join(projectRoot, 'app/src'),
     target: 'electron-renderer',
     devtool: 'source-map',
-    externals: Object.keys(packageJson.dependencies),
     entry: {
         renderer: [
             path.join(projectRoot, 'app/src/renderer/main.js')
@@ -80,29 +79,38 @@ let cfg = {
         ]
     },
     plugins: [
-        new ExtractTextPlugin('styles.css'),
-        new HtmlWebpackPlugin({
-            filename: 'index.html',
-            template: path.join(projectRoot, 'app/index.ejs'),
-            appModules: process.env.NODE_ENV !== 'production'
-                ? path.join(projectRoot, 'app/node_modules')
-                : false
-        })
+        new ExtractTextPlugin('styles.css')
     ],
     resolve: {
-        extensions: ['.js', '.vue', '.json', '.css', '.node'],
-        modules: [
-            path.join(projectRoot, 'node_modules'),
-            path.join(projectRoot, 'app/node_modules')
-        ]
+        extensions: ['.js', '.vue', '.json', '.css', '.node']
     }
 };
 
+if (process.env.NODE_ENV !== 'production') {
+    cfg.externals = Object.keys(packageJson.dependencies);
+    cfg.resolve.modules = [
+        path.join(projectRoot, 'node_modules'),
+        path.join(projectRoot, 'app/node_modules')
+    ];
+    cfg.plugins.push(
+        new HtmlWebpackPlugin({
+            filename: 'index.html',
+            template: path.join(projectRoot, 'app/index.ejs'),
+            appModules: path.join(projectRoot, 'app/node_modules')
+        }),
+        new webpack.DefinePlugin({
+            PRODUCTION: 'false'
+        })
+    );
+}
+
 if (process.env.NODE_ENV === 'production') {
-    delete cfg.externals;
-    delete cfg.resolve.modules;
     cfg.plugins.push(
         new BabiliPlugin(),
+        new HtmlWebpackPlugin({
+            filename: 'index.html',
+            template: path.join(projectRoot, 'app/index.ejs')
+        }),
         new webpack.DefinePlugin({
             PRODUCTION: 'true',
             'process.env': {
