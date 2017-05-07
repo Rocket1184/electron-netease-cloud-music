@@ -10,8 +10,8 @@
             </router-link>
         </div>
         <div class="cell info">
-            <span class="song-name">{{playing.name}}</span>
-            <span class="artist-name">{{playing.artistName}}</span>
+            <span class="song-name">{{playing.track.name}}</span>
+            <span class="artist-name">{{playing.track.artistName}}</span>
             <div class="quick-actions">
                 <mu-icon-button title="喜欢"
                                 tooltipPosition="top-center"
@@ -79,7 +79,7 @@ export default {
             'restorePlaylist'
         ]),
         getImgAt(size) {
-            const url = this.playing.album.picUrl || this.fallbackImg;
+            const url = this.playing.track.album.picUrl || this.fallbackImg;
             return `${url}?param=${size}y${size}`;
         },
         play() {
@@ -97,7 +97,7 @@ export default {
             this.audioEl.currentTime = this.timeTotal * value / 100;
         },
         submitListened() {
-            ApiRenderer.submitListened(this.playing.id, this.timeTotal);
+            ApiRenderer.submitListened(this.playing.track.id, this.timeTotal);
         }
     },
     computed: {
@@ -142,13 +142,13 @@ export default {
         const _unsetInterval = () => _playingIntervalId = clearInterval(_playingIntervalId);
 
         _slider.onpointerdown = () => _audioEl.pause();
-        _slider.onpointerup = () => this.playing.playing && _audioEl.play();
+        _slider.onpointerup = () => !this.playing.paused && _audioEl.play();
 
         _audioEl.ondurationchange = () => {
             _unsetInterval();
             this.timeTotal = _audioEl.duration;
             this.timeCurrent = _audioEl.currentTime = 0;
-            if (this.playing.playing) _audioEl.play();
+            if (!this.playing.paused) _audioEl.play();
         };
 
         _audioEl.onseeking = _updateTime;

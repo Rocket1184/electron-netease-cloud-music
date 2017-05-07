@@ -15,7 +15,7 @@ export const QUALITY_LEVELS = {
 
 const state = {
     quality: QUALITY_LEVELS.HIGH,
-    playing: false,
+    paused: true,
     currentIndex: 0,
     loopMode: LOOP_TYPES.LIST_LOOP,
     list: [new Track()],
@@ -30,10 +30,10 @@ const mutations = {
         if (lyrics) target.lyrics = lyrics;
     },
     [types.PAUSE_PLAYING_MUSIC](state) {
-        state.playing = false;
+        state.paused = true;
     },
     [types.RESUME_PLAYING_MUSIC](state) {
-        state.playing = true;
+        state.paused = false;
     },
     [types.SET_PLAY_LIST](state, payload) {
         const { list } = payload;
@@ -56,7 +56,7 @@ const mutations = {
     },
     [types.RESTORE_PLAYLIST](state, payload) {
         const { quality, currentIndex, loopMode, list } = payload;
-        state.playing = false;
+        state.paused = true;
         state.quality = quality || QUALITY_LEVELS.HIGH;
         state.currentIndex = currentIndex || 0;
         state.loopMode = loopMode || LOOP_TYPES.LIST_LOOP;

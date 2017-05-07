@@ -2,7 +2,7 @@
     <div class="song-detail">
         <div class="bkg"
              :style="styleAlbumImg"></div>
-        <div :class="['disk', { play: playing.playing }]">
+        <div :class="['disk', { play: !playing.paused }]">
             <div class="container">
                 <div class="img"
                      :style="styleAlbumImg">
@@ -13,16 +13,17 @@
             </div>
         </div>
         <div class="info">
-            <p class="name">{{playing.name}}</p>
+            <p class="name">{{playing.track.name}}</p>
             <p>
-                歌手：<span class="artists">{{playing.artistName}}</span> 专辑：
-                <span class="album">{{playing.album.name}}</span>
+                歌手：
+                <span class="artists">{{playing.track.artistName}}</span> 专辑：
+                <span class="album">{{playing.track.album.name}}</span>
             </p>
             <div class="lyric">
                 <div class="scroller"
                      :style="lyricScrollerStyle">
-                    <template v-if="playing.lyrics && playing.lyrics.mlrc">
-                        <template v-for="(line, index) in playing.lyrics.mlrc.lyrics">
+                    <template v-if="playing.track.lyrics && playing.track.lyrics.mlrc">
+                        <template v-for="(line, index) in playing.track.lyrics.mlrc.lyrics">
                             <p class="line"
                                :class="{active: index == currentLyricIndex}"
                                :data-time="line.timestamp">
@@ -32,8 +33,8 @@
                             </p>
                         </template>
                     </template>
-                    <template v-else-if="playing.lyrics && playing.lyrics.lrc">
-                        <template v-for="(line, index) in playing.lyrics.lrc.lyrics">
+                    <template v-else-if="playing.track.lyrics && playing.track.lyrics.lrc">
+                        <template v-for="(line, index) in playing.track.lyrics.lrc.lyrics">
                             <p class="line"
                                :class="{active: index == currentLyricIndex}"
                                :data-time="line.timestamp">
@@ -69,11 +70,11 @@ export default {
         ]),
         styleBlurImg() {
             // maybe useful later...
-            return `background-image:url(http://music.163.com/api/img/blur/${this.playing.album.pic});`;
+            return `background-image:url(http://music.163.com/api/img/blur/${this.playing.track.album.pic});`;
         },
         styleAlbumImg() {
             const len = window.devicePixelRatio * 220;
-            return `background-image:url(${this.playing.album.picUrl}?param=${len}y${len});`;
+            return `background-image:url(${this.playing.track.album.picUrl}?param=${len}y${len});`;
         },
         lyricScrollerStyle() {
             if (!this.lyricElemMap.length) return '';
@@ -85,18 +86,18 @@ export default {
     },
     methods: {
         createLyricElemMap() {
-            if (this.playing.lyrics && this.playing.lyrics.lrc) {
+            if (this.playing.track.lyrics && this.playing.track.lyrics.lrc) {
                 this.lyricElemMap = Array.from(document.getElementsByClassName('line'));
             }
         },
         createLyricTimeMap() {
-            if (this.playing.lyrics && this.playing.lyrics.lrc) {
-                this.lyricTimeMap = this.playing.lyrics.lrc.lyrics.map(i => +i.timestamp);
+            if (this.playing.track.lyrics && this.playing.track.lyrics.lrc) {
+                this.lyricTimeMap = this.playing.track.lyrics.lrc.lyrics.map(i => +i.timestamp);
             }
         }
     },
     watch: {
-        'playing.id': function () {
+        'playing.track.id': function () {
             this.currentLyricIndex = -1;
             this.createLyricTimeMap();
             // query lyric elements after they are created
