@@ -7,6 +7,7 @@ unzip qshell.zip qshell_linux_amd64
 
 APP_NAME=electron-netease-cloud-music
 BUCKET_NAME=$APP_NAME-dev
+NCM_RELEASE_CHANNEL=dev
 VERSION_HASH="$NCM_RELEASE_CHANNEL.`git rev-parse --short HEAD`"
 
 ./qshell_linux_amd64 listbucket $BUCKET_NAME stdout
@@ -16,7 +17,7 @@ do
     if [[ $NCM_RELEASE_CHANNEL != "master" ]]; then
         echo $VERSION_HASH > $APP_NAME-$ARCH/ncm_hash
     fi
-    TAR_NAME=$ARCH-$VERSION_HASH.tar.gz
+    TAR_NAME=electron-ncm-$ARCH-$VERSION_HASH.tar.gz
     tar zcf $TAR_NAME $APP_NAME-$ARCH
     ./qshell_linux_amd64 rput $BUCKET_NAME $TAR_NAME $TAR_NAME
 done
