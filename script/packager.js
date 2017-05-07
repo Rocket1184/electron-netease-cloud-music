@@ -22,7 +22,7 @@ const options = {
     asar: true,
     dir: path.join(projectRoot, 'app'),
     out: path.join(projectRoot, 'dist'),
-    ignore: [/assets/, /index\.ejs/, /yarn.lock/, /app\/src/],
+    ignore: [/assets/, /index\.ejs/, /yarn.lock/, /app\/src/, /\.d\.ts$/],
     overwrite: true,
     platform: argv
 };
