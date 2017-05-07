@@ -7,7 +7,7 @@ unzip qshell.zip qshell_linux_amd64
 
 APP_NAME=electron-netease-cloud-music
 BUCKET_NAME=$APP_NAME-dev
-VERSION_HASH=`git rev-parse --short HEAD`
+VERSION_HASH="$NCM_RELEASE_CHANNEL.`git rev-parse --short HEAD`"
 
 ./qshell_linux_amd64 listbucket $BUCKET_NAME stdout
 

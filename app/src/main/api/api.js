@@ -278,20 +278,18 @@ function clearAppData(name = 'cache') {
 function getVersionName() {
     let version = require('../../../package.json').version;
     if (process.env.NODE_ENV === 'development') {
-        version += '.hot';
-        let hash;
+        version += '-hot';
+        let rev = '';
         try {
-            hash = qs.execSync('git rev-parse --short HEAD').toString().trim();
-        } catch (err) {
-            hash = '';
-        }
-        version += `-${hash}+`;
+            rev = qs.execSync('git rev-parse --short HEAD').toString().trim();
+            version += `.${rev}+`;
+        } catch (err) { }
     } else {
         let hash;
         try {
             const hashFilePath = path.join(app.getPath('exe'), '../ncm_hash');
             hash = fs.readFileSync(hashFilePath).toString().trim();
-            version += `.dev-${hash}`;
+            version += `-${hash}`;
         } catch (err) { }
     }
     return version;
