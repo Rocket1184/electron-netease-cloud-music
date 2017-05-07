@@ -1,6 +1,7 @@
 'use strict';
 
 const path = require('path');
+const webpack = require('webpack');
 const packageJson = require('../app/package.json');
 const ExtractTextPlugin = require('extract-text-webpack-plugin');
 const HtmlWebpackPlugin = require('html-webpack-plugin');
@@ -47,7 +48,14 @@ let cfg = {
             },
             {
                 test: /\.vue$/,
-                use: 'vue-loader'
+                loader: 'vue-loader',
+                options: {
+                    loaders: {
+                        css: ExtractTextPlugin.extract({
+                            use: 'css-loader'
+                        })
+                    }
+                }
             },
             {
                 test: /\.(png|jpe?g|gif|svg)(\?.*)?$/,
@@ -91,8 +99,16 @@ let cfg = {
 };
 
 if (process.env.NODE_ENV === 'production') {
+    delete cfg.externals;
+    delete cfg.resolve.modules;
     cfg.plugins.push(
-        new BabiliPlugin()
+        new BabiliPlugin(),
+        new webpack.DefinePlugin({
+            PRODUCTION: 'true',
+            'process.env': {
+                NODE_ENV: '"production"'
+            }
+        })
     );
 }
 
