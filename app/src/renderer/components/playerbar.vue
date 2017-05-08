@@ -1,24 +1,26 @@
 <template>
     <mu-paper class="player-bar-wrapper"
               :zDepth="2">
+        <audio id="playerbar-audio"
+               :src="playing.url"></audio>
         <div class="cell">
-            <router-link :to='`/player`'>
+            <router-link to='/player'>
                 <img :src="getImgAt(64)"
                      :srcset="`${getImgAt(80)} 1.25x, ${getImgAt(96)} 1.5x, ${getImgAt(128)} 2x`">
             </router-link>
         </div>
         <div class="cell info">
-            <span class="song-name">{{playing.name}}</span>
-            <span class="artist-name">{{playing.artist}}</span>
+            <span class="song-name">{{playing.track.name}}</span>
+            <span class="artist-name">{{playing.track.artistName}}</span>
             <div class="quick-actions">
-                <mu-icon-button tooltip="喜欢"
+                <mu-icon-button title="喜欢"
                                 tooltipPosition="top-center"
                                 :iconClass="isFavorite && 'favorite'"
                                 :icon="isFavorite? 'favorite' :'favorite_border'" />
-                <mu-icon-button tooltip="收藏到歌单"
+                <mu-icon-button title="收藏到歌单"
                                 tooltipPosition="top-center"
                                 icon="bookmark_border" />
-                <mu-icon-menu tooltip="播放列表"
+                <mu-icon-menu title="播放列表"
                               tooltipPosition="top-center"
                               icon="playlist_play"
                               :maxHeight="400"
@@ -27,11 +29,11 @@
                 </mu-icon-menu>
             </div>
             <div class="progress">
-                <mu-slider :value="songProgress"
-                           @change="handleProgressDrag"
-                           class="silder" />
-                <span class="text">{{ formatTime(timeCurrent) }} / {{ formatTime(timeTotal) }}</span>
-                <audio :src="playing.url"></audio>
+                <mu-slider id="playerbar-progress"
+                           class="slider"
+                           :value="songProgress"
+                           @change="handleProgressDrag" />
+                <span class="text">{{ timeCurrent | time }} / {{ timeTotal | time }}</span>
             </div>
         </div>
         <div class="cell control">
@@ -39,7 +41,7 @@
                              mini
                              class="button"
                              color="#FFF"
-                             @click="previousTrack" />
+                             @click="playPreviousTrack" />
             <mu-float-button :icon="this.audioEl.paused ? 'play_arrow' : 'pause'"
                              class="button"
                              color="#FFF"
@@ -48,7 +50,7 @@
                              mini
                              class="button"
                              color="#FFF"
-                             @click="nextTrack" />
+                             @click="playNextTrack" />
         </div>
     </mu-paper>
 </template>
@@ -56,6 +58,7 @@
 <script>
 import { mapActions, mapGetters } from 'vuex';
 
+import ApiRenderer from '../util/apirenderer';
 import CurrentList from '../components/currentlist';
 import * as types from '../vuex/mutation-types';
 
@@ -71,24 +74,13 @@ export default {
     },
     methods: {
         ...mapActions([
-            'nextTrack',
-            'previousTrack',
+            'playNextTrack',
+            'playPreviousTrack',
             'restorePlaylist'
         ]),
         getImgAt(size) {
-            const url = this.playing.album.picUrl || this.fallbackImg;
+            const url = this.playing.track.album.picUrl || this.fallbackImg;
             return `${url}?param=${size}y${size}`;
-        },
-        formatTime(value) {
-            const dt = new Date(value * 1000);
-            const h = dt.getUTCHours();
-            const m = dt.getMinutes();
-            const s = dt.getSeconds();
-            let res = '';
-            h && (res += `${h}:`);
-            res += m < 10 ? `0${m}:` : `${m}:`;
-            res += s < 10 ? `0${s}` : `${s}`;
-            return res;
         },
         play() {
             this.$store.commit(types.RESUME_PLAYING_MUSIC);
@@ -103,32 +95,46 @@ export default {
         },
         handleProgressDrag(value) {
             this.audioEl.currentTime = this.timeTotal * value / 100;
+        },
+        submitListened() {
+            ApiRenderer.submitListened(this.playing.track.id, this.timeTotal);
         }
     },
     computed: {
-        ...mapGetters({
-            playlist: 'playlist',
-            playing: 'playingMusic'
-        }),
+        ...mapGetters([
+            'playlist',
+            'playing'
+        ]),
         songProgress() {
             return 100 * this.timeCurrent / this.timeTotal || 0;
         }
     },
+    filters: {
+        time(value) {
+            const dt = new Date(value * 1000);
+            const h = dt.getUTCHours();
+            const m = dt.getMinutes();
+            const s = dt.getSeconds();
+            let res = '';
+            h && (res += `${h}:`);
+            res += m < 10 ? `0${m}:` : `${m}:`;
+            res += s < 10 ? `0${s}` : `${s}`;
+            return res;
+        }
+    },
     created() {
         try {
-            const playing = JSON.parse(localStorage.getItem('playing'));
             const playlist = JSON.parse(localStorage.getItem('playlist'));
-            this.restorePlaylist({ playing, playlist });
+            this.restorePlaylist({ playlist });
         } catch (e) { }
         window.onbeforeunload = () => {
             this.pause();
-            localStorage.setItem('playing', JSON.stringify(this.playing));
             localStorage.setItem('playlist', JSON.stringify(this.playlist));
         };
     },
     mounted() {
-        const _audioEl = document.getElementsByTagName('audio')[0];
-        const _slider = document.querySelector('.progress .silder');
+        const _audioEl = document.getElementById('playerbar-audio');
+        const _slider = document.getElementById('playerbar-progress');
         let _playingIntervalId;
         this.audioEl = _audioEl;
 
@@ -136,13 +142,13 @@ export default {
         const _unsetInterval = () => _playingIntervalId = clearInterval(_playingIntervalId);
 
         _slider.onpointerdown = () => _audioEl.pause();
-        _slider.onpointerup = () => this.playing.playing && _audioEl.play();
+        _slider.onpointerup = () => !this.playing.paused && _audioEl.play();
 
         _audioEl.ondurationchange = () => {
             _unsetInterval();
             this.timeTotal = _audioEl.duration;
             this.timeCurrent = _audioEl.currentTime = 0;
-            if (this.playing.playing) _audioEl.play();
+            if (!this.playing.paused) _audioEl.play();
         };
 
         _audioEl.onseeking = _updateTime;
@@ -162,7 +168,10 @@ export default {
 
         _audioEl.onpause = () => _updateTime() && _unsetInterval();
 
-        _audioEl.onended = () => this.nextTrack();
+        _audioEl.onended = () => {
+            this.submitListened();
+            this.playNextTrack();
+        };
     },
     components: {
         CurrentList
@@ -174,6 +183,7 @@ export default {
 .player-bar-wrapper {
     font-size: 0;
     height: 64px;
+    position: relative;
     .cell {
         min-width: 64px;
         vertical-align: top;
@@ -181,7 +191,6 @@ export default {
         display: inline-block;
     }
     .info {
-        position: relative;
         font-size: 14px;
         padding: 10px 14px;
         width: calc(~"100% - 244px");
@@ -192,19 +201,23 @@ export default {
         .quick-actions {
             position: absolute;
             top: -5px;
-            right: 0;
+            right: 180px;
             .favorite {
                 color: red;
             }
         }
         .progress {
             margin-top: 5px;
-            display: flex;
-            .silder {
-                flex: 1;
+            position: relative;
+            .slider {
+                width: calc(~"100% - 100px");
             }
             .text {
-                margin-left: 10px;
+                position: absolute;
+                right: 0;
+                top: 0;
+                width: 100px;
+                text-align: right;
             }
         }
     }

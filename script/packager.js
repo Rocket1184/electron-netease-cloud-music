@@ -7,8 +7,8 @@ let argv = process.argv.slice(2);
 if (!argv.length) argv = 'all';
 
 if (argv[0] === 'clean') {
-    const distPath = path.resolve(projectRoot, 'dist');
-    const cnt = require('fs').readdirSync(distPath).filter(f => f[0] !== '.').length;;
+    const distPath = path.join(projectRoot, 'dist');
+    const cnt = require('fs').readdirSync(distPath).filter(f => f[0] !== '.').length;
     if (cnt) {
         require('child_process').execSync(`rm -r ${distPath}/*`);
         console.log('Clean build dist succeed.\n');
@@ -20,9 +20,16 @@ if (argv[0] === 'clean') {
 const options = {
     arch: 'x64',
     asar: true,
-    dir: path.resolve(projectRoot, 'app'),
-    out: path.resolve(projectRoot, 'dist'),
-    ignore: [/assets/, /index\.ejs/, /yarn.lock/, /app\/src/],
+    dir: path.join(projectRoot, 'app'),
+    out: path.join(projectRoot, 'dist'),
+    ignore: [
+        /assets/,
+        /index\.ejs/,
+        /app\/src/,
+        /node_modules/,
+        /\.d\.ts$/,
+        /yarn.lock/
+    ],
     overwrite: true,
     platform: argv
 };

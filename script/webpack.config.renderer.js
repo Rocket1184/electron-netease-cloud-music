@@ -1,6 +1,7 @@
 'use strict';
 
 const path = require('path');
+const webpack = require('webpack');
 const packageJson = require('../app/package.json');
 const ExtractTextPlugin = require('extract-text-webpack-plugin');
 const HtmlWebpackPlugin = require('html-webpack-plugin');
@@ -9,10 +10,9 @@ const BabiliPlugin = require('babili-webpack-plugin');
 const projectRoot = path.resolve('.');
 
 let cfg = {
-    context: path.join(projectRoot, 'app'),
+    context: path.join(projectRoot, 'app/src'),
     target: 'electron-renderer',
-    devtool: '#eval-source-map',
-    externals: Object.keys(packageJson.dependencies),
+    devtool: 'source-map',
     entry: {
         renderer: [
             path.join(projectRoot, 'app/src/renderer/main.js')
@@ -47,7 +47,14 @@ let cfg = {
             },
             {
                 test: /\.vue$/,
-                use: 'vue-loader'
+                loader: 'vue-loader',
+                options: {
+                    loaders: {
+                        css: ExtractTextPlugin.extract({
+                            use: 'css-loader'
+                        })
+                    }
+                }
             },
             {
                 test: /\.(png|jpe?g|gif|svg)(\?.*)?$/,
@@ -72,27 +79,44 @@ let cfg = {
         ]
     },
     plugins: [
-        new ExtractTextPlugin('styles.css'),
-        new HtmlWebpackPlugin({
-            filename: 'index.html',
-            template: './index.ejs',
-            appModules: process.env.NODE_ENV !== 'production'
-                ? path.resolve(projectRoot, 'app/node_modules')
-                : false
-        })
+        new ExtractTextPlugin('styles.css')
     ],
     resolve: {
-        extensions: ['.js', '.vue', '.json', '.css', '.node'],
-        modules: [
-            path.join(projectRoot, 'node_modules'),
-            path.join(projectRoot, 'app/node_modules')
-        ]
+        extensions: ['.js', '.vue', '.json', '.css', '.node']
     }
 };
 
+if (process.env.NODE_ENV !== 'production') {
+    cfg.externals = Object.keys(packageJson.dependencies);
+    cfg.resolve.modules = [
+        path.join(projectRoot, 'node_modules'),
+        path.join(projectRoot, 'app/node_modules')
+    ];
+    cfg.plugins.push(
+        new HtmlWebpackPlugin({
+            filename: 'index.html',
+            template: path.join(projectRoot, 'app/index.ejs'),
+            appModules: path.join(projectRoot, 'app/node_modules')
+        }),
+        new webpack.DefinePlugin({
+            PRODUCTION: 'false'
+        })
+    );
+}
+
 if (process.env.NODE_ENV === 'production') {
     cfg.plugins.push(
-        new BabiliPlugin()
+        new BabiliPlugin(),
+        new HtmlWebpackPlugin({
+            filename: 'index.html',
+            template: path.join(projectRoot, 'app/index.ejs')
+        }),
+        new webpack.DefinePlugin({
+            PRODUCTION: 'true',
+            'process.env': {
+                NODE_ENV: '"production"'
+            }
+        })
     );
 }
 

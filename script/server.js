@@ -5,7 +5,8 @@ const WebpackDevServer = require('webpack-dev-server');
 const projectCfg = require('./config');
 const projectRoot = path.resolve('.');
 
-require('child_process').exec(`electron ${projectRoot}/app/src/main/index.dev.js`);
+const mainProcess = require('child_process').exec(`electron ${projectRoot}/app/src/main/index.dev.js`);
+mainProcess.stdout.on('data', console.log);
 
 let compileCfg = require('./webpack.config.renderer');
 compileCfg.entry.renderer.unshift(
@@ -21,7 +22,7 @@ const serverCfg = {
     hot: true,
     stats: 'minimal',
     overlay: true,
-    contentBase: path.resolve(projectRoot, 'app/dist')
+    contentBase: path.join(projectRoot, 'app/dist')
 };
 
 const devServer = new WebpackDevServer(compiler, serverCfg);

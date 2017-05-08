@@ -2,25 +2,37 @@ import * as types from './mutation-types';
 import { LOOP_TYPES } from './modules/playlist';
 import ApiRenderer from '../util/apirenderer';
 
-async function playThisTrack(commit, list, index) {
+export const setUserInfo = async ({ state, commit }, payload) => {
+    const { info, cookie } = payload;
+    commit({
+        type: types.UPDATE_USER_COOKIES,
+        cookie
+    });
+    commit({
+        type: types.SET_USER_INFO,
+        info
+    });
+    commit(types.SET_LOGIN_VALID);
+};
+
+async function playThisTrack(commit, list, index, quality) {
     const [oUrl, lyrics] = await Promise.all([
-        ApiRenderer.getMusicUrl(list[index].id),
+        ApiRenderer.getMusicUrl(list[index].id, quality),
         ApiRenderer.getMusicLyric(list[index].id)
     ]);
-    console.log(oUrl, lyrics);
-    commit({
-        ...list[index],
-        ...oUrl.data[0],
-        lyrics,
-        type: types.SET_PLAYING_MUSIC,
-    });
-    commit({
-        type: types.RESUME_PLAYING_MUSIC
-    });
+    // those invoke can't be reversed!
+    // from below
     commit({
         type: types.SET_CURRENT_INDEX,
         index
     });
+    commit({
+        type: types.UPDATE_PLAYING_MUSIC,
+        urls: { [quality]: oUrl.data[0].url },
+        lyrics
+    });
+    // to above
+    commit(types.RESUME_PLAYING_MUSIC);
 }
 
 export const refreshCurrentTrack = async ({ state, commit }) => {
@@ -31,46 +43,50 @@ export const refreshCurrentTrack = async ({ state, commit }) => {
     });
 };
 
-export const nextTrack = ({ commit, state }) => {
-    const { currentIndex, list } = state.playlist;
+export const playNextTrack = ({ commit, state }) => {
+    const { currentIndex, list, quality } = state.playlist;
     let nextIndex = (currentIndex + 1) % list.length;
-    playThisTrack(commit, state.playlist.list, nextIndex);
+    playThisTrack(commit, list, nextIndex, quality);
 };
 
-export const previousTrack = ({ commit, state }) => {
-    const { currentIndex, list } = state.playlist;
+export const playPreviousTrack = ({ commit, state }) => {
+    const { currentIndex, list, quality } = state.playlist;
     let nextIndex = (currentIndex + list.length - 1) % list.length;
-    playThisTrack(commit, state.playlist.list, nextIndex);
+    playThisTrack(commit, list, nextIndex, quality);
 };
 
 export const playPlaylist = async ({ commit, state }, payload) => {
     if (payload) {
-        await commit({
+        commit({
             type: types.SET_PLAY_LIST,
             list: payload.list
         });
     }
-    const { list, loopMode } = state.playlist;
+    const { list, loopMode, quality } = state.playlist;
     let firstIndex = loopMode === LOOP_TYPES.RANDOM
         ? parseInt(Math.random() * 100000) % list.length
         : 0;
-    playThisTrack(commit, state.playlist.list, firstIndex);
+    playThisTrack(commit, list, firstIndex, quality);
 };
 
 export const playTrackIndex = ({ commit, state }, payload) => {
-    playThisTrack(commit, state.playlist.list, payload.index);
+    const { list, quality } = state.playlist;
+    playThisTrack(commit, list, payload.index, quality);
 };
 
 export const restorePlaylist = async ({ commit, state }, payload) => {
-    const { playing, playlist } = payload;
+    const { playlist } = payload;
     commit({
         type: types.RESTORE_PLAYLIST,
         ...playlist
     });
-    const oUrl = await ApiRenderer.getMusicUrl(playing.id);
-    commit({
-        ...playing,
-        ...oUrl.data[0],
-        type: types.SET_PLAYING_MUSIC,
-    });
+    const oldUrl = playlist.list[playlist.currentIndex].urls[playlist.quality];
+    const status = await ApiRenderer.checkUrlStatus(oldUrl);
+    if (status !== 200) {
+        const oUrl = await ApiRenderer.getMusicUrl(playlist.list[playlist.currentIndex].id);
+        commit({
+            type: types.UPDATE_PLAYING_MUSIC,
+            urls: { [playlist.quality]: oUrl.data[0].url }
+        });
+    }
 };

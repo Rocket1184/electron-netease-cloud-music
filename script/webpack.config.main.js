@@ -1,6 +1,7 @@
 'use strict';
 
 const path = require('path');
+const webpack = require('webpack');
 const packageJson = require('../app/package.json');
 const BabiliPlugin = require('babili-webpack-plugin');
 
@@ -9,6 +10,7 @@ const projectRoot = path.resolve('.');
 let cfg = {
     context: path.join(projectRoot, 'app/src'),
     target: 'electron',
+    devtool: 'source-map',
     externals: Object.keys(packageJson.dependencies),
     entry: {
         main: path.join(projectRoot, 'app/src/main/index.js')
@@ -40,8 +42,16 @@ let cfg = {
 };
 
 if (process.env.NODE_ENV === 'production') {
+    delete cfg.externals;
+    delete cfg.resolve.modules;
     cfg.plugins.push(
-        new BabiliPlugin()
+        new BabiliPlugin(),
+        new webpack.DefinePlugin({
+            PRODUCTION: 'true',
+            'process.env': {
+                NODE_ENV: '"production"'
+            }
+        })
     );
 }
 

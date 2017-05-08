@@ -2,7 +2,7 @@
     <div class="song-detail">
         <div class="bkg"
              :style="styleAlbumImg"></div>
-        <div :class="diskClass">
+        <div :class="['disk', { play: !playing.paused }]">
             <div class="container">
                 <div class="img"
                      :style="styleAlbumImg">
@@ -13,31 +13,39 @@
             </div>
         </div>
         <div class="info">
-            <p class="name">{{playing.name}}</p>
+            <p class="name">{{playing.track.name}}</p>
             <p>
-                歌手：<span class="artists">{{playing.artist}}</span> 专辑：
-                <span class="album">{{playing.album.name}}</span>
+                歌手：
+                <span class="artists">{{playing.track.artistName}}</span> 专辑：
+                <span class="album">{{playing.track.album.name}}</span>
             </p>
             <div class="lyric">
-                <template v-if="playing.lyrics.mlrc">
-                    <template v-for="line in playing.lyrics.mlrc.lyrics">
-                        <p class="line">
-                            <span>{{line.content}}</span>
-                            <br>
-                            <span>{{line.trans}}</span>
-                        </p>
+                <div class="scroller"
+                     :style="lyricScrollerStyle">
+                    <template v-if="playing.track.lyrics && playing.track.lyrics.mlrc">
+                        <template v-for="(line, index) in playing.track.lyrics.mlrc.lyrics">
+                            <p class="line"
+                               :class="{active: index == currentLyricIndex}"
+                               :data-time="line.timestamp">
+                                <span>{{line.content}}</span>
+                                <br>
+                                <span>{{line.trans}}</span>
+                            </p>
+                        </template>
                     </template>
-                </template>
-                <template v-else-if="playing.lyrics.lrc">
-                    <template v-for="line in playing.lyrics.lrc.lyrics">
-                        <p class="line">
-                            <span>{{line.content}}</span>
-                        </p>
+                    <template v-else-if="playing.track.lyrics && playing.track.lyrics.lrc">
+                        <template v-for="(line, index) in playing.track.lyrics.lrc.lyrics">
+                            <p class="line"
+                               :class="{active: index == currentLyricIndex}"
+                               :data-time="line.timestamp">
+                                <span>{{line.content}}</span>
+                            </p>
+                        </template>
                     </template>
-                </template>
-                <template v-else>
-                    <p>暂无歌词</p>
-                </template>
+                    <template v-else>
+                        <p>暂无歌词</p>
+                    </template>
+                </div>
             </div>
         </div>
     </div>
@@ -49,27 +57,91 @@ import { mapGetters } from 'vuex';
 export default {
     data() {
         return {
-            id: null
+            isActive: false,
+            _audioEl: {},
+            lyricElemMap: [],
+            lyricTimeMap: [],
+            currentLyricIndex: -1
         };
     },
     computed: {
-        ...mapGetters({
-            playing: 'playingMusic'
-        }),
+        ...mapGetters([
+            'playing'
+        ]),
         styleBlurImg() {
             // maybe useful later...
-            return `background-image:url(http://music.163.com/api/img/blur/${this.playing.album.pic});`;
+            return `background-image:url(http://music.163.com/api/img/blur/${this.playing.track.album.pic});`;
         },
         styleAlbumImg() {
             const len = window.devicePixelRatio * 220;
-            return `background-image:url(${this.playing.picUrl}?param=${len}y${len});`;
+            return `background-image:url(${this.playing.track.album.picUrl}?param=${len}y${len});`;
         },
-        diskClass() {
-            return [
-                'disk',
-                this.playing.playing ? 'play' : ''
-            ];
+        lyricScrollerStyle() {
+            if (!this.lyricElemMap.length) return '';
+            if (this.currentLyricIndex === -1) return 'transform: translateY(200px);';
+            const currentLyricElem = this.lyricElemMap[this.currentLyricIndex];
+            const offset = 200 - currentLyricElem.offsetTop - currentLyricElem.clientHeight;
+            return `transform: translateY(${offset}px);`;
         }
+    },
+    methods: {
+        createLyricElemMap() {
+            if (this.playing.track.lyrics && this.playing.track.lyrics.lrc) {
+                this.lyricElemMap = Array.from(document.getElementsByClassName('line'));
+            }
+        },
+        createLyricTimeMap() {
+            if (this.playing.track.lyrics && this.playing.track.lyrics.lrc) {
+                this.lyricTimeMap = this.playing.track.lyrics.lrc.lyrics.map(i => +i.timestamp);
+            }
+        }
+    },
+    watch: {
+        'playing.track.id': function () {
+            this.currentLyricIndex = -1;
+            this.createLyricTimeMap();
+            // query lyric elements after they are created
+            this.$nextTick(() => this.createLyricElemMap());
+        }
+    },
+    created() {
+        this.createLyricTimeMap();
+        this._audioEl = document.getElementById('playerbar-audio');
+        this._audioEl.ontimeupdate = ev => {
+            // do nothing if element map is empty or compo not acitve
+            // it's empty in case:
+            // 1. no lyric for this track
+            // 2. the component is mounted but not active yet e.g. it's in <keep-alive/> background
+            if (!this.isActive || !this.lyricElemMap.length) return;
+            // do not loop from 0 every time
+            // loop form curren index. if current index equals -1, loop from 0
+            let loopStart = this.currentLyricIndex === -1 ? 0 : this.currentLyricIndex;
+            // the process was darged backword, loop from 0
+            if (ev.target.currentTime < +this.lyricElemMap[loopStart].getAttribute('data-time')) {
+                loopStart = 0;
+            }
+            // loop and find the smallest whose time larger than currentTime
+            for (let i = loopStart; i < this.lyricElemMap.length; i++) {
+                if (ev.target.currentTime < +this.lyricElemMap[i].getAttribute('data-time')) {
+                    this.currentLyricIndex = i - 1;
+                    return;
+                }
+            }
+            // not found any, point to the last element
+            this.currentLyricIndex = this.lyricElemMap.length - 1;
+        };
+    },
+    mounted() {
+        this.createLyricElemMap();
+    },
+    activated() {
+        this.isActive = true;
+        if (!this.lyricElemMap.length) {
+            this.createLyricElemMap();
+        }
+    },
+    deactivated() {
+        this.isActive = false;
     }
 };
 </script>
@@ -77,8 +149,16 @@ export default {
 <style lang="less">
 .shadow-text {
     color: white;
-    text-shadow: 1px 1px 2px rgba(0, 0, 0, 0.8),
-    0px 0px 2px rgba(0, 0, 0, 0.5);
+    text-shadow: 1px 1px 3px rgba(0, 0, 0, 1);
+}
+
+.ellipsis-text(@width: 200px) {
+    display: inline-block;
+    max-width: @width;
+    overflow: hidden;
+    text-overflow: ellipsis;
+    white-space: nowrap;
+    vertical-align: bottom;
 }
 
 .song-detail {
@@ -96,7 +176,8 @@ export default {
         background-size: 80% 450px;
         background-repeat: no-repeat;
         background-position: 50% 0%;
-        filter: blur(60px) opacity(0.7);
+        filter: blur(60px);
+        opacity: 0.8;
         transform: translate3d(0, 0, 0); // magic!!! this enables GPU acceleration!!!!
     }
     .disk {
@@ -162,28 +243,22 @@ export default {
             font-size: 32px;
             margin: 8px 0;
         }
-        .ellipsis-text(@width: 200px) {
-            display: inline-block;
-            max-width: @width;
-            overflow: hidden;
-            text-overflow: ellipsis;
-            white-space: nowrap;
-            vertical-align: bottom;
-        }
-        .artists {
-            .ellipsis-text();
-        }
+        .artists,
         .album {
-            .ellipsis-text();
+            .ellipsis-text;
         }
         .lyric {
-            height: 400px;
-            overflow: scroll;
-            .line {
-                margin: 12px 0;
-            }
-            .active {
-                .shadow-text;
+            height: 350px;
+            overflow: hidden;
+            margin-top: 20px;
+            .scroller {
+                transition: transform 0.7s;
+                .line {
+                    margin: 12px 0;
+                }
+                .active {
+                    .shadow-text;
+                }
             }
         }
     }

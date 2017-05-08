@@ -11,6 +11,8 @@
 </template>
 
 <script>
+import { mapGetters } from 'vuex';
+
 import store from './vuex/store';
 import AppNav from './components/appnav';
 import PlayerBar from './components/playerbar';
@@ -23,35 +25,58 @@ export default {
         AppNav,
         PlayerBar
     },
+    computed: {
+        ...mapGetters([
+            'loginValid'
+        ])
+    },
     methods: {
         async checkLogin() {
-            const sugg = await ApiRenderer.getDailySuggestions();
-            if (sugg.code === 200) {
-                this.$store.commit({
-                    type: types.SET_LOGIN_VALID
-                });
-            } else return;
-        },
-        async getPlaylist(uid) {
-            const info = await ApiRenderer.getUserPlaylist(uid);
-            this.$store.commit({
-                type: types.UPDATE_USER_INFO,
-                profile: info.playlist[0].creator
-            });
+            const resp = await ApiRenderer.refreshLogin();
+            return resp.code === 200;
         }
     },
-    created() {
+    watch: {
+        loginValid(val) {
+            if (val === true) {
+                // it needs concurrency here
+                // but how to do it with async ??? maybe cannot
+                const { id } = this.$store.state.user.info;
+                ApiRenderer.getCookie()
+                    .then(cookie => localStorage.setItem('cookie', JSON.stringify(cookie)));
+                ApiRenderer.getUserPlaylist(id)
+                    .then(resp => {
+                        this.$store.commit(types.UPDATE_USER_INFO, {
+                            info: resp.playlist[0].creator
+                        });
+                        this.$store.commit(types.SET_USER_PLAYLIST, {
+                            playlist: resp.playlist
+                        });
+                    });
+            }
+        }
+    },
+    async beforeCreate() {
+        const st = await ApiRenderer.getCurrentSettings();
+        this.$store.commit(types.UPDATE_SETTINGS, st);
+    },
+    async created() {
         const oldUid = localStorage.getItem('uid');
+        const oldUser = localStorage.getItem('user');
         const oldCookie = localStorage.getItem('cookie');
 
-        if (oldUid && oldCookie) {
-            try {
-                const uid = +oldUid;
-                const cookieObj = JSON.parse(oldCookie);
-                ApiRenderer.updateCookie(cookieObj);
-                this.getPlaylist(uid);
-                this.checkLogin();
-            } catch (err) { console.error(err); }
+        if (oldUid && oldUser && oldCookie) {
+            const cookieObj = JSON.parse(oldCookie);
+            ApiRenderer.updateCookie(cookieObj);
+            const userObj = JSON.parse(oldUser);
+            this.$store.commit(types.UPDATE_USER_INFO, {
+                info: userObj
+            });
+            if (await this.checkLogin()) {
+                this.$store.commit(types.SET_LOGIN_VALID);
+            } else {
+                ApiRenderer.updateCookie({});
+            }
         }
     }
 };

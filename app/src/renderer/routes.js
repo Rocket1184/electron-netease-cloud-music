@@ -7,6 +7,16 @@ export default [
     {
         path: '/player',
         name: 'player',
-        component: resolve => require(['./page/player'], resolve)
+        component: require('./page/player')
+    },
+    {
+        path: '/myplaylist',
+        name: 'myplaylist',
+        component: require('./page/myplaylist')
+    },
+    {
+        path: '/settings',
+        name: 'settings',
+        component: require('./page/settings')
     }
 ];

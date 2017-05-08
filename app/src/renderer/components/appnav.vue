@@ -2,7 +2,7 @@
     <div class="appbar"
          :class="appbarDynamicClassName">
         <div id="appbar-window-control"
-             v-if="notDarwin">
+             v-if="shouldWindowCtlShow">
             <mu-icon-button @click="handleClose"
                             icon="close" />
             <mu-icon-button @click="handleMaximize"
@@ -31,26 +31,41 @@
                                    :src="userAvatarUrl"
                                    :iconSize="40"
                                    :size="80" />
-                        <p class="user-name"
-                           @click="handleNameClick">{{userName}}</p>
+                        <span class="user-name"
+                              @click="handleNameClick">{{userName}}</span>
+                        <mu-flat-button v-if="loginValid"
+                                        label="签到"
+                                        class="button-checkin"
+                                        color="white"
+                                        @click="handleCheckIn" />
                     </div>
                 </div>
+                <router-link to='/'>
+                    <mu-list-item title="个性推荐">
+                        <mu-icon slot="left"
+                                 value="polymer" />
+                    </mu-list-item>
+                </router-link>
+                <router-link to="/myplaylist">
+                    <mu-list-item title="我的歌单">
+                        <mu-icon slot="left"
+                                 value="library_music" />
+                    </mu-list-item>
+                </router-link>
                 <mu-list-item title="听歌排行">
                     <mu-icon slot="left"
                              value="equalizer" />
-                </mu-list-item>
-                <mu-list-item title="我的歌单">
-                    <mu-icon slot="left"
-                             value="library_music" />
                 </mu-list-item>
                 <mu-list-item title="本地音乐">
                     <mu-icon slot="left"
                              value="desktop_mac" />
                 </mu-list-item>
-                <mu-list-item title="应用设置">
-                    <mu-icon slot="left"
-                             value="settings" />
-                </mu-list-item>
+                <router-link to="/settings">
+                    <mu-list-item title="应用设置">
+                        <mu-icon slot="left"
+                                 value="settings" />
+                    </mu-list-item>
+                </router-link>
             </mu-list>
         </mu-drawer>
         <mu-dialog dialogClass="nav-login-dlg"
@@ -78,22 +93,25 @@
                               primary
                               @click="handleLogin" />
         </mu-dialog>
+        <mu-toast v-if="toast"
+                  :message="toastMsg" />
     </div>
 </template>
 
 <script>
-import { mapGetters } from 'vuex';
-import { ipcRenderer } from 'electron';
+import { mapActions, mapGetters } from 'vuex';
+import { remote } from 'electron';
 
 import ApiRenderer from '../util/apirenderer';
-import * as types from '../vuex/mutation-types';
 
 export default {
     data() {
         return {
-            maximized: false,
+            toast: false,
+            toastMsg: '',
+            currentWindow: remote.getCurrentWindow(),
             _inputAccountRef: null,
-            notDarwin: process.platform !== 'darwin',
+            isDarwin: process.platform === 'darwin',
             drawerOpen: false,
             dlgShow: false,
             inputUsr: '',
@@ -103,11 +121,21 @@ export default {
         };
     },
     computed: {
+        currentSettings() {
+            return this.$store.state.settings;
+        },
         appbarDynamicClassName() {
             return [
-                this.notDarwin && 'appbar-with-ctl',
+                this.isDarwin && 'appbar-darwin',
+                this.shouldWindowCtlShow && 'appbar-with-ctl',
                 this.maximized && 'appbar-maximized'
             ];
+        },
+        shouldWindowCtlShow() {
+            return !this.isDarwin && !this.currentSettings.windowBorder;
+        },
+        maximized() {
+            return this.currentWindow.isMaximized();
         },
         backgroundUrlStyle() {
             return this.userBkgUrl && `background-image: url(${this.userBkgUrl})`;
@@ -120,14 +148,17 @@ export default {
         ])
     },
     methods: {
+        ...mapActions([
+            'setUserInfo'
+        ]),
         handleClose() {
-            ipcRenderer.send('closeMainWin');
+            this.currentWindow.close();
         },
         handleMinimize() {
-            ipcRenderer.send('minimizeMainWin');
+            this.currentWindow.minimize();
         },
         handleMaximize() {
-            this.maximized = ipcRenderer.sendSync('toggleMaximizeMainWin');
+            this.maximized ? this.currentWindow.unmaximize() : this.currentWindow.maximize();
         },
         toggleDrawer() {
             this.drawerOpen = !this.drawerOpen;
@@ -141,6 +172,15 @@ export default {
         toggleDlg() {
             this.dlgShow = !this.dlgShow;
         },
+        showToast(msg, timeOut = 1500) {
+            if (this.toast) {
+                this.toast = false;
+                clearTimeout(this.toastTimer);
+            }
+            this.toastMsg = String(msg);
+            this.toastTimer = setTimeout(() => this.toast = false, timeOut);
+            this.$nextTick(() => this.toast = true);
+        },
         async handleLogin() {
             this.errMsgUsr = '';
             this.errMsgPwd = '';
@@ -149,21 +189,12 @@ export default {
             let resp = await ApiRenderer.login(this.inputUsr, this.inputPwd);
             switch (resp.code) {
                 case 200:
-                    const userCookie = await ApiRenderer.getCookie();
-                    this.$store.commit({
-                        type: types.UPDATE_USER_INFO,
-                        ...resp
-                    });
-                    this.$store.commit({
-                        type: types.SET_LOGIN_VALID
-                    });
-                    this.$store.commit({
-                        type: types.UPDATE_USER_COOKIES,
-                        cookie: userCookie
-                    });
-                    localStorage.setItem('cookie', JSON.stringify(userCookie));
-                    localStorage.setItem('uid', resp.account.id);
+                    const cookie = await ApiRenderer.getCookie();
+                    this.setUserInfo({ cookie, info: resp });
                     this.toggleDlg();
+                    localStorage.setItem('cookie', JSON.stringify(cookie));
+                    localStorage.setItem('user', JSON.stringify(resp));
+                    localStorage.setItem('uid', resp.account.id);
                     break;
                 case 501:
                     this.errMsgUsr = '用户不存在';
@@ -171,15 +202,28 @@ export default {
                 case 502:
                     this.errMsgPwd = '密码错误';
             }
+        },
+        async handleCheckIn() {
+            const results = await Promise.all([
+                ApiRenderer.postDailyTask(0),
+                ApiRenderer.postDailyTask(1)
+            ]);
+            let points = 0;
+            results.forEach(e => e.code === 200 ? points += e.point : null);
+            if (points) {
+                this.showToast(`签到成功，获得 ${points} 点积分`);
+            } else {
+                this.showToast('是不是已经签到过了呢 ：）');
+            }
         }
+    },
+    created() {
+        this.$router.afterEach(() => this.drawerOpen = false);
     },
     mounted() {
         this._inputAccountRef = document.getElementsByClassName('app-nav-input-account')[0];
         const pwd = document.getElementById('app-nav-input-password');
         pwd.addEventListener('keydown', e => e.key === 'Enter' && this.handleLogin());
-        window.onresize = () => {
-            this.maximized = ipcRenderer.sendSync('isMainWinMaximized');
-        };
     }
 };
 </script>
@@ -190,7 +234,6 @@ export default {
     user-select: none;
     -webkit-app-region: drag;
     .mu-appbar {
-        padding-top: 12px;
         .left {
             cursor: pointer;
             -webkit-app-region: no-drag;
@@ -225,13 +268,17 @@ export default {
     }
 }
 
-.appbar-maximized {
+.appbar-no-ctl {
     .mu-appbar {
         padding-top: 0;
     }
     #appbar-window-control {
-        visibility: hidden;
+        display: none;
     }
+}
+
+.appbar-darwin {
+    padding-top: 12px;
 }
 
 .appbar-search-field {
@@ -274,12 +321,25 @@ export default {
             padding: 2rem;
             bottom: 0;
             left: 0;
-        }
-        .user-name {
-            margin-top: 1rem;
-            color: white;
-            font-size: 2rem;
-            cursor: pointer;
+            .mu-avatar {
+                display: block;
+            }
+            .user-name {
+                margin-top: 1rem;
+                color: white;
+                font-size: 2rem;
+                cursor: pointer;
+                display: inline-block;
+                line-height: 36px;
+                width: 160px;
+                white-space: nowrap;
+                overflow: hidden;
+                text-overflow: ellipsis;
+                vertical-align: bottom;
+            }
+            .button-checkin {
+                display: inline-block;
+            }
         }
     }
 }

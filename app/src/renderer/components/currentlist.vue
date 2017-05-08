@@ -1,12 +1,12 @@
 <template>
     <mu-list>
-        <template v-for="(song, index) in playlist.list">
-            <mu-list-item :title="song.name"
-                          :afterText="song.artists.map(i => i.name).join(' / ')"
+        <template v-for="(track, index) in playlist.list">
+            <mu-list-item :title="track.name"
+                          :afterText="track.artistName"
                           @click="handleListClick(index)">
                 <mu-icon v-if=""
                          slot="left"
-                         :value="song.id==playingMusic.id ? 'volume_up' : ''" />
+                         :value="track.id==playing.id ? 'volume_up' : ''" />
             </mu-list-item>
         </template>
     </mu-list>
@@ -22,7 +22,7 @@ export default {
     computed: {
         ...mapGetters([
             'playlist',
-            'playingMusic'
+            'playing'
         ])
     },
     methods: {
