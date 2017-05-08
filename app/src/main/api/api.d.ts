@@ -2,7 +2,7 @@ import * as Models from '../../renderer/util/models';
 
 export interface BaseApiResopnse {
     code: Number;
-};
+}
 
 export interface LoginResponse extends BaseApiResopnse {
     loginType: Number
@@ -155,9 +155,9 @@ export interface DailyTaskResponse {
 }
 
 export default class API {
-    updateCookie(cookie: String): String;
+    updateCookie(cookie: String): String | any;
 
-    getCookie(key?: String): String;
+    getCookie(key?: String): String | any;
 
     login(acc: String | Number, pwd: String): Promise<LoginResponse>;
 
@@ -183,15 +183,15 @@ export default class API {
 
     checkUrlStatus(url: String): Promise<Number>;
 
-    getDirSize(dirPath: String): Number;
+    getDirSize(dirPath: String): Number | any;
 
-    getDataSize(name: 'app' | 'cache'): Number;
+    getDataSize(name: 'app' | 'cache'): Number | any;
 
     clearAppData(name: 'app' | 'cache'): void;
 
-    getVersionName(): String;
+    getVersionName(): String | any;
 
-    getCurrentSettings(): ApplicationSettings;
+    getCurrentSettings(): ApplicationSettings | any;
 
     writeSettings(target: ApplicationSettings): void;
 

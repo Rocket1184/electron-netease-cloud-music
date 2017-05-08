@@ -1,4 +1,4 @@
-class UserModel {
+declare class UserModel {
     id: Number;
     nickname: String;
     avatarUrl: String;
@@ -15,7 +15,7 @@ class UserModel {
     bindings: Array<any>;
 }
 
-class RawArtistModel {
+declare class RawArtistModel {
     id: Number;
     name: String;
     img1v1Id: Number;
@@ -25,7 +25,7 @@ class RawArtistModel {
     picUrl: String;
 }
 
-class RawLyricsModel {
+declare class RawLyricsModel {
     qfy: Boolean;
     sfy: Boolean;
     sgc: Boolean;
@@ -34,13 +34,13 @@ class RawLyricsModel {
     klyric?: { version: Number, lyric: String }
 }
 
-class TrackUrlsModel {
+declare class TrackUrlsModel {
     h?: String;
     m?: String;
     l?: String;
 }
 
-class TrackModel {
+declare class TrackModel {
     id: Number;
     name: String;
     album: {
@@ -55,7 +55,7 @@ class TrackModel {
     commentThreadId: Number;
 }
 
-class PlayListModel {
+declare class PlayListModel {
     id: Number;
     name: String;
     creater: UserModel;
@@ -72,8 +72,8 @@ export class User extends UserModel {
 
 export class Track extends TrackModel {
     constructor(o: any);
-    get picUrl(): String;
-    get artistName(): Number;
+    picUrl: String;
+    artistName: Number;
     setUrl(type: String, url: String): void;
 }
 
