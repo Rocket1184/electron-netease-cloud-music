@@ -11,13 +11,6 @@ export interface LoginResponse extends BaseApiResopnse {
     bidings: Array<any>
 }
 
-declare function login(
-    acc: String | Number,
-    pwd: String
-): Promise<LoginResponse>;
-
-declare function refreshLogin(): Promise<BaseApiResopnse>;
-
 export interface UserPlaylistResponse extends BaseApiResopnse {
     more: Boolean
     playlist: Array<Models.Track>
@@ -57,8 +50,6 @@ export interface DailySuggestionsRespopnse extends BaseApiResopnse {
     recommend: Array<DailySuggestionsMusic>
 }
 
-declare function getDailySuggestions(): Promise<DailySuggestionsRespopnse>;
-
 export interface ListDetailResponse extends BaseApiResopnse {
     playlist: Models.PlayListModel
     privileges: Array<any>
@@ -83,17 +74,44 @@ export interface MusicUrlResponse extends BaseApiResopnse {
     }>
 }
 
-declare function getMusicUrl(
-    idOrIds: Number | Array<Number>,
-    quality?: 'h' | 'm' | 'l'
-): Promise<MusicUrlResponse>;
+export interface UserInfoInComment {
+    authStatus: Number
+    avatarUrl: String
+    expertTags: Array<String>
+    locationInfo: any
+    nickname: String
+    remarkName: String
+    userId: Number
+    userType: Number
+    vipType: Number
+}
 
-// TODO: Response type for getMusicComments
-declare function getMusicComments(
-    rid: Number,
-    limit?: Number,
-    offset?: Number
-): Promise<any>;
+export interface BeRepliedComment {
+    content: String
+    status: Number
+    user: UserInfoInComment
+}
+
+export interface MusicCommentItem {
+    beReplied: Array<BeRepliedComment>
+    commentId: Number
+    content: String
+    liked: Boolean
+    likedCount: Number
+    time: Number
+    user: UserInfoInComment
+}
+
+export interface MusicCommentsResponse extends BaseApiResopnse {
+    comments: Array<MusicCommentItem>
+    hotComments: Array<MusicCommentItem>
+    isMusician: Boolean
+    more: Boolean
+    moreHot: Boolean
+    topComments: Array<MusicCommentItem>
+    total: Number
+    userId: Number
+}
 
 export interface LyricObjectItem {
     // not so clear about that
@@ -124,15 +142,11 @@ export interface MusicLyricResponse {
     transUser: LyricAuthor
 }
 
-declare function getVersionName(): String;
-
 export interface ApplicationSettings {
     bitRate: 'h' | 'm' | 'l'
     windowBorder: Boolean
     autoPlay: Boolean
 }
-
-declare function getCurrentSettings(): ApplicationSettings;
 
 export interface DailyTaskResponse {
     code: 200 | -2 | Number
@@ -141,16 +155,45 @@ export interface DailyTaskResponse {
 }
 
 export default class API {
-    getUserPlaylist(uid: Number): Promise<UserPlaylistResponse>
-    getMusicRecord(uid: Number): Promise<MusicRecordResponse>
-    getListDetail(id: Number): Promise<ListDetailResponse>
-    getMusicLyric(id: Number): Promise<MusicLyricResponse>
-    submitWebLog(action: String, json: any): Promise<BaseApiResopnse>
-    submitListened(id: Number, time: Number): Promise<BaseApiResopnse>
-    checkUrlStatus(url: String): Promise<Number>
-    getDirSize(dirPath: String): Number
-    getDataSize(name: 'app' | 'cache'): Number
-    clearAppData(name: 'app' | 'cache'): void
-    writeSettings(target: ApplicationSettings): void
-    postDailyTask(type: 0 | 1): Promise<DailyTaskResponse>
+    updateCookie(cookie: String): String;
+
+    getCookie(key?: String): String;
+
+    login(acc: String | Number, pwd: String): Promise<LoginResponse>;
+
+    refreshLogin(): Promise<BaseApiResopnse>;
+
+    getUserPlaylist(uid: Number): Promise<UserPlaylistResponse>;
+
+    getMusicRecord(uid: Number): Promise<MusicRecordResponse>;
+
+    getDailySuggestions(): Promise<DailySuggestionsRespopnse>;
+
+    getListDetail(id: Number): Promise<ListDetailResponse>;
+
+    getMusicUrl(idOrIds: Number | Array<Number>, quality?: 'h' | 'm' | 'l'): Promise<MusicUrlResponse>;
+
+    getMusicComments(rid: Number, limit?: Number, offset?: Number): Promise<MusicCommentsResponse>;
+
+    getMusicLyric(id: Number): Promise<MusicLyricResponse>;
+
+    submitWebLog(action: String, json: any): Promise<BaseApiResopnse>;
+
+    submitListened(id: Number, time: Number): Promise<BaseApiResopnse>;
+
+    checkUrlStatus(url: String): Promise<Number>;
+
+    getDirSize(dirPath: String): Number;
+
+    getDataSize(name: 'app' | 'cache'): Number;
+
+    clearAppData(name: 'app' | 'cache'): void;
+
+    getVersionName(): String;
+
+    getCurrentSettings(): ApplicationSettings;
+
+    writeSettings(target: ApplicationSettings): void;
+
+    postDailyTask(type: 0 | 1): Promise<DailyTaskResponse>;
 }
