@@ -1382,16 +1382,9 @@ domutils@1.1:
   dependencies:
     domelementtype "1"
 
-domutils@1.5.1:
+domutils@1.5.1, domutils@^1.5.1:
   version "1.5.1"
   resolved "https://registry.yarnpkg.com/domutils/-/domutils-1.5.1.tgz#dcd8488a26f563d61079e48c9f7b7e32373682cf"
-  dependencies:
-    dom-serializer "0"
-    domelementtype "1"
-
-domutils@^1.5.1:
-  version "1.6.0"
-  resolved "https://registry.yarnpkg.com/domutils/-/domutils-1.6.0.tgz#853de07f013287f976b7fe0461740222ea14ecbb"
   dependencies:
     dom-serializer "0"
     domelementtype "1"
@@ -1501,9 +1494,9 @@ electron-to-chromium@^1.2.7:
   version "1.3.9"
   resolved "https://registry.yarnpkg.com/electron-to-chromium/-/electron-to-chromium-1.3.9.tgz#db1cba2a26aebcca2f7f5b8b034554468609157d"
 
-electron@1.6.6:
-  version "1.6.6"
-  resolved "https://registry.yarnpkg.com/electron/-/electron-1.6.6.tgz#17df8cdf73ec2c04cfad7abb413579b8b8dafc28"
+electron@1.7.0:
+  version "1.7.0"
+  resolved "https://registry.yarnpkg.com/electron/-/electron-1.7.0.tgz#307a5a00a521e679c2cd829706bffdb6d34da186"
   dependencies:
     electron-download "^3.0.1"
     extract-zip "^1.0.3"
@@ -1637,9 +1630,9 @@ eslint-loader@^1.7.1:
     object-hash "^1.1.4"
     rimraf "^2.6.1"
 
-eslint-plugin-html@^2.0.1:
-  version "2.0.1"
-  resolved "https://registry.yarnpkg.com/eslint-plugin-html/-/eslint-plugin-html-2.0.1.tgz#3a829510e82522f1e2e44d55d7661a176121fce1"
+eslint-plugin-html@^2.0.3:
+  version "2.0.3"
+  resolved "https://registry.yarnpkg.com/eslint-plugin-html/-/eslint-plugin-html-2.0.3.tgz#7c89883ab0c85fa5d28b666a14a4e906aa90b897"
   dependencies:
     htmlparser2 "^3.8.2"
 
@@ -4732,9 +4725,9 @@ vue-hot-reload-api@^2.0.11, vue-hot-reload-api@^2.1.0:
   version "2.1.0"
   resolved "https://registry.yarnpkg.com/vue-hot-reload-api/-/vue-hot-reload-api-2.1.0.tgz#9ca58a6e0df9078554ce1708688b6578754d86de"
 
-vue-loader@^12.0.3:
-  version "12.0.3"
-  resolved "https://registry.yarnpkg.com/vue-loader/-/vue-loader-12.0.3.tgz#78d9c500f36a2e400ca61a1dbad45dc91897b24c"
+vue-loader@^12.0.4:
+  version "12.0.4"
+  resolved "https://registry.yarnpkg.com/vue-loader/-/vue-loader-12.0.4.tgz#bc9385326e3fd6538606454977baa91eacc6e6fd"
   dependencies:
     consolidate "^0.14.0"
     hash-sum "^1.0.2"
@@ -4757,9 +4750,9 @@ vue-style-loader@^3.0.0, vue-style-loader@^3.0.1:
     hash-sum "^1.0.2"
     loader-utils "^1.0.2"
 
-vue-template-compiler@^2.3.2:
-  version "2.3.2"
-  resolved "https://registry.yarnpkg.com/vue-template-compiler/-/vue-template-compiler-2.3.2.tgz#d48a7f53df5f497033827182ceb4f0d340803017"
+vue-template-compiler@^2.3.3:
+  version "2.3.3"
+  resolved "https://registry.yarnpkg.com/vue-template-compiler/-/vue-template-compiler-2.3.3.tgz#b5bab9ec57309c906b82a78c81a02179dbc2f470"
   dependencies:
     de-indent "^1.0.2"
     he "^1.1.0"
@@ -4827,9 +4820,9 @@ webpack-sources@^0.2.3:
     source-list-map "^1.1.1"
     source-map "~0.5.3"
 
-webpack@^2.5.0:
-  version "2.5.0"
-  resolved "https://registry.yarnpkg.com/webpack/-/webpack-2.5.0.tgz#5a17089f8d0e43442e606d6cf9b2a146c8ed9911"
+webpack@^2.5.1:
+  version "2.5.1"
+  resolved "https://registry.yarnpkg.com/webpack/-/webpack-2.5.1.tgz#61742f0cf8af555b87460a9cd8bba2f1e3ee2fce"
   dependencies:
     acorn "^5.0.0"
     acorn-dynamic-import "^2.0.0"
