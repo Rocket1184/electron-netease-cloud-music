@@ -6,7 +6,7 @@
                           @click="handleListClick(index)">
                 <mu-icon v-if=""
                          slot="left"
-                         :value="track.id==playing.id ? 'volume_up' : ''" />
+                         :value="track.id==playing.track.id ? 'volume_up' : ''" />
             </mu-list-item>
         </template>
     </mu-list>
