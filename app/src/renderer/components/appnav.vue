@@ -204,10 +204,10 @@ export default {
             }
         },
         async handleCheckIn() {
-            const results = await Promise.all([
-                ApiRenderer.postDailyTask(0),
-                ApiRenderer.postDailyTask(1)
-            ]);
+            let results = [
+                await ApiRenderer.postDailyTask(0),
+                await ApiRenderer.postDailyTask(1)
+            ];
             let points = 0;
             results.forEach(e => e.code === 200 ? points += e.point : null);
             if (points) {
