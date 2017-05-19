@@ -12,14 +12,14 @@ async function rejectTimeout(timeOut = 5000) {
 }
 
 methodKeys.map(methodName => {
-    ipcMain.on(methodName, (event, ...args) => {
+    ipcMain.on(methodName, (event, invokeId, ...args) => {
         Promise.race([
             Api[methodName](...args),
             rejectTimeout()
         ]).then(data => {
-            event.sender.send(methodName, data);
+            event.sender.send(`${methodName}${invokeId}`, data);
         }).catch(err => {
-            event.sender.send(methodName, err);
+            event.sender.send(`${methodName}${invokeId}`, err);
         });
     });
 });

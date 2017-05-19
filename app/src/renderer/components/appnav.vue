@@ -87,6 +87,17 @@
                            fullWidth
                            labelFloat/>
             <br/>
+            <div v-if="needCaptcha">
+                <mu-text-field label="验证码"
+                               class="text-field-captcha"
+                               v-model="inputCaptcha"
+                               :errorText="errMsgCaptcha"
+                               labelFloat/>
+                <img :src="`http://music.163.com/captcha?id=${captchaId}`"
+                     class="captcha-img"
+                     alt="Refresh" />
+                <br/>
+            </div>
             <br/>
             <mu-raised-button label="登录"
                               fullWidth
@@ -117,7 +128,11 @@ export default {
             inputUsr: '',
             inputPwd: '',
             errMsgUsr: '',
-            errMsgPwd: ''
+            errMsgPwd: '',
+            needCaptcha: false,
+            captchaId: null,
+            inputCaptcha: '',
+            errMsgCaptcha: ''
         };
     },
     computed: {
@@ -196,18 +211,25 @@ export default {
                     localStorage.setItem('user', JSON.stringify(resp));
                     localStorage.setItem('uid', resp.account.id);
                     break;
+                case 415:
+                    this.errMsgCaptcha = '登录过于频繁，请输入验证码'
+                    this.captchaId = resp.captchaId;
+                    this.needCaptcha = true;
                 case 501:
                     this.errMsgUsr = '用户不存在';
                     break;
                 case 502:
                     this.errMsgPwd = '密码错误';
+                    break;
+                default:
+                    this.errMsgUsr = resp.msg;
             }
         },
         async handleCheckIn() {
-            const results = await Promise.all([
-                ApiRenderer.postDailyTask(0),
-                ApiRenderer.postDailyTask(1)
-            ]);
+            let results = [
+                await ApiRenderer.postDailyTask(0),
+                await ApiRenderer.postDailyTask(1)
+            ];
             let points = 0;
             results.forEach(e => e.code === 200 ? points += e.point : null);
             if (points) {
@@ -346,5 +368,14 @@ export default {
 
 .nav-login-dlg {
     width: 400px;
+    .text-field-captcha {
+        display: inline-block;
+        width: 200px;
+    }
+    .captcha-img {
+        width: 122px;
+        height: 60px;
+        float: right;
+    }
 }
 </style>

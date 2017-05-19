@@ -1,15 +1,17 @@
 <template>
-    <mu-list>
-        <template v-for="(track, index) in playlist.list">
-            <mu-list-item :title="track.name"
+    <div class="current-list">
+        <mu-menu desktop
+                 :width="400">
+            <mu-menu-item v-for="(track, index) in playlist.list"
+                          :title="track.name"
+                          titleClass="menu-title"
                           :afterText="track.artistName"
-                          @click="handleListClick(index)">
-                <mu-icon v-if=""
-                         slot="left"
-                         :value="track.id==playing.id ? 'volume_up' : ''" />
-            </mu-list-item>
-        </template>
-    </mu-list>
+                          afterTextClass="menu-after"
+                          @click="handleListClick(index)"
+                          :leftIcon="track.id==playing.track.id ? 'volume_up' : ''"
+                          :key="track.id" />
+        </mu-menu>
+    </div>
 </template>
 
 <script>
@@ -37,5 +39,24 @@ export default {
 </script>
 
 <style lang="less">
+.current-list {
+    overflow-x: hidden;
+    .mu-menu-destop {
+        padding: 0;
+        .menu-title {
+            width: 350px;
+            overflow: hidden;
+            text-overflow: ellipsis;
+        }
+        .menu-title+div>span {
 
+            display: block;
+            white-space: nowrap;
+            width: 100px;
+            overflow: hidden;
+            text-overflow: ellipsis;
+            color: grey;
+        }
+    }
+}
 </style>
