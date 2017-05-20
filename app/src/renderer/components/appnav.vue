@@ -142,15 +142,11 @@ export default {
         appbarDynamicClassName() {
             return [
                 this.isDarwin && 'appbar-darwin',
-                this.shouldWindowCtlShow && 'appbar-with-ctl',
-                this.maximized && 'appbar-maximized'
+                this.shouldWindowCtlShow && 'appbar-with-ctl'
             ];
         },
         shouldWindowCtlShow() {
             return !this.isDarwin && !this.currentSettings.windowBorder;
-        },
-        maximized() {
-            return this.currentWindow.isMaximized();
         },
         backgroundUrlStyle() {
             return this.userBkgUrl && `background-image: url(${this.userBkgUrl})`;
@@ -173,7 +169,10 @@ export default {
             this.currentWindow.minimize();
         },
         handleMaximize() {
-            this.maximized ? this.currentWindow.unmaximize() : this.currentWindow.maximize();
+            if (this.currentWindow.isMaximized())
+                this.currentWindow.unmaximize();
+            else
+                this.currentWindow.maximize();
         },
         toggleDrawer() {
             this.drawerOpen = !this.drawerOpen;
@@ -212,7 +211,7 @@ export default {
                     localStorage.setItem('uid', resp.account.id);
                     break;
                 case 415:
-                    this.errMsgCaptcha = '登录过于频繁，请输入验证码'
+                    this.errMsgCaptcha = '登录过于频繁，请输入验证码';
                     this.captchaId = resp.captchaId;
                     this.needCaptcha = true;
                 case 501:
