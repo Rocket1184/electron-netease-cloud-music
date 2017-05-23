@@ -25,24 +25,21 @@ function getCookie(key = '') {
 
 async function login(acc, pwd) {
     const password = crypto.createHash('md5').update(pwd).digest('hex');
+    const postBody = {
+        password,
+        rememberLogin: true,
+        // FIXME: do not hardcode this......
+        clientToken: '1_skSxFOj/XAm7bjxjQW5FD4x73jFAbgiM_G37CFfnJVaG1oIU/7exF6ro65ioeuAbf_bRRvlPMnoredCK5p2Upo7Q=='
+    };
     if (/^1\d{10}$/.test(acc)) {
         return await client.post({
             url: `${BaseURL}/weapi/login/cellphone`,
-            data: {
-                phone: acc,
-                password,
-                rememberLogin: true
-            }
+            data: { phone: acc, ...postBody }
         });
-    }
-    else {
+    } else {
         return await client.post({
             url: `${BaseURL}/weapi/login`,
-            data: {
-                username: acc,
-                password,
-                rememberLogin: true
-            }
+            data: { username: acc, ...postBody }
         });
     }
 }
