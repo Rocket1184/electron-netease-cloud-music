@@ -121,7 +121,6 @@ export default {
             toast: false,
             toastMsg: '',
             currentWindow: remote.getCurrentWindow(),
-            _inputAccountRef: null,
             isDarwin: process.platform === 'darwin',
             drawerOpen: false,
             dlgShow: false,
@@ -180,7 +179,12 @@ export default {
         handleNameClick() {
             if (!this.loginValid) {
                 this.dlgShow = true;
-                setTimeout(() => this._inputAccountRef.focus(), 200);
+                this.$nextTick(() => {
+                    const inputAccRef = document.querySelector('.app-nav-input-account');
+                    const inputPwdRef = document.querySelector('#app-nav-input-password');
+                    inputPwdRef.addEventListener('keydown', e => e.key === 'Enter' && this.handleLogin());
+                    setTimeout(() => inputAccRef.focus(), 200);
+                });
             }
         },
         toggleDlg() {
@@ -240,11 +244,6 @@ export default {
     },
     created() {
         this.$router.afterEach(() => this.drawerOpen = false);
-    },
-    mounted() {
-        this._inputAccountRef = document.getElementsByClassName('app-nav-input-account')[0];
-        const pwd = document.getElementById('app-nav-input-password');
-        pwd.addEventListener('keydown', e => e.key === 'Enter' && this.handleLogin());
     }
 };
 </script>
