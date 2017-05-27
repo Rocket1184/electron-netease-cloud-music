@@ -44,13 +44,15 @@ export const refreshCurrentTrack = async ({ state, commit }) => {
 };
 
 export const playNextTrack = ({ commit, state }) => {
-    const { currentIndex, list, quality } = state.playlist;
+    const quality = state.settings.bitRate;
+    const { currentIndex, list } = state.playlist;
     let nextIndex = (currentIndex + 1) % list.length;
     playThisTrack(commit, list, nextIndex, quality);
 };
 
 export const playPreviousTrack = ({ commit, state }) => {
-    const { currentIndex, list, quality } = state.playlist;
+    const quality = state.settings.bitRate;
+    const { currentIndex, list } = state.playlist;
     let nextIndex = (currentIndex + list.length - 1) % list.length;
     playThisTrack(commit, list, nextIndex, quality);
 };
@@ -62,7 +64,8 @@ export const playPlaylist = async ({ commit, state }, payload) => {
             list: payload.list
         });
     }
-    const { list, loopMode, quality } = state.playlist;
+    const quality = state.settings.bitRate;
+    const { list, loopMode } = state.playlist;
     let firstIndex = loopMode === LOOP_TYPES.RANDOM
         ? parseInt(Math.random() * 100000) % list.length
         : 0;
@@ -70,7 +73,8 @@ export const playPlaylist = async ({ commit, state }, payload) => {
 };
 
 export const playTrackIndex = ({ commit, state }, payload) => {
-    const { list, quality } = state.playlist;
+    const quality = state.settings.bitRate;
+    const { list } = state.playlist;
     playThisTrack(commit, list, payload.index, quality);
 };
 
