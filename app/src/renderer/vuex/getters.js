@@ -18,6 +18,12 @@ export const userBkgUrl = state => {
         : null;
 };
 
+export const userFavoriteList = state => {
+    return state.user.loginValid
+        ? state.user.playlist[0]
+        : null;
+};
+
 export const playing = state => {
     const { list, currentIndex, quality, paused } = state.playlist;
     const track = list[currentIndex];
