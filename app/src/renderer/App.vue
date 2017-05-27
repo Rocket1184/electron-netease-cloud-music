@@ -52,6 +52,14 @@ export default {
                         this.$store.commit(types.SET_USER_PLAYLIST, {
                             playlist: resp.playlist
                         });
+                        if (~resp.playlist[0].name.indexOf('喜欢的音乐')) {
+                            return resp.playlist[0].id;
+                        }
+                    }).then(likedListId => {
+                        ApiRenderer.getListDetail(likedListId)
+                            .then(list => {
+                                this.$store.commit(types.UPDATE_USER_PLAYLIST, list.playlist);
+                            });
                     });
             }
         }
