@@ -121,7 +121,6 @@ export default {
             toast: false,
             toastMsg: '',
             currentWindow: remote.getCurrentWindow(),
-            _inputAccountRef: null,
             isDarwin: process.platform === 'darwin',
             drawerOpen: false,
             dlgShow: false,
@@ -142,15 +141,11 @@ export default {
         appbarDynamicClassName() {
             return [
                 this.isDarwin && 'appbar-darwin',
-                this.shouldWindowCtlShow && 'appbar-with-ctl',
-                this.maximized && 'appbar-maximized'
+                this.shouldWindowCtlShow && 'appbar-with-ctl'
             ];
         },
         shouldWindowCtlShow() {
             return !this.isDarwin && !this.currentSettings.windowBorder;
-        },
-        maximized() {
-            return this.currentWindow.isMaximized();
         },
         backgroundUrlStyle() {
             return this.userBkgUrl && `background-image: url(${this.userBkgUrl})`;
@@ -173,7 +168,10 @@ export default {
             this.currentWindow.minimize();
         },
         handleMaximize() {
-            this.maximized ? this.currentWindow.unmaximize() : this.currentWindow.maximize();
+            if (this.currentWindow.isMaximized())
+                this.currentWindow.unmaximize();
+            else
+                this.currentWindow.maximize();
         },
         toggleDrawer() {
             this.drawerOpen = !this.drawerOpen;
@@ -181,7 +179,12 @@ export default {
         handleNameClick() {
             if (!this.loginValid) {
                 this.dlgShow = true;
-                setTimeout(() => this._inputAccountRef.focus(), 200);
+                this.$nextTick(() => {
+                    const inputAccRef = document.querySelector('.app-nav-input-account');
+                    const inputPwdRef = document.querySelector('#app-nav-input-password');
+                    inputPwdRef.addEventListener('keydown', e => e.key === 'Enter' && this.handleLogin());
+                    setTimeout(() => inputAccRef.focus(), 200);
+                });
             }
         },
         toggleDlg() {
@@ -212,7 +215,7 @@ export default {
                     localStorage.setItem('uid', resp.account.id);
                     break;
                 case 415:
-                    this.errMsgCaptcha = '登录过于频繁，请输入验证码'
+                    this.errMsgCaptcha = '登录过于频繁，请输入验证码';
                     this.captchaId = resp.captchaId;
                     this.needCaptcha = true;
                 case 501:
@@ -241,11 +244,6 @@ export default {
     },
     created() {
         this.$router.afterEach(() => this.drawerOpen = false);
-    },
-    mounted() {
-        this._inputAccountRef = document.getElementsByClassName('app-nav-input-account')[0];
-        const pwd = document.getElementById('app-nav-input-password');
-        pwd.addEventListener('keydown', e => e.key === 'Enter' && this.handleLogin());
     }
 };
 </script>

@@ -27,6 +27,10 @@ const mutations = {
     },
     [types.SET_USER_PLAYLIST](state, payload) {
         state.playlist = payload.playlist.map(l => new PlayList(l));
+    },
+    [types.UPDATE_USER_PLAYLIST](state, payload) {
+        const target = state.playlist.filter(l => l.id === payload.id).pop();
+        if (target) Object.assign(target, new PlayList(payload));
     }
 };
 

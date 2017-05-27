@@ -15,8 +15,9 @@
             <div class="quick-actions">
                 <mu-icon-button title="喜欢"
                                 tooltipPosition="top-center"
-                                :iconClass="isFavorite && 'favorite'"
-                                :icon="isFavorite? 'favorite' :'favorite_border'" />
+                                :iconClass="isFavorite ? 'favorite' : ''"
+                                :icon="isFavorite ? 'favorite' :'favorite_border'"
+                                @click="handleFavorite" />
                 <mu-icon-button title="收藏到歌单"
                                 tooltipPosition="top-center"
                                 icon="bookmark_border" />
@@ -68,7 +69,6 @@ export default {
             audioEl: {},
             timeTotal: 0,
             timeCurrent: 0,
-            isFavorite: true,
             fallbackImg: 'http://p3.music.126.net/Dev8qwDRGjIxAtopFG0uxg==/3263350512830591.jpg'
         };
     },
@@ -76,7 +76,8 @@ export default {
         ...mapActions([
             'playNextTrack',
             'playPreviousTrack',
-            'restorePlaylist'
+            'restorePlaylist',
+            'refreshUserPlaylist'
         ]),
         getImgAt(size) {
             const url = this.playing.track.album.picUrl || this.fallbackImg;
@@ -98,13 +99,31 @@ export default {
         },
         submitListened() {
             ApiRenderer.submitListened(this.playing.track.id, this.timeTotal);
+        },
+        async handleFavorite() {
+            const listId = this.userFavoriteList.id;
+            const trackId = this.playing.track.id;
+            if (this.isFavorite) {
+                await ApiRenderer.uncollectTrack(listId, trackId);
+            } else {
+                await ApiRenderer.collectTrack(listId, trackId);
+            }
+            this.refreshUserPlaylist(listId);
         }
     },
     computed: {
         ...mapGetters([
             'playlist',
-            'playing'
+            'playing',
+            'userFavoriteList'
         ]),
+        isFavorite() {
+            if (this.userFavoriteList) {
+                const track = this.userFavoriteList.tracks.filter(t => t.id === this.playing.track.id).pop();
+                return typeof track === 'object';
+            }
+            return false;
+        },
         songProgress() {
             return 100 * this.timeCurrent / this.timeTotal || 0;
         }
@@ -202,6 +221,9 @@ export default {
             position: absolute;
             top: -5px;
             right: 180px;
+            i {
+                transition: color 0.5s;
+            }
             .favorite {
                 color: red;
             }

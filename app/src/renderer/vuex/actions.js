@@ -90,3 +90,8 @@ export const restorePlaylist = async ({ commit, state }, payload) => {
         });
     }
 };
+
+export const refreshUserPlaylist = async ({ commit, state }, payload) => {
+    const resp = await ApiRenderer.getListDetail(payload);
+    commit(types.UPDATE_USER_PLAYLIST, resp.playlist);
+};

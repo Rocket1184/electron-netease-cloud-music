@@ -13,7 +13,7 @@ export interface LoginResponse extends BaseApiResopnse {
 
 export interface UserPlaylistResponse extends BaseApiResopnse {
     more: Boolean
-    playlist: Array<Models.Track>
+    playlist: Array<Models.PlayListModel>
 }
 
 export interface MusicRecordDataItem {
@@ -41,7 +41,7 @@ export interface MusicRecordResponse extends BaseApiResopnse {
     weekData: Array<MusicRecordDataItem>
 }
 
-export interface DailySuggestionsMusic extends Models.Track {
+export interface DailySuggestionsMusic extends Models.TrackModel {
     alg: String
     reason: String
 }
@@ -196,4 +196,10 @@ export default class API {
     writeSettings(target: ApplicationSettings): void;
 
     postDailyTask(type: 0 | 1): Promise<DailyTaskResponse>;
+
+    manipulatePlaylistTracks(op: 'add' | 'del', pid: Number, tracks: Array<Number>)
+
+    collectTrack(pid: Number, ...tracks: Array<Number>)
+
+    uncollectTrack(pid: Number, ...tracks: Array<Number>)
 }
