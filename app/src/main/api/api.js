@@ -309,6 +309,27 @@ async function postDailyTask(type) {
     });
 }
 
+async function manipulatePlaylistTracks(op, pid, tracks) {
+    return await client.post({
+        url: `${BaseURL}/weapi/playlist/manipulate/tracks`,
+        data: {
+            op,
+            pid,
+            tracks,
+            trackIds: JSON.stringify(tracks),
+            csrf_token: ''
+        }
+    });
+}
+
+async function collectTrack(pid, ...tracks) {
+    return await manipulatePlaylistTracks('add', pid, tracks);
+}
+
+async function uncollectTrack(pid, ...tracks) {
+    return await manipulatePlaylistTracks('del', pid, tracks);
+}
+
 export default {
     getCookie,
     updateCookie,
@@ -328,5 +349,7 @@ export default {
     getVersionName,
     getCurrentSettings,
     writeSettings,
-    postDailyTask
+    postDailyTask,
+    collectTrack,
+    uncollectTrack
 };

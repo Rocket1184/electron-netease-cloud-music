@@ -196,4 +196,10 @@ export default class API {
     writeSettings(target: ApplicationSettings): void;
 
     postDailyTask(type: 0 | 1): Promise<DailyTaskResponse>;
+
+    manipulatePlaylistTracks(op: 'add' | 'del', pid: Number, tracks: Array<Number>)
+
+    collectTrack(pid: Number, ...tracks: Array<Number>)
+
+    uncollectTrack(pid: Number, ...tracks: Array<Number>)
 }
