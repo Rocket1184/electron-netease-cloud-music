@@ -194,6 +194,7 @@ export default {
             handler: function (val, oldVal) {
                 if (Object.keys(oldVal).length !== 0) {
                     this.$store.commit(types.UPDATE_SETTINGS, val);
+                    this.$store.commit(types.WRITE_SETTINGS);
                     this.showToast('设置已保存');
                 }
             }

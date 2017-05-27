@@ -25,7 +25,8 @@ export const userFavoriteList = state => {
 };
 
 export const playing = state => {
-    const { list, currentIndex, quality, paused } = state.playlist;
+    const quality = state.settings.bitRate;
+    const { list, currentIndex, paused } = state.playlist;
     const track = list[currentIndex];
     return {
         paused,

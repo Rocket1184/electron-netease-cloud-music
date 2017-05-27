@@ -297,7 +297,7 @@ function getCurrentSettings() {
 }
 
 function writeSettings(target) {
-    Settings.set(target);
+    return Settings.set(target);
 }
 
 async function postDailyTask(type) {

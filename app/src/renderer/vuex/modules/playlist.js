@@ -7,14 +7,7 @@ export const LOOP_TYPES = {
     RANDOM: 2
 };
 
-export const QUALITY_LEVELS = {
-    HIGH: 'h',
-    MEDIUM: 'm',
-    LOW: 'l'
-};
-
 const state = {
-    quality: QUALITY_LEVELS.HIGH,
     paused: true,
     currentIndex: 0,
     loopMode: LOOP_TYPES.LIST_LOOP,
@@ -55,9 +48,8 @@ const mutations = {
         state.loopMode = LOOP_TYPES.RANDOM;
     },
     [types.RESTORE_PLAYLIST](state, payload) {
-        const { quality, currentIndex, loopMode, list } = payload;
+        const { currentIndex, loopMode, list } = payload;
         state.paused = true;
-        state.quality = quality || QUALITY_LEVELS.HIGH;
         state.currentIndex = currentIndex || 0;
         state.loopMode = loopMode || LOOP_TYPES.LIST_LOOP;
         state.list = list.map(t => new Track(t));
