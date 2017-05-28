@@ -113,9 +113,15 @@ export default {
             }
             this.refreshUserPlaylist(listId);
         },
-        async handleCollect (list, index) {
-            console.log(list, index);
-            ApiRenderer.collectTrack(list.id, this.playing.track.id);
+        async handleCollect (list) {
+            const resp = await ApiRenderer.collectTrack(list.id, this.playing.track.id);
+            if(resp.code === 200) {
+                this.$toast('成功添加到歌单     (๑•̀ㅂ•́)و✧');
+            } else if (resp.code === 502) {
+                this.$toast('歌曲已存在        ¯\\_(ツ)_/¯');
+            } else {
+                this.$toast(`失败了 ∑(っ °Д °;)っ 错误代码 ${resp.code}`);
+            }
         }
     },
     computed: {
