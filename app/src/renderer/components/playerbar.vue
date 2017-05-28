@@ -17,8 +17,6 @@
                                 :iconClass="isFavorite ? 'favorite' : ''"
                                 :icon="isFavorite ? 'favorite' :'favorite_border'"
                                 @click="handleFavorite" />
-                <!--<mu-icon-button title="收藏到歌单"
-                                icon="bookmark_border" />-->
                 <mu-icon-menu title="收藏到歌单"
                               icon="bookmark_border"
                               :maxHeight="400"
@@ -81,6 +79,7 @@ export default {
             'playNextTrack',
             'playPreviousTrack',
             'restorePlaylist',
+            'refreshCurrentTrack',
             'refreshUserPlaylist'
         ]),
         getImgAt(size) {
@@ -153,6 +152,9 @@ export default {
         try {
             const playlist = JSON.parse(localStorage.getItem('playlist'));
             this.restorePlaylist({ playlist });
+            ApiRenderer.checkUrlStatus(this.playing.url).then(code => {
+                if(code !== 200) this.refreshCurrentTrack();
+            });
         } catch (e) { }
         window.onbeforeunload = () => {
             this.pause();
