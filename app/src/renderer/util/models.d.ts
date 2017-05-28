@@ -58,7 +58,7 @@ declare class TrackModel extends Object {
 declare class PlayListModel extends Object {
     id: Number;
     name: String;
-    creater: UserModel;
+    creator: UserModel;
     commentThreadId: Number;
     playCount: Number;
     coverImgId: Number;
