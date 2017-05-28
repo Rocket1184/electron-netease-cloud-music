@@ -29,7 +29,8 @@ async function login(acc, pwd) {
         password,
         rememberLogin: true,
         // FIXME: do not hardcode this......
-        clientToken: '1_skSxFOj/XAm7bjxjQW5FD4x73jFAbgiM_G37CFfnJVaG1oIU/7exF6ro65ioeuAbf_bRRvlPMnoredCK5p2Upo7Q=='
+        // clientToken: '1_skSxFOj/XAm7bjxjQW5FD4x73jFAbgiM_G37CFfnJVaG1oIU/7exF6ro65ioeuAbf_bRRvlPMnoredCK5p2Upo7Q=='
+        clientToken: '1_sZ1r5MuQ4qBcb12MxZxFrJ3GgtyZGAYN_Rj3ssFDxxZ7+Lf9kZ+dLlZwS3mfbiE+n_ssnhg1ScZgvXau6VSb4JtQ=='
     };
     if (/^1\d{10}$/.test(acc)) {
         return await client.post({
