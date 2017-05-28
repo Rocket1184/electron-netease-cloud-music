@@ -5,10 +5,14 @@ import 'muse-ui/dist/muse-ui.css';
 
 import App from './App';
 import routes from './routes';
+import Toast from './util/toast';
 
 Vue.use(Router);
 Vue.use(MuseUI);
 Vue.config.debug = true;
+// the 'Toast' uses mu-toast inside,
+// so it must be installed after MuseUI
+Vue.use(Toast);
 
 const router = new Router({
     scrollBehavior: () => ({ y: 0 }),
