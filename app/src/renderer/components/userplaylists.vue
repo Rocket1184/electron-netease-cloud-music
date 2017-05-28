@@ -1,6 +1,6 @@
 <template>
     <mu-list>
-        <template v-for="(list, index) in userPlayLists">
+        <template v-for="(list, index) in listToShow">
             <mu-list-item :title="list.name"
                           @click="handleRowClick(list, index)">
                 <mu-avatar :src="formatImg(list.coverImgUrl)"
@@ -14,15 +14,28 @@
 import { mapGetters } from 'vuex';
 
 export default {
-    data () {
+    props: {
+        showCollected: {
+            type: Boolean,
+            default: false,
+            required: false
+        }
+    },
+    data() {
         return {
             coverSize: window.devicePixelRatio * 40
         };
     },
     computed: {
         ...mapGetters([
-            'userPlayLists'
-        ])
+            'user'
+        ]),
+        listToShow() {
+            return this.user.playlist.filter(i => {
+                if (this.showCollected === true) return true;
+                return i.creator.id == this.user.id;
+            });
+        }
     },
     methods: {
         formatImg(url) {

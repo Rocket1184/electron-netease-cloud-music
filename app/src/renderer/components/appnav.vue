@@ -27,12 +27,12 @@
                 <div class="header"
                      :style="backgroundUrlStyle">
                     <div class="user-info">
-                        <mu-avatar :icon="userAvatarUrl ? null : 'music_note'"
-                                   :src="userAvatarUrl"
+                        <mu-avatar :icon="loginValid ? null : 'music_note'"
+                                   :src="user.avatarUrl"
                                    :iconSize="40"
                                    :size="80" />
                         <span class="user-name"
-                              @click="handleNameClick">{{userName}}</span>
+                              @click="handleNameClick">{{user.name}}</span>
                         <mu-flat-button v-if="loginValid"
                                         label="签到"
                                         class="button-checkin"
@@ -144,13 +144,11 @@ export default {
             return !this.isDarwin && !this.currentSettings.windowBorder;
         },
         backgroundUrlStyle() {
-            return this.userBkgUrl && `background-image: url(${this.userBkgUrl})`;
+            return this.user.bkgUrl && `background-image: url(${this.user.bkgUrl})`;
         },
         ...mapGetters([
             'loginValid',
-            'userName',
-            'userBkgUrl',
-            'userAvatarUrl'
+            'user'
         ])
     },
     methods: {

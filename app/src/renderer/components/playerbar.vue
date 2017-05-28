@@ -21,7 +21,7 @@
                               icon="bookmark_border"
                               :maxHeight="400"
                               :targetOrigin="{ vertical: 'bottom', horizontal: 'left' }">
-                    <UserPlaylists @rowClick="handleCollect"/>
+                    <UserPlaylists @rowClick="handleCollect" />
                 </mu-icon-menu>
                 <mu-icon-menu title="播放列表"
                               icon="playlist_play"
@@ -104,7 +104,7 @@ export default {
             ApiRenderer.submitListened(this.playing.track.id, this.timeTotal);
         },
         async handleFavorite() {
-            const listId = this.userFavoriteList.id;
+            const listId = this.user.favoriteList.id;
             const trackId = this.playing.track.id;
             if (this.isFavorite) {
                 await ApiRenderer.uncollectTrack(listId, trackId);
@@ -113,9 +113,9 @@ export default {
             }
             this.refreshUserPlaylist(listId);
         },
-        async handleCollect (list) {
+        async handleCollect(list) {
             const resp = await ApiRenderer.collectTrack(list.id, this.playing.track.id);
-            if(resp.code === 200) {
+            if (resp.code === 200) {
                 this.$toast('成功添加到歌单     (๑•̀ㅂ•́)و✧');
             } else if (resp.code === 502) {
                 this.$toast('歌曲已存在        ¯\\_(ツ)_/¯');
@@ -128,11 +128,12 @@ export default {
         ...mapGetters([
             'playlist',
             'playing',
-            'userFavoriteList'
+            'user'
         ]),
         isFavorite() {
-            if (this.userFavoriteList) {
-                const track = this.userFavoriteList.tracks.filter(t => t.id === this.playing.track.id).pop();
+            const { favoriteList } = this.user;
+            if (favoriteList) {
+                const track = favoriteList.tracks.filter(t => t.id === this.playing.track.id).pop();
                 return typeof track === 'object';
             }
             return false;
@@ -159,7 +160,7 @@ export default {
             const playlist = JSON.parse(localStorage.getItem('playlist'));
             this.restorePlaylist({ playlist });
             ApiRenderer.checkUrlStatus(this.playing.url).then(code => {
-                if(code !== 200) this.refreshCurrentTrack();
+                if (code !== 200) this.refreshCurrentTrack();
             });
         } catch (e) { }
         window.onbeforeunload = () => {

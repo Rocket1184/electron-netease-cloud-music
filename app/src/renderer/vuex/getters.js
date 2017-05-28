@@ -1,33 +1,17 @@
 export const loginValid = state => state.user.loginValid;
 
-export const userAvatarUrl = state => {
-    return state.user.loginValid
-        ? state.user.info.avatarUrl
-        : null;
-};
-
-export const userName = state => {
-    return state.user.loginValid
-        ? state.user.info.nickname
-        : '未登录';
-};
-
-export const userBkgUrl = state => {
-    return state.user.loginValid
-        ? state.user.info.bkgUrl
-        : null;
-};
-
-export const userFavoriteList = state => {
-    return state.user.loginValid
-        ? state.user.playlist[0]
-        : null;
-};
-
-export const userPlayLists = state => {
-    return state.user.loginValid
-        ? state.user.playlist
-        : [];
+export const user = state => {
+    const { id, avatarUrl, nickname, bkgUrl } = state.user.info;
+    const { playlist } = state.user;
+    if (state.user.loginValid) return {
+        id,
+        avatarUrl,
+        name: nickname,
+        bkgUrl,
+        favoriteList: playlist[0],
+        playlist
+    };
+    return {};
 };
 
 export const playing = state => {
