@@ -14,15 +14,18 @@
             <span class="artist-name">{{playing.track.artistName}}</span>
             <div class="quick-actions">
                 <mu-icon-button title="喜欢"
-                                tooltipPosition="top-center"
                                 :iconClass="isFavorite ? 'favorite' : ''"
                                 :icon="isFavorite ? 'favorite' :'favorite_border'"
                                 @click="handleFavorite" />
-                <mu-icon-button title="收藏到歌单"
-                                tooltipPosition="top-center"
-                                icon="bookmark_border" />
+                <!--<mu-icon-button title="收藏到歌单"
+                                icon="bookmark_border" />-->
+                <mu-icon-menu title="收藏到歌单"
+                              icon="bookmark_border"
+                              :maxHeight="400"
+                              :targetOrigin="{ vertical: 'bottom', horizontal: 'left' }">
+                    <UserPlaylists @rowClick="handleCollect"/>
+                </mu-icon-menu>
                 <mu-icon-menu title="播放列表"
-                              tooltipPosition="top-center"
                               icon="playlist_play"
                               :maxHeight="400"
                               :targetOrigin="{ vertical: 'bottom', horizontal: 'left' }">
@@ -60,7 +63,8 @@
 import { mapActions, mapGetters } from 'vuex';
 
 import ApiRenderer from '../util/apirenderer';
-import CurrentList from '../components/currentlist';
+import CurrentList from './currentlist';
+import UserPlaylists from './userplaylists';
 import * as types from '../vuex/mutation-types';
 
 export default {
@@ -109,6 +113,10 @@ export default {
                 await ApiRenderer.collectTrack(listId, trackId);
             }
             this.refreshUserPlaylist(listId);
+        },
+        async handleCollect (list, index) {
+            console.log(list, index);
+            ApiRenderer.collectTrack(list.id, this.playing.track.id);
         }
     },
     computed: {
@@ -193,7 +201,8 @@ export default {
         };
     },
     components: {
-        CurrentList
+        CurrentList,
+        UserPlaylists
     }
 };
 </script>
