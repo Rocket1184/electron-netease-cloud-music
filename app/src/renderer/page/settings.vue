@@ -58,9 +58,7 @@
         <mu-list-item title="获取源代码"
                       @click="openBrowser('https://github.com/rocket1184/electron-netease-cloud-music')"
                       disableRipple />
-        <!--================below are toast and dialog================-->
-        <mu-toast v-if="toast"
-                  :message="toastMsg" />
+        <!-- - - - - - - - - -  dialog below - - - - - - - - -  -->
         <mu-dialog :open="prompt"
                    :title="promptTitle">
             {{promptText}}
@@ -86,9 +84,6 @@ import ApiRenderer from '../util/apirenderer';
 export default {
     data() {
         return {
-            toast: false,
-            toastMsg: '',
-            toastTimer: 0,
             prompt: false,
             promptTitle: '',
             promptText: '',
@@ -119,7 +114,7 @@ export default {
                 ApiRenderer.clearAppData('cache')
             ]);
             this.refreshSize();
-            this.showToast('成功清除缓存');
+            this.$toast('成功清除缓存');
         },
         wipeAppData() {
             this.showPrompt({
@@ -158,15 +153,6 @@ export default {
                 }
             }
         },
-        showToast(msg, timeOut = 1500) {
-            if (this.toast) {
-                this.toast = false;
-                clearTimeout(this.toastTimer);
-            }
-            this.toastMsg = String(msg);
-            this.toastTimer = setTimeout(() => this.toast = false, timeOut);
-            this.$nextTick(() => this.toast = true);
-        },
         showPrompt(cfg) {
             this.prompt = true;
             this.promptTitle = cfg.title;
@@ -195,7 +181,7 @@ export default {
                 if (Object.keys(oldVal).length !== 0) {
                     this.$store.commit(types.UPDATE_SETTINGS, val);
                     this.$store.commit(types.WRITE_SETTINGS);
-                    this.showToast('设置已保存');
+                    this.$toast('设置已保存');
                 }
             }
         },

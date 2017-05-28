@@ -104,8 +104,6 @@
                               primary
                               @click="handleLogin" />
         </mu-dialog>
-        <mu-toast v-if="toast"
-                  :message="toastMsg" />
     </div>
 </template>
 
@@ -118,8 +116,6 @@ import ApiRenderer from '../util/apirenderer';
 export default {
     data() {
         return {
-            toast: false,
-            toastMsg: '',
             currentWindow: remote.getCurrentWindow(),
             isDarwin: process.platform === 'darwin',
             drawerOpen: false,
@@ -190,20 +186,12 @@ export default {
         toggleDlg() {
             this.dlgShow = !this.dlgShow;
         },
-        showToast(msg, timeOut = 1500) {
-            if (this.toast) {
-                this.toast = false;
-                clearTimeout(this.toastTimer);
-            }
-            this.toastMsg = String(msg);
-            this.toastTimer = setTimeout(() => this.toast = false, timeOut);
-            this.$nextTick(() => this.toast = true);
-        },
         async handleLogin() {
             this.errMsgUsr = '';
             this.errMsgPwd = '';
             if (!this.inputUsr) return this.errMsgUsr = '用户名不能为空';
             if (!this.inputPwd) return this.errMsgPwd = '密码不能为空';
+            // TODO: Login with captcha
             let resp = await ApiRenderer.login(this.inputUsr, this.inputPwd);
             switch (resp.code) {
                 case 200:
@@ -236,9 +224,9 @@ export default {
             let points = 0;
             results.forEach(e => e.code === 200 ? points += e.point : null);
             if (points) {
-                this.showToast(`签到成功，获得 ${points} 点积分`);
+                this.$toast(`签到成功，获得 ${points} 点积分`);
             } else {
-                this.showToast('是不是已经签到过了呢 ：）');
+                this.$toast('是不是已经签到过了呢 ：）');
             }
         }
     },
