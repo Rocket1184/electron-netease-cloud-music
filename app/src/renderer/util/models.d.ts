@@ -1,4 +1,4 @@
-declare class UserModel {
+declare class UserModel extends Object {
     id: Number;
     nickname: String;
     avatarUrl: String;
@@ -15,7 +15,7 @@ declare class UserModel {
     bindings: Array<any>;
 }
 
-declare class RawArtistModel {
+declare class RawArtistModel extends Object {
     id: Number;
     name: String;
     img1v1Id: Number;
@@ -25,7 +25,7 @@ declare class RawArtistModel {
     picUrl: String;
 }
 
-declare class RawLyricsModel {
+declare class RawLyricsModel extends Object {
     qfy: Boolean;
     sfy: Boolean;
     sgc: Boolean;
@@ -34,13 +34,13 @@ declare class RawLyricsModel {
     klyric?: { version: Number, lyric: String }
 }
 
-declare class TrackUrlsModel {
+declare class TrackUrlsModel extends Object {
     h?: String;
     m?: String;
     l?: String;
 }
 
-declare class TrackModel {
+declare class TrackModel extends Object {
     id: Number;
     name: String;
     album: {
@@ -55,7 +55,7 @@ declare class TrackModel {
     commentThreadId: Number;
 }
 
-declare class PlayListModel {
+declare class PlayListModel extends Object {
     id: Number;
     name: String;
     creater: UserModel;
