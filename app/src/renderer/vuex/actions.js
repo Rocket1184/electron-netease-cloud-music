@@ -36,10 +36,12 @@ async function playThisTrack(commit, list, index, quality) {
 }
 
 export const refreshCurrentTrack = async ({ state, commit }) => {
-    const oUrl = await ApiRenderer.getMusicUrl(state.playing.track.id);
+    const quality = state.settings.bitRate;
+    const { currentIndex, list } = state.playlist;
+    const oUrl = await ApiRenderer.getMusicUrl(list[currentIndex].id, quality);
     commit({
-        ...oUrl.data[0],
-        type: types.SET_PLAYING_MUSIC,
+        type: types.UPDATE_PLAYING_MUSIC,
+        urls: { [quality]: oUrl.data[0].url },
     });
 };
 
