@@ -37,7 +37,7 @@ const Models = {
         return {
             id: -1,
             name: '',
-            creater: new User(),
+            creator: new User(),
             commentThreadId: -1,
             playCount: -1,
             coverImgId: -1,
@@ -102,7 +102,7 @@ export class PlayList {
         if (!o) return Models.PlayList;
         this.id = o.id;
         this.name = o.name;
-        this.creater = new User(o.creater);
+        this.creator = new User(o.creator);
         this.commentThreadId = o.commentThreadId;
         this.playCount = o.playCount;
         this.coverImgId = o.coverImgId;

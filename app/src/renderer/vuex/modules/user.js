@@ -30,7 +30,15 @@ const mutations = {
     },
     [types.UPDATE_USER_PLAYLIST](state, payload) {
         const target = state.playlist.filter(l => l.id === payload.id).pop();
-        if (target) Object.assign(target, new PlayList(payload));
+        if (target) {
+            let newList = new PlayList(payload);
+            for (const key in newList) {
+                if (typeof newList[key] === typeof undefined) {
+                    delete newList[key];
+                }
+            }
+            Object.assign(target, newList);
+        }
     }
 };
 
