@@ -156,13 +156,13 @@ async function getMusicLyric(id) {
     let result = {};
     if (tmp.lrc && tmp.lrc.version) {
         result.lrc = Lrc.parse(tmp.lrc.lyric);
-        result.lrc.lyrics = result.lrc.lyrics.sort(byTimestamp);
+        result.lrc.lyrics.sort(byTimestamp);
         result.lyricUser = tmp.lyricUser;
     }
     if (tmp.tlyric && tmp.tlyric.version) {
         result.transUser = tmp.transUser;
         let tlrc = Lrc.parse(tmp.tlyric.lyric);
-        tlrc.lyrics = tlrc.lyrics.sort(byTimestamp);
+        tlrc.lyrics.sort(byTimestamp);
         let mlrc = {
             info: result.lrc.info,
             transInfo: tlrc.info,
