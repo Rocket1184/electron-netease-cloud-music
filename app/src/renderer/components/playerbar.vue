@@ -164,7 +164,7 @@ export default {
             });
         } catch (e) { }
         window.onbeforeunload = () => {
-            this.pause();
+            if (!this.$store.state.settings.autoPlay) this.pause();
             localStorage.setItem('playlist', JSON.stringify(this.playlist));
         };
     },
