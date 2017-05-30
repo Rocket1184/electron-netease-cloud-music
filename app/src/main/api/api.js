@@ -331,6 +331,43 @@ async function uncollectTrack(pid, ...tracks) {
     return await manipulatePlaylistTracks('del', pid, tracks);
 }
 
+async function getSearchSuggest(s) {
+    return await client.post({
+        url: `${BaseURL}/weapi/search/suggest/web`,
+        data: {
+            s,
+            csrf_token: ''
+        }
+    });
+}
+
+const searchTypeMap = {
+    song: '1',
+    album: '10',
+    artist: '100',
+    playlist: '1000',
+    user: '1002',
+    mv: '1004',
+    lyric: '1006',
+    radio: '1009'
+};
+
+async function search(s, type, limit = 20, offset = 0) {
+    return client.post({
+        url: `${BaseURL}/weapi/cloudsearch/get/web`,
+        data: {
+            hlposttag: '</span>',
+            hlpretag: '<span class="s-fc7">',
+            limit,
+            offset,
+            s,
+            total: true,
+            type: searchTypeMap[type],
+            csrf_token: ''
+        }
+    });
+}
+
 export default {
     getCookie,
     updateCookie,
@@ -352,5 +389,7 @@ export default {
     writeSettings,
     postDailyTask,
     collectTrack,
-    uncollectTrack
+    uncollectTrack,
+    getSearchSuggest,
+    search
 };
