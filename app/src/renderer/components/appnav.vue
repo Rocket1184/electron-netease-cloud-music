@@ -14,10 +14,17 @@
             <mu-icon-button icon="menu"
                             slot="left"
                             @click="toggleDrawer" />
-            <mu-text-field icon="search"
-                           class="appbar-search-field"
-                           slot="right"
-                           hintText="搜索歌曲、歌单、用户" />
+            <mu-auto-complete icon="search"
+                              slot="right"
+                              class="appbar-search-field"
+                              inputClass="appbar-search-input"
+                              hintText="搜索歌曲、歌单、用户"
+                              :maxHeight="400"
+                              openOnFocus
+                              v-model="searchText"
+                              :dataSource="searchAutoComplete"
+                              @input="handleSearchInput"
+                              @keyup.enter="handleSearch" />
         </mu-appbar>
         <mu-drawer :width="300"
                    :open="drawerOpen"
@@ -112,12 +119,15 @@ import { mapActions, mapGetters } from 'vuex';
 import { remote } from 'electron';
 
 import ApiRenderer from '../util/apirenderer';
+import { searchIconMap } from '../util/searchtype';
 
 export default {
     data() {
         return {
             currentWindow: remote.getCurrentWindow(),
             isDarwin: process.platform === 'darwin',
+            searchText: '',
+            searchAutoComplete: [],
             drawerOpen: false,
             dlgShow: false,
             inputUsr: '',
@@ -226,10 +236,36 @@ export default {
             } else {
                 this.$toast('是不是已经签到过了呢 ：）');
             }
+        },
+        async handleSearchInput() {
+            const resp = await ApiRenderer.getSearchSuggest(this.searchText);
+            if (resp.code === 200) {
+                let tmp = [];
+                for (const key in resp.result) {
+                    const current = resp.result[key];
+                    if (Array.isArray(current) && typeof current[0] === 'object') {
+                        tmp.push(...current.map(e => ({
+                            text: e.name,
+                            rightIcon: searchIconMap[key]
+                        })));
+                    }
+                }
+                this.searchAutoComplete = tmp;
+            } else {
+                this.searchAutoComplete = [];
+            }
+        },
+        handleSearch() {
+            this.$router.push(`/search?q=${this.searchText}`);
         }
     },
     created() {
         this.$router.afterEach(() => this.drawerOpen = false);
+    },
+    mounted() {
+        document.querySelector('.appbar-search-input').onkeydown = ev => {
+            if (ev.key === 'Enter') this.handleSearch();
+        };
     }
 };
 </script>
@@ -288,20 +324,22 @@ export default {
 }
 
 .appbar-search-field {
-    color: #FFF;
-    margin-bottom: 0;
-    -webkit-app-region: no-drag;
-    &.focus-state {
+    .mu-text-field {
         color: #FFF;
-    }
-    .mu-text-field-hint {
-        color: fade(#FFF, 54%);
-    }
-    .mu-text-field-input {
-        color: #FFF;
-    }
-    .mu-text-field-focus-line {
-        background-color: #FFF;
+        margin-bottom: 0;
+        -webkit-app-region: no-drag;
+        &.focus-state {
+            color: #FFF;
+        }
+        .mu-text-field-hint {
+            color: fade(#FFF, 54%);
+        }
+        .mu-text-field-input {
+            color: #FFF;
+        }
+        .mu-text-field-focus-line {
+            background-color: #FFF;
+        }
     }
 }
 
