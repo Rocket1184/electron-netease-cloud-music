@@ -5,6 +5,11 @@ export default [
         component: require('./page/index')
     },
     {
+        path: '/search',
+        name: 'search',
+        component: require('./page/search')
+    },
+    {
         path: '/player',
         name: 'player',
         component: require('./page/player')
