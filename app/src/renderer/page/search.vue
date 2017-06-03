@@ -22,6 +22,7 @@
 </template>
 
 <script>
+import { Track } from '../util/models';
 import TrackList from '../components/tracklist';
 import { searchTypes } from '../util/searchtype';
 import ApiRenderer from '../util/apirenderer';
@@ -41,7 +42,7 @@ export default {
             const { q, t } = this.$route.query;
             const resp = await ApiRenderer.search(q, t || searchTypes.song);
             if (resp.code === 200) {
-                this.tracks = resp.result.songs || [];
+                this.tracks = resp.result.songs.map(i => new Track(i)) || [];
             }
         }
     },
