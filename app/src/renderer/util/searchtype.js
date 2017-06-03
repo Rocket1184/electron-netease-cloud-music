@@ -7,7 +7,7 @@ const searchIconMap = {
     mvs: 'music_video'
 };
 
-const searchTypeMap = {
+const searchTypeCode = {
     song: '1',
     album: '10',
     artist: '100',
@@ -18,7 +18,7 @@ const searchTypeMap = {
     radio: '1009'
 };
 
-const types = {
+const searchTypes = {
     song: 'song',
     album: 'album',
     artist: 'artist',
@@ -30,7 +30,7 @@ const types = {
 };
 
 export {
-    types,
+    searchTypes,
     searchIconMap,
-    searchTypeMap
+    searchTypeCode
 };

@@ -23,7 +23,7 @@
 
 <script>
 import TrackList from '../components/tracklist';
-import { types } from '../util/searchtype';
+import { searchTypes } from '../util/searchtype';
 import ApiRenderer from '../util/apirenderer';
 
 export default {
@@ -39,7 +39,7 @@ export default {
         },
         async handleSearch() {
             const { q, t } = this.$route.query;
-            const resp = await ApiRenderer.search(q, t || types.song);
+            const resp = await ApiRenderer.search(q, t || searchTypes.song);
             if (resp.code === 200) {
                 this.tracks = resp.result.songs || [];
             }
