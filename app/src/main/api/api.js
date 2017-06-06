@@ -303,8 +303,9 @@ function writeSettings(target) {
 
 async function postDailyTask(type) {
     return await client.post({
-        url: `${BaseURL}/weapi/point/dailyTask?type=${type}`,
+        url: `${BaseURL}/weapi/point/dailyTask`,
         data: {
+            type,
             csrf_token: ''
         }
     });
