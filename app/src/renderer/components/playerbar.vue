@@ -64,6 +64,7 @@
             <UserPlaylists @rowClick="handleCollect" />
         </mu-popup>
         <transition name="list-open-up">
+            <!-- TODO: Click outside to close the list -->
             <mu-paper rounded
                       class="currentlist"
                       v-show="currentListShown">
@@ -293,7 +294,8 @@ export default {
         }
     }
     .currentlist {
-        position: absolute;
+        // FIXME: it repaints the whole list when scrolling
+        position: fixed;
         right: 4px;
         bottom: 68px;
         height: 420px;
