@@ -14,21 +14,19 @@
             <span class="artist-name">{{playing.track.artistName}}</span>
             <div class="quick-actions">
                 <mu-icon-button title="喜欢"
-                                :iconClass="isFavorite ? 'favorite' : ''"
+                                :iconClass="{ favorite: isFavorite }"
                                 :icon="isFavorite ? 'favorite' :'favorite_border'"
                                 @click="handleFavorite" />
-                <mu-icon-menu title="收藏到歌单"
-                              icon="bookmark_border"
-                              :maxHeight="400"
-                              :targetOrigin="{ vertical: 'bottom', horizontal: 'left' }">
-                    <UserPlaylists @rowClick="handleCollect" />
-                </mu-icon-menu>
-                <mu-icon-menu title="播放列表"
-                              icon="playlist_play"
-                              :maxHeight="400"
-                              :targetOrigin="{ vertical: 'bottom', horizontal: 'left' }">
-                    <CurrentList/>
-                </mu-icon-menu>
+                <mu-checkbox title="收藏到歌单"
+                             class="action-item"
+                             uncheckIcon="bookmark_border"
+                             checkedIcon="bookmark"
+                             v-model="userPlaylistsShown" />
+                <mu-checkbox title="播放列表"
+                             class="action-item"
+                             uncheckIcon="playlist_play"
+                             checkedIcon="playlist_play"
+                             v-model="currentListShown" />
             </div>
             <div class="progress">
                 <mu-slider id="playerbar-progress"
@@ -54,6 +52,24 @@
                              color="#FFF"
                              @click="playNextTrack" />
         </div>
+        <mu-popup position="bottom"
+                  :open="userPlaylistsShown"
+                  @close="userPlaylistsShown=false">
+            <mu-appbar title="收藏到歌单">
+                <mu-icon-button slot="right"
+                                icon="close"
+                                color="white"
+                                @click="userPlaylistsShown=false" />
+            </mu-appbar>
+            <UserPlaylists @rowClick="handleCollect" />
+        </mu-popup>
+        <transition name="list-open-up">
+            <mu-paper rounded
+                      class="currentlist"
+                      v-show="currentListShown">
+                <CurrentList/>
+            </mu-paper>
+        </transition>
     </mu-paper>
 </template>
 
@@ -71,7 +87,9 @@ export default {
             audioEl: {},
             timeTotal: 0,
             timeCurrent: 0,
-            fallbackImg: 'http://p3.music.126.net/Dev8qwDRGjIxAtopFG0uxg==/3263350512830591.jpg'
+            fallbackImg: 'http://p3.music.126.net/Dev8qwDRGjIxAtopFG0uxg==/3263350512830591.jpg',
+            userPlaylistsShown: false,
+            currentListShown: false
         };
     },
     methods: {
@@ -245,6 +263,9 @@ export default {
             .favorite {
                 color: red;
             }
+            .action-item {
+                margin: 12px 12px 0 0;
+            }
         }
         .progress {
             margin-top: 5px;
@@ -271,5 +292,24 @@ export default {
             box-shadow: transparent 0 0 0;
         }
     }
+    .currentlist {
+        position: absolute;
+        right: 4px;
+        bottom: 68px;
+        height: 420px;
+        overflow-y: scroll;
+        -webkit-transform-origin-y: 420px;
+    }
+}
+
+.list-open-up-enter-active,
+.list-open-up-leave-active {
+    transition: transform 0.5s;
+    transition-timing-function: cubic-bezier(0.23, 1, 0.32, 1);
+}
+
+.list-open-up-enter,
+.list-open-up-leave-active {
+    transform: scaleY(0);
 }
 </style>
