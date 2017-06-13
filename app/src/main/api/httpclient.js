@@ -74,6 +74,10 @@ class HttpClient {
 
     post(config) {
         config.method = 'post';
+        if (this.cookie.__csrf) {
+            config.url += `?csrf_token=${this.cookie.__csrf}`;
+            config.data.csrf_token = this.cookie.__csrf;
+        }
         config.data = HttpClient.mkEncodeData(config.data);
 
         config.headers = Object.assign({

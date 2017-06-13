@@ -46,12 +46,9 @@ async function login(acc, pwd) {
 }
 
 async function refreshLogin() {
-    let csrf = client.getCookie('__csrf');
     return await client.post({
-        url: `${BaseURL}/weapi/login/token/refresh?csrf_token=${csrf}`,
-        data: {
-            csrf_token: csrf
-        }
+        url: `${BaseURL}/weapi/login/token/refresh`,
+        data: { }
     });
 }
 
@@ -62,7 +59,6 @@ async function getUserPlaylist(uid) {
             uid,
             offset: 0,
             limit: 1000,
-            csrf_token: ''
         }
     });
 }
@@ -73,7 +69,6 @@ async function getMusicRecord(uid) {
         data: {
             uid,
             type: 0,
-            csrf_token: ''
         }
     });
 }
@@ -85,7 +80,6 @@ async function getDailySuggestions() {
             offset: 0,
             total: true,
             limit: 20,
-            csrf_token: ''
         }
     });
 }
@@ -99,7 +93,6 @@ async function getListDetail(id) {
             total: true,
             limit: 1000,
             n: 1000,
-            csrf_token: ''
         }
     });
 }
@@ -120,7 +113,6 @@ async function getMusicUrl(idOrIds, quality = 'h') {
         data: {
             ids,
             br: QualityMap[quality],
-            csrf_token: ''
         }
     });
 }
@@ -132,7 +124,6 @@ async function getMusicComments(rid, limit = 20, offset = 0) {
             rid,
             offset,
             limit,
-            csrf_token: ''
         }
     });
 }
@@ -150,7 +141,6 @@ async function getMusicLyric(id) {
             lv: -1,
             kv: -1,
             tv: -1,
-            csrf_token: ''
         }
     });
     let result = {};
@@ -191,7 +181,6 @@ async function submitWebLog(action, json) {
         data: {
             action,
             json: JSON.stringify(json),
-            csrf_token: ''
         }
     });
 }
@@ -203,7 +192,7 @@ async function submitListened(id, time) {
         wifi: 0,
         download: 0,
         time: Math.round(time),
-        end: 'playend',
+        end: 'ui',
     });
 }
 
@@ -306,7 +295,6 @@ async function postDailyTask(type) {
         url: `${BaseURL}/weapi/point/dailyTask`,
         data: {
             type,
-            csrf_token: ''
         }
     });
 }
@@ -319,7 +307,6 @@ async function manipulatePlaylistTracks(op, pid, tracks) {
             pid,
             tracks,
             trackIds: JSON.stringify(tracks),
-            csrf_token: ''
         }
     });
 }
@@ -337,7 +324,6 @@ async function getSearchSuggest(s) {
         url: `${BaseURL}/weapi/search/suggest/web`,
         data: {
             s,
-            csrf_token: ''
         }
     });
 }
@@ -364,7 +350,6 @@ async function search(s, type, limit = 20, offset = 0) {
             s,
             total: true,
             type: searchTypeMap[type],
-            csrf_token: ''
         }
     });
 }
