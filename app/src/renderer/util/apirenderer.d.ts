@@ -8,7 +8,8 @@ declare class ApiRenderer extends API {
     clearAppData(name: 'app' | 'cache'): Promise<void>;
     getVersionName(): Promise<String>;
     getCurrentSettings(): Promise<ApiNameSpace.ApplicationSettings>;
-    writeSettings(target: ApiNameSpace.ApplicationSettings): Promise<void>;
+    writeSettings(target: ApiNameSpace.ApplicationSettings): Promise<ApiNameSpace.ApplicationSettings>;
+    resetSettings(): Promise<ApiNameSpace.ApplicationSettings>;
 }
 
 declare const ApiRendererStaic: ApiRenderer;

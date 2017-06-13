@@ -221,15 +221,15 @@ export default class API {
 
     getDirSize(dirPath: String): Number | any;
 
-    getDataSize(name: 'app' | 'cache'): Number | any;
-
-    clearAppData(name: 'app' | 'cache'): void;
+    getDataSize(): Number | any;
 
     getVersionName(): String | any;
 
     getCurrentSettings(): ApplicationSettings | any;
 
-    writeSettings(target: ApplicationSettings): void;
+    writeSettings(target: ApplicationSettings): ApplicationSettings | any;
+
+    resetSettings(): ApplicationSettings | any;
 
     postDailyTask(type: 0 | 1): Promise<DailyTaskResponse>;
 
