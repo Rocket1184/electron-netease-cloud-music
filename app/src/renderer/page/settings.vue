@@ -75,8 +75,7 @@
 </template>
 
 <script>
-import qs from 'child_process';
-import { ipcRenderer, remote } from 'electron';
+import { ipcRenderer, remote, shell } from 'electron';
 
 import * as types from '../vuex/mutation-types';
 import ApiRenderer from '../util/apirenderer';
@@ -84,6 +83,7 @@ import ApiRenderer from '../util/apirenderer';
 export default {
     data() {
         return {
+            session: remote.getCurrentWebContents().session,
             prompt: false,
             promptTitle: '',
             promptText: '',
@@ -96,25 +96,24 @@ export default {
     },
     methods: {
         refreshSize() {
-            ApiRenderer.getDataSize('cache').then(s => this.cacheSize = s);
-            ApiRenderer.getDataSize('app').then(s => this.dataSize = s);
+            this.session.getCacheSize(s => this.cacheSize = s);
+            ApiRenderer.getDataSize().then(s => this.dataSize = s);
         },
         toggleByName(name) {
             if (typeof this.settings[name] === 'boolean') {
                 this.settings[name] = !this.settings[name];
             }
         },
-        async clearSessionCache() {
-            const { session } = remote.getCurrentWindow().webContents;
-            new Promise(resolve => session.clearCache(resolve));
+        async clearStorage() {
+            return new Promise(resolve => this.session.clearStorageData({
+                storages: ['appcache', 'cookies', 'localstorage']
+            }, resolve));
         },
-        async clearCache() {
-            await Promise.all([
-                this.clearSessionCache(),
-                ApiRenderer.clearAppData('cache')
-            ]);
-            this.refreshSize();
-            this.$toast('成功清除缓存');
+        clearCache() {
+            this.session.clearCache(() => {
+                this.refreshSize();
+                this.$toast('成功清除缓存');
+            });
         },
         wipeAppData() {
             this.showPrompt({
@@ -122,12 +121,9 @@ export default {
                 text: '这将清除所有应用数据，包括缓存以及账号登录状态，确定吗？',
                 action: async () => {
                     ApiRenderer.updateCookie({});
+                    ApiRenderer.resetSettings();
                     window.onbeforeunload = null;
-                    localStorage.clear();
-                    await Promise.all([
-                        this.clearSessionCache(),
-                        ApiRenderer.clearAppData('app')
-                    ]);
+                    await this.clearStorage();
                     ipcRenderer.send('recreateWindow');
                 }
             });
@@ -140,17 +136,13 @@ export default {
         },
         openBrowser(url) {
             try {
-                qs.execSync(`xdg-open ${url}`);
+                shell.openExternal(url);
             } catch (err) {
-                try {
-                    qs.execSync(`open ${url}`);
-                } catch (err) {
-                    this.showPrompt({
-                        title: '提示',
-                        text: `无法打开您的浏览器，请直接访问 ${url}`,
-                        action: () => { }
-                    });
-                }
+                this.showPrompt({
+                    title: '提示',
+                    text: `无法打开您的浏览器，请直接访问 ${url}`,
+                    action: () => { }
+                });
             }
         },
         showPrompt(cfg) {

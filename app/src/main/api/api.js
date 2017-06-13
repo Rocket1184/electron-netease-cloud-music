@@ -48,7 +48,7 @@ async function login(acc, pwd) {
 async function refreshLogin() {
     return await client.post({
         url: `${BaseURL}/weapi/login/token/refresh`,
-        data: { }
+        data: {}
     });
 }
 
@@ -232,17 +232,12 @@ function getDirSize(dirPath) {
     return totalSize;
 }
 
-const dataDirMap = {
-    app: '',
-    cache: 'Cache'
-};
-const appData = app.getPath('appData');
-const appName = process.env.NODE_ENV === 'development'
-    ? 'Electron'
-    : require('../../../package.json').name;
-
-function getDataSize(name = 'app') {
-    const cachePath = path.join(appData, appName, dataDirMap[name]);
+function getDataSize() {
+    const appData = app.getPath('appData');
+    const appName = process.env.NODE_ENV === 'development'
+        ? 'Electron'
+        : require('../../../package.json').name;
+    const cachePath = path.join(appData, appName);
     let size;
     try {
         size = getDirSize(cachePath);
@@ -250,16 +245,6 @@ function getDataSize(name = 'app') {
         size = 0;
     }
     return size;
-}
-
-function clearAppData(name = 'cache') {
-    const delPath = path.join(appData, appName, dataDirMap[name]);
-    try {
-        qs.execSync(`rm -rf ${delPath}`);
-    } catch (err) {
-        return err;
-    }
-    return false;
 }
 
 function getVersionName() {
@@ -288,6 +273,10 @@ function getCurrentSettings() {
 
 function writeSettings(target) {
     return Settings.set(target);
+}
+
+function resetSettings() {
+    return Settings.set(require('../default'));
 }
 
 async function postDailyTask(type) {
@@ -369,10 +358,10 @@ export default {
     submitListened,
     checkUrlStatus,
     getDataSize,
-    clearAppData,
     getVersionName,
     getCurrentSettings,
     writeSettings,
+    resetSettings,
     postDailyTask,
     collectTrack,
     uncollectTrack,
