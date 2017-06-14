@@ -11,7 +11,10 @@ export const user = state => {
         favoriteList: playlist[0],
         playlist
     };
-    return {};
+    return {
+        id: 0,
+        name: '未登录'
+    };
 };
 
 export const userPlayLists = state => {

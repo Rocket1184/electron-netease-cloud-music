@@ -23,74 +23,69 @@ function getCookie(key = '') {
     return client.getCookie(key);
 }
 
-async function login(acc, pwd) {
+function login(acc, pwd) {
     const password = crypto.createHash('md5').update(pwd).digest('hex');
     const postBody = {
         password,
         rememberLogin: true,
         // FIXME: do not hardcode this......
-        clientToken: '1_skSxFOj/XAm7bjxjQW5FD4x73jFAbgiM_G37CFfnJVaG1oIU/7exF6ro65ioeuAbf_bRRvlPMnoredCK5p2Upo7Q=='
+        // clientToken: '1_skSxFOj/XAm7bjxjQW5FD4x73jFAbgiM_G37CFfnJVaG1oIU/7exF6ro65ioeuAbf_bRRvlPMnoredCK5p2Upo7Q=='
+        clientToken: '1_sZ1r5MuQ4qBcb12MxZxFrJ3GgtyZGAYN_Rj3ssFDxxZ7+Lf9kZ+dLlZwS3mfbiE+n_ssnhg1ScZgvXau6VSb4JtQ=='
     };
     if (/^1\d{10}$/.test(acc)) {
-        return await client.post({
+        return client.post({
             url: `${BaseURL}/weapi/login/cellphone`,
             data: { phone: acc, ...postBody }
         });
     } else {
-        return await client.post({
+        return client.post({
             url: `${BaseURL}/weapi/login`,
             data: { username: acc, ...postBody }
         });
     }
 }
 
-async function refreshLogin() {
-    let csrf = client.getCookie('__csrf');
-    return await client.post({
-        url: `${BaseURL}/weapi/login/token/refresh?csrf_token=${csrf}`,
-        data: {
-            csrf_token: csrf
-        }
+function refreshLogin() {
+    return client.post({
+        url: `${BaseURL}/weapi/login/token/refresh`,
+        data: {}
     });
 }
 
-async function getUserPlaylist(uid) {
-    return await client.post({
+function getUserPlaylist(uid) {
+    return client.post({
         url: `${BaseURL}/weapi/user/playlist`,
         data: {
             uid,
             offset: 0,
             limit: 1000,
-            csrf_token: ''
         }
     });
 }
 
-async function getMusicRecord(uid) {
-    return await client.post({
+function getMusicRecord(uid) {
+    return client.post({
         url: `${BaseURL}/weapi/v1/play/record`,
         data: {
             uid,
             type: 0,
-            csrf_token: ''
         }
     });
 }
 
-async function getDailySuggestions() {
-    return await client.post({
+function getDailySuggestions() {
+    return client.post({
         url: `${BaseURL}/weapi/v1/discovery/recommend/songs`,
         data: {
             offset: 0,
             total: true,
             limit: 20,
-            csrf_token: ''
         }
     });
 }
 
-async function getListDetail(id) {
-    return await client.post({
+function getListDetail(id) {
+    return client.post({
         url: `${BaseURL}/weapi/v3/playlist/detail`,
         data: {
             id,
@@ -98,7 +93,6 @@ async function getListDetail(id) {
             total: true,
             limit: 1000,
             n: 1000,
-            csrf_token: ''
         }
     });
 }
@@ -109,29 +103,27 @@ const QualityMap = {
     l: 96000
 };
 
-async function getMusicUrl(idOrIds, quality = 'h') {
+function getMusicUrl(idOrIds, quality = 'h') {
     if (!QualityMap[quality]) throw new Error(`Quality type '${quality}' is not in [h,m,l]`);
     let ids;
     if (Array.isArray(idOrIds)) ids = idOrIds;
     else ids = [idOrIds];
-    return await client.post({
+    return client.post({
         url: `${BaseURL}/weapi/song/enhance/player/url`,
         data: {
             ids,
             br: QualityMap[quality],
-            csrf_token: ''
         }
     });
 }
 
-async function getMusicComments(rid, limit = 20, offset = 0) {
-    return await client.post({
+function getMusicComments(rid, limit = 20, offset = 0) {
+    return client.post({
         url: `${BaseURL}/weapi/v1/resource/comments/R_SO_4_${rid}`,
         data: {
             rid,
             offset,
             limit,
-            csrf_token: ''
         }
     });
 }
@@ -149,19 +141,18 @@ async function getMusicLyric(id) {
             lv: -1,
             kv: -1,
             tv: -1,
-            csrf_token: ''
         }
     });
     let result = {};
     if (tmp.lrc && tmp.lrc.version) {
         result.lrc = Lrc.parse(tmp.lrc.lyric);
-        result.lrc.lyrics = result.lrc.lyrics.sort(byTimestamp);
+        result.lrc.lyrics.sort(byTimestamp);
         result.lyricUser = tmp.lyricUser;
     }
     if (tmp.tlyric && tmp.tlyric.version) {
         result.transUser = tmp.transUser;
         let tlrc = Lrc.parse(tmp.tlyric.lyric);
-        tlrc.lyrics = tlrc.lyrics.sort(byTimestamp);
+        tlrc.lyrics.sort(byTimestamp);
         let mlrc = {
             info: result.lrc.info,
             transInfo: tlrc.info,
@@ -184,25 +175,24 @@ async function getMusicLyric(id) {
     return result;
 }
 
-async function submitWebLog(action, json) {
-    return await client.post({
+function submitWebLog(action, json) {
+    return client.post({
         url: `${BaseURL}/weapi/log/web`,
         data: {
             action,
             json: JSON.stringify(json),
-            csrf_token: ''
         }
     });
 }
 
-async function submitListened(id, time) {
-    return await submitWebLog('play', {
+function submitListened(id, time) {
+    return submitWebLog('play', {
         id,
         type: 'song',
         wifi: 0,
         download: 0,
         time: Math.round(time),
-        end: 'playend',
+        end: 'ui',
     });
 }
 
@@ -217,6 +207,9 @@ function checkUrlStatus(u = 'http://m10.music.126.net') {
             break;
         case 'http:':
             request = http;
+            break;
+        default:
+            throw new Error(`Unsupported protocol ${opt.protocol}`);
     }
     return new Promise(resolve => {
         request.request({
@@ -242,17 +235,12 @@ function getDirSize(dirPath) {
     return totalSize;
 }
 
-const dataDirMap = {
-    app: '',
-    cache: 'Cache'
-};
-const appData = app.getPath('appData');
-const appName = process.env.NODE_ENV === 'development'
-    ? 'Electron'
-    : require('../../../package.json').name;
-
-function getDataSize(name = 'app') {
-    const cachePath = path.join(appData, appName, dataDirMap[name]);
+function getDataSize() {
+    const appData = app.getPath('appData');
+    const appName = process.env.NODE_ENV === 'development'
+        ? 'Electron'
+        : require('../../../package.json').name;
+    const cachePath = path.join(appData, appName);
     let size;
     try {
         size = getDirSize(cachePath);
@@ -260,16 +248,6 @@ function getDataSize(name = 'app') {
         size = 0;
     }
     return size;
-}
-
-function clearAppData(name = 'cache') {
-    const delPath = path.join(appData, appName, dataDirMap[name]);
-    try {
-        qs.execSync(`rm -rf ${delPath}`);
-    } catch (err) {
-        return err;
-    }
-    return false;
 }
 
 function getVersionName() {
@@ -300,34 +278,72 @@ function writeSettings(target) {
     return Settings.set(target);
 }
 
-async function postDailyTask(type) {
-    return await client.post({
-        url: `${BaseURL}/weapi/point/dailyTask?type=${type}`,
+function resetSettings() {
+    return Settings.set(require('../default'));
+}
+
+function postDailyTask(type) {
+    return client.post({
+        url: `${BaseURL}/weapi/point/dailyTask`,
         data: {
-            csrf_token: ''
+            type,
         }
     });
 }
 
-async function manipulatePlaylistTracks(op, pid, tracks) {
-    return await client.post({
+function manipulatePlaylistTracks(op, pid, tracks) {
+    return client.post({
         url: `${BaseURL}/weapi/playlist/manipulate/tracks`,
         data: {
             op,
             pid,
             tracks,
             trackIds: JSON.stringify(tracks),
-            csrf_token: ''
         }
     });
 }
 
-async function collectTrack(pid, ...tracks) {
-    return await manipulatePlaylistTracks('add', pid, tracks);
+function collectTrack(pid, ...tracks) {
+    return manipulatePlaylistTracks('add', pid, tracks);
 }
 
-async function uncollectTrack(pid, ...tracks) {
-    return await manipulatePlaylistTracks('del', pid, tracks);
+function uncollectTrack(pid, ...tracks) {
+    return manipulatePlaylistTracks('del', pid, tracks);
+}
+
+function getSearchSuggest(s) {
+    return client.post({
+        url: `${BaseURL}/weapi/search/suggest/web`,
+        data: {
+            s,
+        }
+    });
+}
+
+const searchTypeMap = {
+    song: '1',
+    album: '10',
+    artist: '100',
+    playlist: '1000',
+    user: '1002',
+    mv: '1004',
+    lyric: '1006',
+    radio: '1009'
+};
+
+function search(s, type, limit = 20, offset = 0) {
+    return client.post({
+        url: `${BaseURL}/weapi/cloudsearch/get/web`,
+        data: {
+            hlposttag: '</span>',
+            hlpretag: '<span class="s-fc7">',
+            limit,
+            offset,
+            s,
+            total: true,
+            type: searchTypeMap[type],
+        }
+    });
 }
 
 export default {
@@ -345,11 +361,13 @@ export default {
     submitListened,
     checkUrlStatus,
     getDataSize,
-    clearAppData,
     getVersionName,
     getCurrentSettings,
     writeSettings,
+    resetSettings,
     postDailyTask,
     collectTrack,
-    uncollectTrack
+    uncollectTrack,
+    getSearchSuggest,
+    search
 };

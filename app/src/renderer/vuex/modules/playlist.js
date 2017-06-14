@@ -48,8 +48,8 @@ const mutations = {
         state.loopMode = LOOP_TYPES.RANDOM;
     },
     [types.RESTORE_PLAYLIST](state, payload) {
-        const { currentIndex, loopMode, list } = payload;
-        state.paused = true;
+        const { currentIndex, loopMode, list, paused } = payload;
+        state.paused = paused;
         state.currentIndex = currentIndex || 0;
         state.loopMode = loopMode || LOOP_TYPES.LIST_LOOP;
         state.list = list.map(t => new Track(t));

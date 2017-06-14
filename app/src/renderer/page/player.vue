@@ -60,7 +60,6 @@ export default {
             isActive: false,
             _audioEl: {},
             lyricElemMap: [],
-            lyricTimeMap: [],
             currentLyricIndex: -1
         };
     },
@@ -80,7 +79,7 @@ export default {
             if (!this.lyricElemMap.length) return '';
             if (this.currentLyricIndex === -1) return 'transform: translateY(200px);';
             const currentLyricElem = this.lyricElemMap[this.currentLyricIndex];
-            const offset = 200 - currentLyricElem.offsetTop - currentLyricElem.clientHeight;
+            const offset = 150 - currentLyricElem.offsetTop - currentLyricElem.clientHeight;
             return `transform: translateY(${offset}px);`;
         }
     },
@@ -89,23 +88,16 @@ export default {
             if (this.playing.track.lyrics && this.playing.track.lyrics.lrc) {
                 this.lyricElemMap = Array.from(document.getElementsByClassName('line'));
             }
-        },
-        createLyricTimeMap() {
-            if (this.playing.track.lyrics && this.playing.track.lyrics.lrc) {
-                this.lyricTimeMap = this.playing.track.lyrics.lrc.lyrics.map(i => +i.timestamp);
-            }
         }
     },
     watch: {
         'playing.track.id': function () {
             this.currentLyricIndex = -1;
-            this.createLyricTimeMap();
             // query lyric elements after they are created
             this.$nextTick(() => this.createLyricElemMap());
         }
     },
     created() {
-        this.createLyricTimeMap();
         this._audioEl = document.getElementById('playerbar-audio');
         this._audioEl.ontimeupdate = ev => {
             // do nothing if element map is empty or compo not acitve
@@ -114,7 +106,7 @@ export default {
             // 2. the component is mounted but not active yet e.g. it's in <keep-alive/> background
             if (!this.isActive || !this.lyricElemMap.length) return;
             // do not loop from 0 every time
-            // loop form curren index. if current index equals -1, loop from 0
+            // loop form current index. if current index equals -1, loop from 0
             let loopStart = this.currentLyricIndex === -1 ? 0 : this.currentLyricIndex;
             // the process was darged backword, loop from 0
             if (ev.target.currentTime < +this.lyricElemMap[loopStart].getAttribute('data-time')) {
@@ -240,6 +232,7 @@ export default {
         padding: 10px 0;
         box-sizing: border-box;
         .name {
+            .ellipsis-text(500px);
             font-size: 32px;
             margin: 8px 0;
         }
@@ -248,7 +241,7 @@ export default {
             .ellipsis-text;
         }
         .lyric {
-            height: 350px;
+            height: 340px;
             overflow: hidden;
             margin-top: 20px;
             .scroller {

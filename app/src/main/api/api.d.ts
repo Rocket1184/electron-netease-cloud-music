@@ -154,6 +154,42 @@ export interface DailyTaskResponse {
     msg?: String
 }
 
+export interface RawAlbum {
+    id: Number,
+    name: String,
+    artist: Models.RawArtistModel,
+    copyrightId: Number,
+    picId: Number,
+    publishTime: Number,
+    size: Number,
+    status: Number
+}
+
+export interface RawMV {
+    artistId: Number,
+    artistName: String,
+    artists: Array<Models.RawArtistModel>,
+    briefDesc: String,
+    cover: String,
+    desc: any,
+    duration: Number,
+    mark: Number,
+    name: String,
+    playCount: Number,
+    subed: Boolean
+}
+
+export interface SearchResponse extends BaseApiResopnse {
+    result: {
+        songs?: Array<Models.TrackModel>,
+        artists?: Array<Models.RawArtistModel>,
+        playlists?: Array<Models.PlayListModel>,
+        albums?: Array<RawAlbum>,
+        mvs?: Array<RawMV>,
+        order: Array<'songs' | 'artists' | 'playlists' | 'albums' | 'mvs'>
+    }
+}
+
 export default class API {
     updateCookie(cookie: String): String | any;
 
@@ -185,21 +221,25 @@ export default class API {
 
     getDirSize(dirPath: String): Number | any;
 
-    getDataSize(name: 'app' | 'cache'): Number | any;
-
-    clearAppData(name: 'app' | 'cache'): void;
+    getDataSize(): Number | any;
 
     getVersionName(): String | any;
 
     getCurrentSettings(): ApplicationSettings | any;
 
-    writeSettings(target: ApplicationSettings): void;
+    writeSettings(target: ApplicationSettings): ApplicationSettings | any;
+
+    resetSettings(): ApplicationSettings | any;
 
     postDailyTask(type: 0 | 1): Promise<DailyTaskResponse>;
 
-    manipulatePlaylistTracks(op: 'add' | 'del', pid: Number, tracks: Array<Number>)
+    manipulatePlaylistTracks(op: 'add' | 'del', pid: Number, tracks: Array<Number>);
 
-    collectTrack(pid: Number, ...tracks: Array<Number>)
+    collectTrack(pid: Number, ...tracks: Array<Number>);
 
-    uncollectTrack(pid: Number, ...tracks: Array<Number>)
+    uncollectTrack(pid: Number, ...tracks: Array<Number>);
+
+    getSearchSuggest(s: String): Promise<SearchResponse>;
+
+    search(s: String, type: Number | String, limit?: Number, offset?: Number): Promise<SearchResponse>;
 }
