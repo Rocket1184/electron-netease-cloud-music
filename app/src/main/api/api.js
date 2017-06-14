@@ -23,7 +23,7 @@ function getCookie(key = '') {
     return client.getCookie(key);
 }
 
-async function login(acc, pwd) {
+function login(acc, pwd) {
     const password = crypto.createHash('md5').update(pwd).digest('hex');
     const postBody = {
         password,
@@ -33,27 +33,27 @@ async function login(acc, pwd) {
         clientToken: '1_sZ1r5MuQ4qBcb12MxZxFrJ3GgtyZGAYN_Rj3ssFDxxZ7+Lf9kZ+dLlZwS3mfbiE+n_ssnhg1ScZgvXau6VSb4JtQ=='
     };
     if (/^1\d{10}$/.test(acc)) {
-        return await client.post({
+        return client.post({
             url: `${BaseURL}/weapi/login/cellphone`,
             data: { phone: acc, ...postBody }
         });
     } else {
-        return await client.post({
+        return client.post({
             url: `${BaseURL}/weapi/login`,
             data: { username: acc, ...postBody }
         });
     }
 }
 
-async function refreshLogin() {
-    return await client.post({
+function refreshLogin() {
+    return client.post({
         url: `${BaseURL}/weapi/login/token/refresh`,
         data: {}
     });
 }
 
-async function getUserPlaylist(uid) {
-    return await client.post({
+function getUserPlaylist(uid) {
+    return client.post({
         url: `${BaseURL}/weapi/user/playlist`,
         data: {
             uid,
@@ -63,8 +63,8 @@ async function getUserPlaylist(uid) {
     });
 }
 
-async function getMusicRecord(uid) {
-    return await client.post({
+function getMusicRecord(uid) {
+    return client.post({
         url: `${BaseURL}/weapi/v1/play/record`,
         data: {
             uid,
@@ -73,8 +73,8 @@ async function getMusicRecord(uid) {
     });
 }
 
-async function getDailySuggestions() {
-    return await client.post({
+function getDailySuggestions() {
+    return client.post({
         url: `${BaseURL}/weapi/v1/discovery/recommend/songs`,
         data: {
             offset: 0,
@@ -84,8 +84,8 @@ async function getDailySuggestions() {
     });
 }
 
-async function getListDetail(id) {
-    return await client.post({
+function getListDetail(id) {
+    return client.post({
         url: `${BaseURL}/weapi/v3/playlist/detail`,
         data: {
             id,
@@ -103,12 +103,12 @@ const QualityMap = {
     l: 96000
 };
 
-async function getMusicUrl(idOrIds, quality = 'h') {
+function getMusicUrl(idOrIds, quality = 'h') {
     if (!QualityMap[quality]) throw new Error(`Quality type '${quality}' is not in [h,m,l]`);
     let ids;
     if (Array.isArray(idOrIds)) ids = idOrIds;
     else ids = [idOrIds];
-    return await client.post({
+    return client.post({
         url: `${BaseURL}/weapi/song/enhance/player/url`,
         data: {
             ids,
@@ -117,8 +117,8 @@ async function getMusicUrl(idOrIds, quality = 'h') {
     });
 }
 
-async function getMusicComments(rid, limit = 20, offset = 0) {
-    return await client.post({
+function getMusicComments(rid, limit = 20, offset = 0) {
+    return client.post({
         url: `${BaseURL}/weapi/v1/resource/comments/R_SO_4_${rid}`,
         data: {
             rid,
@@ -175,8 +175,8 @@ async function getMusicLyric(id) {
     return result;
 }
 
-async function submitWebLog(action, json) {
-    return await client.post({
+function submitWebLog(action, json) {
+    return client.post({
         url: `${BaseURL}/weapi/log/web`,
         data: {
             action,
@@ -185,8 +185,8 @@ async function submitWebLog(action, json) {
     });
 }
 
-async function submitListened(id, time) {
-    return await submitWebLog('play', {
+function submitListened(id, time) {
+    return submitWebLog('play', {
         id,
         type: 'song',
         wifi: 0,
@@ -207,6 +207,9 @@ function checkUrlStatus(u = 'http://m10.music.126.net') {
             break;
         case 'http:':
             request = http;
+            break;
+        default:
+            throw new Error(`Unsupported protocol ${opt.protocol}`);
     }
     return new Promise(resolve => {
         request.request({
@@ -279,8 +282,8 @@ function resetSettings() {
     return Settings.set(require('../default'));
 }
 
-async function postDailyTask(type) {
-    return await client.post({
+function postDailyTask(type) {
+    return client.post({
         url: `${BaseURL}/weapi/point/dailyTask`,
         data: {
             type,
@@ -288,8 +291,8 @@ async function postDailyTask(type) {
     });
 }
 
-async function manipulatePlaylistTracks(op, pid, tracks) {
-    return await client.post({
+function manipulatePlaylistTracks(op, pid, tracks) {
+    return client.post({
         url: `${BaseURL}/weapi/playlist/manipulate/tracks`,
         data: {
             op,
@@ -300,16 +303,16 @@ async function manipulatePlaylistTracks(op, pid, tracks) {
     });
 }
 
-async function collectTrack(pid, ...tracks) {
-    return await manipulatePlaylistTracks('add', pid, tracks);
+function collectTrack(pid, ...tracks) {
+    return manipulatePlaylistTracks('add', pid, tracks);
 }
 
-async function uncollectTrack(pid, ...tracks) {
-    return await manipulatePlaylistTracks('del', pid, tracks);
+function uncollectTrack(pid, ...tracks) {
+    return manipulatePlaylistTracks('del', pid, tracks);
 }
 
-async function getSearchSuggest(s) {
-    return await client.post({
+function getSearchSuggest(s) {
+    return client.post({
         url: `${BaseURL}/weapi/search/suggest/web`,
         data: {
             s,
@@ -328,7 +331,7 @@ const searchTypeMap = {
     radio: '1009'
 };
 
-async function search(s, type, limit = 20, offset = 0) {
+function search(s, type, limit = 20, offset = 0) {
     return client.post({
         url: `${BaseURL}/weapi/cloudsearch/get/web`,
         data: {
