@@ -79,7 +79,7 @@ export default {
             if (!this.lyricElemMap.length) return '';
             if (this.currentLyricIndex === -1) return 'transform: translateY(200px);';
             const currentLyricElem = this.lyricElemMap[this.currentLyricIndex];
-            const offset = 175 - currentLyricElem.offsetTop - currentLyricElem.clientHeight;
+            const offset = 150 - currentLyricElem.offsetTop - currentLyricElem.clientHeight;
             return `transform: translateY(${offset}px);`;
         }
     },
@@ -232,6 +232,7 @@ export default {
         padding: 10px 0;
         box-sizing: border-box;
         .name {
+            .ellipsis-text(500px);
             font-size: 32px;
             margin: 8px 0;
         }
@@ -240,7 +241,7 @@ export default {
             .ellipsis-text;
         }
         .lyric {
-            height: 350px;
+            height: 340px;
             overflow: hidden;
             margin-top: 20px;
             .scroller {
