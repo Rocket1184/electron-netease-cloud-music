@@ -51,7 +51,8 @@
                       @click="reloadWindow"
                       disableRipple/>
         <mu-sub-header>关于</mu-sub-header>
-        <mu-list-item title="版本号">
+        <mu-list-item title="版本号"
+                      @click="showVersions">
             <span slot="right"
                   class="nowrap">{{versionName}}</span>
         </mu-list-item>
@@ -61,7 +62,7 @@
         <!-- - - - - - - - - -  dialog below - - - - - - - - -  -->
         <mu-dialog :open="prompt"
                    :title="promptTitle">
-            {{promptText}}
+            <div v-html="promptText" ></div>
             <mu-flat-button slot="actions"
                             @click="prompt=false"
                             primary
@@ -144,6 +145,18 @@ export default {
                     action: () => { }
                 });
             }
+        },
+        showVersions() {
+            this.showPrompt({
+                title: '版本号',
+                text: `<pre>
+                    Electron: ${process.versions.electron}
+                    Chrome: ${process.versions.chrome}
+                    Node: ${process.versions.node}
+                    V8: ${process.versions.v8}
+                </pre>`,
+                action: () => { }
+            });
         },
         showPrompt(cfg) {
             this.prompt = true;
