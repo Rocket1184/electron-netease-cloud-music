@@ -5,9 +5,7 @@
   "scripts": {
     "dev": "node script/server.js",
     "pack": "node script/webpack.js",
-    "build": "node script/packager.js",
-    "lint": "eslint --ext .js,.vue -f ./node_modules/eslint-friendly-formatter app",
-    "lint:fix": "eslint --ext .js,.vue -f ./node_modules/eslint-friendly-formatter --fix app"
+    "build": "node script/packager.js"
   },
   "author": "rocka <i@rocka.me> (https://rocka.me)",
   "license": "GPL-3.0",
