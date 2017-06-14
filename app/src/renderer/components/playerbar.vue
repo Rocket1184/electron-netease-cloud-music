@@ -250,6 +250,13 @@ export default {
         font-size: 14px;
         padding: 10px 14px;
         width: calc(~"100% - 244px");
+        .song-name {
+            max-width: 500px;
+            overflow: hidden;
+            text-overflow: ellipsis;
+            white-space: nowrap;
+            vertical-align: middle;
+        }
         .artist-name {
             margin-left: 14px;
             color: dimgrey;
