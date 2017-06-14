@@ -37,9 +37,9 @@ yarn install
 # serve with hot reload at localhost:24353
 npm run dev
 
-# pack js/vue in app/src into bundle
+# build the app in production mod
+export NODE_ENV=production
 npm run pack
-
-# pack electron app
-npm run build
+npm run build linux
+npm run build darwin
 ```
