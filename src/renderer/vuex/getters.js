@@ -17,12 +17,6 @@ export const user = state => {
     };
 };
 
-export const userPlayLists = state => {
-    return state.user.loginValid
-        ? state.user.playlist
-        : [];
-};
-
 export const playing = state => {
     const quality = state.settings.bitRate;
     const { list, currentIndex, paused } = state.playlist;

@@ -2,9 +2,9 @@
 
 **UNOFFICAL** client for music.163.com
 
-[![build status](https://api.travis-ci.org/Rocket1184/electron-netease-cloud-music.svg?branch=master)](https://travis-ci.org/Rocket1184/electron-netease-cloud-music/builds)
-[![dependencies staus](https://david-dm.org/rocket1184/electron-netease-cloud-music/status.svg)](https://david-dm.org/rocket1184/electron-netease-cloud-music)
-[![devDependencies staus](https://david-dm.org/rocket1184/electron-netease-cloud-music/dev-status.svg)](https://david-dm.org/rocket1184/electron-netease-cloud-music?type=dev)
+[![build status](https://api.travis-ci.org/Rocket1184/electron-netease-cloud-music.svg?branch=dev)](https://travis-ci.org/Rocket1184/electron-netease-cloud-music/builds)
+[![dependencies staus](https://david-dm.org/rocket1184/electron-netease-cloud-music/dev/status.svg)](https://david-dm.org/rocket1184/electron-netease-cloud-music/dev)
+[![devDependencies staus](https://david-dm.org/rocket1184/electron-netease-cloud-music/dev/dev-status.svg)](https://david-dm.org/rocket1184/electron-netease-cloud-music/dev?type=dev)
 
 ## Download latest master/dev releases
 Click here -> [![hreoku status](https://heroku-badge.herokuapp.com/?app=electron-ncm-downloads&style=flat&svg=1)](https://electron-ncm-downloads.herokuapp.com/) <-
