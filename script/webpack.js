@@ -1,3 +1,4 @@
+const fs = require('fs');
 const path = require('path');
 const webpack = require('webpack');
 
@@ -7,7 +8,7 @@ let argv = process.argv.slice(2);
 if (!argv.length) argv = ['main', 'renderer'];
 
 if (argv[0] === 'clean') {
-    const distPath = path.join(projectRoot, 'app/dist');
+    const distPath = path.join(projectRoot, 'dist');
     const cnt = require('fs').readdirSync(distPath).filter(f => f[0] !== '.').length;
     if (cnt) {
         require('child_process').execSync(`rm -r ${distPath}/*`);
@@ -15,6 +16,10 @@ if (argv[0] === 'clean') {
     }
     else console.log('Nothing to clean.\n');
     process.exit(0);
+} else {
+    // copy package.json to dist path, or we cannot start app
+    fs.createReadStream(path.join(projectRoot, 'package.json'))
+        .pipe(fs.createWriteStream(path.join(projectRoot, 'dist/package.json')));
 }
 
 let webpackCfg = [];

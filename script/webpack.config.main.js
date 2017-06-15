@@ -2,23 +2,23 @@
 
 const path = require('path');
 const webpack = require('webpack');
-const packageJson = require('../app/package.json');
+const packageJson = require('../package.json');
 const BabiliPlugin = require('babili-webpack-plugin');
 
 const projectRoot = path.resolve('.');
 
 let cfg = {
-    context: path.join(projectRoot, 'app/src'),
+    context: path.join(projectRoot, 'src'),
     target: 'electron',
     devtool: 'source-map',
     externals: Object.keys(packageJson.dependencies),
     entry: {
-        main: path.join(projectRoot, 'app/src/main/index.js')
+        main: path.join(projectRoot, 'src/main/index.js')
     },
     output: {
         filename: '[name].js',
         libraryTarget: 'commonjs2',
-        path: path.join(projectRoot, 'app/dist')
+        path: path.join(projectRoot, 'dist')
     },
     module: {
         rules: [
@@ -36,7 +36,7 @@ let cfg = {
     },
     resolve: {
         modules: [
-            path.join(projectRoot, 'app/node_modules')
+            path.join(projectRoot, 'node_modules')
         ]
     }
 };

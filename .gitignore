@@ -43,12 +43,8 @@ jspm_packages
 thumbs.db
 
 # Build dist
-app/dist/index.html
-app/dist/main.js
-app/dist/renderer.js
-app/dist/styles.css
-builds/*
-dist/
+build/*
+dist/*
 
 # Keep Folders
 !.gitkeep

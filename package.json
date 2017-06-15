@@ -1,7 +1,8 @@
 {
   "name": "electron-netease-cloud-music",
-  "version": "0.1.0",
+  "version": "0.2.0",
   "description": "UNOFFICAL client for music.163.com",
+  "main": "main.js",
   "scripts": {
     "dev": "node script/server.js",
     "pack": "node script/webpack.js",
@@ -41,5 +42,14 @@
     "webpack": "^2.6.1",
     "webpack-dev-server": "^2.4.5"
   },
-  "dependencies": {}
+  "dependencies": {
+    "axios": "^0.16.2",
+    "big-integer": "^1.6.23",
+    "cookie": "^0.3.1",
+    "lrc-kit": "^0.2.2",
+    "muse-ui": "^2.0.3",
+    "vue": "^2.3.4",
+    "vue-router": "^2.5.3",
+    "vuex": "^2.3.1"
+  }
 }

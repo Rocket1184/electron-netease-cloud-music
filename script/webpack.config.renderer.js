@@ -2,7 +2,7 @@
 
 const path = require('path');
 const webpack = require('webpack');
-const packageJson = require('../app/package.json');
+const packageJson = require('../package.json');
 const ExtractTextPlugin = require('extract-text-webpack-plugin');
 const HtmlWebpackPlugin = require('html-webpack-plugin');
 const BabiliPlugin = require('babili-webpack-plugin');
@@ -10,18 +10,18 @@ const BabiliPlugin = require('babili-webpack-plugin');
 const projectRoot = path.resolve('.');
 
 let cfg = {
-    context: path.join(projectRoot, 'app/src'),
+    context: projectRoot,
     target: 'electron-renderer',
     devtool: 'source-map',
     entry: {
         renderer: [
-            path.join(projectRoot, 'app/src/renderer/main.js')
+            path.join(projectRoot, 'src/renderer/main.js')
         ]
     },
     output: {
         filename: '[name].js',
         libraryTarget: 'commonjs2',
-        path: path.join(projectRoot, 'app/dist')
+        path: path.join(projectRoot, 'dist')
     },
     module: {
         rules: [
@@ -89,14 +89,13 @@ let cfg = {
 if (process.env.NODE_ENV !== 'production') {
     cfg.externals = Object.keys(packageJson.dependencies);
     cfg.resolve.modules = [
-        path.join(projectRoot, 'node_modules'),
-        path.join(projectRoot, 'app/node_modules')
+        path.join(projectRoot, 'node_modules')
     ];
     cfg.plugins.push(
         new HtmlWebpackPlugin({
             filename: 'index.html',
-            template: path.join(projectRoot, 'app/index.ejs'),
-            appModules: path.join(projectRoot, 'app/node_modules')
+            template: path.join(projectRoot, 'src/renderer/index.ejs'),
+            appModules: path.join(projectRoot, 'node_modules')
         }),
         new webpack.DefinePlugin({
             PRODUCTION: 'false'
@@ -109,7 +108,7 @@ if (process.env.NODE_ENV === 'production') {
         new BabiliPlugin(),
         new HtmlWebpackPlugin({
             filename: 'index.html',
-            template: path.join(projectRoot, 'app/index.ejs')
+            template: path.join(projectRoot, 'src/renderer/index.ejs')
         }),
         new webpack.DefinePlugin({
             PRODUCTION: 'true',

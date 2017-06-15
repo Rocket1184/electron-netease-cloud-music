@@ -7,7 +7,7 @@ let argv = process.argv.slice(2);
 if (!argv.length) argv = 'all';
 
 if (argv[0] === 'clean') {
-    const distPath = path.join(projectRoot, 'dist');
+    const distPath = path.join(projectRoot, 'build');
     const cnt = require('fs').readdirSync(distPath).filter(f => f[0] !== '.').length;
     if (cnt) {
         require('child_process').execSync(`rm -r ${distPath}/*`);
@@ -20,16 +20,9 @@ if (argv[0] === 'clean') {
 const options = {
     arch: 'x64',
     asar: true,
-    dir: path.join(projectRoot, 'app'),
-    out: path.join(projectRoot, 'dist'),
-    ignore: [
-        /assets/,
-        /index\.ejs/,
-        /app\/src/,
-        /node_modules/,
-        /\.d\.ts$/,
-        /yarn.lock/
-    ],
+    icon: path.join(projectRoot, 'assets/icons/icon'),
+    dir: path.join(projectRoot, 'dist'),
+    out: path.join(projectRoot, 'build'),
     overwrite: true,
     platform: argv
 };

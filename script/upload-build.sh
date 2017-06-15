@@ -1,6 +1,6 @@
 #!/bin/bash
 
-cd dist
+cd build
 wget http://devtools.qiniu.com/qshell-v2.0.5.zip -O qshell.zip
 unzip qshell.zip qshell_linux_amd64
 ./qshell_linux_amd64 account $QINIU_AK $QINIU_SK

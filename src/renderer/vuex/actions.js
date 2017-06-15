@@ -2,7 +2,7 @@ import * as types from './mutation-types';
 import { LOOP_TYPES } from './modules/playlist';
 import ApiRenderer from '../util/apirenderer';
 
-export const setUserInfo = async ({ state, commit }, payload) => {
+export function setUserInfo({ commit }, payload) {
     const { info, cookie } = payload;
     commit({
         type: types.UPDATE_USER_COOKIES,
@@ -35,7 +35,7 @@ async function playThisTrack(commit, list, index, quality) {
     commit(types.RESUME_PLAYING_MUSIC);
 }
 
-export const refreshCurrentTrack = async ({ state, commit }) => {
+export async function refreshCurrentTrack({ state, commit }) {
     const quality = state.settings.bitRate;
     const { currentIndex, list } = state.playlist;
     const oUrl = await ApiRenderer.getMusicUrl(list[currentIndex].id, quality);
@@ -45,21 +45,21 @@ export const refreshCurrentTrack = async ({ state, commit }) => {
     });
 };
 
-export const playNextTrack = ({ commit, state }) => {
+export function playNextTrack({ commit, state }) {
     const quality = state.settings.bitRate;
     const { currentIndex, list } = state.playlist;
     let nextIndex = (currentIndex + 1) % list.length;
     playThisTrack(commit, list, nextIndex, quality);
 };
 
-export const playPreviousTrack = ({ commit, state }) => {
+export function playPreviousTrack({ commit, state }) {
     const quality = state.settings.bitRate;
     const { currentIndex, list } = state.playlist;
     let nextIndex = (currentIndex + list.length - 1) % list.length;
     playThisTrack(commit, list, nextIndex, quality);
 };
 
-export const playPlaylist = async ({ commit, state }, payload) => {
+export async function playPlaylist({ commit, state }, payload) {
     if (payload) {
         commit({
             type: types.SET_PLAY_LIST,
@@ -74,13 +74,13 @@ export const playPlaylist = async ({ commit, state }, payload) => {
     playThisTrack(commit, list, firstIndex, quality);
 };
 
-export const playTrackIndex = ({ commit, state }, payload) => {
+export function playTrackIndex({ commit, state }, payload) {
     const quality = state.settings.bitRate;
     const { list } = state.playlist;
     playThisTrack(commit, list, payload.index, quality);
 };
 
-export const restorePlaylist = async ({ commit, state }, payload) => {
+export async function restorePlaylist({ commit }, payload) {
     const { playlist } = payload;
     commit({
         type: types.RESTORE_PLAYLIST,
@@ -97,7 +97,7 @@ export const restorePlaylist = async ({ commit, state }, payload) => {
     }
 };
 
-export const refreshUserPlaylist = async ({ commit, state }, payload) => {
+export async function refreshUserPlaylist({ commit }, payload) {
     const resp = await ApiRenderer.getListDetail(payload);
     commit(types.UPDATE_USER_PLAYLIST, resp.playlist);
 };
