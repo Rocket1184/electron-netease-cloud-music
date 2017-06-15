@@ -27,17 +27,13 @@ Click here -> [![hreoku status](https://heroku-badge.herokuapp.com/?app=electron
 ## Build Setup
 
 ``` bash
-# install dev dependencies
-yarn install
-
-# install app dependencies
-cd app
+# install dependencies
 yarn install
 
 # serve with hot reload at localhost:24353
 npm run dev
 
-# build the app in production mod
+# build the app in production mode
 export NODE_ENV=production
 npm run pack
 npm run build linux

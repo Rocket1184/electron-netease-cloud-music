@@ -7,7 +7,7 @@ import * as Settings from './settings';
 let shouldAppQuit = true;
 let mainWindow;
 const winURL = process.env.NODE_ENV === 'development'
-    ? `http://localhost:${require('../../../script/config').devPort}`
+    ? `http://localhost:${require('../../script/config').devPort}`
     : `file://${__dirname}/index.html`;
 
 function createWindow(url = winURL) {
