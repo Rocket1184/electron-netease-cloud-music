@@ -5,6 +5,12 @@ const WebpackDevServer = require('webpack-dev-server');
 const projectCfg = require('./config');
 const projectRoot = path.resolve('.');
 
+process.on('SIGINT', () => {
+    console.log('\nCtrl-C Pressed. Exiting...\n');
+    mainProcess.kill();
+    process.exit(0);
+});
+
 const mainProcess = require('child_process').exec(`electron ${projectRoot}/app/src/main/index.dev.js`);
 mainProcess.stdout.on('data', console.log);
 
