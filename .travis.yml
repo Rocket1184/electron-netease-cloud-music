@@ -4,7 +4,6 @@ cache:
   yarn: true
   directories:
   - node_modules
-  - app/node_modules
 script:
   - script/install-and-build.sh
   - script/upload-build.sh
