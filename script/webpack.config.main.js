@@ -10,8 +10,6 @@ const projectRoot = path.resolve('.');
 let cfg = {
     context: path.join(projectRoot, 'src'),
     target: 'electron',
-    devtool: 'source-map',
-    externals: Object.keys(packageJson.dependencies),
     entry: {
         main: path.join(projectRoot, 'src/main/index.js')
     },
@@ -33,17 +31,11 @@ let cfg = {
     node: {
         __dirname: false,
         __filename: false
-    },
-    resolve: {
-        modules: [
-            path.join(projectRoot, 'node_modules')
-        ]
     }
 };
 
 if (process.env.NODE_ENV === 'production') {
-    delete cfg.externals;
-    delete cfg.resolve.modules;
+    // release config
     cfg.plugins.push(
         new BabiliPlugin(),
         new webpack.DefinePlugin({
@@ -53,6 +45,13 @@ if (process.env.NODE_ENV === 'production') {
             }
         })
     );
+} else {
+    // dev config
+    cfg.devtool = 'eval';
+    cfg.externals = Object.keys(packageJson.dependencies);
+    cfg.resolve.modules = [
+        path.join(projectRoot, 'node_modules')
+    ];
 }
 
 module.exports = cfg;

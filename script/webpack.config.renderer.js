@@ -12,7 +12,6 @@ const projectRoot = path.resolve('.');
 let cfg = {
     context: projectRoot,
     target: 'electron-renderer',
-    devtool: 'source-map',
     entry: {
         renderer: [
             path.join(projectRoot, 'src/renderer/main.js')
@@ -86,7 +85,24 @@ let cfg = {
     }
 };
 
-if (process.env.NODE_ENV !== 'production') {
+if (process.env.NODE_ENV === 'production') {
+    // release config
+    cfg.plugins.push(
+        new BabiliPlugin(),
+        new HtmlWebpackPlugin({
+            filename: 'index.html',
+            template: path.join(projectRoot, 'src/renderer/index.ejs')
+        }),
+        new webpack.DefinePlugin({
+            PRODUCTION: 'true',
+            'process.env': {
+                NODE_ENV: '"production"'
+            }
+        })
+    );
+} else {
+    // dev config
+    cfg.devtool = 'cheap-module-eval-source-map';
     cfg.externals = Object.keys(packageJson.dependencies);
     cfg.resolve.modules = [
         path.join(projectRoot, 'node_modules')
@@ -99,22 +115,6 @@ if (process.env.NODE_ENV !== 'production') {
         }),
         new webpack.DefinePlugin({
             PRODUCTION: 'false'
-        })
-    );
-}
-
-if (process.env.NODE_ENV === 'production') {
-    cfg.plugins.push(
-        new BabiliPlugin(),
-        new HtmlWebpackPlugin({
-            filename: 'index.html',
-            template: path.join(projectRoot, 'src/renderer/index.ejs')
-        }),
-        new webpack.DefinePlugin({
-            PRODUCTION: 'true',
-            'process.env': {
-                NODE_ENV: '"production"'
-            }
         })
     );
 }
