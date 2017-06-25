@@ -1,143 +1,90 @@
 <template>
     <div class="appbar"
-         :class="appbarDynamicClassName">
+        :class="appbarDynamicClassName">
         <div id="appbar-window-control"
-             v-if="shouldWindowCtlShow">
-            <mu-icon-button @click="handleClose"
-                            icon="close" />
-            <mu-icon-button @click="handleMaximize"
-                            icon="keyboard_arrow_up" />
-            <mu-icon-button @click="handleMinimize"
-                            icon="keyboard_arrow_down" />
+            v-if="shouldWindowCtlShow">
+            <mu-icon-button @click="handleClose()"
+                icon="close"></mu-icon-button>
+            <mu-icon-button @click="handleMaximize()"
+                icon="keyboard_arrow_up"></mu-icon-button>
+            <mu-icon-button @click="handleMinimize()"
+                icon="keyboard_arrow_down"></mu-icon-button>
         </div>
         <mu-appbar title="Electron Netease Cloud Music">
             <mu-icon-button icon="menu"
-                            slot="left"
-                            @click="toggleDrawer" />
-            <mu-auto-complete icon="search"
-                              slot="right"
-                              class="appbar-search-field"
-                              inputClass="appbar-search-input"
-                              hintText="搜索歌曲、歌单、用户"
-                              :maxHeight="400"
-                              openOnFocus
-                              v-model="searchText"
-                              :dataSource="searchAutoComplete"
-                              @input="handleSearchInput"
-                              @keyup.enter="handleSearch" />
+                slot="left"
+                @click="toggleDrawer()"></mu-icon-button>
+            <searchBox slot="right"></searchBox>
         </mu-appbar>
         <mu-drawer :width="300"
-                   :open="drawerOpen"
-                   :docked="false"
-                   @close="toggleDrawer()">
+            :open="drawerOpen"
+            :docked="false"
+            @close="toggleDrawer()">
             <mu-list class="appnav-drawer">
                 <div class="header"
-                     :style="backgroundUrlStyle">
+                    :style="backgroundUrlStyle">
                     <div class="user-info">
                         <mu-avatar :icon="loginValid ? null : 'music_note'"
-                                   :src="user.avatarUrl"
-                                   :iconSize="40"
-                                   :size="80" />
+                            :src="user.avatarUrl"
+                            :iconSize="40"
+                            :size="80"></mu-avatar>
                         <span class="user-name"
-                              @click="handleNameClick">{{user.name}}</span>
+                            @click="handleNameClick()">{{user.name}}</span>
                         <mu-flat-button v-if="loginValid"
-                                        label="签到"
-                                        class="button-checkin"
-                                        color="white"
-                                        @click="handleCheckIn" />
+                            label="签到"
+                            class="button-checkin"
+                            color="white"
+                            @click="handleCheckIn()"></mu-flat-button>
                     </div>
                 </div>
                 <router-link to='/'>
                     <mu-list-item title="个性推荐">
                         <mu-icon slot="left"
-                                 value="polymer" />
+                            value="polymer"></mu-icon>
                     </mu-list-item>
                 </router-link>
                 <router-link to="/myplaylist">
                     <mu-list-item title="我的歌单">
                         <mu-icon slot="left"
-                                 value="library_music" />
+                            value="library_music"></mu-icon>
                     </mu-list-item>
                 </router-link>
                 <mu-list-item title="听歌排行">
                     <mu-icon slot="left"
-                             value="equalizer" />
+                        value="equalizer"></mu-icon>
                 </mu-list-item>
                 <mu-list-item title="本地音乐">
                     <mu-icon slot="left"
-                             value="desktop_mac" />
+                        value="desktop_mac"></mu-icon>
                 </mu-list-item>
                 <router-link to="/settings">
                     <mu-list-item title="应用设置">
                         <mu-icon slot="left"
-                                 value="settings" />
+                            value="settings"></mu-icon>
                     </mu-list-item>
                 </router-link>
             </mu-list>
         </mu-drawer>
-        <mu-dialog dialogClass="nav-login-dlg"
-                   :open="dlgShow"
-                   title="登录"
-                   @close="toggleDlg">
-            <mu-text-field label="用户名/邮箱/手机号"
-                           inputClass="app-nav-input-account"
-                           v-model="inputUsr"
-                           :errorText="errMsgUsr"
-                           fullWidth
-                           labelFloat/>
-            <br/>
-            <mu-text-field label="密码"
-                           id="app-nav-input-password"
-                           type="password"
-                           v-model="inputPwd"
-                           :errorText="errMsgPwd"
-                           fullWidth
-                           labelFloat/>
-            <br/>
-            <div v-if="needCaptcha">
-                <mu-text-field label="验证码"
-                               class="text-field-captcha"
-                               v-model="inputCaptcha"
-                               :errorText="errMsgCaptcha"
-                               labelFloat/>
-                <img :src="`http://music.163.com/captcha?id=${captchaId}`"
-                     class="captcha-img"
-                     alt="Refresh" />
-                <br/>
-            </div>
-            <br/>
-            <mu-raised-button label="登录"
-                              fullWidth
-                              primary
-                              @click="handleLogin" />
-        </mu-dialog>
+        <loginDialog :show="dlgShow"
+            @close="toggleDlg()"></loginDialog>
     </div>
 </template>
 
 <script>
-import { mapActions, mapGetters } from 'vuex';
+import { mapGetters } from 'vuex';
 import { remote } from 'electron';
 
 import ApiRenderer from '../util/apirenderer';
-import { searchIconMap } from '../util/searchtype';
+import loginDialog from './loginDialog';
+import searchBox from './searchBox';
 
 export default {
     data() {
         return {
             currentWindow: remote.getCurrentWindow(),
             isDarwin: process.platform === 'darwin',
-            searchText: '',
-            searchAutoComplete: [],
             drawerOpen: false,
-            dlgShow: false,
-            inputUsr: '',
-            inputPwd: '',
-            errMsgUsr: '',
-            errMsgPwd: '',
-            needCaptcha: false,
-            captchaId: null,
-            inputCaptcha: '',
-            errMsgCaptcha: ''
+            dlgShow: false
         };
     },
     computed: {
@@ -162,9 +109,6 @@ export default {
         ])
     },
     methods: {
-        ...mapActions([
-            'setUserInfo'
-        ]),
         handleClose() {
             this.currentWindow.close();
         },
@@ -183,46 +127,10 @@ export default {
         handleNameClick() {
             if (!this.loginValid) {
                 this.dlgShow = true;
-                this.$nextTick(() => {
-                    const inputAccRef = document.querySelector('.app-nav-input-account');
-                    const inputPwdRef = document.querySelector('#app-nav-input-password');
-                    inputPwdRef.addEventListener('keydown', e => e.key === 'Enter' && this.handleLogin());
-                    setTimeout(() => inputAccRef.focus(), 200);
-                });
             }
         },
         toggleDlg() {
             this.dlgShow = !this.dlgShow;
-        },
-        async handleLogin() {
-            this.errMsgUsr = '';
-            this.errMsgPwd = '';
-            if (!this.inputUsr) return this.errMsgUsr = '用户名不能为空';
-            if (!this.inputPwd) return this.errMsgPwd = '密码不能为空';
-            // TODO: Login with captcha
-            let resp = await ApiRenderer.login(this.inputUsr, this.inputPwd);
-            switch (resp.code) {
-                case 200:
-                    const cookie = await ApiRenderer.getCookie();
-                    this.setUserInfo({ cookie, info: resp });
-                    this.toggleDlg();
-                    localStorage.setItem('cookie', JSON.stringify(cookie));
-                    localStorage.setItem('user', JSON.stringify(resp));
-                    localStorage.setItem('uid', resp.account.id);
-                    break;
-                case 415:
-                    this.errMsgCaptcha = '登录过于频繁，请输入验证码';
-                    this.captchaId = resp.captchaId;
-                    this.needCaptcha = true;
-                case 501:
-                    this.errMsgUsr = '用户不存在';
-                    break;
-                case 502:
-                    this.errMsgPwd = '密码错误';
-                    break;
-                default:
-                    this.errMsgUsr = resp.msg;
-            }
         },
         async handleCheckIn() {
             let results = [
@@ -236,36 +144,14 @@ export default {
             } else {
                 this.$toast('是不是已经签到过了呢 ：）');
             }
-        },
-        async handleSearchInput() {
-            const resp = await ApiRenderer.getSearchSuggest(this.searchText);
-            if (resp.code === 200) {
-                let tmp = [];
-                for (const key in resp.result) {
-                    const current = resp.result[key];
-                    if (Array.isArray(current) && typeof current[0] === 'object') {
-                        tmp.push(...current.map(e => ({
-                            text: e.name,
-                            rightIcon: searchIconMap[key]
-                        })));
-                    }
-                }
-                this.searchAutoComplete = tmp;
-            } else {
-                this.searchAutoComplete = [];
-            }
-        },
-        handleSearch() {
-            this.$router.push(`/search?q=${this.searchText}`);
         }
     },
     created() {
         this.$router.afterEach(() => this.drawerOpen = false);
     },
-    mounted() {
-        document.querySelector('.appbar-search-input').onkeydown = ev => {
-            if (ev.key === 'Enter') this.handleSearch();
-        };
+    components: {
+        loginDialog,
+        searchBox
     }
 };
 </script>
@@ -323,26 +209,6 @@ export default {
     padding-top: 12px;
 }
 
-.appbar-search-field {
-    .mu-text-field {
-        color: #FFF;
-        margin-bottom: 0;
-        -webkit-app-region: no-drag;
-        &.focus-state {
-            color: #FFF;
-        }
-        .mu-text-field-hint {
-            color: fade(#FFF, 54%);
-        }
-        .mu-text-field-input {
-            color: #FFF;
-        }
-        .mu-text-field-focus-line {
-            background-color: #FFF;
-        }
-    }
-}
-
 .appnav-drawer {
     padding-top: 0;
     .header {
@@ -385,19 +251,6 @@ export default {
                 display: inline-block;
             }
         }
-    }
-}
-
-.nav-login-dlg {
-    width: 400px;
-    .text-field-captcha {
-        display: inline-block;
-        width: 200px;
-    }
-    .captcha-img {
-        width: 122px;
-        height: 60px;
-        float: right;
     }
 }
 </style>
