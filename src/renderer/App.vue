@@ -1,12 +1,12 @@
 <template>
     <div id="app">
-        <AppNav/>
+        <appNav></appNav>
         <div class="router-view">
             <keep-alive>
-                <router-view/>
+                <router-view></router-view>
             </keep-alive>
         </div>
-        <PlayerBar/>
+        <playerBar></playerBar>
     </div>
 </template>
 
@@ -14,16 +14,16 @@
 import { mapGetters } from 'vuex';
 
 import store from './vuex/store';
-import AppNav from './components/appnav';
-import PlayerBar from './components/playerbar';
-import ApiRenderer from './util/apirenderer';
+import appNav from './components/appNav';
+import playerBar from './components/playerBar';
+import ApiRenderer from './util/apiRenderer';
 import * as types from './vuex/mutation-types';
 
 export default {
     store,
     components: {
-        AppNav,
-        PlayerBar
+        appNav,
+        playerBar
     },
     computed: {
         ...mapGetters([

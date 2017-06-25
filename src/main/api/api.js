@@ -7,7 +7,7 @@ import qs from 'child_process';
 import { app } from 'electron';
 import { http, https } from 'follow-redirects';
 
-import Client from './httpclient';
+import Client from './httpClient';
 import * as Settings from '../settings';
 
 const BaseURL = 'http://music.163.com';
@@ -279,7 +279,7 @@ function writeSettings(target) {
 }
 
 function resetSettings() {
-    return Settings.set(require('../default'));
+    return Settings.set(Settings.defaultSettings);
 }
 
 function postDailyTask(type) {

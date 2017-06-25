@@ -2,75 +2,75 @@
     <div class="settings">
         <mu-sub-header>基本设置</mu-sub-header>
         <mu-list-item title="试听音质"
-                      disableRipple />
+            disableRipple></mu-list-item>
         <div class="margin-block">
             <mu-radio label="高 (320 kbit/s)"
-                      name="bitRate"
-                      nativeValue="h"
-                      v-model="settings.bitRate" />
-            <br/>
+                name="bitRate"
+                nativeValue="h"
+                v-model="settings.bitRate"></mu-radio>
+            <br>
             <mu-radio label="中 (160 kbit/s)"
-                      name="bitRate"
-                      nativeValue="m"
-                      v-model="settings.bitRate" />
-            <br/>
+                name="bitRate"
+                nativeValue="m"
+                v-model="settings.bitRate"></mu-radio>
+            <br>
             <mu-radio label="低 (96 kbit/s)"
-                      name="bitRate"
-                      nativeValue="l"
-                      v-model="settings.bitRate" />
+                name="bitRate"
+                nativeValue="l"
+                v-model="settings.bitRate"></mu-radio>
         </div>
         <mu-list-item title="使用系统标题栏"
-                      @click="toggleByName('windowBorder')"
-                      disableRipple>
+            @click="toggleByName('windowBorder')"
+            disableRipple>
             <mu-switch v-model="settings.windowBorder"
-                       slot="right" />
+                slot="right"></mu-switch>
         </mu-list-item>
         <mu-list-item title="启动时自动开始播放"
-                      @click="toggleByName('autoPlay')"
-                      disableRipple>
+            @click="toggleByName('autoPlay')"
+            disableRipple>
             <mu-switch v-model="settings.autoPlay"
-                       slot="right" />
+                slot="right"></mu-switch>
         </mu-list-item>
         <mu-sub-header>高级设置</mu-sub-header>
         <mu-list-item title="清除缓存"
-                      @click="clearCache"
-                      disableRipple>
+            @click="clearCache"
+            disableRipple>
             <span slot="right"
-                  class="nowrap">{{cacheSize | hunamSize}}</span>
+                class="nowrap">{{cacheSize | hunamSize}}</span>
         </mu-list-item>
         <mu-list-item title="清除所有应用数据"
-                      @click="wipeAppData"
-                      disableRipple>
+            @click="wipeAppData"
+            disableRipple>
             <span slot="right"
-                  class="nowrap">{{dataSize | hunamSize}}</span>
+                class="nowrap">{{dataSize | hunamSize}}</span>
         </mu-list-item>
         <mu-list-item title="启动开发者工具"
-                      @click="launchDevTools"
-                      disableRipple/>
+            @click="launchDevTools"
+            disableRipple></mu-list-item>
         <mu-list-item title="重新载入窗口"
-                      @click="reloadWindow"
-                      disableRipple/>
+            @click="reloadWindow"
+            disableRipple></mu-list-item>
         <mu-sub-header>关于</mu-sub-header>
         <mu-list-item title="版本号"
-                      @click="showVersions">
+            @click="showVersions">
             <span slot="right"
-                  class="nowrap">{{versionName}}</span>
+                class="nowrap">{{versionName}}</span>
         </mu-list-item>
         <mu-list-item title="获取源代码"
-                      @click="openBrowser('https://github.com/rocket1184/electron-netease-cloud-music')"
-                      disableRipple />
+            @click="openBrowser('https://github.com/rocket1184/electron-netease-cloud-music')"
+            disableRipple></mu-list-item>
         <!-- - - - - - - - - -  dialog below - - - - - - - - -  -->
         <mu-dialog :open="prompt"
-                   :title="promptTitle">
-            <div v-html="promptText" ></div>
+            :title="promptTitle">
+            <div v-html="promptText"></div>
             <mu-flat-button slot="actions"
-                            @click="prompt=false"
-                            primary
-                            label="取消" />
+                @click="prompt=false"
+                primary
+                label="取消"></mu-flat-button>
             <mu-flat-button slot="actions"
-                            primary
-                            @click="promptAction"
-                            label="确定" />
+                primary
+                @click="promptAction"
+                label="确定"></mu-flat-button>
         </mu-dialog>
     </div>
 </template>
@@ -79,7 +79,7 @@
 import { ipcRenderer, remote, shell } from 'electron';
 
 import * as types from '../vuex/mutation-types';
-import ApiRenderer from '../util/apirenderer';
+import ApiRenderer from '../util/apiRenderer';
 
 export default {
     data() {

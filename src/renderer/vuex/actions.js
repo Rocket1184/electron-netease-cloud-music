@@ -1,6 +1,6 @@
 import * as types from './mutation-types';
 import { LOOP_TYPES } from './modules/playlist';
-import ApiRenderer from '../util/apirenderer';
+import ApiRenderer from '../util/apiRenderer';
 
 export function setUserInfo({ commit }, payload) {
     const { info, cookie } = payload;

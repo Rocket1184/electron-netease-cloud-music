@@ -37,7 +37,7 @@
 <script>
 import { mapActions } from 'vuex';
 
-import ApiRenderer from '../util/apirenderer';
+import ApiRenderer from '../util/apiRenderer';
 
 export default {
     props: {

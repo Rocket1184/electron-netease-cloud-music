@@ -2,15 +2,15 @@
     <div class="myplaylist">
         <div class="aside">
             <mu-list>
-                <template v-for="(e, i) in playlist">
-                    <mu-list-item :title="e.name"
-                                  titleClass="list-name"
-                                  @click="loadPlaylist(i)" />
-                </template>
+                <mu-list-item v-for="(e, i) in playlist"
+                    :key="i"
+                    :title="e.name"
+                    titleClass="list-name"
+                    @click="loadPlaylist(i)"></mu-list-item>
             </mu-list>
         </div>
         <div class="content">
-            <TrackList :list="list" />
+            <trackList :list="list"></trackList>
         </div>
     </div>
 </template>
@@ -19,8 +19,8 @@
 import { mapState } from 'vuex';
 
 import { Track } from '../util/models';
-import ApiRenderer from '../util/apirenderer';
-import TrackList from '../components/tracklist';
+import ApiRenderer from '../util/apiRenderer';
+import trackList from '../components/trackList';
 
 export default {
     data() {
@@ -44,7 +44,7 @@ export default {
         this.loadPlaylist(0);
     },
     components: {
-        TrackList
+        trackList
     }
 };
 </script>

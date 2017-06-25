@@ -1,11 +1,11 @@
 <template>
     <div class="song-detail">
         <div class="bkg"
-             :style="styleAlbumImg"></div>
+            :style="styleAlbumImg"></div>
         <div :class="['disk', { play: !playing.paused }]">
             <div class="container">
                 <div class="img"
-                     :style="styleAlbumImg">
+                    :style="styleAlbumImg">
                     <div class="border">
                     </div>
                 </div>
@@ -21,26 +21,26 @@
             </p>
             <div class="lyric">
                 <div class="scroller"
-                     :style="lyricScrollerStyle">
+                    :style="lyricScrollerStyle">
                     <template v-if="playing.track.lyrics && playing.track.lyrics.mlrc">
-                        <template v-for="(line, index) in playing.track.lyrics.mlrc.lyrics">
-                            <p class="line"
-                               :class="{active: index == currentLyricIndex}"
-                               :data-time="line.timestamp">
-                                <span>{{line.content}}</span>
-                                <br>
-                                <span>{{line.trans}}</span>
-                            </p>
-                        </template>
+                        <p v-for="(line, index) in playing.track.lyrics.mlrc.lyrics"
+                            class="line"
+                            :key="index"
+                            :class="{active: index == currentLyricIndex}"
+                            :data-time="line.timestamp">
+                            <span>{{line.content}}</span>
+                            <br>
+                            <span>{{line.trans}}</span>
+                        </p>
                     </template>
                     <template v-else-if="playing.track.lyrics && playing.track.lyrics.lrc">
-                        <template v-for="(line, index) in playing.track.lyrics.lrc.lyrics">
-                            <p class="line"
-                               :class="{active: index == currentLyricIndex}"
-                               :data-time="line.timestamp">
-                                <span>{{line.content}}</span>
-                            </p>
-                        </template>
+                        <p v-for="(line, index) in playing.track.lyrics.lrc.lyrics"
+                            :key="index"
+                            class="line"
+                            :class="{active: index == currentLyricIndex}"
+                            :data-time="line.timestamp">
+                            <span>{{line.content}}</span>
+                        </p>
                     </template>
                     <template v-else>
                         <p>暂无歌词</p>

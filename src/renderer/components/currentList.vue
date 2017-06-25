@@ -1,15 +1,15 @@
 <template>
     <div class="current-list">
         <mu-menu desktop
-                 :width="400">
+            :width="400">
             <mu-menu-item v-for="(track, index) in playlist.list"
-                          :title="track.name"
-                          titleClass="menu-title"
-                          :afterText="track.artistName"
-                          afterTextClass="menu-after"
-                          @click="handleListClick(index)"
-                          :leftIcon="track.id==playing.track.id ? 'volume_up' : ''"
-                          :key="track.id" />
+                :title="track.name"
+                titleClass="menu-title"
+                :afterText="track.artistName"
+                afterTextClass="menu-after"
+                @click="handleListClick(index)"
+                :leftIcon="track.id==playing.track.id ? 'volume_up' : ''"
+                :key="track.id"></mu-menu-item>
         </mu-menu>
     </div>
 </template>

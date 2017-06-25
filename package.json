@@ -4,7 +4,7 @@
   "description": "UNOFFICAL client for music.163.com",
   "main": "main.js",
   "scripts": {
-    "dev": "node script/server.js",
+    "dev": "node script/dev-server.js",
     "pack": "node script/webpack.js",
     "build": "node script/packager.js"
   },

@@ -2,32 +2,31 @@
     <div class="tracklist">
         <template v-if="list.length !== 0">
             <mu-list-item title="播放全部"
-                          @click="handlePlayAll">
+                @click="handlePlayAll">
                 <mu-icon slot="left"
-                         value="play_circle_filled" />
+                    value="play_circle_filled"></mu-icon>
             </mu-list-item>
-            <mu-divider />
+            <mu-divider></mu-divider>
             <mu-table class="table">
-                <template v-for="track in list">
-                    <mu-tr>
-                        <mu-td :title="track.name">
-                            <span class="label">{{track.name}}</span>
-                        </mu-td>
-                        <mu-td :title="track.artistName">
-                            <span class="label">{{track.artistName}}</span>
-                        </mu-td>
-                        <mu-td>
-                            <mu-icon-button icon="favorite_border" />
-                            <mu-icon-button icon="playlist_add" />
-                        </mu-td>
-                    </mu-tr>
-                </template>
+                <mu-tr v-for="(track, index) in list"
+                    :key="index">
+                    <mu-td :title="track.name">
+                        <span class="label">{{track.name}}</span>
+                    </mu-td>
+                    <mu-td :title="track.artistName">
+                        <span class="label">{{track.artistName}}</span>
+                    </mu-td>
+                    <mu-td>
+                        <mu-icon-button icon="favorite_border"></mu-icon-button>
+                        <mu-icon-button icon="playlist_add"></mu-icon-button>
+                    </mu-td>
+                </mu-tr>
             </mu-table>
         </template>
         <div v-else
-             class="loading-wrapper">
+            class="loading-wrapper">
             <mu-circular-progress :size="60"
-                                  :strokeWidth="5" />
+                :strokeWidth="5"></mu-circular-progress>
         </div>
     </div>
 </template>

@@ -1,12 +1,12 @@
 <template>
     <mu-paper class="player-bar-wrapper"
-              :zDepth="2">
+        :zDepth="2">
         <audio id="playerbar-audio"
-               :src="playing.url"></audio>
+            :src="playing.url"></audio>
         <div class="cell">
             <router-link to='/player'>
                 <img :src="getImgAt(64)"
-                     :srcset="`${getImgAt(80)} 1.25x, ${getImgAt(96)} 1.5x, ${getImgAt(128)} 2x`">
+                    :srcset="`${getImgAt(80)} 1.25x, ${getImgAt(96)} 1.5x, ${getImgAt(128)} 2x`">
             </router-link>
         </div>
         <div class="cell info">
@@ -14,61 +14,61 @@
             <span class="artist-name">{{playing.track.artistName}}</span>
             <div class="quick-actions">
                 <mu-icon-button title="喜欢"
-                                :iconClass="{ favorite: isFavorite }"
-                                :icon="isFavorite ? 'favorite' :'favorite_border'"
-                                @click="handleFavorite" />
+                    :iconClass="{ favorite: isFavorite }"
+                    :icon="isFavorite ? 'favorite' :'favorite_border'"
+                    @click="handleFavorite"></mu-icon-button>
                 <mu-checkbox title="收藏到歌单"
-                             class="action-item"
-                             uncheckIcon="bookmark_border"
-                             checkedIcon="bookmark"
-                             v-model="userPlaylistsShown" />
+                    class="action-item"
+                    uncheckIcon="bookmark_border"
+                    checkedIcon="bookmark"
+                    v-model="userPlaylistsShown"></mu-checkbox>
                 <mu-checkbox title="播放列表"
-                             class="action-item"
-                             uncheckIcon="playlist_play"
-                             checkedIcon="playlist_play"
-                             v-model="currentListShown" />
+                    class="action-item"
+                    uncheckIcon="playlist_play"
+                    checkedIcon="playlist_play"
+                    v-model="currentListShown"></mu-checkbox>
             </div>
             <div class="progress">
                 <mu-slider id="playerbar-progress"
-                           class="slider"
-                           :value="songProgress"
-                           @change="handleProgressDrag" />
+                    class="slider"
+                    :value="songProgress"
+                    @change="handleProgressDrag"></mu-slider>
                 <span class="text">{{ timeCurrent | time }} / {{ timeTotal | time }}</span>
             </div>
         </div>
         <div class="cell control">
             <mu-float-button icon="skip_previous"
-                             mini
-                             class="button"
-                             color="#FFF"
-                             @click="playPreviousTrack" />
+                mini
+                class="button"
+                color="#FFF"
+                @click="playPreviousTrack"></mu-float-button>
             <mu-float-button :icon="this.audioEl.paused ? 'play_arrow' : 'pause'"
-                             class="button"
-                             color="#FFF"
-                             @click="handlePlayOrPause" />
+                class="button"
+                color="#FFF"
+                @click="handlePlayOrPause"></mu-float-button>
             <mu-float-button icon="skip_next"
-                             mini
-                             class="button"
-                             color="#FFF"
-                             @click="playNextTrack" />
+                mini
+                class="button"
+                color="#FFF"
+                @click="playNextTrack"></mu-float-button>
         </div>
         <mu-popup position="bottom"
-                  :open="userPlaylistsShown"
-                  @close="userPlaylistsShown=false">
+            :open="userPlaylistsShown"
+            @close="userPlaylistsShown=false">
             <mu-appbar title="收藏到歌单">
                 <mu-icon-button slot="right"
-                                icon="close"
-                                color="white"
-                                @click="userPlaylistsShown=false" />
+                    icon="close"
+                    color="white"
+                    @click="userPlaylistsShown=false"></mu-icon-button>
             </mu-appbar>
-            <UserPlaylists @rowClick="handleCollect" />
+            <userPlaylists @rowClick="handleCollect"></userPlaylists>
         </mu-popup>
         <transition name="list-open-up">
             <!-- TODO: Click outside to close the list -->
             <mu-paper rounded
-                      class="currentlist"
-                      v-show="currentListShown">
-                <CurrentList/>
+                class="currentlist"
+                v-show="currentListShown">
+                <currentList></currentList>
             </mu-paper>
         </transition>
     </mu-paper>
@@ -77,9 +77,9 @@
 <script>
 import { mapActions, mapGetters } from 'vuex';
 
-import ApiRenderer from '../util/apirenderer';
-import CurrentList from './currentlist';
-import UserPlaylists from './userplaylists';
+import ApiRenderer from '../util/apiRenderer';
+import currentList from './currentList';
+import userPlaylists from './userPlaylists';
 import * as types from '../vuex/mutation-types';
 
 export default {
@@ -229,8 +229,8 @@ export default {
         };
     },
     components: {
-        CurrentList,
-        UserPlaylists
+        currentList,
+        userPlaylists
     }
 };
 </script>

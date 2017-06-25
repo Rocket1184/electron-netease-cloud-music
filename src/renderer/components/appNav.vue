@@ -37,30 +37,12 @@
                             @click="handleCheckIn()"></mu-flat-button>
                     </div>
                 </div>
-                <router-link to='/'>
-                    <mu-list-item title="个性推荐">
+                <router-link v-for="route in validRoutes"
+                    :key="route.name"
+                    :to="route.path">
+                    <mu-list-item :title="route.name">
                         <mu-icon slot="left"
-                            value="polymer"></mu-icon>
-                    </mu-list-item>
-                </router-link>
-                <router-link to="/myplaylist">
-                    <mu-list-item title="我的歌单">
-                        <mu-icon slot="left"
-                            value="library_music"></mu-icon>
-                    </mu-list-item>
-                </router-link>
-                <mu-list-item title="听歌排行">
-                    <mu-icon slot="left"
-                        value="equalizer"></mu-icon>
-                </mu-list-item>
-                <mu-list-item title="本地音乐">
-                    <mu-icon slot="left"
-                        value="desktop_mac"></mu-icon>
-                </mu-list-item>
-                <router-link to="/settings">
-                    <mu-list-item title="应用设置">
-                        <mu-icon slot="left"
-                            value="settings"></mu-icon>
+                            :value="route.icon"></mu-icon>
                     </mu-list-item>
                 </router-link>
             </mu-list>
@@ -74,9 +56,10 @@
 import { mapGetters } from 'vuex';
 import { remote } from 'electron';
 
-import ApiRenderer from '../util/apirenderer';
+import ApiRenderer from '../util/apiRenderer';
 import loginDialog from './loginDialog';
 import searchBox from './searchBox';
+import Routes from '../routes';
 
 export default {
     data() {
@@ -88,6 +71,9 @@ export default {
         };
     },
     computed: {
+        validRoutes() {
+            return Routes.filter(r => r.icon);
+        },
         currentSettings() {
             return this.$store.state.settings;
         },

@@ -55,4 +55,4 @@ ipcMain.on('recreateWindow', (event, url) => {
 });
 
 // boot up ApiHost
-require('./api/apihost');
+require('./api/apiHost');

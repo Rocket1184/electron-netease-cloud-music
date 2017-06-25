@@ -1,12 +1,12 @@
 <template>
     <mu-list>
-        <template v-for="(list, index) in listToShow">
-            <mu-list-item :title="list.name"
-                          @click="handleRowClick(list, index)">
-                <mu-avatar :src="formatImg(list.coverImgUrl)"
-                           slot="leftAvatar" />
-            </mu-list-item>
-        </template>
+        <mu-list-item v-for="(list, index) in listToShow"
+            :key="index"
+            :title="list.name"
+            @click="handleRowClick(list, index)">
+            <mu-avatar :src="formatImg(list.coverImgUrl)"
+                slot="leftAvatar"></mu-avatar>
+        </mu-list-item>
     </mu-list>
 </template>
 

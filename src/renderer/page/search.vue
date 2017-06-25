@@ -1,31 +1,31 @@
 <template>
     <div>
         <mu-tabs :value="activeTab"
-                 @change="handleTabChange">
+            @change="handleTabChange">
             <mu-tab value="song"
-                    title="单曲" />
+                title="单曲"></mu-tab>
             <mu-tab value="artist"
-                    title="歌手" />
+                title="歌手"></mu-tab>
             <mu-tab value="album"
-                    title="专辑" />
+                title="专辑"></mu-tab>
             <mu-tab value="playlist"
-                    title="歌单" />
+                title="歌单"></mu-tab>
             <mu-tab value="mv"
-                    title="MV" />
+                title="MV"></mu-tab>
             <mu-tab value="user"
-                    title="用户" />
+                title="用户"></mu-tab>
         </mu-tabs>
         <div v-if="activeTab === 'song'">
-            <TrackList :list="tracks" />
+            <trackList :list="tracks"></trackList>
         </div>
     </div>
 </template>
 
 <script>
 import { Track } from '../util/models';
-import TrackList from '../components/tracklist';
-import { searchTypes } from '../util/searchtype';
-import ApiRenderer from '../util/apirenderer';
+import trackList from '../components/trackList';
+import { searchTypes } from '../util/searchType';
+import ApiRenderer from '../util/apiRenderer';
 
 export default {
     data() {
@@ -54,7 +54,7 @@ export default {
         this.handleSearch();
     },
     components: {
-        TrackList
+        trackList
     }
 };
 </script>

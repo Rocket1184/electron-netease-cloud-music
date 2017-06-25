@@ -6,7 +6,7 @@
             <p>每日歌曲推荐</p>
         </div>
         <div class="cell content">
-            <TrackList :list="dailyList" />
+            <trackList :list="dailyList"> </trackList>
         </div>
     </mu-paper>
 </template>
@@ -15,8 +15,8 @@
 import { mapGetters } from 'vuex';
 
 import { Track } from '../util/models';
-import TrackList from './tracklist';
-import ApiRenderer from '../util/apirenderer';
+import trackList from './trackList';
+import ApiRenderer from '../util/apiRenderer';
 
 export default {
     data() {
@@ -47,7 +47,7 @@ export default {
         if (this.loginValid) this.getDailyList();
     },
     components: {
-        TrackList
+        trackList
     }
 };
 </script>

@@ -2,7 +2,11 @@ import fs from 'fs';
 import path from 'path';
 import { app } from 'electron';
 
-import defaultSettings from './default';
+export const defaultSettings = {
+    bitRate: 'h',
+    windowBorder: true,
+    autoPlay: false
+};
 
 const pkgName = require('../../package.json').name;
 const configName = 'settings.json';
