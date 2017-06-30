@@ -10,6 +10,11 @@ const winURL = process.env.NODE_ENV === 'development'
     ? `http://localhost:${require('../../script/config').devPort}`
     : `file://${__dirname}/index.html`;
 
+let loginWindow;
+let loginURL = process.env.NODE_ENV === 'development'
+    ? `http://localhost:${require('../../script/config').devPort}/renderer/login.html`
+    : `file://${__dirname}/login.html`;
+
 function createWindow(url = winURL) {
     const settings = Settings.getCurrent();
 
@@ -52,6 +57,19 @@ ipcMain.on('recreateWindow', (event, url) => {
         mainWindow = createWindow(url);
         shouldAppQuit = true;
     }
+});
+
+ipcMain.on('showLoginWindow', () => {
+    loginWindow = new BrowserWindow({
+        height: 700,
+        width: 1150,
+        name: 'Login',
+        webPreferences: {
+            webSecurity: false,
+            blinkFeatures: 'OverlayScrollbars'
+        }
+    });
+    loginWindow.loadURL(loginURL);
 });
 
 // boot up ApiHost
