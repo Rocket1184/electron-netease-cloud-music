@@ -3,15 +3,11 @@ import { User, PlayList } from '../../util/models';
 
 const state = {
     loginValid: false,
-    cookie: {},
     playlist: [],
     info: new User()
 };
 
 const mutations = {
-    [types.UPDATE_USER_COOKIES](state, payload) {
-        state.cookie = payload.cookie;
-    },
     [types.SET_LOGIN_VALID](state, payload) {
         if (payload === undefined || payload === true || payload.valid === true) {
             state.loginValid = true;

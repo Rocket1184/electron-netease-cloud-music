@@ -3,17 +3,58 @@ import { LOOP_TYPES } from './modules/playlist';
 import ApiRenderer from '../util/apiRenderer';
 
 export function setUserInfo({ commit }, payload) {
-    const { info, cookie } = payload;
-    commit({
-        type: types.UPDATE_USER_COOKIES,
-        cookie
-    });
-    commit({
-        type: types.SET_USER_INFO,
-        info
-    });
-    commit(types.SET_LOGIN_VALID);
+    commit(types.SET_USER_INFO, payload);
 };
+
+export function storeUserInfo(context, payload) {
+    const { user, cookie } = payload;
+    localStorage.setItem('user', JSON.stringify(user));
+    localStorage.setItem('cookie', JSON.stringify(cookie));
+}
+
+export function restoreUserInfo(context) {
+    const user = localStorage.getItem('user');
+    const cookie = localStorage.getItem('cookie');
+    if (user && cookie) {
+        const userObj = JSON.parse(user);
+        const cookieObj = JSON.parse(cookie);
+        context.commit(types.SET_USER_INFO, { info: userObj });
+        ApiRenderer.updateCookie(cookieObj);
+        ApiRenderer.refreshLogin().then(resp => {
+            if (resp.code === 200) {
+                setLoginValid(context);
+            } else {
+                ApiRenderer.updateCookie({});
+            }
+        });
+    }
+}
+
+export function setLoginValid({ state, commit }, payload) {
+    if (payload === undefined || payload === true || payload.valid === true) {
+        commit(types.SET_LOGIN_VALID);
+        const { id } = state.user.info;
+        ApiRenderer.getCookie()
+            .then(cookie => localStorage.setItem('cookie', JSON.stringify(cookie)));
+        ApiRenderer.getUserPlaylist(id).then(resp => {
+            commit(types.UPDATE_USER_INFO, {
+                info: resp.playlist[0].creator
+            });
+            commit(types.SET_USER_PLAYLIST, {
+                playlist: resp.playlist
+            });
+            if (~resp.playlist[0].name.indexOf('喜欢的音乐')) {
+                return resp.playlist[0].id;
+            }
+        }).then(likedListId => {
+            ApiRenderer.getListDetail(likedListId).then(list => {
+                commit(types.UPDATE_USER_PLAYLIST, list.playlist);
+            });
+        });
+    } else {
+        commit(types.SET_LOGIN_VALID, false);
+    }
+}
 
 async function playThisTrack(commit, list, index, quality) {
     const [oUrl, lyrics] = await Promise.all([
