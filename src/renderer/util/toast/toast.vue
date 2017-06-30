@@ -1,6 +1,8 @@
 <template>
-    <mu-toast v-if="toast"
-              :message="toastMsg" />
+    <div>
+        <mu-toast v-if="toast"
+            :message="toastMsg"></mu-toast>
+    </div>
 </template>
 
 <script>
