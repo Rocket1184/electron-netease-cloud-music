@@ -12,7 +12,7 @@ export function storeUserInfo(context, payload) {
     localStorage.setItem('cookie', JSON.stringify(cookie));
 }
 
-export function restoreUserInfo(context) {
+export async function restoreUserInfo(context) {
     const user = localStorage.getItem('user');
     const cookie = localStorage.getItem('cookie');
     if (user && cookie) {
@@ -20,13 +20,14 @@ export function restoreUserInfo(context) {
         const cookieObj = JSON.parse(cookie);
         context.commit(types.SET_USER_INFO, { info: userObj });
         ApiRenderer.updateCookie(cookieObj);
-        ApiRenderer.refreshLogin().then(resp => {
-            if (resp.code === 200) {
-                setLoginValid(context);
-            } else {
-                ApiRenderer.updateCookie({});
-            }
-        });
+        const resp = await ApiRenderer.refreshLogin();
+        if (resp.code === 200) {
+            setLoginValid(context);
+            return true;
+        } else {
+            ApiRenderer.updateCookie({});
+            return false;
+        }
     }
 }
 
