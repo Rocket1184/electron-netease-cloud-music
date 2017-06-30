@@ -20,6 +20,9 @@ if (argv[0] === 'clean') {
     // copy package.json to dist path, or we cannot start app
     fs.createReadStream(path.join(projectRoot, 'package.json'))
         .pipe(fs.createWriteStream(path.join(projectRoot, 'dist/package.json')));
+    // copy login.html to dist path, or we cannot use web login
+    fs.createReadStream(path.join(projectRoot, 'src/renderer/login.html'))
+        .pipe(fs.createWriteStream(path.join(projectRoot, 'dist/login.html')));
 }
 
 let webpackCfg = [];

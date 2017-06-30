@@ -33,7 +33,7 @@ const serverCfg = {
     hot: true,
     stats: 'minimal',
     overlay: true,
-    contentBase: path.join(projectRoot, 'dist')
+    contentBase: path.join(projectRoot, 'src')
 };
 
 const devServer = new WebpackDevServer(compiler, serverCfg);
