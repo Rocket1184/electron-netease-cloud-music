@@ -13,14 +13,12 @@
 <script>
 import { mapActions } from 'vuex';
 
-import store from './vuex/store';
 import appNav from './components/appNav';
 import playerBar from './components/playerBar';
 import ApiRenderer from './util/apiRenderer';
 import * as types from './vuex/mutation-types';
 
 export default {
-    store,
     components: {
         appNav,
         playerBar

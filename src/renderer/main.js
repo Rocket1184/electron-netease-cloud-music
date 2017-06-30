@@ -4,6 +4,7 @@ import MuseUI from 'muse-ui';
 import 'muse-ui/dist/muse-ui.css';
 
 import App from './App';
+import store from './vuex/store';
 import routes from './routes';
 import Toast from './util/toast';
 
@@ -22,6 +23,7 @@ const router = new Router({
 /* eslint-disable no-new */
 new Vue({
     el: '#app',
+    store,
     router,
     ...App
 });
