@@ -25,9 +25,7 @@
                     </mu-step-content>
                 </mu-step>
                 <mu-step>
-                    <mu-step-label>
-                        确认登录成功
-                    </mu-step-label>
+                    <mu-step-label>确认登录成功</mu-step-label>
                     <mu-step-content>
                         <mu-flat-button label="上一步"
                             @click="webLoginStep--"></mu-flat-button>
@@ -77,6 +75,22 @@ import { ipcRenderer } from 'electron';
 
 import ApiRenderer from '../util/apiRenderer';
 
+function initData() {
+    return {
+        webLoginStep: 0,
+        loginType: 'web',
+        inputUsr: '',
+        inputPwd: '',
+        errMsgUsr: '',
+        errMsgPwd: '',
+        needCaptcha: false,
+        captchaId: null,
+        inputCaptcha: '',
+        errMsgCaptcha: '',
+        posting: false
+    };
+};
+
 export default {
     props: {
         show: {
@@ -84,21 +98,7 @@ export default {
             required: true
         }
     },
-    data() {
-        return {
-            webLoginStep: 0,
-            loginType: 'web',
-            inputUsr: '',
-            inputPwd: '',
-            errMsgUsr: '',
-            errMsgPwd: '',
-            needCaptcha: false,
-            captchaId: null,
-            inputCaptcha: '',
-            errMsgCaptcha: '',
-            posting: false
-        };
-    },
+    data: initData,
     methods: {
         ...mapActions([
             'setUserInfo',
@@ -148,17 +148,6 @@ export default {
             };
             setTimeout(() => inputAccRef.focus(), 200);
         },
-        resetData() {
-            this.inputUsr = '';
-            this.inputPwd = '';
-            this.errMsgUsr = '';
-            this.errMsgPwd = '';
-            this.needCaptcha = false;
-            this.captchaId = null;
-            this.inputCaptcha = '';
-            this.errMsgCaptcha = '';
-            this.posting = false;
-        },
         openLoginWeb() {
             this.webLoginStep++;
             ipcRenderer.send('showLoginWindow');
@@ -178,7 +167,7 @@ export default {
             if (val === true) {
                 this.$nextTick(this.bindKeybordEvent);
             } else {
-                this.resetData();
+                Object.assign(this.$data, initData());
             }
         }
     }
