@@ -31,12 +31,24 @@
             <mu-switch v-model="settings.autoPlay"
                 slot="right"></mu-switch>
         </mu-list-item>
-        <mu-sub-header>高级设置</mu-sub-header>
-        <mu-list-item title="清除缓存"
-            @click="clearCache"
+        <mu-sub-header>缓存管理</mu-sub-header>
+        <mu-list-item title="清除浏览器缓存"
+            @click="clearCache('chrome')"
             disableRipple>
             <span slot="right"
                 class="nowrap">{{cacheSize | hunamSize}}</span>
+        </mu-list-item>
+        <mu-list-item title="清除歌曲缓存"
+            @click="clearCache('music')"
+            disableRipple>
+            <span slot="right"
+                class="nowrap">{{musicSize | hunamSize}}</span>
+        </mu-list-item>
+        <mu-list-item title="清除歌词缓存"
+            @click="clearCache('lyric')"
+            disableRipple>
+            <span slot="right"
+                class="nowrap">{{lyricSize | hunamSize}}</span>
         </mu-list-item>
         <mu-list-item title="清除所有应用数据"
             @click="wipeAppData"
@@ -44,6 +56,7 @@
             <span slot="right"
                 class="nowrap">{{dataSize | hunamSize}}</span>
         </mu-list-item>
+        <mu-sub-header>高级设置</mu-sub-header>
         <mu-list-item title="启动开发者工具"
             @click="launchDevTools"
             disableRipple></mu-list-item>
@@ -84,12 +97,13 @@ import ApiRenderer from '../util/apiRenderer';
 export default {
     data() {
         return {
-            session: remote.getCurrentWebContents().session,
             prompt: false,
             promptTitle: '',
             promptText: '',
             promptAction: () => { },
             cacheSize: 0,
+            musicSize: 0,
+            lyricSize: 0,
             dataSize: 0,
             versionName: '',
             settings: {}
@@ -97,8 +111,10 @@ export default {
     },
     methods: {
         refreshSize() {
-            this.session.getCacheSize(s => this.cacheSize = s);
+            remote.getCurrentWebContents().session.getCacheSize(s => this.cacheSize = s);
             ApiRenderer.getDataSize().then(s => this.dataSize = s);
+            ApiRenderer.getDataSize('music').then(s => this.musicSize = s);
+            ApiRenderer.getDataSize('lyric').then(s => this.lyricSize = s);
         },
         toggleByName(name) {
             if (typeof this.settings[name] === 'boolean') {
@@ -110,21 +126,37 @@ export default {
                 storages: ['appcache', 'cookies', 'localstorage']
             }, resolve));
         },
-        clearCache() {
-            this.session.clearCache(() => {
-                this.refreshSize();
-                this.$toast('成功清除缓存');
-            });
+        clearCache(type) {
+            switch (type) {
+                case 'chrome':
+                    remote.getCurrentWebContents().session.clearCache(() => {
+                        this.refreshSize();
+                        this.$toast('成功清除浏览器缓存');
+                    });
+                    break;
+                case 'music':
+                    ApiRenderer.clearCache('music')
+                        .then(() => this.$toast('成功清除歌曲缓存'));
+                    break;
+                case 'lyric':
+                    ApiRenderer.clearCache('lyric')
+                        .then(() => this.$toast('成功清除歌词缓存'));
+                    break;
+                default:
+                    this.$toast('搞啥呢？？？');
+            }
+            this.refreshSize();
         },
         wipeAppData() {
             this.showPrompt({
                 title: '提示',
                 text: '这将清除所有应用数据，包括缓存以及账号登录状态，确定吗？',
                 action: async () => {
+                    await this.clearStorage();
+                    window.onbeforeunload = null;
                     ApiRenderer.updateCookie({});
                     ApiRenderer.resetSettings();
-                    window.onbeforeunload = null;
-                    await this.clearStorage();
+                    ApiRenderer.clearCache('all');
                     ipcRenderer.send('recreateWindow');
                 }
             });
@@ -200,9 +232,6 @@ export default {
     beforeCreate() {
         ApiRenderer.getCurrentSettings().then(s => this.settings = s);
         ApiRenderer.getVersionName().then(v => this.versionName = v);
-    },
-    async created() {
-        this.refreshSize();
     },
     activated() {
         this.refreshSize();
