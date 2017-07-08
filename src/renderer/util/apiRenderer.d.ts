@@ -4,8 +4,8 @@ declare class ApiRenderer extends API {
     getCookie(key?: String): Promise<String>
     updateCookie(cookie?: String | Array<String>): Promise<String>
     getDirSize(dirPath: String): Promise<Number>;
-    getDataSize(name: 'app' | 'cache'): Promise<Number>;
-    clearAppData(name: 'app' | 'cache'): Promise<void>;
+    getDataSize(type: 'all' | 'music' | 'lyric'): Promise<Number>;
+    clearCache(type: 'all' | 'music' | 'lyric'): Promise<any>;
     getVersionName(): Promise<String>;
     getCurrentSettings(): Promise<ApiNameSpace.ApplicationSettings>;
     writeSettings(target: ApiNameSpace.ApplicationSettings): Promise<ApiNameSpace.ApplicationSettings>;

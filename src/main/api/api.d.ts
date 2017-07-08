@@ -74,6 +74,11 @@ export interface MusicUrlResponse extends BaseApiResopnse {
     }>
 }
 
+export interface MusicUrlCachedResponse {
+    url?: String
+    errno?: Number | 200 | 404
+}
+
 export interface UserInfoInComment {
     authStatus: Number
     avatarUrl: String
@@ -209,9 +214,13 @@ export default class API {
 
     getMusicUrl(idOrIds: Number | Array<Number>, quality?: 'h' | 'm' | 'l'): Promise<MusicUrlResponse>;
 
+    getMusicUrlCached(id: Number, quality?: 'h' | 'm' | 'l'): Promise<MusicUrlCachedResponse>;
+
     getMusicComments(rid: Number, limit?: Number, offset?: Number): Promise<MusicCommentsResponse>;
 
     getMusicLyric(id: Number): Promise<MusicLyricResponse>;
+
+    getMusicLyricCached(id: Number): Promise<LyricObjectItem>;
 
     submitWebLog(action: String, json: any): Promise<BaseApiResopnse>;
 
@@ -219,9 +228,9 @@ export default class API {
 
     checkUrlStatus(url: String): Promise<Number>;
 
-    getDirSize(dirPath: String): Number | any;
+    getDataSize(type: String): Number | any;
 
-    getDataSize(): Number | any;
+    clearCache(type: String): Boolean | any;
 
     getVersionName(): String | any;
 
