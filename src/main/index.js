@@ -25,6 +25,7 @@ function createWindow(url = winURL) {
         titleBarStyle: settings.windowBorder ? 'default' : 'hidden',
         name: 'Electron Netease Cloud Music',
         webPreferences: {
+            webSecurity: process.env.NODE_ENV !== 'development',
             blinkFeatures: 'OverlayScrollbars'
         }
     });
