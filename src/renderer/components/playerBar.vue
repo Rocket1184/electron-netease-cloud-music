@@ -107,7 +107,11 @@ export default {
         },
         play() {
             this.$store.commit(types.RESUME_PLAYING_MUSIC);
-            this.audioEl.play();
+            try {
+                this.audioEl.play();
+            } catch (err) {
+                this.refreshCurrentTrack();
+            }
         },
         pause() {
             this.$store.commit(types.PAUSE_PLAYING_MUSIC);
