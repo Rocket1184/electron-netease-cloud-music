@@ -7,7 +7,7 @@ const configName = 'settings.json';
 const configDir = path.join(app.getPath('appData'), pkgJSON.name);
 const configPath = path.join(configDir, configName);
 
-export const appName = process.argv.indexOf('electron index.dev.js') >= 0
+export const appName = ~process.argv[1].indexOf('index.dev.js')
     ? 'Electron'
     : pkgJSON.name;
 
