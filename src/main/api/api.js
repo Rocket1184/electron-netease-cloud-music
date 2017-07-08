@@ -14,7 +14,15 @@ import * as Settings from '../settings';
 const BaseURL = 'http://music.163.com';
 
 const client = new Client();
-const musicCache = new Cache(path.join(app.getPath('appData'), Settings.appName, 'musicCache'));
+
+const appDataPath = path.join(app.getPath('appData'), Settings.appName);
+const cachePathMap = {
+    all: appDataPath,
+    music: path.join(appDataPath, 'musicCache'),
+    lyric: path.join(appDataPath, 'lyricCache')
+};
+const musicCache = new Cache(cachePathMap.music);
+const lyricCache = new Cache(cachePathMap.lyric);
 
 function updateCookie(cookie) {
     client.updateCookie(cookie);
@@ -196,6 +204,24 @@ async function getMusicLyric(id) {
     return result;
 }
 
+async function getMusicLyricCached(id) {
+    if (await lyricCache.has(id)) {
+        return new Promise((resolve, reject) => {
+            fs.readFile(lyricCache.fullPath(id), (err, data) => {
+                if (!err) {
+                    resolve(JSON.parse(data.toString()));
+                } else {
+                    reject(err);
+                }
+            });
+        });
+    } else {
+        const lyric = await getMusicLyric(id);
+        lyricCache.save(id, lyric);
+        return lyric;
+    }
+}
+
 function submitWebLog(action, json) {
     return client.post({
         url: `${BaseURL}/weapi/log/web`,
@@ -256,9 +282,8 @@ function getDirSize(dirPath) {
     return totalSize;
 }
 
-function getDataSize() {
-    const appData = app.getPath('appData');
-    const cachePath = path.join(appData, Settings.appName);
+function getDataSize(type = 'all') {
+    const cachePath = cachePathMap[type];
     let size;
     try {
         size = getDirSize(cachePath);
@@ -377,6 +402,7 @@ export default {
     getMusicUrlCached,
     getMusicComments,
     getMusicLyric,
+    getMusicLyricCached,
     submitListened,
     checkUrlStatus,
     getDataSize,
