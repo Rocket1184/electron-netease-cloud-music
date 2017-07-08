@@ -7,12 +7,14 @@ import qs from 'child_process';
 import { app } from 'electron';
 import { http, https } from 'follow-redirects';
 
+import Cache from './cache';
 import Client from './httpClient';
 import * as Settings from '../settings';
 
 const BaseURL = 'http://music.163.com';
 
 const client = new Client();
+const musicCache = new Cache(path.join(app.getPath('appData'), Settings.appName, 'musicCache'));
 
 function updateCookie(cookie) {
     client.updateCookie(cookie);
@@ -115,6 +117,25 @@ function getMusicUrl(idOrIds, quality = 'h') {
             br: QualityMap[quality],
         }
     });
+}
+
+async function getMusicUrlCached(id, quality = 'h') {
+    if (!QualityMap[quality]) throw new Error(`Quality type '${quality}' is not in [h,m,l]`);
+    const fileName = `${id}${quality}`;
+    const result = { url: `file://${musicCache.fullPath(fileName)}` };
+    if (await musicCache.has(fileName)) {
+        return result;
+    } else {
+        const oUrl = await getMusicUrl(id, quality);
+        if (oUrl.data[0].code === 200) {
+            await musicCache.fetch(oUrl.data[0].url, fileName);
+            return result;
+        } else {
+            return {
+                errno: oUrl.data[0].code
+            };
+        }
+    }
 }
 
 function getMusicComments(rid, limit = 20, offset = 0) {
@@ -353,6 +374,7 @@ export default {
     getDailySuggestions,
     getListDetail,
     getMusicUrl,
+    getMusicUrlCached,
     getMusicComments,
     getMusicLyric,
     submitListened,
