@@ -282,6 +282,19 @@ function getDirSize(dirPath) {
     return totalSize;
 }
 
+function removeDir(dirPath) {
+    const files = fs.readdirSync(dirPath);
+    files.forEach(file => {
+        const fullPath = path.join(dirPath, file);
+        const stat = fs.statSync(fullPath);
+        if (stat.isFile()) {
+            fs.unlinkSync(fullPath);
+        } else if (stat.isDirectory) {
+            removeDir(fullPath);
+        }
+    });
+}
+
 function getDataSize(type = 'all') {
     const cachePath = cachePathMap[type];
     let size;
@@ -291,6 +304,18 @@ function getDataSize(type = 'all') {
         size = 0;
     }
     return size;
+}
+
+function clearCache(type) {
+    try {
+        removeDir(cachePathMap[type]);
+    } catch (err) {
+        return {
+            errno: -1,
+            err
+        };
+    }
+    return true;
 }
 
 function getVersionName() {
@@ -406,6 +431,7 @@ export default {
     submitListened,
     checkUrlStatus,
     getDataSize,
+    clearCache,
     getVersionName,
     getCurrentSettings,
     writeSettings,
