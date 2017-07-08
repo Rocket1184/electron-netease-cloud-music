@@ -60,7 +60,7 @@ export function setLoginValid({ state, commit }, payload) {
 async function playThisTrack(commit, list, index, quality) {
     const [oUrl, lyrics] = await Promise.all([
         ApiRenderer.getMusicUrlCached(list[index].id, quality),
-        ApiRenderer.getMusicLyric(list[index].id)
+        ApiRenderer.getMusicLyricCached(list[index].id)
     ]);
     // those invoke can't be reversed!
     // from below
