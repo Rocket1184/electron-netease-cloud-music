@@ -59,7 +59,7 @@ export function setLoginValid({ state, commit }, payload) {
 
 async function playThisTrack(commit, list, index, quality) {
     const [oUrl, lyrics] = await Promise.all([
-        ApiRenderer.getMusicUrl(list[index].id, quality),
+        ApiRenderer.getMusicUrlCached(list[index].id, quality),
         ApiRenderer.getMusicLyric(list[index].id)
     ]);
     // those invoke can't be reversed!
@@ -70,7 +70,7 @@ async function playThisTrack(commit, list, index, quality) {
     });
     commit({
         type: types.UPDATE_PLAYING_MUSIC,
-        urls: { [quality]: oUrl.data[0].url },
+        urls: { [quality]: oUrl.url },
         lyrics
     });
     // to above
@@ -80,10 +80,10 @@ async function playThisTrack(commit, list, index, quality) {
 export async function refreshCurrentTrack({ state, commit }) {
     const quality = state.settings.bitRate;
     const { currentIndex, list } = state.playlist;
-    const oUrl = await ApiRenderer.getMusicUrl(list[currentIndex].id, quality);
+    const oUrl = await ApiRenderer.getMusicUrlCached(list[currentIndex].id, quality);
     commit({
         type: types.UPDATE_PLAYING_MUSIC,
-        urls: { [quality]: oUrl.data[0].url },
+        urls: { [quality]: oUrl.url },
     });
 };
 
@@ -122,21 +122,12 @@ export function playTrackIndex({ commit, state }, payload) {
     playThisTrack(commit, list, payload.index, quality);
 };
 
-export async function restorePlaylist({ commit }, payload) {
+export async function restorePlaylist(context, payload) {
     const { playlist } = payload;
-    commit({
-        type: types.RESTORE_PLAYLIST,
-        ...playlist
-    });
+    context.commit(types.RESTORE_PLAYLIST, playlist);
     const oldUrl = playlist.list[playlist.currentIndex].urls[playlist.quality];
     const status = await ApiRenderer.checkUrlStatus(oldUrl);
-    if (status !== 200) {
-        const oUrl = await ApiRenderer.getMusicUrl(playlist.list[playlist.currentIndex].id);
-        commit({
-            type: types.UPDATE_PLAYING_MUSIC,
-            urls: { [playlist.quality]: oUrl.data[0].url }
-        });
-    }
+    if (status !== 200) refreshCurrentTrack(context);
 };
 
 export async function refreshUserPlaylist({ commit }, payload) {
