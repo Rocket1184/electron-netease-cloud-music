@@ -237,10 +237,7 @@ function getDirSize(dirPath) {
 
 function getDataSize() {
     const appData = app.getPath('appData');
-    const appName = process.env.NODE_ENV === 'development'
-        ? 'Electron'
-        : require('../../../package.json').name;
-    const cachePath = path.join(appData, appName);
+    const cachePath = path.join(appData, Settings.appName);
     let size;
     try {
         size = getDirSize(cachePath);
@@ -251,7 +248,7 @@ function getDataSize() {
 }
 
 function getVersionName() {
-    let version = require('../../../package.json').version;
+    let version = Settings.appVer;
     if (process.env.NODE_ENV === 'development') {
         version += '-hot';
         let rev = '';
