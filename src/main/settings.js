@@ -2,16 +2,22 @@ import fs from 'fs';
 import path from 'path';
 import { app } from 'electron';
 
+const pkgJSON = require('../../package.json');
+const configName = 'settings.json';
+const configDir = path.join(app.getPath('appData'), pkgJSON.name);
+const configPath = path.join(configDir, configName);
+
+export const appName = process.argv.indexOf('electron index.dev.js') >= 0
+    ? 'Electron'
+    : pkgJSON.name;
+
+export const appVer = pkgJSON.version;
+
 export const defaultSettings = {
     bitRate: 'h',
     windowBorder: true,
     autoPlay: false
 };
-
-const pkgName = require('../../package.json').name;
-const configName = 'settings.json';
-const configDir = path.join(app.getPath('appData'), pkgName);
-const configPath = path.join(configDir, configName);
 
 function writeFile(target) {
     fs.writeFileSync(configPath, JSON.stringify(target, null, 4), 'utf8');
