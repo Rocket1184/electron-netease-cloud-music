@@ -214,16 +214,16 @@ export default {
         }
         .user-info {
             position: absolute;
-            padding: 2rem;
+            padding: 20px;
             bottom: 0;
             left: 0;
             .mu-avatar {
                 display: block;
             }
             .user-name {
-                margin-top: 1rem;
+                margin-top: 10px;
                 color: white;
-                font-size: 2rem;
+                font-size: 20px;
                 cursor: pointer;
                 display: inline-block;
                 line-height: 36px;

@@ -66,7 +66,7 @@ export default {
         text-align: center;
         color: white;
         font-size: 24px;
-        padding-top: 2em;
+        padding-top: 20px;
     }
     .content {
         flex: 7;

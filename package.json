@@ -23,10 +23,10 @@
     "css-loader": "^0.28.4",
     "devtron": "^1.4.0",
     "electron": "^1.7.4",
-    "electron-debug": "^1.1.0",
+    "electron-debug": "^1.2.0",
     "electron-devtools-installer": "^2.2.0",
     "electron-packager": "^8.7.2",
-    "eslint": "^4.1.1",
+    "eslint": "^4.2.0",
     "eslint-plugin-html": "^3.0.0",
     "extract-text-webpack-plugin": "^2.1.2",
     "file-loader": "^0.11.2",
@@ -39,8 +39,8 @@
     "vue-loader": "^13.0.0",
     "vue-style-loader": "^3.0.1",
     "vue-template-compiler": "^2.3.4",
-    "webpack": "^3.0.0",
-    "webpack-dev-server": "^2.5.0"
+    "webpack": "^3.1.0",
+    "webpack-dev-server": "^2.5.1"
   },
   "dependencies": {
     "axios": "^0.16.2",
@@ -48,7 +48,7 @@
     "cookie": "^0.3.1",
     "follow-redirects": "^1.2.4",
     "lrc-kit": "^0.2.2",
-    "muse-ui": "^2.0.3",
+    "muse-ui": "^2.1.0",
     "vue": "^2.3.4",
     "vue-router": "^2.7.0",
     "vuex": "^2.3.1"
