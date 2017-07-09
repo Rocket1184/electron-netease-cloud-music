@@ -77,7 +77,7 @@ export default {
         },
         lyricScrollerStyle() {
             if (!this.lyricElemMap.length) return '';
-            if (this.currentLyricIndex === -1) return 'transform: translateY(200px);';
+            if (this.currentLyricIndex === -1) return 'transform: translateY(150px);';
             const currentLyricElem = this.lyricElemMap[this.currentLyricIndex];
             const offset = 150 - currentLyricElem.offsetTop - currentLyricElem.clientHeight;
             return `transform: translateY(${offset}px);`;
