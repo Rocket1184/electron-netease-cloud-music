@@ -122,7 +122,7 @@ export default {
             }
         },
         async clearStorage() {
-            return new Promise(resolve => this.session.clearStorageData({
+            return new Promise(resolve => remote.getCurrentWebContents().session.clearStorageData({
                 storages: ['appcache', 'cookies', 'localstorage']
             }, resolve));
         },
@@ -152,11 +152,15 @@ export default {
                 title: '提示',
                 text: '这将清除所有应用数据，包括缓存以及账号登录状态，确定吗？',
                 action: async () => {
-                    await this.clearStorage();
                     window.onbeforeunload = null;
-                    ApiRenderer.updateCookie({});
-                    ApiRenderer.resetSettings();
-                    ApiRenderer.clearCache('all');
+                    await Promise.all([
+                        this.clearStorage(),
+                        ApiRenderer.updateCookie({}),
+                        ApiRenderer.resetSettings(),
+                        ApiRenderer.clearCache('chrome'),
+                        ApiRenderer.clearCache('music'),
+                        ApiRenderer.clearCache('lyric'),
+                    ]);
                     ipcRenderer.send('recreateWindow');
                 }
             });
