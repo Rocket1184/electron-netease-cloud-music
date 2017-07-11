@@ -12,15 +12,14 @@ const state = {
     currentIndex: 0,
     loopMode: LOOP_TYPES.LIST_LOOP,
     list: [new Track()],
+    activeLyric: {}
 };
 
 const mutations = {
-    [types.UPDATE_PLAYING_MUSIC](state, payload) {
+    [types.UPDATE_PLAYING_URL](state, payload) {
         const { list, currentIndex } = state;
-        const { urls, lyrics } = payload;
         let target = list[currentIndex];
-        if (urls) Object.assign(target.urls, urls);
-        if (lyrics) target.lyrics = lyrics;
+        if (payload) Object.assign(target.urls, payload);
     },
     [types.PAUSE_PLAYING_MUSIC](state) {
         state.paused = true;
@@ -44,6 +43,9 @@ const mutations = {
             throw new Error('Wrong mutation payload in SET_CURRENT_INDEX.');
         }
     },
+    [types.SET_ACTIVE_LYRIC](state, payload) {
+        state.activeLyric = payload;
+    },
     [types.SET_LOOP_MODE_LOOP](state) {
         state.loopMode = LOOP_TYPES.LIST_LOOP;
     },
@@ -54,11 +56,12 @@ const mutations = {
         state.loopMode = LOOP_TYPES.RANDOM;
     },
     [types.RESTORE_PLAYLIST](state, payload) {
-        const { currentIndex, loopMode, list, paused } = payload;
-        state.paused = paused;
+        const { currentIndex, loopMode, list, paused, activeLyric } = payload;
+        state.paused = paused || true;
         state.currentIndex = currentIndex || 0;
         state.loopMode = loopMode || LOOP_TYPES.LIST_LOOP;
         state.list = list.map(t => new Track(t));
+        state.activeLyric = activeLyric || {};
     }
 };
 

@@ -22,8 +22,8 @@
             <div class="lyric">
                 <div class="scroller"
                     :style="lyricScrollerStyle">
-                    <template v-if="playing.track.lyrics && playing.track.lyrics.mlrc">
-                        <p v-for="(line, index) in playing.track.lyrics.mlrc.lyrics"
+                    <template v-if="playing.lyrics.mlrc">
+                        <p v-for="(line, index) in playing.lyrics.mlrc.lyrics"
                             class="line"
                             :key="index"
                             :class="{active: index == currentLyricIndex}"
@@ -33,8 +33,8 @@
                             <span>{{line.trans}}</span>
                         </p>
                     </template>
-                    <template v-else-if="playing.track.lyrics && playing.track.lyrics.lrc">
-                        <p v-for="(line, index) in playing.track.lyrics.lrc.lyrics"
+                    <template v-else-if="playing.lyrics.lrc">
+                        <p v-for="(line, index) in playing.lyrics.lrc.lyrics"
                             :key="index"
                             class="line"
                             :class="{active: index == currentLyricIndex}"
@@ -76,8 +76,9 @@ export default {
             return `background-image:url(${this.playing.track.album.picUrl}?param=${len}y${len});`;
         },
         lyricScrollerStyle() {
-            if (!this.lyricElemMap.length) return '';
-            if (this.currentLyricIndex === -1) return 'transform: translateY(150px);';
+            if (this.lyricElemMap.length === 0 || this.currentLyricIndex === -1) {
+                return 'transform: translateY(150px)';
+            }
             const currentLyricElem = this.lyricElemMap[this.currentLyricIndex];
             const offset = 150 - currentLyricElem.offsetTop - currentLyricElem.clientHeight;
             return `transform: translateY(${offset}px);`;
@@ -85,7 +86,7 @@ export default {
     },
     methods: {
         createLyricElemMap() {
-            if (this.playing.track.lyrics && this.playing.track.lyrics.lrc) {
+            if (this.playing.lyrics.lrc) {
                 this.lyricElemMap = Array.from(document.getElementsByClassName('line'));
             }
         }

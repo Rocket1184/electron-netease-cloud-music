@@ -57,30 +57,23 @@ export function setLoginValid({ state, commit }, payload) {
     }
 }
 
-async function playThisTrack(commit, list, index, quality) {
-    commit(types.SET_CURRENT_INDEX, index);
-    const [oUrl, lyrics] = await Promise.all([
-        ApiRenderer.getMusicUrlCached(list[index].id, quality),
-        ApiRenderer.getMusicLyricCached(list[index].id)
-    ]);
-    // those invoke can't be reversed!
-    // from below
-    commit(types.UPDATE_PLAYING_MUSIC, {
-        urls: { [quality]: oUrl.url },
-        lyrics
-    });
-    // to above
-    commit(types.RESUME_PLAYING_MUSIC);
+async function updatePlayingUrl(commit, trackId, quality) {
+    const oUrl = await ApiRenderer.getMusicUrlCached(trackId, quality);
+    commit(types.UPDATE_PLAYING_URL, { [quality]: oUrl.url });
 }
 
-export async function refreshCurrentTrack({ state, commit }) {
+function playThisTrack(commit, list, index, quality) {
+    commit(types.SET_CURRENT_INDEX, index);
+    ApiRenderer.getMusicLyricCached(list[index].id)
+        .then(lyric => commit(types.SET_ACTIVE_LYRIC, lyric));
+    updatePlayingUrl(commit, list[index].id, quality)
+        .then(() => commit(types.RESUME_PLAYING_MUSIC));
+}
+
+export function refreshCurrentTrack({ state, commit }) {
     const quality = state.settings.bitRate;
     const { currentIndex, list } = state.playlist;
-    const oUrl = await ApiRenderer.getMusicUrlCached(list[currentIndex].id, quality);
-    commit({
-        type: types.UPDATE_PLAYING_MUSIC,
-        urls: { [quality]: oUrl.url },
-    });
+    updatePlayingUrl(commit, list[currentIndex].id, quality);
 };
 
 export function playNextTrack({ commit, state }) {
