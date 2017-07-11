@@ -58,18 +58,14 @@ export function setLoginValid({ state, commit }, payload) {
 }
 
 async function playThisTrack(commit, list, index, quality) {
+    commit(types.SET_CURRENT_INDEX, index);
     const [oUrl, lyrics] = await Promise.all([
         ApiRenderer.getMusicUrlCached(list[index].id, quality),
         ApiRenderer.getMusicLyricCached(list[index].id)
     ]);
     // those invoke can't be reversed!
     // from below
-    commit({
-        type: types.SET_CURRENT_INDEX,
-        index
-    });
-    commit({
-        type: types.UPDATE_PLAYING_MUSIC,
+    commit(types.UPDATE_PLAYING_MUSIC, {
         urls: { [quality]: oUrl.url },
         lyrics
     });
