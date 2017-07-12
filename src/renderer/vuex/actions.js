@@ -38,7 +38,6 @@ export function setLoginValid({ state, commit }, payload) {
             localStorage.setItem('cookie', JSON.stringify(cookie));
         });
         ApiRenderer.getUserPlaylist(state.user.info.id).then(({ playlist }) => {
-            console.log(playlist);
             commit(types.UPDATE_USER_INFO, playlist[0].creator);
             commit(types.SET_USER_PLAYLISTS, playlist);
             if (~playlist[0].name.indexOf('喜欢的音乐')) {
