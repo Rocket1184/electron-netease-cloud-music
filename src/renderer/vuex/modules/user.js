@@ -16,13 +16,13 @@ const mutations = {
         }
     },
     [types.SET_USER_INFO](state, payload) {
-        state.info = new User(payload.info);
+        state.info = new User(payload);
     },
     [types.UPDATE_USER_INFO](state, payload) {
         Object.assign(state.info, new User(payload.info));
     },
-    [types.SET_USER_PLAYLIST](state, payload) {
-        state.playlist = payload.playlist.map(l => new PlayList(l));
+    [types.SET_USER_PLAYLISTS](state, payload) {
+        state.playlist = payload.map(l => new PlayList(l));
     },
     [types.UPDATE_USER_PLAYLIST](state, payload) {
         const target = state.playlist.filter(l => l.id === payload.id).pop();

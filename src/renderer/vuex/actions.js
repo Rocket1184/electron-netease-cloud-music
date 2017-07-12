@@ -34,18 +34,14 @@ export async function restoreUserInfo(context) {
 export function setLoginValid({ state, commit }, payload) {
     if (payload === undefined || payload === true || payload.valid === true) {
         commit(types.SET_LOGIN_VALID);
-        const { id } = state.user.info;
-        ApiRenderer.getCookie()
-            .then(cookie => localStorage.setItem('cookie', JSON.stringify(cookie)));
-        ApiRenderer.getUserPlaylist(id).then(resp => {
-            commit(types.UPDATE_USER_INFO, {
-                info: resp.playlist[0].creator
-            });
-            commit(types.SET_USER_PLAYLIST, {
-                playlist: resp.playlist
-            });
-            if (~resp.playlist[0].name.indexOf('喜欢的音乐')) {
-                return resp.playlist[0].id;
+        ApiRenderer.getCookie().then(cookie => {
+            localStorage.setItem('cookie', JSON.stringify(cookie));
+        });
+        ApiRenderer.getUserPlaylist(state.user.info.id).then(({ playlist }) => {
+            commit(types.UPDATE_USER_INFO, playlist[0].creator);
+            commit(types.SET_USER_PLAYLISTS, playlist);
+            if (~playlist[0].name.indexOf('喜欢的音乐')) {
+                return playlist[0].id;
             }
         }).then(likedListId => {
             ApiRenderer.getListDetail(likedListId).then(list => {
@@ -92,10 +88,7 @@ export function playPreviousTrack({ commit, state }) {
 
 export async function playPlaylist({ commit, state }, payload) {
     if (payload) {
-        commit({
-            type: types.SET_PLAY_LIST,
-            list: payload.list
-        });
+        commit(types.SET_PLAY_LIST, { list: payload.list });
     }
     const quality = state.settings.bitRate;
     const { list, loopMode } = state.playlist;

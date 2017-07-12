@@ -122,7 +122,7 @@ export default {
                 case 200:
                     this.$emit('close');
                     this.setLoginValid();
-                    this.setUserInfo({ info: resp });
+                    this.setUserInfo(resp);
                     const cookie = await ApiRenderer.getCookie();
                     this.storeUserInfo({ user: resp, cookie });
                     break;
