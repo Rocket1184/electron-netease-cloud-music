@@ -60,6 +60,7 @@ async function updatePlayingUrl(commit, trackId, quality) {
 
 function playThisTrack(commit, list, index, quality) {
     commit(types.SET_CURRENT_INDEX, index);
+    commit(types.SET_ACTIVE_LYRIC, {});
     ApiRenderer.getMusicLyricCached(list[index].id)
         .then(lyric => commit(types.SET_ACTIVE_LYRIC, lyric));
     updatePlayingUrl(commit, list[index].id, quality)

@@ -92,10 +92,12 @@ export default {
         }
     },
     watch: {
-        'playing.track.id': function () {
-            this.currentLyricIndex = -1;
-            // query lyric elements after they are created
-            this.$nextTick(() => this.createLyricElemMap());
+        'playing.track.lyrics': {
+            deep: true,
+            handler() {
+                // query lyric elements after they are created
+                this.$nextTick(() => this.createLyricElemMap());
+            }
         }
     },
     created() {
