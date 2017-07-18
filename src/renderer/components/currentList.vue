@@ -1,17 +1,23 @@
 <template>
-    <div class="current-list">
-        <mu-menu desktop
-            :width="400">
-            <mu-menu-item v-for="(track, index) in playlist.list"
-                :title="track.name"
-                titleClass="menu-title"
-                :afterText="track.artistName"
-                afterTextClass="menu-after"
-                @click="handleListClick(index)"
-                :leftIcon="track.id==playing.track.id ? 'volume_up' : ''"
-                :key="track.id"></mu-menu-item>
-        </mu-menu>
-    </div>
+    <mu-list class="current-list">
+        <mu-list-item v-for="(track, index) in playlist.list"
+            :key="track.id"
+            :title="track.name"
+            titleClass="track-name"
+            :afterText="track.artistName"
+            afterTextClass="track-artist"
+            @click="handleListClick(index)">
+            <mu-icon v-if="track.id == playing.track.id"
+                slot="left"
+                value="volume_up">
+            </mu-icon>
+            <span v-else
+                slot="left"
+                class="ellipsis-text-16px">
+                {{index + 1}}
+            </span>
+        </mu-list-item>
+    </mu-list>
 </template>
 
 <script>
@@ -40,23 +46,23 @@ export default {
 
 <style lang="less">
 .current-list {
-    overflow-x: hidden;
-    .mu-menu-destop {
-        padding: 0;
-        .menu-title {
-            width: 350px;
-            overflow: hidden;
-            text-overflow: ellipsis;
-        }
-        .menu-title+div>span {
-
-            display: block;
-            white-space: nowrap;
-            width: 100px;
-            overflow: hidden;
-            text-overflow: ellipsis;
-            color: grey;
-        }
+    width: 600px;
+    background-color: white;
+    overflow-y: scroll;
+    .ellipsis-text-16px {
+        font-size: 16px;
+        overflow: hidden;
+        white-space: nowrap;
+        text-overflow: ellipsis;
+    }
+    .track-name {
+        max-width: 70%;
+        .ellipsis-text-16px;
+    }
+    .track-artist {
+        display: block;
+        max-width: 30%;
+        .ellipsis-text-16px;
     }
 }
 </style>

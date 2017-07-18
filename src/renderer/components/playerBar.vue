@@ -65,11 +65,7 @@
         </mu-popup>
         <transition name="list-open-up">
             <!-- TODO: Click outside to close the list -->
-            <mu-paper rounded
-                class="currentlist"
-                v-show="currentListShown">
-                <currentList></currentList>
-            </mu-paper>
+            <currentList v-show="currentListShown"></currentList>
         </transition>
     </mu-paper>
 </template>
@@ -304,14 +300,13 @@ export default {
             box-shadow: transparent 0 0 0;
         }
     }
-    .currentlist {
-        // FIXME: it repaints the whole list when scrolling
+    .current-list {
         position: fixed;
         right: 4px;
         bottom: 68px;
-        height: 420px;
-        overflow-y: scroll;
-        -webkit-transform-origin-y: 420px;
+        height: 496px;
+        -webkit-transform-origin-y: 496px;
+        box-shadow: 0 3px 10px rgba(0, 0, 0, .15);
     }
 }
 
