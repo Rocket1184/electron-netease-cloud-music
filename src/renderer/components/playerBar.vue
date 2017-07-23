@@ -255,7 +255,6 @@ export default {
             overflow: hidden;
             text-overflow: ellipsis;
             white-space: nowrap;
-            vertical-align: middle;
         }
         .artist-name {
             margin-left: 14px;
