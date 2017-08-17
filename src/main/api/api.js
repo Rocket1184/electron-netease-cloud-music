@@ -3,13 +3,14 @@ import url from 'url';
 import path from 'path';
 import crypto from 'crypto';
 import { Lrc } from 'lrc-kit';
-import qs from 'child_process';
+import cp from 'child_process';
 import { app } from 'electron';
 import { http, https } from 'follow-redirects';
 
 import Cache from './cache';
 import Client from './httpClient';
 import * as Settings from '../settings';
+import MusicServer from '../musicServer';
 
 const BaseURL = 'http://music.163.com';
 
@@ -23,6 +24,9 @@ const cachePathMap = {
 };
 const musicCache = new Cache(cachePathMap.music);
 const lyricCache = new Cache(cachePathMap.lyric);
+
+const musicServer = new MusicServer(musicCache);
+musicServer.listen(8209);
 
 function updateCookie(cookie) {
     client.updateCookie(cookie);
@@ -127,23 +131,8 @@ function getMusicUrl(idOrIds, quality = 'h') {
     });
 }
 
-async function getMusicUrlCached(id, quality = 'h') {
-    if (!QualityMap[quality]) throw new Error(`Quality type '${quality}' is not in [h,m,l]`);
-    const fileName = `${id}${quality}`;
-    const result = { url: `file://${musicCache.fullPath(fileName)}` };
-    if (await musicCache.has(fileName)) {
-        return result;
-    } else {
-        const oUrl = await getMusicUrl(id, quality);
-        if (oUrl.data[0].code === 200) {
-            await musicCache.fetch(oUrl.data[0].url, fileName);
-            return result;
-        } else {
-            return {
-                errno: oUrl.data[0].code
-            };
-        }
-    }
+async function getMusicUrlCached(id, quality = 'l') {
+    return { url: `http://127.0.0.1:8209/music?id=${id}&quality=${quality}` };
 }
 
 function getMusicComments(rid, limit = 20, offset = 0) {
@@ -324,7 +313,7 @@ function getVersionName() {
         version += '-hot';
         let rev = '';
         try {
-            rev = qs.execSync('git rev-parse --short HEAD').toString().trim();
+            rev = cp.execSync('git rev-parse --short HEAD').toString().trim();
             version += `.${rev}+`;
         } catch (err) { }
     } else {
