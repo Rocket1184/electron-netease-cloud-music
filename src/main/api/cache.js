@@ -29,7 +29,7 @@ class Cache {
         return fs.createWriteStream(this.fullPath(fileName));
     }
 
-    fetch(url, outputFileName) {
+    fetch(url) {
         const opt = URL.parse(url);
         let request;
         switch (opt.protocol) {
@@ -42,12 +42,18 @@ class Cache {
             default:
                 throw new Error(`Unsupported protocol ${opt.protocol}.`);
         }
-        return new Promise((resolve, reject) => {
+        return new Promise(resolve => {
             request.get({
                 host: opt.host,
                 path: opt.path,
                 headers: this.headers
-            }, res => {
+            }, resolve);
+        });
+    }
+
+    fetchAsFile(url, outputFileName) {
+        return new Promise((resolve, reject) => {
+            fetch(url).then(res => {
                 if (res.statusCode === 200) {
                     res.pipe(this.writeStream(outputFileName));
                     resolve(this.fullPath(outputFileName));
@@ -56,7 +62,7 @@ class Cache {
                 }
             });
         });
-    }
+    }        
 
     save(outputFileName, data) {
         return new Promise((resolve, reject) => {
