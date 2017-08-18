@@ -1,12 +1,12 @@
-import API, * as ApiNameSpace from '../../main/api/api';
+import * as ApiNameSpace from '../../main/api/api';
 
-declare class ApiRenderer extends API {
-    getCookie(key?: String): Promise<String>
-    updateCookie(cookie?: String | Array<String>): Promise<String>
-    getDirSize(dirPath: String): Promise<Number>;
-    getDataSize(type: 'all' | 'music' | 'lyric'): Promise<Number>;
+declare class ApiRenderer extends ApiNameSpace.ApiFunctions {
+    getCookie(key?: string): Promise<string>
+    updateCookie(cookie?: string | Array<string>): Promise<string>
+    getDirSize(dirPath: string): Promise<number>;
+    getDataSize(type: 'all' | 'music' | 'lyric'): Promise<number>;
     clearCache(type: 'all' | 'music' | 'lyric'): Promise<any>;
-    getVersionName(): Promise<String>;
+    getVersionName(): Promise<string>;
     getCurrentSettings(): Promise<ApiNameSpace.ApplicationSettings>;
     writeSettings(target: ApiNameSpace.ApplicationSettings): Promise<ApiNameSpace.ApplicationSettings>;
     resetSettings(): Promise<ApiNameSpace.ApplicationSettings>;

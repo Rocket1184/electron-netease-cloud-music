@@ -5,7 +5,7 @@ import url from 'url';
 import qs from 'querystring';
 import { createServer } from 'http';
 
-import API from './api/api';
+import { getMusicUrl } from './api/api';
 import Cache from './api/cache';
 
 function statAsync(path) {
@@ -84,7 +84,7 @@ class MusicServer {
                 });
                 file.pipe(res);
             } else {
-                const oUrl = await API.getMusicUrl(id, quality);
+                const oUrl = await getMusicUrl(id, quality);
                 if (oUrl.data[0].code === 200) {
                     console.log(`[MusicServer] Got URL for music id=${id}`);
 
