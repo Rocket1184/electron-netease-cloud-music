@@ -19,6 +19,7 @@ function statAsync(path) {
 
 // credit: https://github.com/obastemur/mediaserver/blob/master/index.js#L38-L62
 function getRange(req, total) {
+    // <range-start> - <range-end> / <file-size>
     const range = [0, total, 0];
     const rinfo = req.headers ? req.headers.range : null;
 
@@ -73,6 +74,7 @@ class MusicServer {
                 console.log(`[MusicServer] Hit cache for music id=${id}`);
                 const stat = await statAsync(filePath);
                 const range = getRange(req, stat.size);
+                // TODO: <range-end> may larger than <file-size>, cause file is still being downloaded
                 const file = fs.createReadStream(filePath, { start: range[0], end: range[1] });
                 res.writeHead(206, {
                     'Cache-Control': 'no-cache',
@@ -98,12 +100,12 @@ class MusicServer {
                         'Content-Range': `bytes ${range[0]}-${range[1]}/${realLength}`
                     });
 
-                    let stat = fs.statSync(filePath);
+                    let stat = await statAsync(filePath);
                     let file = fs.createReadStream(filePath);
                     file.pipe(res, { end: false });
-                    function endHandler() {
+                    async function endHandler() {
                         console.log('[MusicServer] emit end');
-                        const newStat = fs.statSync(filePath);
+                        const newStat = await statAsync(filePath);
                         if (newStat.size < realLength) {
                             if (newStat.size <= stat.size || stat.size == 0) {
                                 console.log('[MusicServer] no more data gain');
@@ -116,6 +118,7 @@ class MusicServer {
                             }
                             stat = newStat;
                         } else {
+                            console.log(`[MusicServer] stream ending, total size ${newStat.size}`);
                             file = null;
                             fs.createReadStream(filePath, { start: stat.size }).pipe(res);
                         }
