@@ -48,11 +48,7 @@ let cfg = {
                 test: /\.vue$/,
                 loader: 'vue-loader',
                 options: {
-                    loaders: {
-                        css: ExtractTextPlugin.extract({
-                            use: 'css-loader'
-                        })
-                    }
+                    extractCSS: true,
                 }
             },
             {
