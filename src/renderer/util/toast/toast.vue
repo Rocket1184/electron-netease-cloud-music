@@ -23,7 +23,7 @@ export default {
             this.toastMsg = String(msg);
             this.toastTimer = setTimeout(() => this.toast = false, timeOut);
             this.$nextTick(() => this.toast = true);
-        },
+        }
     }
 };
 </script>

@@ -1,6 +1,7 @@
 import Vue from 'vue';
+import Toast from './toast.vue';
 
-const ToastConstructor = Vue.extend(require('./toast.vue').default);
+const ToastConstructor = Vue.extend(Toast);
 
 export default {
     install($Vue) {
