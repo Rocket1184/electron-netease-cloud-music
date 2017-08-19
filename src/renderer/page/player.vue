@@ -1,11 +1,11 @@
 <template>
     <div class="song-detail">
         <div class="bkg"
-             :style="styleAlbumImg"></div>
+            :style="styleAlbumImg"></div>
         <div :class="['disk', { play: !playing.paused }]">
             <div class="container">
                 <div class="img"
-                     :style="styleAlbumImg">
+                    :style="styleAlbumImg">
                     <div class="border">
                     </div>
                 </div>
@@ -21,13 +21,13 @@
             </p>
             <div class="lyric">
                 <div class="scroller"
-                     :style="lyricScrollerStyle">
+                    :style="lyricScrollerStyle">
                     <template v-if="playing.lyrics.mlrc">
                         <p v-for="(line, index) in playing.lyrics.mlrc.lyrics"
-                           class="line"
-                           :key="index"
-                           :class="{active: index == currentLyricIndex}"
-                           :data-time="line.timestamp">
+                            class="line"
+                            :key="index"
+                            :class="{active: index == currentLyricIndex}"
+                            :data-time="line.timestamp">
                             <span>{{line.content}}</span>
                             <br>
                             <span>{{line.trans}}</span>
@@ -35,10 +35,10 @@
                     </template>
                     <template v-else-if="playing.lyrics.lrc">
                         <p v-for="(line, index) in playing.lyrics.lrc.lyrics"
-                           :key="index"
-                           class="line"
-                           :class="{active: index == currentLyricIndex}"
-                           :data-time="line.timestamp">
+                            :key="index"
+                            class="line"
+                            :class="{active: index == currentLyricIndex}"
+                            :data-time="line.timestamp">
                             <span>{{line.content}}</span>
                         </p>
                     </template>
@@ -88,16 +88,20 @@ export default {
         createLyricElemMap() {
             if (this.playing.lyrics.lrc) {
                 this.lyricElemMap = Array.from(document.getElementsByClassName('line'));
-                this.currentLyricIndex = -1;
             }
         }
     },
     watch: {
-        'playing.track.lyrics': {
+        ['playing.lyrics']: {
             deep: true,
             handler() {
                 // query lyric elements after they are created
                 this.$nextTick(() => this.createLyricElemMap());
+            }
+        },
+        ['playing.track.id']: {
+            handler() {
+                this.currentLyricIndex = -1;
             }
         }
     },
