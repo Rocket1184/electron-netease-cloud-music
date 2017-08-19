@@ -29,7 +29,9 @@ export default {
             this.promptTitle = cfg.title;
             this.promptText = cfg.text;
             this.promptAction = async () => {
-                await cfg.action();
+                if (typeof cfg.action === 'function') {
+                    await cfg.action();
+                }
                 this.prompt = false;
             };
         }
