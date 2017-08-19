@@ -72,19 +72,6 @@
         <mu-list-item title="获取源代码"
             @click="openBrowser('https://github.com/rocket1184/electron-netease-cloud-music')"
             disableRipple></mu-list-item>
-        <!-- - - - - - - - - -  dialog below - - - - - - - - -  -->
-        <mu-dialog :open="prompt"
-            :title="promptTitle">
-            <div v-html="promptText"></div>
-            <mu-flat-button slot="actions"
-                @click="prompt=false"
-                primary
-                label="取消"></mu-flat-button>
-            <mu-flat-button slot="actions"
-                primary
-                @click="promptAction"
-                label="确定"></mu-flat-button>
-        </mu-dialog>
     </div>
 </template>
 
@@ -97,10 +84,6 @@ import ApiRenderer from '../util/apiRenderer';
 export default {
     data() {
         return {
-            prompt: false,
-            promptTitle: '',
-            promptText: '',
-            promptAction: () => { },
             cacheSize: 0,
             musicSize: 0,
             lyricSize: 0,
@@ -116,9 +99,15 @@ export default {
             ApiRenderer.getDataSize('music').then(s => this.musicSize = s);
             ApiRenderer.getDataSize('lyric').then(s => this.lyricSize = s);
         },
+        saveSettings() {
+            this.$store.commit(types.UPDATE_SETTINGS, this.settings);
+            this.$store.commit(types.WRITE_SETTINGS);
+            this.$toast('设置已保存');
+        },
         toggleByName(name) {
             if (typeof this.settings[name] === 'boolean') {
                 this.settings[name] = !this.settings[name];
+                this.saveSettings();
             }
         },
         async clearStorage() {
@@ -148,7 +137,7 @@ export default {
             this.refreshSize();
         },
         wipeAppData() {
-            this.showPrompt({
+            this.$prompt({
                 title: '提示',
                 text: '这将清除所有应用数据，包括缓存以及账号登录状态，确定吗？',
                 action: async () => {
@@ -175,33 +164,22 @@ export default {
             try {
                 shell.openExternal(url);
             } catch (err) {
-                this.showPrompt({
+                this.$prompt({
                     title: '提示',
-                    text: `无法打开您的浏览器，请直接访问 ${url}`,
-                    action: () => { }
+                    text: `无法打开您的浏览器，请直接访问 ${url}`
                 });
             }
         },
         showVersions() {
-            this.showPrompt({
+            this.$prompt({
                 title: '版本号',
                 text: `<pre>
                     Electron: ${process.versions.electron}
                     Chrome: ${process.versions.chrome}
                     Node: ${process.versions.node}
                     V8: ${process.versions.v8}
-                </pre>`,
-                action: () => { }
+                </pre>`
             });
-        },
-        showPrompt(cfg) {
-            this.prompt = true;
-            this.promptTitle = cfg.title;
-            this.promptText = cfg.text;
-            this.promptAction = async () => {
-                await cfg.action();
-                this.prompt = false;
-            };
         }
     },
     filters: {
@@ -216,16 +194,6 @@ export default {
         }
     },
     watch: {
-        settings: {
-            deep: true,
-            handler: function (val, oldVal) {
-                if (Object.keys(oldVal).length !== 0) {
-                    this.$store.commit(types.UPDATE_SETTINGS, val);
-                    this.$store.commit(types.WRITE_SETTINGS);
-                    this.$toast('设置已保存');
-                }
-            }
-        },
         ['settings.windowBorder'](val, oldVal) {
             if (oldVal !== undefined) {
                 this.$store.commit(types.WRITE_SETTINGS);
