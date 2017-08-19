@@ -46,10 +46,7 @@ let cfg = {
             },
             {
                 test: /\.vue$/,
-                loader: 'vue-loader',
-                options: {
-                    extractCSS: true,
-                }
+                loader: 'vue-loader'
             },
             {
                 test: /\.(png|jpe?g|gif|svg)(\?.*)?$/,
@@ -83,6 +80,11 @@ let cfg = {
 
 if (process.env.NODE_ENV === 'production') {
     // release config
+    cfg.module.rules.map(e => {
+        if (e.loader === 'vue-loader') {
+            e.options.extractCSS = true;
+        }
+    });
     cfg.plugins.push(
         new BabiliPlugin(),
         new HtmlWebpackPlugin({
