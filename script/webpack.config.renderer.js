@@ -90,8 +90,8 @@ if (process.env.NODE_ENV === 'production') {
             template: path.join(projectRoot, 'src/renderer/index.ejs')
         }),
         new webpack.DefinePlugin({
-            PRODUCTION: 'true',
             'process.env': {
+                PRODUCTION: 'true',
                 NODE_ENV: '"production"'
             }
         })
@@ -108,9 +108,6 @@ if (process.env.NODE_ENV === 'production') {
             filename: 'index.html',
             template: path.join(projectRoot, 'src/renderer/index.ejs'),
             appModules: path.join(projectRoot, 'node_modules')
-        }),
-        new webpack.DefinePlugin({
-            PRODUCTION: 'false'
         })
     );
 }

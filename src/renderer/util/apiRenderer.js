@@ -10,7 +10,7 @@ methodKeys.forEach(methodName => {
         invokeId++;
         return new Promise((resolve, reject) => {
             ipcRenderer.once(`${methodName}${invokeId}`, (event, data) => {
-                if (!PRODUCTION) console.info(methodName, data);
+                if (!process.env.PRODUCTION) console.info(methodName, data);
                 if (data.errno) reject(data);
                 else resolve(data);
             });
