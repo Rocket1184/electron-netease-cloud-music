@@ -2,5 +2,11 @@
 
 export NODE_ENV=production
 npm run pack
-npm run build linux
-npm run build darwin
+
+if [ $? -eq "0" ]
+then
+    npm run build linux
+    npm run build darwin
+else
+    exit 1
+fi

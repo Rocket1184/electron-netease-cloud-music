@@ -46,7 +46,8 @@ let cfg = {
             },
             {
                 test: /\.vue$/,
-                loader: 'vue-loader'
+                loader: 'vue-loader',
+                options: {}
             },
             {
                 test: /\.(png|jpe?g|gif|svg)(\?.*)?$/,
