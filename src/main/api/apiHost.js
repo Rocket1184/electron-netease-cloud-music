@@ -3,7 +3,7 @@ import Api from './api';
 
 const methodKeys = Object.getOwnPropertyNames(Api);
 
-async function rejectTimeout(timeOut = 5000) {
+async function rejectTimeout(timeOut = 60000) {
     return await new Promise((_, reject) => {
         setTimeout(() => {
             reject(`request time out after ${timeOut} ms`);
