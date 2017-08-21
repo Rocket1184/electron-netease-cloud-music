@@ -77,6 +77,7 @@ import ApiRenderer from '../util/apiRenderer';
 import currentList from './currentList';
 import userPlaylists from './userPlaylists';
 import * as types from '../vuex/mutation-types';
+import { getImgSizeOf } from '../util/image';
 
 export default {
     data() {
@@ -99,7 +100,7 @@ export default {
         ]),
         getImgAt(size) {
             const url = this.playing.track.album.picUrl || this.fallbackImg;
-            return `${url}?param=${size}y${size}`;
+            return getImgSizeOf(url, size);
         },
         play() {
             this.$store.commit(types.RESUME_PLAYING_MUSIC);

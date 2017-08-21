@@ -53,6 +53,7 @@
 
 <script>
 import { mapGetters } from 'vuex';
+import { getImgSizeOf } from '../util/image';
 
 export default {
     data() {
@@ -67,13 +68,9 @@ export default {
         ...mapGetters([
             'playing'
         ]),
-        styleBlurImg() {
-            // maybe useful later...
-            return `background-image:url(http://music.163.com/api/img/blur/${this.playing.track.album.pic});`;
-        },
         styleAlbumImg() {
             const len = window.devicePixelRatio * 220;
-            return `background-image:url(${this.playing.track.album.picUrl}?param=${len}y${len});`;
+            return `background-image:url(${getImgSizeOf(this.playing.track.album.picUrl, len)});`;
         },
         lyricScrollerStyle() {
             if (this.lyricElemMap.length === 0 || this.currentLyricIndex === -1) {
