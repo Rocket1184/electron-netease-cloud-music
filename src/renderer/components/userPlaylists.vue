@@ -1,17 +1,16 @@
 <template>
-    <mu-list>
-        <mu-list-item v-for="(list, index) in listToShow"
+    <mu-list class="user-playlists">
+        <PlaylistItem v-for="(list, index) in listToShow"
             :key="index"
-            :title="list.name"
+            :item="list"
             @click="handleRowClick(list, index)">
-            <mu-avatar :src="formatImg(list.coverImgUrl)"
-                slot="leftAvatar"></mu-avatar>
-        </mu-list-item>
+        </PlaylistItem>
     </mu-list>
 </template>
 
 <script>
 import { mapGetters } from 'vuex';
+import PlaylistItem from './myPlaylistItem';
 
 export default {
     props: {
@@ -20,11 +19,6 @@ export default {
             default: false,
             required: false
         }
-    },
-    data() {
-        return {
-            coverSize: window.devicePixelRatio * 40
-        };
     },
     computed: {
         ...mapGetters([
@@ -38,17 +32,18 @@ export default {
         }
     },
     methods: {
-        formatImg(url) {
-            const size = this.coverSize;
-            return `${url}?param=${size}y${size}`;
-        },
         handleRowClick(list, index) {
             this.$emit('rowClick', list, index);
         }
+    },
+    components: {
+        PlaylistItem
     }
 };
 </script>
 
 <style lang="less">
-
+.user-playlists {
+    min-width: 400px;
+}
 </style>
