@@ -40,6 +40,7 @@ const Models = {
             creator: new User(),
             commentThreadId: -1,
             playCount: -1,
+            trackCount: 0,
             coverImgId: -1,
             coverImgUrl: '',
             tracks: [new Track()]
@@ -105,6 +106,7 @@ export class PlayList {
         this.creator = new User(o.creator);
         this.commentThreadId = o.commentThreadId;
         this.playCount = o.playCount;
+        this.trackCount = o.trackCount;
         this.coverImgId = o.coverImgId;
         this.coverImgUrl = o.coverImgUrl;
         const tracks = o.tracks || o.recommend || [];
