@@ -78,6 +78,7 @@ import currentList from './currentList';
 import userPlaylists from './userPlaylists';
 import * as types from '../vuex/mutation-types';
 import { getImgSizeOf } from '../util/image';
+import { shortTime } from '../util/time';
 
 export default {
     data() {
@@ -163,17 +164,7 @@ export default {
         }
     },
     filters: {
-        time(value) {
-            const dt = new Date(value * 1000);
-            const h = dt.getUTCHours();
-            const m = dt.getMinutes();
-            const s = dt.getSeconds();
-            let res = '';
-            h && (res += `${h}:`);
-            res += m < 10 ? `0${m}:` : `${m}:`;
-            res += s < 10 ? `0${s}` : `${s}`;
-            return res;
-        }
+        time: shortTime
     },
     created() {
         try {

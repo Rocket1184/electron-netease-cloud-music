@@ -20,6 +20,8 @@
 </template>
 
 <script>
+import { shortDate } from '../util/time';
+
 export default {
     props: {
         list: {
@@ -27,13 +29,7 @@ export default {
         }
     },
     filters: {
-        shortDate(val) {
-            const dt = new Date(val);
-            const y = dt.getFullYear();
-            const m = dt.getMonth() + 1;
-            const d = dt.getDay();
-            return `${y}-${m}-${d}`;
-        }
+        shortDate
     }
 };
 </script>
