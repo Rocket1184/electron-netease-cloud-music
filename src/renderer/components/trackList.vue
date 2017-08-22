@@ -2,6 +2,7 @@
     <div class="tracklist">
         <template v-if="list.length !== 0">
             <mu-list-item title="播放全部"
+                class="play-all"
                 @click="handlePlayAll">
                 <mu-icon slot="left"
                     value="play_circle_filled"></mu-icon>
@@ -50,6 +51,18 @@ export default {
 <style lang="less">
 .tracklist {
     width: 100%;
+    .play-all {
+        .mu-icon {
+            font-size: 20px;
+            padding-left: 8px;
+        }
+        .mu-item {
+            padding-left: 54px;
+            .mu-item-title {
+                font-size: 14px;
+            }
+        }
+    }
     .table {
         .label {
             display: block;
