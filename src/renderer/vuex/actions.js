@@ -67,12 +67,6 @@ function playThisTrack(commit, list, index, quality) {
         .then(() => commit(types.RESUME_PLAYING_MUSIC));
 }
 
-export function refreshCurrentTrack({ state, commit }) {
-    const quality = state.settings.bitRate;
-    const { currentIndex, list } = state.playlist;
-    updatePlayingUrl(commit, list[currentIndex].id, quality);
-};
-
 export function playNextTrack({ commit, state }) {
     const quality = state.settings.bitRate;
     const { currentIndex, list } = state.playlist;
@@ -108,9 +102,6 @@ export function playTrackIndex({ commit, state }, payload) {
 export async function restorePlaylist(context, payload) {
     const { playlist } = payload;
     context.commit(types.RESTORE_PLAYLIST, playlist);
-    const oldUrl = playlist.list[playlist.currentIndex].urls[playlist.quality];
-    const status = await ApiRenderer.checkUrlStatus(oldUrl);
-    if (status !== 200) refreshCurrentTrack(context);
 };
 
 export async function refreshUserPlaylist({ commit }, payload) {

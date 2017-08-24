@@ -96,7 +96,6 @@ export default {
             'playNextTrack',
             'playPreviousTrack',
             'restorePlaylist',
-            'refreshCurrentTrack',
             'refreshUserPlaylist'
         ]),
         getImgAt(size) {
@@ -105,11 +104,7 @@ export default {
         },
         play() {
             this.$store.commit(types.RESUME_PLAYING_MUSIC);
-            try {
-                this.audioEl.play();
-            } catch (err) {
-                this.refreshCurrentTrack();
-            }
+            this.audioEl.play();
         },
         pause() {
             this.$store.commit(types.PAUSE_PLAYING_MUSIC);
@@ -170,9 +165,6 @@ export default {
         try {
             const playlist = JSON.parse(localStorage.getItem('playlist'));
             this.restorePlaylist({ playlist });
-            ApiRenderer.checkUrlStatus(this.playing.url).then(code => {
-                if (code !== 200) this.refreshCurrentTrack();
-            });
         } catch (e) { }
         window.onbeforeunload = () => {
             if (!this.$store.state.settings.autoPlay) this.pause();
