@@ -234,14 +234,16 @@ export default {
         font-size: 14px;
         padding: 10px 14px;
         width: calc(~"100% - 244px");
-        .song-name {
-            max-width: 500px;
+        .song-name,
+        .artist-name {
+            display: inline-block;
+            max-width: 310px;
             overflow: hidden;
             text-overflow: ellipsis;
             white-space: nowrap;
         }
         .artist-name {
-            margin-left: 14px;
+            margin-left: 10px;
             color: dimgrey;
         }
         .quick-actions {
@@ -259,7 +261,6 @@ export default {
             }
         }
         .progress {
-            margin-top: 5px;
             position: relative;
             .slider {
                 width: calc(~"100% - 100px");
