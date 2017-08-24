@@ -107,7 +107,6 @@ export default {
         toggleByName(name) {
             if (typeof this.settings[name] === 'boolean') {
                 this.settings[name] = !this.settings[name];
-                this.saveSettings();
             }
         },
         async clearStorage() {
@@ -194,6 +193,8 @@ export default {
         }
     },
     watch: {
+        ['settings.bitRate']() { this.saveSettings(); },
+        ['settings.autoPlay']() { this.saveSettings(); },
         ['settings.windowBorder'](val, oldVal) {
             if (oldVal !== undefined) {
                 this.$store.commit(types.WRITE_SETTINGS);
