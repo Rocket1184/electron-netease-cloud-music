@@ -16,6 +16,10 @@
             </mu-list>
         </mu-paper>
         <div class="content">
+            <template v-if="detail">
+                <PlaylistHeader :detail="detail"></PlaylistHeader>
+                <mu-sub-header>曲目列表</mu-sub-header>
+            </template>
             <TrackList :list="tracks"></TrackList>
         </div>
     </div>
@@ -28,10 +32,12 @@ import { Track } from '../util/models';
 import ApiRenderer from '../util/apiRenderer';
 import TrackList from '../components/trackList';
 import PlaylistItem from '../components/myPlaylistItem';
+import PlaylistHeader from '../components/playlistHeader';
 
 export default {
     data() {
         return {
+            detail: {},
             tracks: []
         };
     },
@@ -54,8 +60,10 @@ export default {
     },
     methods: {
         async loadPlaylist(id) {
+            this.detail = null;
             this.tracks = [];
             const raw = await ApiRenderer.getListDetail(id);
+            this.detail = raw.playlist;
             this.tracks = raw.playlist.tracks.map(t => new Track(t));
         }
     },
@@ -64,7 +72,8 @@ export default {
     },
     components: {
         TrackList,
-        PlaylistItem
+        PlaylistItem,
+        PlaylistHeader
     }
 };
 </script>
