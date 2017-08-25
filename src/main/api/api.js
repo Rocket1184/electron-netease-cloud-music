@@ -66,6 +66,15 @@ export function refreshLogin() {
     });
 }
 
+export async function logout() {
+    const resp = await client.post({ url: `${BaseURL}/logout` });
+    console.log(`logout resp is ${JSON.stringify(resp)}`);
+    if (resp.code == 200) {
+        client.setCookie({});
+    }
+    return resp.code;
+}
+
 export function getUserPlaylist(uid) {
     return client.post({
         url: `${BaseURL}/weapi/user/playlist`,
@@ -405,6 +414,7 @@ export default {
     getCookie,
     updateCookie,
     login,
+    logout,
     refreshLogin,
     getUserPlaylist,
     getMusicRecord,
