@@ -47,13 +47,13 @@
                 </router-link>
             </mu-list>
         </mu-drawer>
-        <loginDialog :show="dlgShow"
+        <loginDialog :show="loginDlgShow"
             @close="toggleDlg()"></loginDialog>
     </div>
 </template>
 
 <script>
-import { mapGetters } from 'vuex';
+import { mapActions, mapGetters } from 'vuex';
 import { remote } from 'electron';
 
 import ApiRenderer from '../util/apiRenderer';
@@ -67,7 +67,7 @@ export default {
             currentWindow: remote.getCurrentWindow(),
             isDarwin: process.platform === 'darwin',
             drawerOpen: false,
-            dlgShow: false
+            loginDlgShow: false
         };
     },
     computed: {
@@ -95,6 +95,9 @@ export default {
         ])
     },
     methods: {
+        ...mapActions([
+            'logout'
+        ]),
         handleClose() {
             this.currentWindow.close();
         },
@@ -112,11 +115,17 @@ export default {
         },
         handleNameClick() {
             if (!this.loginValid) {
-                this.dlgShow = true;
+                this.loginDlgShow = true;
+            } else {
+                this.$prompt({
+                    title: '提示',
+                    text: '确认要退出登录吗？退出登录后将无法查看每日歌曲推荐，收藏的歌单等信息。',
+                    action: () => this.logout()
+                });
             }
         },
         toggleDlg() {
-            this.dlgShow = !this.dlgShow;
+            this.loginDlgShow = !this.loginDlgShow;
         },
         async handleCheckIn() {
             let results = [
