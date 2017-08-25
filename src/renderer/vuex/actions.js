@@ -1,6 +1,7 @@
 import * as types from './mutation-types';
 import { LOOP_TYPES } from './modules/playlist';
 import ApiRenderer from '../util/apiRenderer';
+import { User } from '../util/models';
 
 export function setUserInfo({ commit }, payload) {
     commit(types.SET_USER_INFO, payload);
@@ -51,6 +52,17 @@ export function setLoginValid({ state, commit }, payload) {
     } else {
         commit(types.SET_LOGIN_VALID, false);
     }
+}
+
+export function logout({ commit }) {
+    ApiRenderer.logout().then(code => {
+        console.log(`logout retcode is ${JSON.stringify(code)}`);
+        if (code == 200) {
+            commit(types.SET_LOGIN_VALID, false);
+            setUserInfo({ commit }, new User());
+            ['user', 'cookie'].map(k => localStorage.removeItem(k));
+        }
+    });
 }
 
 async function updatePlayingUrl(commit, trackId, quality) {
