@@ -145,9 +145,9 @@ export default {
                         this.clearStorage(),
                         ApiRenderer.updateCookie({}),
                         ApiRenderer.resetSettings(),
-                        ApiRenderer.clearCache('chrome'),
-                        ApiRenderer.clearCache('music'),
-                        ApiRenderer.clearCache('lyric'),
+                        this.clearCache('chrome'),
+                        this.clearCache('music'),
+                        this.clearCache('lyric'),
                     ]);
                     ipcRenderer.send('recreateWindow');
                 }
@@ -193,8 +193,14 @@ export default {
         }
     },
     watch: {
-        ['settings.bitRate']() { this.saveSettings(); },
-        ['settings.autoPlay']() { this.saveSettings(); },
+        ['settings']: {
+            deep: true,
+            handler(val, oldVal) {
+                if (Object.keys(oldVal).length !== 0) {
+                    this.saveSettings();
+                }
+            }
+        },
         ['settings.windowBorder'](val, oldVal) {
             if (oldVal !== undefined) {
                 this.$store.commit(types.WRITE_SETTINGS);
