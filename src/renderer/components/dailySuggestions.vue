@@ -6,7 +6,14 @@
             <p>每日歌曲推荐</p>
         </div>
         <div class="cell content">
-            <trackList :list="dailyList"> </trackList>
+            <trackList v-if="loginValid"
+                :list="dailyList"></trackList>
+            <div v-else
+                class="tip">
+                <mu-icon value="nature_people"
+                    :size="128"></mu-icon>
+                <p>登录后开启歌曲推荐 ：）</p>
+            </div>
         </div>
     </mu-paper>
 </template>
@@ -39,8 +46,12 @@ export default {
         }
     },
     watch: {
-        loginValid: function (val) {
-            if (val) this.getDailyList();
+        loginValid(val) {
+            if (val) {
+                this.getDailyList();
+            } else {
+                this.dailyList = [];
+            }
         }
     },
     created() {
@@ -70,6 +81,11 @@ export default {
     }
     .content {
         flex: 7;
+        .tip {
+            color: grey;
+            text-align: center;
+            margin-top: 100px;
+        }
     }
 }
 </style>
