@@ -4,14 +4,28 @@
             class="cover">
         <div class="desc">
             <p class="name">{{detail.name}}</p>
-            <mu-list-item :title="detail.creator.nickname"
-                :afterText="`创建于 ${shortDate(detail.createTime)}`"
-                disabled>
+            <div class="creator">
                 <mu-avatar slot="left"
+                    class="avatar"
                     :src="detail.creator.avatarUrl" />
-            </mu-list-item>
-            <mu-icon-button icon="star"></mu-icon-button>
-            <mu-icon-button icon="comment"></mu-icon-button>
+                <span class="creator-name">{{detail.creator.nickname}}</span>
+                <span class="create-time">创建于 {{shortDate(detail.createTime)}}</span>
+            </div>
+            <div class="actions">
+                <mu-flat-button :label="`收藏 (${detail.subscribedCount})`"
+                    :icon="detail.subscribed ? 'star' : 'star_border'" />
+                <mu-flat-button :label="`评论 (${detail.commentCount})`"
+                    icon="comment" />
+            </div>
+            <div class="intro">
+                <mu-list-item title="歌单介绍"
+                    toggleNested
+                    :open="false">
+                    <mu-content-block slot="nested">
+                        <pre>{{detail.description}}</pre>
+                    </mu-content-block>
+                </mu-list-item>
+            </div>
         </div>
     </div>
 </template>
@@ -39,21 +53,41 @@ export default {
 
 <style lang="less">
 .playlist-header {
-    height: 200px;
+    min-height: 200px;
     background-size: cover;
     .cover {
         height: 160px;
         width: 160px;
-        margin: 20px 10px 40px 40px;
+        margin: 20px 10px 0 40px;
     }
     .desc {
         display: inline-block;
-        margin: 20px 0;
+        margin-top: 20px;
         vertical-align: top;
-        width: calc(~"100% - 220px");
+        width: calc(~"100% - 240px");
         .name {
-            margin-left: 16px;
             font-size: 20px;
+            margin-left: 16px;
+        }
+        .creator {
+            margin: 10px 0 10px 16px;
+            .avatar,
+            .creator-name,
+            .create-time {
+                vertical-align: middle;
+            }
+            .creator-name {
+                margin: 0 10px;
+            }
+            .create-time {
+                color: grey;
+            }
+        }
+    }
+    .actions {
+        span {
+            line-height: 48px;
+            display: inline-block;
         }
     }
 }
