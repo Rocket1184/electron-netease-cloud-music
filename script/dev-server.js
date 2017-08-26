@@ -12,8 +12,8 @@ process.on('SIGINT', () => {
 });
 
 const mainProcess = require('child_process').exec(`electron ${projectRoot}/src/main/index.dev.js`);
-mainProcess.stdout.on('data', console.log);
-mainProcess.stderr.on('data', console.error);
+mainProcess.stdout.pipe(process.stdout);
+mainProcess.stderr.pipe(process.stderr);
 mainProcess.on('close', code => {
     console.log('\nElectron exited. Exiting...');
     process.exit(code);

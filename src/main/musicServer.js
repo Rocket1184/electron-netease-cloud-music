@@ -2,11 +2,14 @@
 
 import fs from 'fs';
 import url from 'url';
+import debug from 'debug';
 import qs from 'querystring';
 import { createServer } from 'http';
 
 import { getMusicUrl } from './api/api';
 import Cache from './api/cache';
+
+const d = debug('MusicServer');
 
 function statAsync(path) {
     return new Promise((resolve, reject) => {
@@ -64,14 +67,14 @@ class MusicServer {
     static async serverHandler(cache, req, res) {
         const location = url.parse(req.url);
         const params = qs.parse(location.query);
-        console.log(`[MusicServer] Request hit ${location.path}`);
+        d(`Request hit ${location.path}`);
         if (req.method === 'GET' && location.pathname === '/music') {
             const id = params['id'];
             const quality = params['quality'] || 'l';
             const fileName = `${id}${quality}`;
             const filePath = cache.fullPath(fileName);
             if (await cache.has(fileName)) {
-                console.log(`[MusicServer] Hit cache for music id=${id}`);
+                d(`Hit cache for music id=${id}`);
                 const stat = await statAsync(filePath);
                 const range = getRange(req, stat.size);
                 // TODO: <range-end> may larger than <file-size>, cause file is still being downloaded
@@ -86,7 +89,7 @@ class MusicServer {
             } else {
                 const oUrl = await getMusicUrl(id, quality);
                 if (oUrl.data[0].code === 200) {
-                    console.log(`[MusicServer] Got URL for music id=${id}`);
+                    d(`Got URL for music id=${id}`);
 
                     const st = await cache.fetch(oUrl.data[0].url, fileName);
                     st.pipe(fs.createWriteStream(filePath));
@@ -104,34 +107,34 @@ class MusicServer {
                     let file = fs.createReadStream(filePath);
                     file.pipe(res, { end: false });
                     async function endHandler() {
-                        console.log('[MusicServer] emit end');
+                        d('stream end but not finished');
                         const newStat = await statAsync(filePath);
                         if (newStat.size < realLength) {
                             if (newStat.size <= stat.size || stat.size == 0) {
-                                console.log('[MusicServer] no more data gain');
+                                d('no more data gain, wait 100ms');
                                 setTimeout(endHandler, 100);
                             } else {
-                                console.log(`[MusicServer] restart at ${stat.size}`);
+                                d(`restart at ${stat.size}`);
                                 file = fs.createReadStream(filePath, { start: stat.size, end: newStat.size - 1 });
                                 file.pipe(res, { end: false });
                                 file.on('end', endHandler);
                             }
                             stat = newStat;
                         } else {
-                            console.log(`[MusicServer] stream ending, total size ${newStat.size}`);
+                            d(`stream ending, total size ${newStat.size}`);
                             file = null;
                             fs.createReadStream(filePath, { start: stat.size }).pipe(res);
                         }
                     }
                     file.on('end', endHandler);
                 } else {
-                    console.log(`[MusicServer] Cannot get URL for music id=${id}`);
+                    d(`Cannot get URL for music id=${id}`);
                     res.writeHead(404);
                     res.end();
                 }
             }
         } else {
-            console.log('[MusicServer] What a Terrible Failure request');
+            d('What a Terrible Failure request');
             res.writeHead(400);
             res.end();
         }
@@ -140,13 +143,14 @@ class MusicServer {
     listen(...args) {
         if (this.server) {
             if (this.server.listening) {
-                throw new Error('[MusicServer] already lisitening');
+                throw new Error('[MusicServer] already listening');
             } else {
                 this.server.listen(...args);
             }
         } else {
             this.server = createServer((req, res) => MusicServer.serverHandler(this.cache, req, res));
             this.server.listen(...args);
+            d(`listening on ${JSON.stringify(args)}`);
         }
     }
 }

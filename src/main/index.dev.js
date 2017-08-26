@@ -7,12 +7,13 @@
 
 /* eslint-disable no-console */
 
+// Set debug `env`
+process.env.DEBUG = 'MusicServer,Api';
+process.env.DEBUG_COLORS = true;
+
 // Set babel `env` and install `babel-register`
 process.env.NODE_ENV = 'development';
-
-require('babel-register')({
-    ignore: /node_modules/
-});
+require('babel-register');
 
 // Install `electron-debug` with `devtron`
 require('electron-debug')({ showDevTools: true });
