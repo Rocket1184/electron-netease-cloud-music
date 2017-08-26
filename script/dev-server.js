@@ -12,7 +12,12 @@ process.on('SIGINT', () => {
 });
 
 const mainProcess = require('child_process').exec(`electron ${projectRoot}/src/main/index.dev.js`);
-mainProcess.stdout.on('data', console.log);
+mainProcess.stdout.pipe(process.stdout);
+mainProcess.stderr.pipe(process.stderr);
+mainProcess.on('close', code => {
+    console.log('\nElectron exited. Exiting...');
+    process.exit(code);
+});
 
 let compileCfg = require('./webpack.config.renderer');
 compileCfg.entry.renderer.unshift(
@@ -28,7 +33,7 @@ const serverCfg = {
     hot: true,
     stats: 'minimal',
     overlay: true,
-    contentBase: path.join(projectRoot, 'dist')
+    contentBase: path.join(projectRoot, 'src')
 };
 
 const devServer = new WebpackDevServer(compiler, serverCfg);

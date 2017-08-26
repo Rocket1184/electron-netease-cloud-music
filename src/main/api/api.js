@@ -3,27 +3,41 @@ import url from 'url';
 import path from 'path';
 import crypto from 'crypto';
 import { Lrc } from 'lrc-kit';
-import qs from 'child_process';
+import cp from 'child_process';
 import { app } from 'electron';
 import { http, https } from 'follow-redirects';
 
-import Client from './httpclient';
+import Cache from './cache';
+import Client from './httpClient';
 import * as Settings from '../settings';
+import MusicServer from '../musicServer';
 
 const BaseURL = 'http://music.163.com';
 
 const client = new Client();
 
-function updateCookie(cookie) {
+const appDataPath = path.join(app.getPath('appData'), Settings.appName);
+const cachePathMap = {
+    all: appDataPath,
+    music: path.join(appDataPath, 'musicCache'),
+    lyric: path.join(appDataPath, 'lyricCache')
+};
+const musicCache = new Cache(cachePathMap.music);
+const lyricCache = new Cache(cachePathMap.lyric);
+
+const musicServer = new MusicServer(musicCache);
+musicServer.listen(8209);
+
+export function updateCookie(cookie) {
     client.updateCookie(cookie);
     return client.getCookie('');
 }
 
-function getCookie(key = '') {
+export function getCookie(key = '') {
     return client.getCookie(key);
 }
 
-function login(acc, pwd) {
+export function login(acc, pwd) {
     const password = crypto.createHash('md5').update(pwd).digest('hex');
     const postBody = {
         password,
@@ -45,14 +59,22 @@ function login(acc, pwd) {
     }
 }
 
-function refreshLogin() {
+export function refreshLogin() {
     return client.post({
         url: `${BaseURL}/weapi/login/token/refresh`,
         data: {}
     });
 }
 
-function getUserPlaylist(uid) {
+export async function logout() {
+    const resp = await client.post({ url: `${BaseURL}/logout` });
+    if (resp.code == 200) {
+        client.setCookie({});
+    }
+    return resp.code;
+}
+
+export function getUserPlaylist(uid) {
     return client.post({
         url: `${BaseURL}/weapi/user/playlist`,
         data: {
@@ -63,7 +85,7 @@ function getUserPlaylist(uid) {
     });
 }
 
-function getMusicRecord(uid) {
+export function getMusicRecord(uid) {
     return client.post({
         url: `${BaseURL}/weapi/v1/play/record`,
         data: {
@@ -73,7 +95,7 @@ function getMusicRecord(uid) {
     });
 }
 
-function getDailySuggestions() {
+export function getDailySuggestions() {
     return client.post({
         url: `${BaseURL}/weapi/v1/discovery/recommend/songs`,
         data: {
@@ -84,7 +106,7 @@ function getDailySuggestions() {
     });
 }
 
-function getListDetail(id) {
+export function getListDetail(id) {
     return client.post({
         url: `${BaseURL}/weapi/v3/playlist/detail`,
         data: {
@@ -103,7 +125,7 @@ const QualityMap = {
     l: 96000
 };
 
-function getMusicUrl(idOrIds, quality = 'h') {
+export function getMusicUrl(idOrIds, quality = 'h') {
     if (!QualityMap[quality]) throw new Error(`Quality type '${quality}' is not in [h,m,l]`);
     let ids;
     if (Array.isArray(idOrIds)) ids = idOrIds;
@@ -117,7 +139,11 @@ function getMusicUrl(idOrIds, quality = 'h') {
     });
 }
 
-function getMusicComments(rid, limit = 20, offset = 0) {
+export async function getMusicUrlCached(id, quality = 'l') {
+    return { url: `http://127.0.0.1:8209/music?id=${id}&quality=${quality}` };
+}
+
+export function getMusicComments(rid, limit = 20, offset = 0) {
     return client.post({
         url: `${BaseURL}/weapi/v1/resource/comments/R_SO_4_${rid}`,
         data: {
@@ -132,7 +158,7 @@ function byTimestamp(a, b) {
     return a.timestamp - b.timestamp;
 }
 
-async function getMusicLyric(id) {
+export async function getMusicLyric(id) {
     const tmp = await client.post({
         url: `${BaseURL}/weapi/song/lyric`,
         data: {
@@ -175,7 +201,25 @@ async function getMusicLyric(id) {
     return result;
 }
 
-function submitWebLog(action, json) {
+export async function getMusicLyricCached(id) {
+    if (await lyricCache.has(id)) {
+        return new Promise((resolve, reject) => {
+            fs.readFile(lyricCache.fullPath(id), (err, data) => {
+                if (!err) {
+                    resolve(JSON.parse(data.toString()));
+                } else {
+                    reject(err);
+                }
+            });
+        });
+    } else {
+        const lyric = await getMusicLyric(id);
+        lyricCache.save(id, lyric);
+        return lyric;
+    }
+}
+
+export function submitWebLog(action, json) {
     return client.post({
         url: `${BaseURL}/weapi/log/web`,
         data: {
@@ -185,7 +229,7 @@ function submitWebLog(action, json) {
     });
 }
 
-function submitListened(id, time) {
+export function submitListened(id, time) {
     return submitWebLog('play', {
         id,
         type: 'song',
@@ -196,7 +240,7 @@ function submitListened(id, time) {
     });
 }
 
-function checkUrlStatus(u = 'http://m10.music.126.net') {
+export function checkUrlStatus(u = 'http://m10.music.126.net') {
     u = String(u);
     if (!~u.indexOf('http')) return new Promise(resolve => resolve(-1));
     const opt = url.parse(u);
@@ -212,16 +256,13 @@ function checkUrlStatus(u = 'http://m10.music.126.net') {
             throw new Error(`Unsupported protocol ${opt.protocol}`);
     }
     return new Promise(resolve => {
-        request.request({
-            host: opt.host,
-            path: opt.path + (opt.search || '')
-        }, resp => {
+        request.request(opt, resp => {
             resolve(resp.statusCode);
         }).end();
     });
 }
 
-function getDirSize(dirPath) {
+export function getDirSize(dirPath) {
     let totalSize = 0;
     const files = fs.readdirSync(dirPath);
     files.forEach(file => {
@@ -235,12 +276,21 @@ function getDirSize(dirPath) {
     return totalSize;
 }
 
-function getDataSize() {
-    const appData = app.getPath('appData');
-    const appName = process.env.NODE_ENV === 'development'
-        ? 'Electron'
-        : require('../../../package.json').name;
-    const cachePath = path.join(appData, appName);
+export function removeDir(dirPath) {
+    const files = fs.readdirSync(dirPath);
+    files.forEach(file => {
+        const fullPath = path.join(dirPath, file);
+        const stat = fs.statSync(fullPath);
+        if (stat.isFile()) {
+            fs.unlinkSync(fullPath);
+        } else if (stat.isDirectory) {
+            removeDir(fullPath);
+        }
+    });
+}
+
+export function getDataSize(type = 'all') {
+    const cachePath = cachePathMap[type];
     let size;
     try {
         size = getDirSize(cachePath);
@@ -250,13 +300,25 @@ function getDataSize() {
     return size;
 }
 
-function getVersionName() {
-    let version = require('../../../package.json').version;
+export function clearCache(type) {
+    try {
+        removeDir(cachePathMap[type]);
+    } catch (err) {
+        return {
+            errno: -1,
+            err
+        };
+    }
+    return true;
+}
+
+export function getVersionName() {
+    let version = Settings.appVer;
     if (process.env.NODE_ENV === 'development') {
         version += '-hot';
         let rev = '';
         try {
-            rev = qs.execSync('git rev-parse --short HEAD').toString().trim();
+            rev = cp.execSync('git rev-parse --short HEAD').toString().trim();
             version += `.${rev}+`;
         } catch (err) { }
     } else {
@@ -270,19 +332,19 @@ function getVersionName() {
     return version;
 }
 
-function getCurrentSettings() {
+export function getCurrentSettings() {
     return Settings.getCurrent();
 }
 
-function writeSettings(target) {
+export function writeSettings(target) {
     return Settings.set(target);
 }
 
-function resetSettings() {
-    return Settings.set(require('../default'));
+export function resetSettings() {
+    return Settings.set(Settings.defaultSettings);
 }
 
-function postDailyTask(type) {
+export function postDailyTask(type) {
     return client.post({
         url: `${BaseURL}/weapi/point/dailyTask`,
         data: {
@@ -291,7 +353,7 @@ function postDailyTask(type) {
     });
 }
 
-function manipulatePlaylistTracks(op, pid, tracks) {
+export function manipulatePlaylistTracks(op, pid, tracks) {
     return client.post({
         url: `${BaseURL}/weapi/playlist/manipulate/tracks`,
         data: {
@@ -303,15 +365,15 @@ function manipulatePlaylistTracks(op, pid, tracks) {
     });
 }
 
-function collectTrack(pid, ...tracks) {
+export function collectTrack(pid, ...tracks) {
     return manipulatePlaylistTracks('add', pid, tracks);
 }
 
-function uncollectTrack(pid, ...tracks) {
+export function uncollectTrack(pid, ...tracks) {
     return manipulatePlaylistTracks('del', pid, tracks);
 }
 
-function getSearchSuggest(s) {
+export function getSearchSuggest(s) {
     return client.post({
         url: `${BaseURL}/weapi/search/suggest/web`,
         data: {
@@ -331,7 +393,7 @@ const searchTypeMap = {
     radio: '1009'
 };
 
-function search(s, type, limit = 20, offset = 0) {
+export function search(s, type, limit = 20, offset = 0) {
     return client.post({
         url: `${BaseURL}/weapi/cloudsearch/get/web`,
         data: {
@@ -350,17 +412,21 @@ export default {
     getCookie,
     updateCookie,
     login,
+    logout,
     refreshLogin,
     getUserPlaylist,
     getMusicRecord,
     getDailySuggestions,
     getListDetail,
     getMusicUrl,
+    getMusicUrlCached,
     getMusicComments,
     getMusicLyric,
+    getMusicLyricCached,
     submitListened,
     checkUrlStatus,
     getDataSize,
+    clearCache,
     getVersionName,
     getCurrentSettings,
     writeSettings,

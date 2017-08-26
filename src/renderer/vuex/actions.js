@@ -1,49 +1,82 @@
 import * as types from './mutation-types';
 import { LOOP_TYPES } from './modules/playlist';
-import ApiRenderer from '../util/apirenderer';
+import ApiRenderer from '../util/apiRenderer';
+import { User } from '../util/models';
 
 export function setUserInfo({ commit }, payload) {
-    const { info, cookie } = payload;
-    commit({
-        type: types.UPDATE_USER_COOKIES,
-        cookie
-    });
-    commit({
-        type: types.SET_USER_INFO,
-        info
-    });
-    commit(types.SET_LOGIN_VALID);
+    commit(types.SET_USER_INFO, payload);
 };
 
-async function playThisTrack(commit, list, index, quality) {
-    const [oUrl, lyrics] = await Promise.all([
-        ApiRenderer.getMusicUrl(list[index].id, quality),
-        ApiRenderer.getMusicLyric(list[index].id)
-    ]);
-    // those invoke can't be reversed!
-    // from below
-    commit({
-        type: types.SET_CURRENT_INDEX,
-        index
-    });
-    commit({
-        type: types.UPDATE_PLAYING_MUSIC,
-        urls: { [quality]: oUrl.data[0].url },
-        lyrics
-    });
-    // to above
-    commit(types.RESUME_PLAYING_MUSIC);
+export function storeUserInfo(context, payload) {
+    const { user, cookie } = payload;
+    localStorage.setItem('user', JSON.stringify(user));
+    localStorage.setItem('cookie', JSON.stringify(cookie));
 }
 
-export async function refreshCurrentTrack({ state, commit }) {
-    const quality = state.settings.bitRate;
-    const { currentIndex, list } = state.playlist;
-    const oUrl = await ApiRenderer.getMusicUrl(list[currentIndex].id, quality);
-    commit({
-        type: types.UPDATE_PLAYING_MUSIC,
-        urls: { [quality]: oUrl.data[0].url },
+export async function restoreUserInfo(context) {
+    const user = localStorage.getItem('user');
+    const cookie = localStorage.getItem('cookie');
+    if (user && cookie) {
+        const userObj = JSON.parse(user);
+        const cookieObj = JSON.parse(cookie);
+        context.commit(types.SET_USER_INFO, userObj);
+        ApiRenderer.updateCookie(cookieObj);
+        const resp = await ApiRenderer.refreshLogin();
+        if (resp.code === 200) {
+            setLoginValid(context);
+            return true;
+        } else {
+            ApiRenderer.updateCookie({});
+            return false;
+        }
+    }
+}
+
+export function setLoginValid({ state, commit }, payload) {
+    if (payload === undefined || payload === true || payload.valid === true) {
+        commit(types.SET_LOGIN_VALID);
+        ApiRenderer.getCookie().then(cookie => {
+            localStorage.setItem('cookie', JSON.stringify(cookie));
+        });
+        ApiRenderer.getUserPlaylist(state.user.info.id).then(({ playlist }) => {
+            commit(types.UPDATE_USER_INFO, playlist[0].creator);
+            commit(types.SET_USER_PLAYLISTS, playlist);
+            if (~playlist[0].name.indexOf('喜欢的音乐')) {
+                return playlist[0].id;
+            }
+        }).then(likedListId => {
+            ApiRenderer.getListDetail(likedListId).then(list => {
+                commit(types.UPDATE_USER_PLAYLIST, list.playlist);
+            });
+        });
+    } else {
+        commit(types.SET_LOGIN_VALID, false);
+    }
+}
+
+export function logout({ commit }) {
+    ApiRenderer.logout().then(code => {
+        if (code == 200) {
+            commit(types.SET_LOGIN_VALID, false);
+            setUserInfo({ commit }, new User());
+            ['user', 'cookie'].map(k => localStorage.removeItem(k));
+        }
     });
-};
+}
+
+async function updatePlayingUrl(commit, trackId, quality) {
+    const oUrl = await ApiRenderer.getMusicUrlCached(trackId, quality);
+    commit(types.UPDATE_PLAYING_URL, { [quality]: oUrl.url });
+}
+
+function playThisTrack(commit, list, index, quality) {
+    commit(types.SET_CURRENT_INDEX, index);
+    commit(types.SET_ACTIVE_LYRIC, {});
+    ApiRenderer.getMusicLyricCached(list[index].id)
+        .then(lyric => commit(types.SET_ACTIVE_LYRIC, lyric));
+    updatePlayingUrl(commit, list[index].id, quality)
+        .then(() => commit(types.RESUME_PLAYING_MUSIC));
+}
 
 export function playNextTrack({ commit, state }) {
     const quality = state.settings.bitRate;
@@ -61,10 +94,7 @@ export function playPreviousTrack({ commit, state }) {
 
 export async function playPlaylist({ commit, state }, payload) {
     if (payload) {
-        commit({
-            type: types.SET_PLAY_LIST,
-            list: payload.list
-        });
+        commit(types.SET_PLAY_LIST, { list: payload.list });
     }
     const quality = state.settings.bitRate;
     const { list, loopMode } = state.playlist;
@@ -80,21 +110,9 @@ export function playTrackIndex({ commit, state }, payload) {
     playThisTrack(commit, list, payload.index, quality);
 };
 
-export async function restorePlaylist({ commit }, payload) {
+export async function restorePlaylist(context, payload) {
     const { playlist } = payload;
-    commit({
-        type: types.RESTORE_PLAYLIST,
-        ...playlist
-    });
-    const oldUrl = playlist.list[playlist.currentIndex].urls[playlist.quality];
-    const status = await ApiRenderer.checkUrlStatus(oldUrl);
-    if (status !== 200) {
-        const oUrl = await ApiRenderer.getMusicUrl(playlist.list[playlist.currentIndex].id);
-        commit({
-            type: types.UPDATE_PLAYING_MUSIC,
-            urls: { [playlist.quality]: oUrl.data[0].url }
-        });
-    }
+    context.commit(types.RESTORE_PLAYLIST, playlist);
 };
 
 export async function refreshUserPlaylist({ commit }, payload) {

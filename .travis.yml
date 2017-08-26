@@ -3,8 +3,8 @@ node_js: node # install the latest release of node
 cache:
   yarn: true
   directories:
+  - $HOME/.electron
   - node_modules
-  - app/node_modules
 script:
-  - script/install-and-build.sh
-  - script/upload-build.sh
+  - script/travis-build.sh
+  - script/travis-upload-build.sh

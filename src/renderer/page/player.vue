@@ -1,11 +1,11 @@
 <template>
     <div class="song-detail">
         <div class="bkg"
-             :style="styleAlbumImg"></div>
+            :style="styleAlbumImg"></div>
         <div :class="['disk', { play: !playing.paused }]">
             <div class="container">
                 <div class="img"
-                     :style="styleAlbumImg">
+                    :style="styleAlbumImg">
                     <div class="border">
                     </div>
                 </div>
@@ -21,26 +21,26 @@
             </p>
             <div class="lyric">
                 <div class="scroller"
-                     :style="lyricScrollerStyle">
-                    <template v-if="playing.track.lyrics && playing.track.lyrics.mlrc">
-                        <template v-for="(line, index) in playing.track.lyrics.mlrc.lyrics">
-                            <p class="line"
-                               :class="{active: index == currentLyricIndex}"
-                               :data-time="line.timestamp">
-                                <span>{{line.content}}</span>
-                                <br>
-                                <span>{{line.trans}}</span>
-                            </p>
-                        </template>
+                    :style="lyricScrollerStyle">
+                    <template v-if="playing.lyrics.mlrc">
+                        <p v-for="(line, index) in playing.lyrics.mlrc.lyrics"
+                            class="line"
+                            :key="index"
+                            :class="{active: index == currentLyricIndex}"
+                            :data-time="line.timestamp">
+                            <span>{{line.content}}</span>
+                            <br>
+                            <span>{{line.trans}}</span>
+                        </p>
                     </template>
-                    <template v-else-if="playing.track.lyrics && playing.track.lyrics.lrc">
-                        <template v-for="(line, index) in playing.track.lyrics.lrc.lyrics">
-                            <p class="line"
-                               :class="{active: index == currentLyricIndex}"
-                               :data-time="line.timestamp">
-                                <span>{{line.content}}</span>
-                            </p>
-                        </template>
+                    <template v-else-if="playing.lyrics.lrc">
+                        <p v-for="(line, index) in playing.lyrics.lrc.lyrics"
+                            :key="index"
+                            class="line"
+                            :class="{active: index == currentLyricIndex}"
+                            :data-time="line.timestamp">
+                            <span>{{line.content}}</span>
+                        </p>
                     </template>
                     <template v-else>
                         <p>暂无歌词</p>
@@ -53,6 +53,7 @@
 
 <script>
 import { mapGetters } from 'vuex';
+import { getImgSizeOf } from '../util/image';
 
 export default {
     data() {
@@ -67,17 +68,14 @@ export default {
         ...mapGetters([
             'playing'
         ]),
-        styleBlurImg() {
-            // maybe useful later...
-            return `background-image:url(http://music.163.com/api/img/blur/${this.playing.track.album.pic});`;
-        },
         styleAlbumImg() {
             const len = window.devicePixelRatio * 220;
-            return `background-image:url(${this.playing.track.album.picUrl}?param=${len}y${len});`;
+            return `background-image:url(${getImgSizeOf(this.playing.track.album.picUrl, len)});`;
         },
         lyricScrollerStyle() {
-            if (!this.lyricElemMap.length) return '';
-            if (this.currentLyricIndex === -1) return 'transform: translateY(200px);';
+            if (this.lyricElemMap.length === 0 || this.currentLyricIndex === -1) {
+                return 'transform: translateY(150px)';
+            }
             const currentLyricElem = this.lyricElemMap[this.currentLyricIndex];
             const offset = 150 - currentLyricElem.offsetTop - currentLyricElem.clientHeight;
             return `transform: translateY(${offset}px);`;
@@ -85,16 +83,23 @@ export default {
     },
     methods: {
         createLyricElemMap() {
-            if (this.playing.track.lyrics && this.playing.track.lyrics.lrc) {
+            if (this.playing.lyrics.lrc) {
                 this.lyricElemMap = Array.from(document.getElementsByClassName('line'));
             }
         }
     },
     watch: {
-        'playing.track.id': function () {
-            this.currentLyricIndex = -1;
-            // query lyric elements after they are created
-            this.$nextTick(() => this.createLyricElemMap());
+        ['playing.lyrics']: {
+            deep: true,
+            handler() {
+                // query lyric elements after they are created
+                this.$nextTick(() => this.createLyricElemMap());
+            }
+        },
+        ['playing.track.id']: {
+            handler() {
+                this.currentLyricIndex = -1;
+            }
         }
     },
     created() {

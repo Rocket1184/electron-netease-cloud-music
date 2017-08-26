@@ -19,11 +19,12 @@ export const user = state => {
 
 export const playing = state => {
     const quality = state.settings.bitRate;
-    const { list, currentIndex, paused } = state.playlist;
+    const { list, currentIndex, paused, activeLyric } = state.playlist;
     const track = list[currentIndex];
     return {
         paused,
         track,
+        lyrics: activeLyric,
         url: track.urls[quality]
     };
 };

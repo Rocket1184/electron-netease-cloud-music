@@ -12,7 +12,6 @@ const projectRoot = path.resolve('.');
 let cfg = {
     context: projectRoot,
     target: 'electron-renderer',
-    devtool: 'source-map',
     entry: {
         renderer: [
             path.join(projectRoot, 'src/renderer/main.js')
@@ -48,13 +47,7 @@ let cfg = {
             {
                 test: /\.vue$/,
                 loader: 'vue-loader',
-                options: {
-                    loaders: {
-                        css: ExtractTextPlugin.extract({
-                            use: 'css-loader'
-                        })
-                    }
-                }
+                options: {}
             },
             {
                 test: /\.(png|jpe?g|gif|svg)(\?.*)?$/,
@@ -86,7 +79,29 @@ let cfg = {
     }
 };
 
-if (process.env.NODE_ENV !== 'production') {
+if (process.env.NODE_ENV === 'production') {
+    // release config
+    cfg.module.rules.map(e => {
+        if (e.loader === 'vue-loader') {
+            e.options.extractCSS = true;
+        }
+    });
+    cfg.plugins.push(
+        new BabiliPlugin(),
+        new HtmlWebpackPlugin({
+            filename: 'index.html',
+            template: path.join(projectRoot, 'src/renderer/index.ejs')
+        }),
+        new webpack.DefinePlugin({
+            'process.env': {
+                PRODUCTION: 'true',
+                NODE_ENV: '"production"'
+            }
+        })
+    );
+} else {
+    // dev config
+    cfg.devtool = 'cheap-module-eval-source-map';
     cfg.externals = Object.keys(packageJson.dependencies);
     cfg.resolve.modules = [
         path.join(projectRoot, 'node_modules')
@@ -96,25 +111,6 @@ if (process.env.NODE_ENV !== 'production') {
             filename: 'index.html',
             template: path.join(projectRoot, 'src/renderer/index.ejs'),
             appModules: path.join(projectRoot, 'node_modules')
-        }),
-        new webpack.DefinePlugin({
-            PRODUCTION: 'false'
-        })
-    );
-}
-
-if (process.env.NODE_ENV === 'production') {
-    cfg.plugins.push(
-        new BabiliPlugin(),
-        new HtmlWebpackPlugin({
-            filename: 'index.html',
-            template: path.join(projectRoot, 'src/renderer/index.ejs')
-        }),
-        new webpack.DefinePlugin({
-            PRODUCTION: 'true',
-            'process.env': {
-                NODE_ENV: '"production"'
-            }
         })
     );
 }

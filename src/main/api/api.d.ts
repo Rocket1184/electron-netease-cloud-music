@@ -1,11 +1,11 @@
 import * as Models from '../../renderer/util/models';
 
 export interface BaseApiResopnse {
-    code: Number;
+    code: number;
 }
 
 export interface LoginResponse extends BaseApiResopnse {
-    loginType: Number
+    loginType: number
     account: any
     profile: any
     bidings: Array<any>
@@ -17,21 +17,21 @@ export interface UserPlaylistResponse extends BaseApiResopnse {
 }
 
 export interface MusicRecordDataItem {
-    playCount: Number
-    score: Number
+    playCount: number
+    score: number
     song: {
-        id: Number
-        name: String
+        id: number
+        name: string
         al: {
-            id: Number
-            name: String
-            pic: Number
-            picUrl: String
-            pic_str: String
+            id: number
+            name: string
+            pic: number
+            picUrl: string
+            pic_str: string
         },
         ar: {
-            id: Number
-            name: String
+            id: number
+            name: string
         }
     }
 }
@@ -42,8 +42,8 @@ export interface MusicRecordResponse extends BaseApiResopnse {
 }
 
 export interface DailySuggestionsMusic extends Models.TrackModel {
-    alg: String
-    reason: String
+    alg: string
+    reason: string
 }
 
 export interface DailySuggestionsRespopnse extends BaseApiResopnse {
@@ -57,48 +57,53 @@ export interface ListDetailResponse extends BaseApiResopnse {
 
 export interface MusicUrlResponse extends BaseApiResopnse {
     data: Array<{
-        br: Number
+        br: number
         canExtend: Boolean
-        code: Number
-        expi: Number
-        fee: Number
-        flag: Number
-        gain: Number
-        id: Number
-        md5: String
-        payed: Number
-        size: Number
-        type: String
+        code: number
+        expi: number
+        fee: number
+        flag: number
+        gain: number
+        id: number
+        md5: string
+        payed: number
+        size: number
+        type: string
         uf: any
-        url: String
+        url: string
     }>
 }
 
+export interface MusicUrlCachedResponse {
+    url?: string
+    errno?: number | 200 | 404
+}
+
 export interface UserInfoInComment {
-    authStatus: Number
-    avatarUrl: String
-    expertTags: Array<String>
+    authStatus: number
+    avatarUrl: string
+    expertTags: Array<string>
     locationInfo: any
-    nickname: String
-    remarkName: String
-    userId: Number
-    userType: Number
-    vipType: Number
+    nickname: string
+    remarkName: string
+    userId: number
+    userType: number
+    vipType: number
 }
 
 export interface BeRepliedComment {
-    content: String
-    status: Number
+    content: string
+    status: number
     user: UserInfoInComment
 }
 
 export interface MusicCommentItem {
     beReplied: Array<BeRepliedComment>
-    commentId: Number
-    content: String
+    commentId: number
+    content: string
     liked: Boolean
-    likedCount: Number
-    time: Number
+    likedCount: number
+    time: number
     user: UserInfoInComment
 }
 
@@ -109,30 +114,30 @@ export interface MusicCommentsResponse extends BaseApiResopnse {
     more: Boolean
     moreHot: Boolean
     topComments: Array<MusicCommentItem>
-    total: Number
-    userId: Number
+    total: number
+    userId: number
 }
 
 export interface LyricObjectItem {
     // not so clear about that
     info?: {
-        al?: String
-        ar?: String
+        al?: string
+        ar?: string
     }
     lyrics?: Array<{
-        content: String
-        timestamp: Number
-        trans?: String
+        content: string
+        timestamp: number
+        trans?: string
     }>
 }
 
 export interface LyricAuthor {
-    demand: Number
-    id: Number
-    nickname: String
-    status: Number
-    uptime: Number
-    userid: Number
+    demand: number
+    id: number
+    nickname: string
+    status: number
+    uptime: number
+    userid: number
 }
 
 export interface MusicLyricResponse {
@@ -149,33 +154,33 @@ export interface ApplicationSettings {
 }
 
 export interface DailyTaskResponse {
-    code: 200 | -2 | Number
-    point?: Number
-    msg?: String
+    code: 200 | -2 | number
+    point?: number
+    msg?: string
 }
 
 export interface RawAlbum {
-    id: Number,
-    name: String,
+    id: number,
+    name: string,
     artist: Models.RawArtistModel,
-    copyrightId: Number,
-    picId: Number,
-    publishTime: Number,
-    size: Number,
-    status: Number
+    copyrightId: number,
+    picId: number,
+    publishTime: number,
+    size: number,
+    status: number
 }
 
 export interface RawMV {
-    artistId: Number,
-    artistName: String,
+    artistId: number,
+    artistName: string,
     artists: Array<Models.RawArtistModel>,
-    briefDesc: String,
-    cover: String,
+    briefDesc: string,
+    cover: string,
     desc: any,
-    duration: Number,
-    mark: Number,
-    name: String,
-    playCount: Number,
+    duration: number,
+    mark: number,
+    name: string,
+    playCount: number,
     subed: Boolean
 }
 
@@ -190,56 +195,37 @@ export interface SearchResponse extends BaseApiResopnse {
     }
 }
 
-export default class API {
-    updateCookie(cookie: String): String | any;
-
-    getCookie(key?: String): String | any;
-
-    login(acc: String | Number, pwd: String): Promise<LoginResponse>;
-
+export class ApiFunctions {
+    updateCookie(cookie: string): string | any;
+    getCookie(key?: string): string | any;
+    login(acc: string | number, pwd: string): Promise<LoginResponse>;
     refreshLogin(): Promise<BaseApiResopnse>;
-
-    getUserPlaylist(uid: Number): Promise<UserPlaylistResponse>;
-
-    getMusicRecord(uid: Number): Promise<MusicRecordResponse>;
-
+    getUserPlaylist(uid: number): Promise<UserPlaylistResponse>;
+    getMusicRecord(uid: number): Promise<MusicRecordResponse>;
     getDailySuggestions(): Promise<DailySuggestionsRespopnse>;
-
-    getListDetail(id: Number): Promise<ListDetailResponse>;
-
-    getMusicUrl(idOrIds: Number | Array<Number>, quality?: 'h' | 'm' | 'l'): Promise<MusicUrlResponse>;
-
-    getMusicComments(rid: Number, limit?: Number, offset?: Number): Promise<MusicCommentsResponse>;
-
-    getMusicLyric(id: Number): Promise<MusicLyricResponse>;
-
-    submitWebLog(action: String, json: any): Promise<BaseApiResopnse>;
-
-    submitListened(id: Number, time: Number): Promise<BaseApiResopnse>;
-
-    checkUrlStatus(url: String): Promise<Number>;
-
-    getDirSize(dirPath: String): Number | any;
-
-    getDataSize(): Number | any;
-
-    getVersionName(): String | any;
-
+    getListDetail(id: number): Promise<ListDetailResponse>;
+    getMusicUrl(idOrIds: number | Array<number>, quality?: 'h' | 'm' | 'l'): Promise<MusicUrlResponse>;
+    getMusicUrlCached(id: number, quality?: 'h' | 'm' | 'l'): Promise<MusicUrlCachedResponse>;
+    getMusicComments(rid: number, limit?: number, offset?: number): Promise<MusicCommentsResponse>;
+    getMusicLyric(id: number): Promise<MusicLyricResponse>;
+    getMusicLyricCached(id: number): Promise<LyricObjectItem>;
+    submitWebLog(action: string, json: any): Promise<BaseApiResopnse>;
+    submitListened(id: number, time: number): Promise<BaseApiResopnse>;
+    checkUrlStatus(url: string): Promise<number>;
+    getDataSize(type: string): number | any;
+    clearCache(type: string): Boolean | any;
+    getVersionName(): string | any;
     getCurrentSettings(): ApplicationSettings | any;
-
     writeSettings(target: ApplicationSettings): ApplicationSettings | any;
-
     resetSettings(): ApplicationSettings | any;
-
     postDailyTask(type: 0 | 1): Promise<DailyTaskResponse>;
+    manipulatePlaylistTracks(op: 'add' | 'del', pid: number, tracks: Array<number>);
+    collectTrack(pid: number, ...tracks: Array<number>);
+    uncollectTrack(pid: number, ...tracks: Array<number>);
+    getSearchSuggest(s: string): Promise<SearchResponse>;
+    search(s: string, type: number | string, limit?: number, offset?: number): Promise<SearchResponse>;
+};
 
-    manipulatePlaylistTracks(op: 'add' | 'del', pid: Number, tracks: Array<Number>);
+declare const ApiStatic: ApiFunctions;
 
-    collectTrack(pid: Number, ...tracks: Array<Number>);
-
-    uncollectTrack(pid: Number, ...tracks: Array<Number>);
-
-    getSearchSuggest(s: String): Promise<SearchResponse>;
-
-    search(s: String, type: Number | String, limit?: Number, offset?: Number): Promise<SearchResponse>;
-}
+export default { ...ApiStatic };

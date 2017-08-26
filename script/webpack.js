@@ -20,6 +20,9 @@ if (argv[0] === 'clean') {
     // copy package.json to dist path, or we cannot start app
     fs.createReadStream(path.join(projectRoot, 'package.json'))
         .pipe(fs.createWriteStream(path.join(projectRoot, 'dist/package.json')));
+    // copy login.html to dist path, or we cannot use web login
+    fs.createReadStream(path.join(projectRoot, 'src/renderer/login.html'))
+        .pipe(fs.createWriteStream(path.join(projectRoot, 'dist/login.html')));
 }
 
 let webpackCfg = [];
@@ -32,7 +35,9 @@ if (!webpackCfg.length) {
     process.exit(1);
 }
 
+const dtStart = Date.now();
 webpack(webpackCfg, (err, stats) => {
+    const dtEnd = Date.now();
     if (err) throw err;
     process.stdout.write(stats.toString({
         colors: true,
@@ -41,5 +46,6 @@ webpack(webpackCfg, (err, stats) => {
         chunks: false,
         chunkModules: false
     }));
-    console.log('\n\nPack for ' + argv.join(', ') + ' succeed.\n');
+    console.log('\n\nPack for ' + argv.join(', ') + ' succeed.');
+    console.log(`It takes ${(dtEnd - dtStart)/1000} second(s).\n`);
 });

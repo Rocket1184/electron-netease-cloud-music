@@ -1,0 +1,81 @@
+<!DOCTYPE html>
+<html lang="zh">
+
+<head>
+    <meta charset="UTF-8">
+    <title>Login - Electron Netease Cloud Music</title>
+    <style>
+        html,
+        body {
+            margin: 0;
+            padding: 0;
+            height: 100%;
+        }
+        webview {
+            height: 100%;
+        }
+    </style>
+</head>
+
+<body>
+    <webview
+        allowpopups
+        src="http://music.163.com"
+        partition="login"
+        blinkfeatures="OverlayScrollbars"></webview>
+
+    <script>
+        const { remote, ipcRenderer } = require('electron');
+
+        document.querySelector('webview').addEventListener('dom-ready', attachDebugger);
+
+        function attachDebugger() {
+            const wv = document.querySelector('webview');
+            const wc = wv.getWebContents();
+            try {
+                wc.debugger.attach('1.1');
+                console.info('Debugger attached');
+            } catch (err) {
+                console.error('Debugger attach failed due to', err);
+                return;
+            }
+            wc.debugger.on('detach', (event, reason) => {
+                console.error('Debugger detached due to', reason);
+            });
+            wc.debugger.on('message', (event, method, params) => {
+                if (method === "Network.responseReceived"  
+                    && params 
+                    && params.response
+                    && ~params.response.url.indexOf('/weapi/')
+                    && !~params.response.url.indexOf('/weblog')
+                ) {
+                    console.log(`hit ${params.response.url}`);
+                    wc.debugger.sendCommand('Network.getResponseBody', {
+                        requestId: params.requestId
+                    }, (err, resp) => {
+                        if(!err.code && ~params.response.url.indexOf('/login')) {
+                            const userObj = JSON.parse(resp.body);
+                            if(userObj.code === 200){
+                                localStorage.setItem('user', resp.body);
+                                wc.debugger.sendCommand('Network.getCookies', {
+                                    urls: ['http://music.163.com']
+                                }, (err, resp) => {
+                                    if(!err.code){
+                                        let cks = {};
+                                        resp.cookies.forEach(ck => cks[ck.name] = ck.value);
+                                        localStorage.setItem('cookie', JSON.stringify(cks));
+                                        console.log('Login finished');
+                                        remote.getCurrentWindow().close();
+                                    }
+                                })
+                            }
+                        }
+                    });
+                }
+            });
+            wc.debugger.sendCommand('Network.enable');
+        }
+    </script>
+</body>
+
+</html>

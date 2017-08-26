@@ -1,12 +1,12 @@
 <template>
     <mu-paper class="player-bar-wrapper"
-              :zDepth="2">
+        :zDepth="2">
         <audio id="playerbar-audio"
-               :src="playing.url"></audio>
+            :src="playing.url"></audio>
         <div class="cell">
             <router-link to='/player'>
                 <img :src="getImgAt(64)"
-                     :srcset="`${getImgAt(80)} 1.25x, ${getImgAt(96)} 1.5x, ${getImgAt(128)} 2x`">
+                    :srcset="`${getImgAt(80)} 1.25x, ${getImgAt(96)} 1.5x, ${getImgAt(128)} 2x`">
             </router-link>
         </div>
         <div class="cell info">
@@ -14,62 +14,58 @@
             <span class="artist-name">{{playing.track.artistName}}</span>
             <div class="quick-actions">
                 <mu-icon-button title="喜欢"
-                                :iconClass="{ favorite: isFavorite }"
-                                :icon="isFavorite ? 'favorite' :'favorite_border'"
-                                @click="handleFavorite" />
+                    :iconClass="{ favorite: isFavorite }"
+                    :icon="isFavorite ? 'favorite' :'favorite_border'"
+                    @click="handleFavorite"></mu-icon-button>
                 <mu-checkbox title="收藏到歌单"
-                             class="action-item"
-                             uncheckIcon="bookmark_border"
-                             checkedIcon="bookmark"
-                             v-model="userPlaylistsShown" />
+                    class="action-item"
+                    uncheckIcon="bookmark_border"
+                    checkedIcon="bookmark"
+                    v-model="userPlaylistsShown"></mu-checkbox>
                 <mu-checkbox title="播放列表"
-                             class="action-item"
-                             uncheckIcon="playlist_play"
-                             checkedIcon="playlist_play"
-                             v-model="currentListShown" />
+                    class="action-item"
+                    uncheckIcon="playlist_play"
+                    checkedIcon="playlist_play"
+                    v-model="currentListShown"></mu-checkbox>
             </div>
             <div class="progress">
                 <mu-slider id="playerbar-progress"
-                           class="slider"
-                           :value="songProgress"
-                           @change="handleProgressDrag" />
+                    class="slider"
+                    :value="songProgress"
+                    @change="handleProgressDrag"></mu-slider>
                 <span class="text">{{ timeCurrent | time }} / {{ timeTotal | time }}</span>
             </div>
         </div>
         <div class="cell control">
             <mu-float-button icon="skip_previous"
-                             mini
-                             class="button"
-                             color="#FFF"
-                             @click="playPreviousTrack" />
+                mini
+                class="button"
+                color="#FFF"
+                @click="playPreviousTrack"></mu-float-button>
             <mu-float-button :icon="this.audioEl.paused ? 'play_arrow' : 'pause'"
-                             class="button"
-                             color="#FFF"
-                             @click="handlePlayOrPause" />
+                class="button"
+                color="#FFF"
+                @click="handlePlayOrPause"></mu-float-button>
             <mu-float-button icon="skip_next"
-                             mini
-                             class="button"
-                             color="#FFF"
-                             @click="playNextTrack" />
+                mini
+                class="button"
+                color="#FFF"
+                @click="playNextTrack"></mu-float-button>
         </div>
         <mu-popup position="bottom"
-                  :open="userPlaylistsShown"
-                  @close="userPlaylistsShown=false">
+            :open="userPlaylistsShown"
+            @close="userPlaylistsShown=false">
             <mu-appbar title="收藏到歌单">
                 <mu-icon-button slot="right"
-                                icon="close"
-                                color="white"
-                                @click="userPlaylistsShown=false" />
+                    icon="close"
+                    color="white"
+                    @click="userPlaylistsShown=false"></mu-icon-button>
             </mu-appbar>
-            <UserPlaylists @rowClick="handleCollect" />
+            <userPlaylists @rowClick="handleCollect"></userPlaylists>
         </mu-popup>
         <transition name="list-open-up">
             <!-- TODO: Click outside to close the list -->
-            <mu-paper rounded
-                      class="currentlist"
-                      v-show="currentListShown">
-                <CurrentList/>
-            </mu-paper>
+            <currentList v-show="currentListShown"></currentList>
         </transition>
     </mu-paper>
 </template>
@@ -77,10 +73,12 @@
 <script>
 import { mapActions, mapGetters } from 'vuex';
 
-import ApiRenderer from '../util/apirenderer';
-import CurrentList from './currentlist';
-import UserPlaylists from './userplaylists';
+import ApiRenderer from '../util/apiRenderer';
+import currentList from './currentList';
+import userPlaylists from './userPlaylists';
 import * as types from '../vuex/mutation-types';
+import { getImgSizeOf } from '../util/image';
+import { shortTime } from '../util/time';
 
 export default {
     data() {
@@ -98,12 +96,11 @@ export default {
             'playNextTrack',
             'playPreviousTrack',
             'restorePlaylist',
-            'refreshCurrentTrack',
             'refreshUserPlaylist'
         ]),
         getImgAt(size) {
             const url = this.playing.track.album.picUrl || this.fallbackImg;
-            return `${url}?param=${size}y${size}`;
+            return getImgSizeOf(url, size);
         },
         play() {
             this.$store.commit(types.RESUME_PLAYING_MUSIC);
@@ -162,25 +159,12 @@ export default {
         }
     },
     filters: {
-        time(value) {
-            const dt = new Date(value * 1000);
-            const h = dt.getUTCHours();
-            const m = dt.getMinutes();
-            const s = dt.getSeconds();
-            let res = '';
-            h && (res += `${h}:`);
-            res += m < 10 ? `0${m}:` : `${m}:`;
-            res += s < 10 ? `0${s}` : `${s}`;
-            return res;
-        }
+        time: shortTime
     },
     created() {
         try {
             const playlist = JSON.parse(localStorage.getItem('playlist'));
             this.restorePlaylist({ playlist });
-            ApiRenderer.checkUrlStatus(this.playing.url).then(code => {
-                if (code !== 200) this.refreshCurrentTrack();
-            });
         } catch (e) { }
         window.onbeforeunload = () => {
             if (!this.$store.state.settings.autoPlay) this.pause();
@@ -229,8 +213,8 @@ export default {
         };
     },
     components: {
-        CurrentList,
-        UserPlaylists
+        currentList,
+        userPlaylists
     }
 };
 </script>
@@ -250,15 +234,16 @@ export default {
         font-size: 14px;
         padding: 10px 14px;
         width: calc(~"100% - 244px");
-        .song-name {
-            max-width: 500px;
+        .song-name,
+        .artist-name {
+            display: inline-block;
+            max-width: 310px;
             overflow: hidden;
             text-overflow: ellipsis;
             white-space: nowrap;
-            vertical-align: middle;
         }
         .artist-name {
-            margin-left: 14px;
+            margin-left: 10px;
             color: dimgrey;
         }
         .quick-actions {
@@ -276,7 +261,6 @@ export default {
             }
         }
         .progress {
-            margin-top: 5px;
             position: relative;
             .slider {
                 width: calc(~"100% - 100px");
@@ -300,14 +284,13 @@ export default {
             box-shadow: transparent 0 0 0;
         }
     }
-    .currentlist {
-        // FIXME: it repaints the whole list when scrolling
+    .current-list {
         position: fixed;
         right: 4px;
         bottom: 68px;
-        height: 420px;
-        overflow-y: scroll;
-        -webkit-transform-origin-y: 420px;
+        height: 496px;
+        -webkit-transform-origin-y: 496px;
+        box-shadow: 0 3px 10px rgba(0, 0, 0, .15);
     }
 }
 

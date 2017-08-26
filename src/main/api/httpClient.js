@@ -12,11 +12,11 @@ class HttpClient {
     get clientHeaders() {
         return {
             Cookie: this.getCookieString(),
-            'User-Agent': 'Mozilla/5.0 (Windows NT 10.0; WOW64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/35.0.1916.157 Safari/537.36',
+            'User-Agent': 'Mozilla/5.0 (X11; Linux x86_64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/60.0.3112.113 Safari/537.36',
             Host: 'music.163.com',
             Accept: '*/*',
             Referer: 'http://music.163.com/',
-            Connection: 'close'
+            Connection: 'keep-alive'
         };
     }
 
@@ -76,9 +76,15 @@ class HttpClient {
         config.method = 'post';
         if (this.cookie.__csrf) {
             config.url += `?csrf_token=${this.cookie.__csrf}`;
-            config.data.csrf_token = this.cookie.__csrf;
+            if (config.data) {
+                config.data.csrf_token = this.cookie.__csrf;
+            }
         }
-        config.data = HttpClient.mkEncodeData(config.data);
+        if (config.data) {
+            config.data = HttpClient.mkEncodeData(config.data);
+        } else {
+            config.data = '';
+        }
 
         config.headers = Object.assign({
             'Content-Type': 'application/x-www-form-urlencoded',

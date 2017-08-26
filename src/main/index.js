@@ -10,6 +10,11 @@ const winURL = process.env.NODE_ENV === 'development'
     ? `http://localhost:${require('../../script/config').devPort}`
     : `file://${__dirname}/index.html`;
 
+let loginWindow;
+let loginURL = process.env.NODE_ENV === 'development'
+    ? `http://localhost:${require('../../script/config').devPort}/renderer/login.html`
+    : `file://${__dirname}/login.html`;
+
 function createWindow(url = winURL) {
     const settings = Settings.getCurrent();
 
@@ -20,6 +25,7 @@ function createWindow(url = winURL) {
         titleBarStyle: settings.windowBorder ? 'default' : 'hidden',
         name: 'Electron Netease Cloud Music',
         webPreferences: {
+            webSecurity: process.env.NODE_ENV !== 'development',
             blinkFeatures: 'OverlayScrollbars'
         }
     });
@@ -54,5 +60,18 @@ ipcMain.on('recreateWindow', (event, url) => {
     }
 });
 
+ipcMain.on('showLoginWindow', () => {
+    loginWindow = new BrowserWindow({
+        height: 700,
+        width: 1150,
+        name: 'Login',
+        webPreferences: {
+            webSecurity: false,
+            blinkFeatures: 'OverlayScrollbars'
+        }
+    });
+    loginWindow.loadURL(loginURL);
+});
+
 // boot up ApiHost
-require('./api/apihost');
+require('./api/apiHost');
