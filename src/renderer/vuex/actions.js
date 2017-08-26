@@ -56,7 +56,6 @@ export function setLoginValid({ state, commit }, payload) {
 
 export function logout({ commit }) {
     ApiRenderer.logout().then(code => {
-        console.log(`logout retcode is ${JSON.stringify(code)}`);
         if (code == 200) {
             commit(types.SET_LOGIN_VALID, false);
             setUserInfo({ commit }, new User());

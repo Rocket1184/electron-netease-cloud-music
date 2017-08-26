@@ -68,7 +68,6 @@ export function refreshLogin() {
 
 export async function logout() {
     const resp = await client.post({ url: `${BaseURL}/logout` });
-    console.log(`logout resp is ${JSON.stringify(resp)}`);
     if (resp.code == 200) {
         client.setCookie({});
     }
@@ -243,7 +242,6 @@ export function submitListened(id, time) {
 
 export function checkUrlStatus(u = 'http://m10.music.126.net') {
     u = String(u);
-    console.log(u);
     if (!~u.indexOf('http')) return new Promise(resolve => resolve(-1));
     const opt = url.parse(u);
     let request;
