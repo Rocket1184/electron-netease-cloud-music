@@ -2,7 +2,7 @@
 
 import { app, BrowserWindow, ipcMain } from 'electron';
 
-import * as Settings from './settings';
+import { getCurrent } from './settings';
 
 let shouldAppQuit = true;
 let mainWindow;
@@ -16,7 +16,7 @@ let loginURL = process.env.NODE_ENV === 'development'
     : `file://${__dirname}/login.html`;
 
 function createWindow(url = winURL) {
-    const settings = Settings.getCurrent();
+    const settings = getCurrent();
 
     const win = new BrowserWindow({
         height: 700,
