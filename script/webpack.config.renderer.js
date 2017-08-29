@@ -52,7 +52,7 @@ let cfg = {
             {
                 test: /\.(png|jpe?g|gif|svg)(\?.*)?$/,
                 use: {
-                    loader: 'url-loader',
+                    loader: 'file-loader',
                     query: {
                         name: 'imgs/[name].[ext]'
                     }
@@ -61,7 +61,7 @@ let cfg = {
             {
                 test: /\.(woff2?|eot|ttf|otf)(\?.*)?$/,
                 use: {
-                    loader: 'url-loader',
+                    loader: 'file-loader',
                     query: {
                         name: 'fonts/[name].[ext]'
                     }
@@ -80,12 +80,13 @@ let cfg = {
             'page': path.join(projectRoot, 'src/renderer/page/'),
             'compo': path.join(projectRoot, 'src/renderer/components/')
         },
-        extensions: ['.js', '.vue', '.json', '.css', '.node']
+        extensions: ['.js', '.vue', '.json', '.css']
     }
 };
 
 if (process.env.NODE_ENV === 'production') {
     // release config
+    cfg.devtool = 'source-map';
     cfg.module.rules.map(e => {
         if (e.loader === 'vue-loader') {
             e.options.extractCSS = true;
