@@ -1,12 +1,12 @@
 import debug from 'debug';
 import { ipcMain } from 'electron';
 
-import Api from './api';
+import * as Api from './api';
 
 const d = debug('Api');
-const methodKeys = Object.getOwnPropertyNames(Api);
+const methodKeys = Reflect.ownKeys(Api).filter(k => typeof Api[k] === 'function');
 
-d('All Api methods: %O', methodKeys);
+d('All Api methods:\n%O', methodKeys);
 
 async function rejectTimeout(timeOut = 60000) {
     return await new Promise((_, reject) => {

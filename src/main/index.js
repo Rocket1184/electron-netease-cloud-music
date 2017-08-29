@@ -74,4 +74,4 @@ ipcMain.on('showLoginWindow', () => {
 });
 
 // boot up ApiHost
-require('./api/apiHost');
+require('./apiHost');

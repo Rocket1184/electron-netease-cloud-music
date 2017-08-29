@@ -10,7 +10,7 @@ import { http, https } from 'follow-redirects';
 import Cache from './cache';
 import Client from './httpClient';
 import * as Settings from '../settings';
-import MusicServer from '../musicServer';
+import MusicServer from './musicServer';
 
 const BaseURL = 'http://music.163.com';
 
@@ -26,7 +26,8 @@ const musicCache = new Cache(cachePathMap.music);
 const lyricCache = new Cache(cachePathMap.lyric);
 
 const musicServer = new MusicServer(musicCache);
-musicServer.listen(8209);
+const musicServerPort = process.env.NODE_ENV === 'development' ? 8210 : 8209;
+musicServer.listen(musicServerPort);
 
 export function updateCookie(cookie) {
     client.updateCookie(cookie);
@@ -139,8 +140,8 @@ export function getMusicUrl(idOrIds, quality = 'h') {
     });
 }
 
-export async function getMusicUrlCached(id, quality = 'l') {
-    return { url: `http://127.0.0.1:8209/music?id=${id}&quality=${quality}` };
+export function getMusicUrlCached(id, quality = 'l') {
+    return { url: `http://127.0.0.1:${musicServerPort}/music?id=${id}&quality=${quality}` };
 }
 
 export function getMusicComments(rid, limit = 20, offset = 0) {
@@ -407,33 +408,3 @@ export function search(s, type, limit = 20, offset = 0) {
         }
     });
 }
-
-export default {
-    getCookie,
-    updateCookie,
-    login,
-    logout,
-    refreshLogin,
-    getUserPlaylist,
-    getMusicRecord,
-    getDailySuggestions,
-    getListDetail,
-    getMusicUrl,
-    getMusicUrlCached,
-    getMusicComments,
-    getMusicLyric,
-    getMusicLyricCached,
-    submitListened,
-    checkUrlStatus,
-    getDataSize,
-    clearCache,
-    getVersionName,
-    getCurrentSettings,
-    writeSettings,
-    resetSettings,
-    postDailyTask,
-    collectTrack,
-    uncollectTrack,
-    getSearchSuggest,
-    search
-};

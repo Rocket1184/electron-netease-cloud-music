@@ -1,13 +1,11 @@
-'use strict';
-
 import fs from 'fs';
 import url from 'url';
 import debug from 'debug';
 import qs from 'querystring';
 import { createServer } from 'http';
 
-import { getMusicUrl } from './api/api';
-import Cache from './api/cache';
+import Cache from './cache';
+import { getMusicUrl } from '.';
 
 const d = debug('MusicServer');
 

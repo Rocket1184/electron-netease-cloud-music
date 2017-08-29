@@ -205,7 +205,7 @@ export class ApiFunctions {
     getDailySuggestions(): Promise<DailySuggestionsRespopnse>;
     getListDetail(id: number): Promise<ListDetailResponse>;
     getMusicUrl(idOrIds: number | Array<number>, quality?: 'h' | 'm' | 'l'): Promise<MusicUrlResponse>;
-    getMusicUrlCached(id: number, quality?: 'h' | 'm' | 'l'): Promise<MusicUrlCachedResponse>;
+    getMusicUrlCached(id: number, quality?: 'h' | 'm' | 'l'): MusicUrlCachedResponse;
     getMusicComments(rid: number, limit?: number, offset?: number): Promise<MusicCommentsResponse>;
     getMusicLyric(id: number): Promise<MusicLyricResponse>;
     getMusicLyricCached(id: number): Promise<LyricObjectItem>;
