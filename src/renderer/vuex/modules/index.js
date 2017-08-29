@@ -1,9 +1,9 @@
-const files = require.context('.', false, /\.js$/);
-const modules = {};
+import playlist from './playlist';
+import settings from './settings';
+import user from './user';
 
-files.keys().forEach((key) => {
-    if (key === './index.js') return;
-    modules[key.replace(/(\.\/|\.js)/g, '')] = files(key).default;
-});
-
-export default modules;
+export default {
+    playlist,
+    settings,
+    user
+};
