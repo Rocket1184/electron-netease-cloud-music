@@ -1,5 +1,5 @@
 import * as types from '../mutation-types';
-import { Track } from '../../util/models';
+import { Track } from 'util/models';
 
 export const LOOP_TYPES = {
     LIST_LOOP: 0,

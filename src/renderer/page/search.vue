@@ -61,12 +61,12 @@
 </template>
 
 <script>
-import { Track } from '../util/models';
-import TrackList from '../components/trackList';
-import ArtistList from '../components/artistList';
-import AlbumList from '../components/albumList';
-import { searchTypes } from '../util/searchType';
-import ApiRenderer from '../util/apiRenderer';
+import { Track } from 'util/models';
+import TrackList from 'compo/trackList';
+import ArtistList from 'compo/artistList';
+import AlbumList from 'compo/albumList';
+import { searchTypes } from 'util/searchType';
+import ApiRenderer from 'util/apiRenderer';
 
 export default {
     data() {

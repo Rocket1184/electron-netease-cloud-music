@@ -53,7 +53,7 @@
 
 <script>
 import { mapGetters } from 'vuex';
-import { getImgSizeOf } from '../util/image';
+import { getImgSizeOf } from 'util/image';
 
 export default {
     data() {
@@ -200,7 +200,7 @@ export default {
                     bottom: 65px;
                     width: 350px;
                     height: 350px;
-                    background-image: url(../../../assets/img/disc.png);
+                    background-image: url('~assets/img/disc.png');
                     background-size: contain;
                     position: relative;
                 }
@@ -213,7 +213,7 @@ export default {
                 left: 230px;
                 width: 100px;
                 height: 200px;
-                background-image: url(../../../assets/img/needle.png);
+                background-image: url('~assets/img/needle.png');
                 background-repeat: no-repeat;
                 background-size: contain;
                 transition: transform 0.5s;

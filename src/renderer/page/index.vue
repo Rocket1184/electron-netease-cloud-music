@@ -5,7 +5,7 @@
 </template>
 
 <script>
-import dailySuggestions from '../components/dailySuggestions';
+import dailySuggestions from 'compo/dailySuggestions';
 
 export default {
     components: {

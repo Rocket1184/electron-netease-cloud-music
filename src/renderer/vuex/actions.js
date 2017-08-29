@@ -1,7 +1,7 @@
 import * as types from './mutation-types';
 import { LOOP_TYPES } from './modules/playlist';
-import ApiRenderer from '../util/apiRenderer';
-import { User } from '../util/models';
+import ApiRenderer from 'util/apiRenderer';
+import { User } from 'util/models';
 
 export function setUserInfo({ commit }, payload) {
     commit(types.SET_USER_INFO, payload);

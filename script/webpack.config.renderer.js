@@ -54,7 +54,6 @@ let cfg = {
                 use: {
                     loader: 'url-loader',
                     query: {
-                        limit: 10000,
                         name: 'imgs/[name].[ext]'
                     }
                 }
@@ -64,7 +63,6 @@ let cfg = {
                 use: {
                     loader: 'url-loader',
                     query: {
-                        limit: 10000,
                         name: 'fonts/[name].[ext]'
                     }
                 }
@@ -75,6 +73,13 @@ let cfg = {
         new ExtractTextPlugin('styles.css')
     ],
     resolve: {
+        alias: {
+            'assets': path.join(projectRoot, 'assets/'),
+            '@': path.join(projectRoot, 'src/renderer/'),
+            'util': path.join(projectRoot, 'src/renderer/util/'),
+            'page': path.join(projectRoot, 'src/renderer/page/'),
+            'compo': path.join(projectRoot, 'src/renderer/components/')
+        },
         extensions: ['.js', '.vue', '.json', '.css', '.node']
     }
 };

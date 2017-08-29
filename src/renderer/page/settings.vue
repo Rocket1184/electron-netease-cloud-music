@@ -78,9 +78,9 @@
 <script>
 import { ipcRenderer, remote, shell } from 'electron';
 
-import * as types from '../vuex/mutation-types';
-import ApiRenderer from '../util/apiRenderer';
-import { hunamSize } from '../util/formatter';
+import * as types from '@/vuex/mutation-types';
+import ApiRenderer from 'util/apiRenderer';
+import { hunamSize } from 'util/formatter';
 
 export default {
     data() {

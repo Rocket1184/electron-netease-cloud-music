@@ -31,8 +31,8 @@
 </template>
 
 <script>
-import { getImgSizeOf, HiDpiPx } from '../util/image';
-import { shortDate } from '../util/formatter';
+import { getImgSizeOf, HiDpiPx } from 'util/image';
+import { shortDate } from 'util/formatter';
 
 export default {
     props: {

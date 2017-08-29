@@ -73,7 +73,7 @@
 import { mapActions } from 'vuex';
 import { ipcRenderer } from 'electron';
 
-import ApiRenderer from '../util/apiRenderer';
+import ApiRenderer from 'util/apiRenderer';
 
 function initData() {
     return {

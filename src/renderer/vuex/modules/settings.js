@@ -1,5 +1,5 @@
 import * as types from '../mutation-types';
-import ApiRenderer from '../../util/apiRenderer';
+import ApiRenderer from 'util/apiRenderer';
 
 let state = {
     bitRate: 'h',

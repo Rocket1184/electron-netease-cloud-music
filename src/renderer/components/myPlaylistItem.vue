@@ -11,7 +11,7 @@
 </template>
 
 <script>
-import { getImgSizeOf, HiDpiPx } from '../util/image';
+import { getImgSizeOf, HiDpiPx } from 'util/image';
 
 export default {
     props: {

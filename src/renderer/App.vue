@@ -39,11 +39,6 @@ export default {
 </script>
 
 <style>
-* {
-    margin: 0;
-    padding: 0;
-}
-
 html,
 body,
 #app {
@@ -60,7 +55,7 @@ body,
     font-family: 'Material Icons';
     font-style: normal;
     font-weight: 400;
-    src: url('../../assets/font/material-icons.woff2') format('woff2');
+    src: url('~assets/font/material-icons.woff2') format('woff2');
 }
 
 .material-icons {

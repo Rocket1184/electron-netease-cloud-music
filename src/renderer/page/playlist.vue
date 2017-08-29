@@ -28,11 +28,11 @@
 <script>
 import { mapGetters } from 'vuex';
 
-import { Track } from '../util/models';
-import ApiRenderer from '../util/apiRenderer';
-import TrackList from '../components/trackList';
-import PlaylistItem from '../components/myPlaylistItem';
-import PlaylistHeader from '../components/playlistHeader';
+import { Track } from 'util/models';
+import ApiRenderer from 'util/apiRenderer';
+import TrackList from 'compo/trackList';
+import PlaylistItem from 'compo/myPlaylistItem';
+import PlaylistHeader from 'compo/playlistHeader';
 
 export default {
     data() {

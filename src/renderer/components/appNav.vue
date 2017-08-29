@@ -56,10 +56,10 @@
 import { mapActions, mapGetters } from 'vuex';
 import { remote } from 'electron';
 
-import ApiRenderer from '../util/apiRenderer';
+import ApiRenderer from 'util/apiRenderer';
 import loginDialog from './loginDialog';
 import searchBox from './searchBox';
-import Routes from '../routes';
+import Routes from '@/routes';
 
 export default {
     data() {
@@ -211,7 +211,7 @@ export default {
         width: 100%;
         height: 200px;
         background-size: cover;
-        background-image: url(../../../assets/img/TealRedYellow.png);
+        background-image: url('~assets/img/TealRedYellow.png');
         background-position-y: 50%;
         &::before {
             position: absolute;
