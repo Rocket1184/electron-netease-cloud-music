@@ -80,6 +80,7 @@ import { ipcRenderer, remote, shell } from 'electron';
 
 import * as types from '../vuex/mutation-types';
 import ApiRenderer from '../util/apiRenderer';
+import { hunamSize } from '../util/formatter';
 
 export default {
     data() {
@@ -182,15 +183,7 @@ export default {
         }
     },
     filters: {
-        hunamSize(val) {
-            let i;
-            const unit = ['', 'K', 'M', 'G', 'T'];
-            for (i = 0; i < unit.length; i++) {
-                if (val < 1000) break;
-                else val /= 1024;
-            }
-            return `${val.toFixed(1)} ${unit[i]}B`;
-        }
+        hunamSize
     },
     watch: {
         ['settings']: {

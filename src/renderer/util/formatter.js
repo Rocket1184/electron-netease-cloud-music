@@ -17,3 +17,13 @@ export function shortTime(seconds) {
     res += s < 10 ? `0${s}` : `${s}`;
     return res;
 }
+
+export function hunamSize(val) {
+    let i;
+    const unit = ['', 'K', 'M', 'G', 'T'];
+    for (i = 0; i < unit.length; i++) {
+        if (val < 1000) break;
+        else val /= 1024;
+    }
+    return `${val.toFixed(1)} ${unit[i]}B`;
+}

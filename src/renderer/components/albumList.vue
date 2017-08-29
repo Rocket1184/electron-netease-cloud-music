@@ -20,7 +20,7 @@
 </template>
 
 <script>
-import { shortDate } from '../util/time';
+import { shortDate } from '../util/formatter';
 
 export default {
     props: {

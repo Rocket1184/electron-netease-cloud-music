@@ -32,7 +32,7 @@
 
 <script>
 import { getImgSizeOf, HiDpiPx } from '../util/image';
-import { shortDate } from '../util/time';
+import { shortDate } from '../util/formatter';
 
 export default {
     props: {

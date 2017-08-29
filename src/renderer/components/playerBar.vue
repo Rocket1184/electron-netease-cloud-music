@@ -78,7 +78,7 @@ import currentList from './currentList';
 import userPlaylists from './userPlaylists';
 import * as types from '../vuex/mutation-types';
 import { getImgSizeOf } from '../util/image';
-import { shortTime } from '../util/time';
+import { shortTime } from '../util/formatter';
 
 export default {
     data() {
