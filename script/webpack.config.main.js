@@ -3,7 +3,7 @@
 const path = require('path');
 const webpack = require('webpack');
 const packageJson = require('../package.json');
-const BabiliPlugin = require('babili-webpack-plugin');
+const BabelMinifyPlugin = require('babel-minify-webpack-plugin');
 
 const projectRoot = path.resolve('.');
 
@@ -37,7 +37,7 @@ let cfg = {
 if (process.env.NODE_ENV === 'production') {
     // release config
     cfg.plugins.push(
-        new BabiliPlugin(),
+        new BabelMinifyPlugin(),
         new webpack.DefinePlugin({
             PRODUCTION: 'true',
             'process.env': {

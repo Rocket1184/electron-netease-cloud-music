@@ -3,9 +3,9 @@
 const path = require('path');
 const webpack = require('webpack');
 const packageJson = require('../package.json');
-const ExtractTextPlugin = require('extract-text-webpack-plugin');
 const HtmlWebpackPlugin = require('html-webpack-plugin');
-const BabiliPlugin = require('babili-webpack-plugin');
+const ExtractTextPlugin = require('extract-text-webpack-plugin');
+const BabelMinifyPlugin = require('babel-minify-webpack-plugin');
 
 const projectRoot = path.resolve('.');
 
@@ -93,7 +93,7 @@ if (process.env.NODE_ENV === 'production') {
         }
     });
     cfg.plugins.push(
-        new BabiliPlugin(),
+        new BabelMinifyPlugin(),
         new HtmlWebpackPlugin({
             filename: 'index.html',
             template: path.join(projectRoot, 'src/renderer/index.ejs')
