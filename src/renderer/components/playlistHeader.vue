@@ -67,7 +67,8 @@ export default {
         width: calc(~"100% - 240px");
         .name {
             font-size: 20px;
-            margin-left: 16px;
+            margin-top: 0;
+            margin-left: 12px;
         }
         .creator {
             margin: 10px 0 10px 16px;
