@@ -24,8 +24,8 @@
                     v-model="userPlaylistsShown"></mu-checkbox>
                 <mu-checkbox title="播放列表"
                     class="action-item"
-                    uncheckIcon="playlist_play"
-                    checkedIcon="playlist_play"
+                    uncheckIcon="queue_music"
+                    checkedIcon="queue_music"
                     v-model="currentListShown"></mu-checkbox>
             </div>
             <div class="progress">
