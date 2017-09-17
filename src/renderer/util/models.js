@@ -30,6 +30,7 @@ const Models = {
             artists: [],
             lyrics: {},
             urls: {},
+            duration: -1,
             commentThreadId: -1
         };
     },
@@ -80,6 +81,7 @@ export class Track {
             m: '',
             l: ''
         }, o.urls || {});
+        this.duration = o.dt || o.duration;
         this.commentThreadId = o.commentThreadId;
     }
 
