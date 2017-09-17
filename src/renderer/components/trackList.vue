@@ -8,21 +8,30 @@
                     value="play_circle_filled"></mu-icon>
             </mu-list-item>
             <mu-divider></mu-divider>
-            <mu-table class="table">
-                <mu-tr v-for="(track, index) in list"
+            <div class="list">
+                <div class="row"
+                    v-for="(track, index) in listToShow"
                     :key="index">
-                    <mu-td :title="track.name">
-                        <span class="label">{{track.name}}</span>
-                    </mu-td>
-                    <mu-td :title="track.artistName">
-                        <span class="label">{{track.artistName}}</span>
-                    </mu-td>
-                    <mu-td>
-                        <mu-icon-button icon="favorite_border"></mu-icon-button>
-                        <mu-icon-button icon="playlist_add"></mu-icon-button>
-                    </mu-td>
-                </mu-tr>
-            </mu-table>
+                    <div class="col index">{{listOffset + index + 1}}</div>
+                    <div class="col name">{{track.name}}</div>
+                    <div class="col artist">{{track.artistName}}</div>
+                    <div class="col duration">{{track.duration / 1000 | shortTime}}</div>
+                    <div class="col buttons">
+                        <mu-icon-button icon="add"
+                            title="收藏到歌单"></mu-icon-button>
+                        <mu-icon-button icon="playlist_add"
+                            title="添加到播放列表"></mu-icon-button>
+                    </div>
+                </div>
+            </div>
+            <div class="pagination"
+                v-if="list.length > 50">
+                <mu-pagination :total="list.length"
+                    :current="currentPage"
+                    :pageSize="pageSize"
+                    @pageChange="handlePageChange">
+                </mu-pagination>
+            </div>
         </template>
         <div v-else
             class="loading-wrapper">
@@ -34,16 +43,37 @@
 
 <script>
 import { mapActions } from 'vuex';
+import { shortTime } from 'util/formatter';
 
 export default {
     props: ['list'],
+    data() {
+        return {
+            currentPage: 1,
+            pageSize: 50
+        };
+    },
+    computed: {
+        listOffset() {
+            return (this.currentPage - 1) * this.pageSize;
+        },
+        listToShow() {
+            return this.list.slice(this.listOffset, this.listOffset + this.pageSize);
+        },
+    },
     methods: {
         ...mapActions([
             'playPlaylist'
         ]),
         handlePlayAll() {
             this.playPlaylist({ list: this.list });
+        },
+        handlePageChange(newIndex) {
+            this.currentPage = newIndex;
         }
+    },
+    filters: {
+        shortTime
     }
 };
 </script>
@@ -54,24 +84,64 @@ export default {
     .play-all {
         .mu-icon {
             font-size: 20px;
-            padding-left: 8px;
         }
         .mu-item {
-            padding-left: 54px;
             .mu-item-title {
+                padding-left: 8px;
                 font-size: 14px;
             }
         }
     }
-    .table {
-        .label {
-            display: block;
-            overflow: hidden;
-            text-overflow: ellipsis;
+    .list {
+        .row {
+            display: flex;
+            flex-direction: row;
+            .col {
+                height: 48px;
+                line-height: 48px;
+            }
+            .index {
+                flex: 1;
+                max-width: 48px;
+                text-align: center;
+            }
+            .name,
+            .artist {
+                flex: 6;
+                flex-grow: 1;
+                white-space: nowrap;
+                overflow: hidden;
+                text-overflow: ellipsis;
+                padding: 0 8px;
+            }
+            .duration {
+                flex: 2;
+                flex-grow: 0.2;
+            }
+            .buttons {
+                i {
+                    color: grey;
+                }
+            }
         }
-        td:nth-child(3) {
-            width: 140px;
+    }
+    .do-not-exist {
+        .index {
+            &:hover {
+                font-size: 0;
+                &:before {
+                    padding-right: 0;
+                    content: 'play_circle_filled';
+                    font-family: 'Material Icons';
+                    font-size: 20px;
+                    color: grey;
+                }
+            }
         }
+    }
+    .pagination {
+        width: 100%;
+        padding: 16px;
     }
     .loading-wrapper {
         height: 400px;
