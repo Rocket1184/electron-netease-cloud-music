@@ -13,7 +13,7 @@
   "repository": "github:rocket1184/electron-netease-cloud-music",
   "devDependencies": {
     "babel-core": "^6.26.0",
-    "babel-eslint": "^8.0.0",
+    "babel-eslint": "^8.0.1",
     "babel-loader": "^7.1.2",
     "babel-minify-webpack-plugin": "^0.2.0",
     "babel-plugin-transform-es2015-modules-commonjs": "^6.26.0",
@@ -21,11 +21,11 @@
     "babel-register": "^6.26.0",
     "css-loader": "^0.28.7",
     "devtron": "^1.4.0",
-    "electron": "1.8.0",
+    "electron": "1.8.1",
     "electron-debug": "^1.4.0",
     "electron-devtools-installer": "^2.2.0",
     "electron-packager": "^9.1.0",
-    "eslint": "^4.7.0",
+    "eslint": "^4.7.2",
     "eslint-plugin-html": "^3.2.2",
     "extract-text-webpack-plugin": "^3.0.0",
     "file-loader": "^0.11.2",
@@ -34,22 +34,22 @@
     "less-loader": "^4.0.5",
     "style-loader": "^0.18.2",
     "vue-hot-reload-api": "^2.1.0",
-    "vue-loader": "^13.0.4",
+    "vue-loader": "^13.0.5",
     "vue-style-loader": "^3.0.3",
     "vue-template-compiler": "^2.4.4",
     "webpack": "^3.6.0",
-    "webpack-dev-server": "^2.8.2"
+    "webpack-dev-server": "^2.9.1"
   },
   "dependencies": {
     "axios": "^0.16.2",
     "big-integer": "^1.6.25",
     "cookie": "^0.3.1",
-    "debug": "^3.0.1",
+    "debug": "^3.1.0",
     "follow-redirects": "^1.2.4",
     "lrc-kit": "^0.4.1",
     "muse-ui": "^2.1.0",
     "vue": "^2.4.4",
     "vue-router": "^2.7.0",
-    "vuex": "^2.4.0"
+    "vuex": "^2.4.1"
   }
 }
