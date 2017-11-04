@@ -224,7 +224,7 @@ export class ApiFunctions {
     uncollectTrack(pid: number, ...tracks: Array<number>);
     getSearchSuggest(s: string): Promise<SearchResponse>;
     search(s: string, type: number | string, limit?: number, offset?: number): Promise<SearchResponse>;
-};
+}
 
 declare const ApiStatic: ApiFunctions;
 

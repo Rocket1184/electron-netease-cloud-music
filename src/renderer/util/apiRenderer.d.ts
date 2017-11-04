@@ -1,4 +1,4 @@
-import * as ApiNameSpace from '../../main/api/api';
+import * as ApiNameSpace from '../../main/api';
 
 declare class ApiRenderer extends ApiNameSpace.ApiFunctions {
     getCookie(key?: string): Promise<string>
