@@ -6,8 +6,10 @@
             <p>每日歌曲推荐</p>
         </div>
         <div class="cell content">
-            <trackList v-if="loginValid"
-                :list="dailyList"></trackList>
+            <template v-if="loginValid">
+                <PlayAll :tracks="dailyList"></PlayAll>
+                <TrackList :tracks="dailyList"></TrackList>
+            </template>
             <div v-else
                 class="tip">
                 <mu-icon value="nature_people"
@@ -22,7 +24,8 @@
 import { mapGetters } from 'vuex';
 
 import { Track } from 'util/models';
-import trackList from './trackList';
+import PlayAll from './playAll';
+import TrackList from './trackList';
 import ApiRenderer from 'util/apiRenderer';
 
 export default {
@@ -58,7 +61,8 @@ export default {
         if (this.loginValid) this.getDailyList();
     },
     components: {
-        trackList
+        PlayAll,
+        TrackList
     }
 };
 </script>

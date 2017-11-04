@@ -1,18 +1,11 @@
 <template>
     <div class="tracklist">
-        <template v-if="list.length !== 0">
-            <mu-list-item title="播放全部"
-                class="play-all"
-                @click="handlePlayAll">
-                <mu-icon slot="left"
-                    value="play_circle_filled"></mu-icon>
-            </mu-list-item>
-            <mu-divider></mu-divider>
+        <template v-if="tracks.length !== 0">
             <div class="list">
                 <div class="row"
-                    v-for="(track, index) in listToShow"
+                    v-for="(track, index) in tracks"
                     :key="index">
-                    <div class="col index">{{listOffset + index + 1}}</div>
+                    <div class="col index">{{index + 1 + indexOffset}}</div>
                     <div class="col name">{{track.name}}</div>
                     <div class="col artist">{{track.artistName}}</div>
                     <div class="col duration">{{track.duration / 1000 | shortTime}}</div>
@@ -24,14 +17,6 @@
                     </div>
                 </div>
             </div>
-            <div class="pagination"
-                v-if="list.length > 50">
-                <mu-pagination :total="list.length"
-                    :current="currentPage"
-                    :pageSize="pageSize"
-                    @pageChange="handlePageChange">
-                </mu-pagination>
-            </div>
         </template>
         <div v-else
             class="loading-wrapper">
@@ -42,34 +27,18 @@
 </template>
 
 <script>
-import { mapActions } from 'vuex';
 import { shortTime } from 'util/formatter';
 
 export default {
-    props: ['list'],
-    data() {
-        return {
-            currentPage: 1,
-            pageSize: 50
-        };
-    },
-    computed: {
-        listOffset() {
-            return (this.currentPage - 1) * this.pageSize;
+    props: {
+        tracks: {
+            type: Array,
+            required: true
         },
-        listToShow() {
-            return this.list.slice(this.listOffset, this.listOffset + this.pageSize);
-        },
-    },
-    methods: {
-        ...mapActions([
-            'playPlaylist'
-        ]),
-        handlePlayAll() {
-            this.playPlaylist({ list: this.list });
-        },
-        handlePageChange(newIndex) {
-            this.currentPage = newIndex;
+        indexOffset: {
+            type: Number,
+            default: 0,
+            required: false
         }
     },
     filters: {
@@ -81,17 +50,6 @@ export default {
 <style lang="less">
 .tracklist {
     width: 100%;
-    .play-all {
-        .mu-icon {
-            font-size: 20px;
-        }
-        .mu-item {
-            .mu-item-title {
-                padding-left: 8px;
-                font-size: 14px;
-            }
-        }
-    }
     .list {
         .row {
             display: flex;
@@ -124,24 +82,6 @@ export default {
                 }
             }
         }
-    }
-    .do-not-exist {
-        .index {
-            &:hover {
-                font-size: 0;
-                &:before {
-                    padding-right: 0;
-                    content: 'play_circle_filled';
-                    font-family: 'Material Icons';
-                    font-size: 20px;
-                    color: grey;
-                }
-            }
-        }
-    }
-    .pagination {
-        width: 100%;
-        padding: 16px;
     }
     .loading-wrapper {
         height: 400px;
