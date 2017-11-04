@@ -12,6 +12,7 @@
 </template>
 
 <script>
+import { stringify } from 'querystring';
 import ApiRenderer from 'util/apiRenderer';
 import { searchIconMap } from 'util/searchType';
 
@@ -42,7 +43,10 @@ export default {
             }
         },
         handleSearch() {
-            this.$router.push(`/search?q=${this.searchText}`);
+            const qs = stringify({
+                keyword: this.searchText
+            });
+            this.$router.push(`/search?${qs}`);
         }
     },
     mounted() {

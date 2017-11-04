@@ -1,5 +1,5 @@
 <template>
-    <div>
+    <div class="search">
         <mu-tabs :value="activeTab"
             @change="handleTabChange">
             <mu-tab value="song"
@@ -41,12 +41,16 @@
                 :size="128"></mu-icon>
             <p>哎呀～出错了 ... 错误代码 {{this.searchErrorCode}}</p>
         </div>
-        <TrackList v-else-if="activeTab === 'song'"
-            :list="tracks"></TrackList>
-        <ArtistList v-else-if="activeTab === 'artist'"
-            :list="artists"></ArtistList>
-        <AlbumList v-else-if="activeTab === 'album'"
-            :list="albums"></AlbumList>
+        <div v-else-if="activeTab === 'song'">
+            <TrackList :tracks="items"
+                :indexOffset="searchOffset"></TrackList>
+        </div>
+        <div v-else-if="activeTab === 'artist'">
+            <ArtistList :list="items"></ArtistList>
+        </div>
+        <div v-else-if="activeTab === 'album'">
+            <AlbumList :list="items"></AlbumList>
+        </div>
         <div v-else-if="activeTab === 'playlist'"></div>
         <div v-else-if="activeTab === 'mv'"></div>
         <div v-else-if="activeTab === 'user'"></div>
@@ -57,10 +61,20 @@
                 :size="128"></mu-icon>
             <p>你是怎么来到这儿的？来报个 bug 吧少年！</p>
         </div>
+        <div class="pagination"
+            v-if="totalItems > 20">
+            <mu-pagination :total="totalItems"
+                :current="currentPage"
+                :pageSize="pageSize"
+                @pageChange="handlePageChange">
+            </mu-pagination>
+        </div>
     </div>
 </template>
 
 <script>
+import { stringify } from 'querystring';
+
 import { Track } from 'util/models';
 import TrackList from 'compo/trackList';
 import ArtistList from 'compo/artistList';
@@ -77,10 +91,16 @@ export default {
             searchError: false,
             searchErrorCode: null,
             activeTab: 'song',
-            tracks: [],
-            artists: [],
-            albums: []
+            currentPage: 1,
+            pageSize: 20,
+            items: [],
+            totalItems: 0
         };
+    },
+    computed: {
+        searchOffset() {
+            return (this.currentPage - 1) * this.pageSize;
+        }
     },
     methods: {
         handleTabChange(val) {
@@ -88,33 +108,42 @@ export default {
             this.handleSearch();
         },
         async handleSearch() {
-            const { q, t } = this.$route.query;
-            if (!q) return;
+            const { keyword, type, page } = this.$route.query;
+            if (!keyword) return;
+            this.currentPage = Number(page);
             this.haveSearched = true;
             this.isPosting = true;
-            const resp = await ApiRenderer.search(q, t || this.activeTab);
+            const resp = await ApiRenderer.search(keyword, type || this.activeTab, this.pageSize, this.searchOffset);
             this.isPosting = false;
             if (resp.code === 200) {
                 switch (this.activeTab) {
                     case searchTypes.song:
-                        this.tracks = resp.result.songs.map(i => new Track(i)) || [];
-                        this.haveValidResults = Boolean(this.tracks.length);
+                        this.totalItems = resp.result.songCount;
+                        this.items = resp.result.songs.map(i => new Track(i)) || [];
                         break;
                     case searchTypes.artist:
-                        this.artists = resp.result.artists || [];
-                        this.haveValidResults = Boolean(this.artists.length);
+                        this.items = resp.result.artists || [];
                         break;
                     case searchTypes.album:
-                        this.albums = resp.result.albums || [];
-                        this.haveValidResults = Boolean(this.albums.length);
+                        this.items = resp.result.albums || [];
                         break;
                     default:
                         break;
                 }
+                this.haveValidResults = Boolean(this.items.length);
             } else {
                 this.searchError = true;
                 this.searchErrorCode = resp.code;
             }
+        },
+        handlePageChange(newIndex) {
+            this.currentPage = newIndex;
+            const qs = stringify({
+                keyword: this.$route.query.keyword,
+                type: this.activeTab,
+                page: this.currentPage
+            });
+            this.$router.push(`/search?${qs}`);
         }
     },
     mounted() {
@@ -122,6 +151,8 @@ export default {
     },
     beforeRouteUpdate(to, from, next) {
         next();
+        this.currentPage = from.query.page;
+        this.activeTab = from.query.type;
         this.handleSearch();
     },
     components: {
@@ -133,12 +164,18 @@ export default {
 </script>
 
 <style lang="less">
-.search-tip {
-    width: 100%;
-    text-align: center;
-    margin-top: 100px;
-    p {
-        color: grey;
+.search {
+    .search-tip {
+        width: 100%;
+        text-align: center;
+        margin-top: 100px;
+        p {
+            color: grey;
+        }
+    }
+    .pagination {
+        width: 100%;
+        padding: 16px;
     }
 }
 </style>
