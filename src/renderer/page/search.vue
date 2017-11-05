@@ -51,9 +51,15 @@
         <div v-else-if="searchType === 'album'">
             <AlbumList :list="items"></AlbumList>
         </div>
-        <div v-else-if="searchType === 'playlist'"></div>
-        <div v-else-if="searchType === 'mv'"></div>
-        <div v-else-if="searchType === 'user'"></div>
+        <div v-else-if="searchType === 'playlist'">
+            <UnderConstructionTip></UnderConstructionTip>
+        </div>
+        <div v-else-if="searchType === 'mv'">
+            <UnderConstructionTip></UnderConstructionTip>
+        </div>
+        <div v-else-if="searchType === 'user'">
+            <UnderConstructionTip></UnderConstructionTip>
+        </div>
         <div v-else
             class="search-tip">
             <mu-icon value="bug_report"
@@ -79,6 +85,7 @@ import { Track } from 'util/models';
 import TrackList from 'compo/trackList';
 import ArtistList from 'compo/artistList';
 import AlbumList from 'compo/albumList';
+import UnderConstructionTip from 'compo/underConstructionTip';
 import { searchTypes } from 'util/searchType';
 import ApiRenderer from 'util/apiRenderer';
 
@@ -107,7 +114,7 @@ export default {
         handleTabChange(val) {
             this.searchType = val;
             this.currentPage = this.defaultPage;
-            this.totalItems = 0;            
+            this.totalItems = 0;
             this.updateQueryString();
         },
         handlePageChange(newIndex) {
@@ -131,6 +138,8 @@ export default {
             const resp = await ApiRenderer.search(keyword, type, this.pageSize, this.searchOffset);
             this.isPosting = false;
             if (resp.code === 200) {
+                this.searchError = false;
+                this.searchErrorCode = -1;
                 switch (this.searchType) {
                     case searchTypes.song:
                         this.totalItems = resp.result.songCount;
@@ -164,7 +173,8 @@ export default {
     components: {
         TrackList,
         ArtistList,
-        AlbumList
+        AlbumList,
+        UnderConstructionTip
     }
 };
 </script>
