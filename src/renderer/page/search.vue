@@ -1,6 +1,6 @@
 <template>
     <div class="search">
-        <mu-tabs :value="activeTab"
+        <mu-tabs :value="searchType"
             @change="handleTabChange">
             <mu-tab value="song"
                 title="单曲"></mu-tab>
@@ -41,19 +41,19 @@
                 :size="128"></mu-icon>
             <p>哎呀～出错了 ... 错误代码 {{this.searchErrorCode}}</p>
         </div>
-        <div v-else-if="activeTab === 'song'">
+        <div v-else-if="searchType === 'song'">
             <TrackList :tracks="items"
                 :indexOffset="searchOffset"></TrackList>
         </div>
-        <div v-else-if="activeTab === 'artist'">
+        <div v-else-if="searchType === 'artist'">
             <ArtistList :list="items"></ArtistList>
         </div>
-        <div v-else-if="activeTab === 'album'">
+        <div v-else-if="searchType === 'album'">
             <AlbumList :list="items"></AlbumList>
         </div>
-        <div v-else-if="activeTab === 'playlist'"></div>
-        <div v-else-if="activeTab === 'mv'"></div>
-        <div v-else-if="activeTab === 'user'"></div>
+        <div v-else-if="searchType === 'playlist'"></div>
+        <div v-else-if="searchType === 'mv'"></div>
+        <div v-else-if="searchType === 'user'"></div>
         <div v-else
             class="search-tip">
             <mu-icon value="bug_report"
@@ -90,8 +90,9 @@ export default {
             isPosting: false,
             searchError: false,
             searchErrorCode: null,
-            activeTab: 'song',
+            searchType: 'song',
             currentPage: 1,
+            defaultPage: 1,
             pageSize: 20,
             items: [],
             totalItems: 0
@@ -104,27 +105,43 @@ export default {
     },
     methods: {
         handleTabChange(val) {
-            this.activeTab = val;
-            this.handleSearch();
+            this.searchType = val;
+            this.currentPage = this.defaultPage;
+            this.totalItems = 0;            
+            this.updateQueryString();
+        },
+        handlePageChange(newIndex) {
+            this.currentPage = newIndex;
+            this.updateQueryString();
+        },
+        updateQueryString() {
+            const qs = stringify({
+                keyword: this.$route.query.keyword,
+                type: this.searchType,
+                page: this.currentPage
+            });
+            this.$router.push(`/search?${qs}`);
         },
         async handleSearch() {
-            const { keyword, type, page } = this.$route.query;
+            const { keyword, type = this.searchType, page = this.defaultPage } = this.$route.query;
             if (!keyword) return;
+            if (!this.haveSearched) this.haveSearched = true;
             this.currentPage = Number(page);
-            this.haveSearched = true;
             this.isPosting = true;
-            const resp = await ApiRenderer.search(keyword, type || this.activeTab, this.pageSize, this.searchOffset);
+            const resp = await ApiRenderer.search(keyword, type, this.pageSize, this.searchOffset);
             this.isPosting = false;
             if (resp.code === 200) {
-                switch (this.activeTab) {
+                switch (this.searchType) {
                     case searchTypes.song:
                         this.totalItems = resp.result.songCount;
                         this.items = resp.result.songs.map(i => new Track(i)) || [];
                         break;
                     case searchTypes.artist:
+                        this.totalItems = resp.result.artistCount;
                         this.items = resp.result.artists || [];
                         break;
                     case searchTypes.album:
+                        this.totalItems = resp.result.albumCount;
                         this.items = resp.result.albums || [];
                         break;
                     default:
@@ -135,15 +152,6 @@ export default {
                 this.searchError = true;
                 this.searchErrorCode = resp.code;
             }
-        },
-        handlePageChange(newIndex) {
-            this.currentPage = newIndex;
-            const qs = stringify({
-                keyword: this.$route.query.keyword,
-                type: this.activeTab,
-                page: this.currentPage
-            });
-            this.$router.push(`/search?${qs}`);
         }
     },
     mounted() {
@@ -151,8 +159,6 @@ export default {
     },
     beforeRouteUpdate(to, from, next) {
         next();
-        this.currentPage = from.query.page;
-        this.activeTab = from.query.type;
         this.handleSearch();
     },
     components: {
