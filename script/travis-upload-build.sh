@@ -1,7 +1,7 @@
 #!/bin/bash
 
 cd build
-wget http://devtools.qiniu.com/2.0.9/qshell-linux-x64 -O qshell
+wget https://dn-devtools.qbox.me/2.1.5/qshell-linux-x64 -O qshell
 chmod +x qshell
 ./qshell account $QINIU_AK $QINIU_SK
 
@@ -14,9 +14,7 @@ VERSION_HASH=`git rev-parse --short HEAD`
 
 for ARCH in linux-x64 darwin-x64
 do
-    if [[ $NCM_RELEASE_CHANNEL != "master" ]]; then
-        echo $VERSION_HASH > $APP_NAME-$ARCH/ncm_hash
-    fi
+    echo -n $VERSION_HASH > $APP_NAME-$ARCH/ncm_hash
     TAR_NAME=electron-ncm-$ARCH-$VERSION_HASH.tar.gz
     tar zcf $TAR_NAME $APP_NAME-$ARCH
     ./qshell rput $BUCKET_NAME $TAR_NAME $TAR_NAME
