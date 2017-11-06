@@ -1,20 +1,22 @@
 <template>
     <div class="search">
-        <mu-tabs :value="searchType"
-            @change="handleTabChange">
-            <mu-tab value="song"
-                title="单曲"></mu-tab>
-            <mu-tab value="artist"
-                title="歌手"></mu-tab>
-            <mu-tab value="album"
-                title="专辑"></mu-tab>
-            <mu-tab value="playlist"
-                title="歌单"></mu-tab>
-            <mu-tab value="mv"
-                title="MV"></mu-tab>
-            <mu-tab value="user"
-                title="用户"></mu-tab>
-        </mu-tabs>
+        <mu-paper>
+            <mu-tabs :value="searchType"
+                @change="handleTabChange">
+                <mu-tab value="song"
+                    title="单曲"></mu-tab>
+                <mu-tab value="artist"
+                    title="歌手"></mu-tab>
+                <mu-tab value="album"
+                    title="专辑"></mu-tab>
+                <mu-tab value="playlist"
+                    title="歌单"></mu-tab>
+                <mu-tab value="mv"
+                    title="MV"></mu-tab>
+                <mu-tab value="user"
+                    title="用户"></mu-tab>
+            </mu-tabs>
+        </mu-paper>
         <div v-if="!haveSearched"
             class="search-tip">
             <mu-icon value="search"
