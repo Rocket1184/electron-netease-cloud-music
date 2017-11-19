@@ -1,8 +1,6 @@
 <template>
     <mu-paper class="player-bar-wrapper"
         :zDepth="2">
-        <audio id="playerbar-audio"
-            :src="playing.url"></audio>
         <div class="cell">
             <router-link to='/player'>
                 <img :src="getImgAt(64)"

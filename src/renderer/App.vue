@@ -1,5 +1,7 @@
 <template>
     <div id="app">
+        <audio id="playerbar-audio"
+            :src="playing.url"></audio>
         <appNav></appNav>
         <div class="router-view">
             <keep-alive>
@@ -11,7 +13,7 @@
 </template>
 
 <script>
-import { mapActions } from 'vuex';
+import { mapActions, mapGetters } from 'vuex';
 
 import appNav from './components/appNav';
 import playerBar from './components/playerBar';
@@ -27,6 +29,11 @@ export default {
         ...mapActions([
             'restoreUserInfo'
         ])
+    },
+    computed: {
+        ...mapGetters([
+            'playing',
+        ]),
     },
     async beforeCreate() {
         const st = await ApiRenderer.getCurrentSettings();
