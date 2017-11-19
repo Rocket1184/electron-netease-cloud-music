@@ -33,7 +33,7 @@ Click here -> [![hreoku status](https://heroku-badge.herokuapp.com/?app=electron
 yarn install
 
 # serve with hot reload at localhost:24353
-npm run dev
+yarn dev
 
 # build the app in production mode
 export NODE_ENV=production
