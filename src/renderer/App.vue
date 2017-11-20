@@ -2,28 +2,28 @@
     <div id="app">
         <audio id="playerbar-audio"
             :src="playing.url"></audio>
-        <appNav></appNav>
+        <AppNav></AppNav>
         <div class="router-view">
-            <keep-alive>
+            <keep-alive :include="/^page-\w+$/">
                 <router-view></router-view>
             </keep-alive>
         </div>
-        <playerBar></playerBar>
+        <PlayerBar></PlayerBar>
     </div>
 </template>
 
 <script>
 import { mapActions, mapGetters } from 'vuex';
 
-import appNav from './components/appNav';
-import playerBar from './components/playerBar';
+import AppNav from './components/appNav';
+import PlayerBar from './components/playerBar';
 import ApiRenderer from './util/apiRenderer';
 import * as types from './vuex/mutation-types';
 
 export default {
     components: {
-        appNav,
-        playerBar
+        AppNav,
+        PlayerBar
     },
     methods: {
         ...mapActions([
