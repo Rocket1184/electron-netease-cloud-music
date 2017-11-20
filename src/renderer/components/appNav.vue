@@ -40,7 +40,7 @@
                 <router-link v-for="route in validRoutes"
                     :key="route.name"
                     :to="route.path">
-                    <mu-list-item :title="route.name">
+                    <mu-list-item :title="route.title">
                         <mu-icon slot="left"
                             :value="route.icon"></mu-icon>
                     </mu-list-item>
