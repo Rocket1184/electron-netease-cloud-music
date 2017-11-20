@@ -8,6 +8,7 @@
 import dailySuggestions from 'compo/dailySuggestions';
 
 export default {
+    name: 'page-index',
     components: {
         dailySuggestions
     }

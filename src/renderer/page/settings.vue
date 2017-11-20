@@ -83,6 +83,7 @@ import ApiRenderer from 'util/apiRenderer';
 import { hunamSize } from 'util/formatter';
 
 export default {
+    name: 'page-settings',
     data() {
         return {
             cacheSize: 0,

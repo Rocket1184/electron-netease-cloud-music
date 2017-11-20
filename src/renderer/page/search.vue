@@ -92,6 +92,7 @@ import { searchTypes } from 'util/searchType';
 import ApiRenderer from 'util/apiRenderer';
 
 export default {
+    name: 'page-search',
     data() {
         return {
             haveSearched: false,

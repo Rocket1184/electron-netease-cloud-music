@@ -56,6 +56,7 @@ import { mapGetters } from 'vuex';
 import { getImgSizeOf } from 'util/image';
 
 export default {
+    name: 'page-player',
     data() {
         return {
             isActive: false,

@@ -46,6 +46,7 @@ import PlaylistItem from 'compo/myPlaylistItem';
 import PlaylistHeader from 'compo/playlistHeader';
 
 export default {
+    name: 'page-playlist',
     data() {
         return {
             detail: {},
