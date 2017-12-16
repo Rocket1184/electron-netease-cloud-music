@@ -42,7 +42,7 @@ function aesEncrypt(text, secKey) {
     cipher.setAutoPadding(true);
     let crypted = [cipher.update(text, 'utf8', 'base64'), cipher.final('base64')].join('');
     return crypted;
-};
+}
 
 function rsaEncrypt(text) {
     text = text.split('').reverse().join('');
@@ -53,7 +53,7 @@ function rsaEncrypt(text) {
     let rs = tb.modPow(pk, md).toString(16);
     let result = rs.fillZero(256);
     return result;
-};
+}
 
 function encode(json) {
     json = JSON.stringify(json);
@@ -65,7 +65,7 @@ function encode(json) {
         params: encText,
         encSecKey: encSecKey
     };
-};
+}
 
 export default {
     encode

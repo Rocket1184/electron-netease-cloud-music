@@ -15,9 +15,9 @@
 <script>
 import { mapActions, mapGetters } from 'vuex';
 
-import AppNav from './components/appNav';
-import PlayerBar from './components/playerBar';
-import ApiRenderer from './util/apiRenderer';
+import AppNav from 'compo/appNav.vue';
+import PlayerBar from 'compo/playerBar.vue';
+import ApiRenderer from 'util/apiRenderer';
 import * as types from './vuex/mutation-types';
 
 export default {

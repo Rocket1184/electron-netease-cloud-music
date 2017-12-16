@@ -3,7 +3,7 @@ import Router from 'vue-router';
 import MuseUI from 'muse-ui';
 import 'muse-ui/dist/muse-ui.css';
 
-import App from './App';
+import App from './App.vue';
 import store from './vuex/store';
 import routes from './routes';
 import Toast from './util/toast';

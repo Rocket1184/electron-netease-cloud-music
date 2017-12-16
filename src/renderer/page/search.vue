@@ -84,10 +84,10 @@
 import { stringify } from 'querystring';
 
 import { Track } from 'util/models';
-import TrackList from 'compo/trackList';
-import ArtistList from 'compo/artistList';
-import AlbumList from 'compo/albumList';
-import UnderConstructionTip from 'compo/underConstructionTip';
+import TrackList from 'compo/trackList.vue';
+import ArtistList from 'compo/artistList.vue';
+import AlbumList from 'compo/albumList.vue';
+import UnderConstructionTip from 'compo/underConstructionTip.vue';
 import { searchTypes } from 'util/searchType';
 import ApiRenderer from 'util/apiRenderer';
 

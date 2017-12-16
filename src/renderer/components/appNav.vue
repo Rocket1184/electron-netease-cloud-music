@@ -57,8 +57,8 @@ import { mapActions, mapGetters } from 'vuex';
 import { remote } from 'electron';
 
 import ApiRenderer from 'util/apiRenderer';
-import loginDialog from './loginDialog';
-import searchBox from './searchBox';
+import loginDialog from './loginDialog.vue';
+import searchBox from './searchBox.vue';
 import Routes from '@/routes';
 
 export default {

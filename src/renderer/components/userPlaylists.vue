@@ -10,7 +10,7 @@
 
 <script>
 import { mapGetters } from 'vuex';
-import PlaylistItem from './myPlaylistItem';
+import PlaylistItem from './myPlaylistItem.vue';
 
 export default {
     props: {

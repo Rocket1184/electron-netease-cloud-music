@@ -72,8 +72,8 @@
 import { mapActions, mapGetters } from 'vuex';
 
 import ApiRenderer from 'util/apiRenderer';
-import currentList from './currentList';
-import userPlaylists from './userPlaylists';
+import currentList from './currentList.vue';
+import userPlaylists from './userPlaylists.vue';
 import * as types from '../vuex/mutation-types';
 import { getImgSizeOf } from 'util/image';
 import { shortTime } from 'util/formatter';

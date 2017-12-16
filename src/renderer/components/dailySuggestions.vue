@@ -24,8 +24,8 @@
 import { mapGetters } from 'vuex';
 
 import { Track } from 'util/models';
-import PlayAll from './playAll';
-import TrackList from './trackList';
+import PlayAll from './playAll.vue';
+import TrackList from './trackList.vue';
 import ApiRenderer from 'util/apiRenderer';
 
 export default {

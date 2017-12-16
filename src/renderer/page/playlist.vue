@@ -40,10 +40,10 @@ import { mapGetters } from 'vuex';
 
 import { Track } from 'util/models';
 import ApiRenderer from 'util/apiRenderer';
-import PlayAll from 'compo/playAll';
-import TrackList from 'compo/trackList';
-import PlaylistItem from 'compo/myPlaylistItem';
-import PlaylistHeader from 'compo/playlistHeader';
+import PlayAll from 'compo/playAll.vue';
+import TrackList from 'compo/trackList.vue';
+import PlaylistItem from 'compo/myPlaylistItem.vue';
+import PlaylistHeader from 'compo/playlistHeader.vue';
 
 export default {
     name: 'page-playlist',
