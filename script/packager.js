@@ -6,6 +6,8 @@ const packager = require('electron-packager');
 let argv = process.argv.slice(2);
 if (!argv.length) argv = 'all';
 
+/* eslint-disable no-console */
+
 if (argv[0] === 'clean') {
     const distPath = path.join(projectRoot, 'build');
     const cnt = require('fs').readdirSync(distPath).filter(f => f[0] !== '.').length;

@@ -79,8 +79,7 @@ let cfg = {
             'util': path.join(projectRoot, 'src/renderer/util/'),
             'page': path.join(projectRoot, 'src/renderer/page/'),
             'compo': path.join(projectRoot, 'src/renderer/components/')
-        },
-        extensions: ['.js', '.vue', '.json', '.css']
+        }
     }
 };
 

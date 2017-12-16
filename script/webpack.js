@@ -7,6 +7,8 @@ const projectRoot = path.resolve('.');
 let argv = process.argv.slice(2);
 if (!argv.length) argv = ['main', 'renderer'];
 
+/* eslint-disable no-console */
+
 if (argv[0] === 'clean') {
     const distPath = path.join(projectRoot, 'dist');
     const cnt = require('fs').readdirSync(distPath).filter(f => f[0] !== '.').length;

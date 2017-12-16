@@ -5,6 +5,8 @@ const WebpackDevServer = require('webpack-dev-server');
 const projectCfg = require('./config');
 const projectRoot = path.resolve('.');
 
+/* eslint-disable no-console */
+
 process.on('SIGINT', () => {
     console.log('\nCtrl-C Pressed. Exiting...\n');
     mainProcess.kill();
