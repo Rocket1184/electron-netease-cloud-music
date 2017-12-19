@@ -1,14 +1,14 @@
 declare class UserModel extends Object {
-    id: Number;
-    nickname: String;
-    avatarUrl: String;
-    bkgUrl: String;
-    gender: Number;
-    description: String;
-    detailDescription: String;
-    signature: String;
-    province: Number;
-    city: Number;
+    id: number;
+    nickname: string;
+    avatarUrl: string;
+    bkgUrl: string;
+    gender: number;
+    description: string;
+    detailDescription: string;
+    signature: string;
+    province: number;
+    city: number;
     // blew are raw data from netease login api
     account: any;
     profile: any;
@@ -16,53 +16,56 @@ declare class UserModel extends Object {
 }
 
 declare class RawArtistModel extends Object {
-    id: Number;
-    name: String;
-    img1v1Id: Number;
-    img1v1Id_str: String;
-    img1v1IdUrl: String;
-    picId: Number;
-    picUrl: String;
+    id: number;
+    name: string;
+    img1v1Id: number;
+    img1v1Id_str: string;
+    img1v1IdUrl: string;
+    picId: number;
+    picUrl: string;
 }
 
 declare class RawLyricsModel extends Object {
     qfy: Boolean;
     sfy: Boolean;
     sgc: Boolean;
-    lrc?: { version: Number, lyric: String }
-    tlyric?: { ersion: Number, lyric: String }
-    klyric?: { version: Number, lyric: String }
+    lrc?: { version: number, lyric: string }
+    tlyric?: { ersion: number, lyric: string }
+    klyric?: { version: number, lyric: string }
 }
 
 declare class TrackUrlsModel extends Object {
-    h?: String;
-    m?: String;
-    l?: String;
+    h?: string;
+    m?: string;
+    l?: string;
 }
 
 declare class TrackModel extends Object {
-    id: Number;
-    name: String;
+    id: number;
+    name: string;
     album: {
-        id: Number;
-        name: String;
-        pic: Number;
-        picUrl: String
+        id: number;
+        name: string;
+        pic: number;
+        picUrl: string
     };
     artists: Array<RawArtistModel>;
     lyrics: RawLyricsModel;
     urls: TrackUrlsModel;
-    commentThreadId: Number;
+    commentThreadId: number;
 }
 
 declare class PlayListModel extends Object {
-    id: Number;
-    name: String;
+    id: number;
+    name: string;
     creator: UserModel;
-    commentThreadId: Number;
-    playCount: Number;
-    coverImgId: Number;
-    coverImgUrl: String;
+    commentThreadId: number;
+    playCount: number;
+    coverImgId: number;
+    coverImgUrl: string;
+    createTime: string;
+    subscribedCount: number;
+    commentCount: number;
     tracks: Array<TrackModel>;
 }
 
@@ -72,9 +75,9 @@ export class User extends UserModel {
 
 export class Track extends TrackModel {
     constructor(o: any);
-    picUrl: String;
-    artistName: Number;
-    setUrl(type: String, url: String): void;
+    picUrl: string;
+    artistName: number;
+    setUrl(type: string, url: string): void;
 }
 
 export class PlayList extends PlayListModel {

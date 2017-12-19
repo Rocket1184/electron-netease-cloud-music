@@ -44,6 +44,9 @@ const Models = {
             trackCount: 0,
             coverImgId: -1,
             coverImgUrl: '',
+            createTime: -1,
+            subscribedCount: -1,
+            commentCount: -1,
             tracks: [new Track()]
         };
     }
@@ -111,6 +114,9 @@ export class PlayList {
         this.trackCount = o.trackCount;
         this.coverImgId = o.coverImgId;
         this.coverImgUrl = o.coverImgUrl;
+        this.createTime = o.createTime;
+        this.subscribedCount = o.subscribedCount;
+        this.commentCount = o.commentCount;
         const tracks = o.tracks || o.recommend || [];
         this.tracks = tracks.map(t => new Track(t));
     }
