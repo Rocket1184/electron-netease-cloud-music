@@ -1,7 +1,7 @@
 #!/bin/bash
 
 cd build
-wget https://dn-devtools.qbox.me/2.1.5/qshell-linux-x64 -O qshell
+curl https://dn-devtools.qbox.me/2.1.5/qshell-linux-x64 -o qshell
 chmod +x qshell
 ./qshell account $QINIU_AK $QINIU_SK
 
