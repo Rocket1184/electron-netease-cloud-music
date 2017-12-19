@@ -36,10 +36,8 @@
 </template>
 
 <script>
-import { mapGetters } from 'vuex';
+import { mapActions, mapGetters } from 'vuex';
 
-import { Track } from 'util/models';
-import ApiRenderer from 'util/apiRenderer';
 import PlayAll from 'compo/playAll.vue';
 import TrackList from 'compo/trackList.vue';
 import PlaylistItem from 'compo/myPlaylistItem.vue';
@@ -56,6 +54,9 @@ export default {
         };
     },
     computed: {
+        ...mapActions([
+            'refreshUserPlaylist'
+        ]),
         ...mapGetters([
             'user'
         ]),
@@ -82,9 +83,16 @@ export default {
         async loadPlaylist(id) {
             this.detail = null;
             this.tracks = [];
-            const raw = await ApiRenderer.getListDetail(id);
-            this.detail = raw.playlist;
-            this.tracks = raw.playlist.tracks.map(t => new Track(t));
+            await this.$store.dispatch('refreshUserPlaylist', id);
+            // why don't use
+            // `this.refreshUserPlaylist(id);`
+            // here? If so, vuex action `refreshUserPlaylist` would receive
+            // wrong params. Maybe a bug?
+            const target = this.user.playlist.filter(p => p.id === id).pop();
+            if (target) {
+                this.detail = target;
+                this.tracks = target.tracks;
+            }
         },
         handlePageChange(newIndex) {
             this.currentPage = newIndex;
