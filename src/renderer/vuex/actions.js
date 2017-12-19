@@ -5,7 +5,7 @@ import { User } from 'util/models';
 
 export function setUserInfo({ commit }, payload) {
     commit(types.SET_USER_INFO, payload);
-};
+}
 
 export function storeUserInfo(context, payload) {
     const { user, cookie } = payload;
@@ -83,14 +83,14 @@ export function playNextTrack({ commit, state }) {
     const { currentIndex, list } = state.playlist;
     let nextIndex = (currentIndex + 1) % list.length;
     playThisTrack(commit, list, nextIndex, quality);
-};
+}
 
 export function playPreviousTrack({ commit, state }) {
     const quality = state.settings.bitRate;
     const { currentIndex, list } = state.playlist;
     let nextIndex = (currentIndex + list.length - 1) % list.length;
     playThisTrack(commit, list, nextIndex, quality);
-};
+}
 
 export async function playPlaylist({ commit, state }, payload) {
     if (payload) {
@@ -102,20 +102,20 @@ export async function playPlaylist({ commit, state }, payload) {
         ? parseInt(Math.random() * 100000) % list.length
         : 0;
     playThisTrack(commit, list, firstIndex, quality);
-};
+}
 
 export function playTrackIndex({ commit, state }, payload) {
     const quality = state.settings.bitRate;
     const { list } = state.playlist;
     playThisTrack(commit, list, payload.index, quality);
-};
+}
 
 export async function restorePlaylist(context, payload) {
     const { playlist } = payload;
     context.commit(types.RESTORE_PLAYLIST, playlist);
-};
+}
 
 export async function refreshUserPlaylist({ commit }, payload) {
     const resp = await ApiRenderer.getListDetail(payload);
     commit(types.UPDATE_USER_PLAYLIST, resp.playlist);
-};
+}
