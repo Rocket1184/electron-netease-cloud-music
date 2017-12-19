@@ -125,12 +125,16 @@ export default {
             } else {
                 await ApiRenderer.collectTrack(listId, trackId);
             }
-            this.refreshUserPlaylist(listId);
+            // it would take some time for NetEase to update playlist cover
+            // img, so we just wait 200 ms
+            setTimeout(() => this.refreshUserPlaylist(listId), 200);
         },
         async handleCollect(list) {
             const resp = await ApiRenderer.collectTrack(list.id, this.playing.track.id);
             if (resp.code === 200) {
                 this.$toast('成功添加到歌单     (๑•̀ㅂ•́)و✧');
+                // same to above
+                setTimeout(() => this.refreshUserPlaylist(list.id), 200);
             } else if (resp.code === 502) {
                 this.$toast('歌曲已存在        ¯\\_(ツ)_/¯');
             } else {
@@ -163,7 +167,10 @@ export default {
         try {
             const playlist = JSON.parse(localStorage.getItem('playlist'));
             this.restorePlaylist({ playlist });
-        } catch (e) { }
+        } catch (e) {
+            // eslint-disable-next-line no-console
+            console.info('Playlist stored in localStorage not valid.');
+        }
         window.onbeforeunload = () => {
             if (!this.$store.state.settings.autoPlay) this.pause();
             localStorage.setItem('playlist', JSON.stringify(this.playlist));
@@ -231,7 +238,7 @@ export default {
     .info {
         font-size: 14px;
         padding: 10px 14px;
-        width: calc(~"100% - 244px");
+        width: calc(~'100% - 244px');
         .song-name,
         .artist-name {
             display: inline-block;
@@ -261,7 +268,7 @@ export default {
         .progress {
             position: relative;
             .slider {
-                width: calc(~"100% - 100px");
+                width: calc(~'100% - 100px');
             }
             .text {
                 position: absolute;
@@ -288,7 +295,7 @@ export default {
         bottom: 68px;
         height: 496px;
         -webkit-transform-origin-y: 496px;
-        box-shadow: 0 3px 10px rgba(0, 0, 0, .15);
+        box-shadow: 0 3px 10px rgba(0, 0, 0, 0.15);
     }
 }
 
