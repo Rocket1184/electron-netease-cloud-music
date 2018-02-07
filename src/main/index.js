@@ -37,6 +37,8 @@ function createWindow(url = winURL) {
 
 app.on('ready', () => {
     mainWindow = createWindow();
+    // boot up ApiHost
+    require('./apiHost');
 });
 
 app.on('window-all-closed', () => {
@@ -72,6 +74,3 @@ ipcMain.on('showLoginWindow', () => {
     });
     loginWindow.loadURL(loginURL);
 });
-
-// boot up ApiHost
-require('./apiHost');
