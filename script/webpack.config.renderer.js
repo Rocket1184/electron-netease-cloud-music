@@ -85,7 +85,11 @@ let cfg = {
 
 if (process.env.NODE_ENV === 'production') {
     // release config
-    cfg.devtool = 'source-map';
+    /**
+     * disable source map for now.
+     * see: https://github.com/mozilla/source-map/issues/304
+     */
+    // cfg.devtool = 'source-map';
     cfg.module.rules.map(e => {
         if (e.loader === 'vue-loader') {
             e.options.extractCSS = true;
