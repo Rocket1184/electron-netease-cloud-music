@@ -6,5 +6,4 @@ cache:
   - $HOME/.electron
   - node_modules
 script:
-  - script/travis-build.sh
-  - script/travis-upload-build.sh
+  - script/travis-ci.sh
