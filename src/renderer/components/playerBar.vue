@@ -163,18 +163,21 @@ export default {
     filters: {
         time: shortTime
     },
-    created() {
-        try {
-            const playlist = JSON.parse(localStorage.getItem('playlist'));
-            this.restorePlaylist({ playlist });
-        } catch (e) {
-            // eslint-disable-next-line no-console
-            console.info('Playlist stored in localStorage not valid.');
-        }
+    async created() {
         window.onbeforeunload = () => {
             if (!this.$store.state.settings.autoPlay) this.pause();
             localStorage.setItem('playlist', JSON.stringify(this.playlist));
         };
+        try {
+            const stored = localStorage.getItem('playlist');
+            if (stored) {
+                const playlist = JSON.parse(stored);
+                await this.restorePlaylist({ playlist });
+            }
+        } catch (e) {
+            // eslint-disable-next-line no-console
+            console.info('Playlist stored in localStorage not valid.');
+        }
     },
     mounted() {
         const _audioEl = document.getElementById('playerbar-audio');
