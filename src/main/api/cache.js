@@ -8,13 +8,12 @@ import { http, https } from 'follow-redirects';
 class Cache {
     constructor(path) {
         if (typeof path === 'string') {
-            if (fs.existsSync(path)) {
-                if (fs.statSync(path).isDirectory) {
-                    this.path = path;
-                }
-            } else {
+            if (!fs.existsSync(path)) {
                 fs.mkdirSync(path);
+            } else if (!fs.statSync(path).isDirectory) {
+                throw new Error(`[Cache] '${path} was token by unknown file. Please remove it manually.'`)
             }
+            this.path = path;
         } else {
             throw new Error('Cache path unvalid');
         }
