@@ -1,15 +1,20 @@
 #!/bin/bash
 
 export NODE_ENV=production
-npm run pack
 
-if [ $? -eq "0" ] then
-    npm run build linux
-    npm run build darwin
+pack() {
+    npm run pack
+}
+
+build() {
+    PLATFORMS=(linux darwin)
+    for i in ${PLATFORMS[*]}; do
+        npm run build $i
+    done
+}
+
+if pack && build; then
+    ./upload-build.sh
 else
     exit 1
-fi
-
-if [ $? -eq "0" ] then
-    ./upload-build.sh
 fi
