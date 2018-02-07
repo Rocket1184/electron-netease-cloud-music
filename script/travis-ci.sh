@@ -14,7 +14,7 @@ build() {
 }
 
 if pack && build; then
-    ./upload-build.sh
+    script/upload-build.sh
 else
     exit 1
 fi
