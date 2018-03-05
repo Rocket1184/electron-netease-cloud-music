@@ -9,7 +9,7 @@ const projectRoot = path.resolve('.');
 
 let cfg = {
     context: path.join(projectRoot, 'src'),
-    target: 'electron',
+    target: 'electron-main',
     entry: {
         main: path.join(projectRoot, 'src/main/index.js')
     },
