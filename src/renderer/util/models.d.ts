@@ -59,6 +59,7 @@ declare class PlayListModel extends Object {
     id: number;
     name: string;
     creator: UserModel;
+    description: string;
     commentThreadId: number;
     playCount: number;
     coverImgId: number;

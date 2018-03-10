@@ -39,6 +39,7 @@ const Models = {
             id: -1,
             name: '',
             creator: new User(),
+            description: '',
             commentThreadId: -1,
             playCount: -1,
             trackCount: 0,
@@ -109,6 +110,7 @@ export class PlayList {
         this.id = o.id;
         this.name = o.name;
         this.creator = new User(o.creator);
+        this.description = o.description || '';
         this.commentThreadId = o.commentThreadId;
         this.playCount = o.playCount;
         this.trackCount = o.trackCount;
