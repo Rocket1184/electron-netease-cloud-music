@@ -20,7 +20,7 @@
 <body>
     <webview
         allowpopups
-        src="http://music.163.com"
+        src="https://music.163.com"
         partition="login"
         blinkfeatures="OverlayScrollbars"></webview>
 
@@ -58,7 +58,7 @@
                             if(userObj.code === 200){
                                 localStorage.setItem('user', resp.body);
                                 wc.debugger.sendCommand('Network.getCookies', {
-                                    urls: ['http://music.163.com']
+                                    urls: ['https://music.163.com']
                                 }, (err, resp) => {
                                     if(!err.code){
                                         let cks = {};
