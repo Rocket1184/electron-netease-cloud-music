@@ -7,9 +7,9 @@
             <div class="creator">
                 <mu-avatar slot="left"
                     class="avatar"
-                    :src="detail.creator.avatarUrl" />
+                    :src="creatorAvatarSrc" />
                 <span class="creator-name">{{detail.creator.nickname}}</span>
-                <span class="create-time">创建于 {{shortDate(detail.createTime)}}</span>
+                <span class="create-time">创建于 {{createTime}}</span>
             </div>
             <div class="actions">
                 <mu-flat-button :label="`收藏 (${detail.subscribedCount})`"
@@ -41,12 +41,15 @@ export default {
         }
     },
     computed: {
+        creatorAvatarSrc() {
+            return getImgSizeOf(this.detail.creator.avatarUrl, HiDpiPx(40))
+        },
         coverSrc() {
             return getImgSizeOf(this.detail.coverImgUrl, HiDpiPx(160));
+        },
+        createTime() {
+            return shortDate(this.detail.createTime);
         }
-    },
-    methods: {
-        shortDate
     }
 };
 </script>

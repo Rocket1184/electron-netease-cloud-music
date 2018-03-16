@@ -53,7 +53,7 @@
 
 <script>
 import { mapGetters } from 'vuex';
-import { getImgSizeOf } from 'util/image';
+import { getImgSizeOf, HiDpiPx } from 'util/image';
 
 export default {
     name: 'page-player',
@@ -70,8 +70,7 @@ export default {
             'playing'
         ]),
         styleAlbumImg() {
-            const len = window.devicePixelRatio * 220;
-            return `background-image:url(${getImgSizeOf(this.playing.track.album.picUrl, len)});`;
+            return `background-image:url(${getImgSizeOf(this.playing.track.album.picUrl, HiDpiPx(220))});`;
         },
         lyricScrollerStyle() {
             if (this.lyricElemMap.length === 0 || this.currentLyricIndex === -1) {

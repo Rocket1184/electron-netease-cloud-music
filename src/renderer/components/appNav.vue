@@ -25,7 +25,7 @@
                     :style="backgroundUrlStyle">
                     <div class="user-info">
                         <mu-avatar :icon="loginValid ? null : 'music_note'"
-                            :src="user.avatarUrl"
+                            :src="avatarUrl"
                             :iconSize="40"
                             :size="80"></mu-avatar>
                         <span class="user-name"
@@ -56,6 +56,7 @@
 import { mapActions, mapGetters } from 'vuex';
 import { remote } from 'electron';
 
+import { getImgSizeOf, HiDpiPx } from "util/image";
 import ApiRenderer from 'util/apiRenderer';
 import loginDialog from './loginDialog.vue';
 import searchBox from './searchBox.vue';
@@ -86,8 +87,11 @@ export default {
         shouldWindowCtlShow() {
             return !this.isDarwin && !this.currentSettings.windowBorder;
         },
+        avatarUrl() {
+            return getImgSizeOf(this.user.avatarUrl, HiDpiPx(80));
+        },
         backgroundUrlStyle() {
-            return this.user.bkgUrl && `background-image: url(${this.user.bkgUrl})`;
+            return this.user.bkgUrl && `background-image: url(${getImgSizeOf(this.user.bkgUrl, HiDpiPx(300), HiDpiPx(200))})`;
         },
         ...mapGetters([
             'loginValid',

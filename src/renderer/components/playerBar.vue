@@ -84,7 +84,7 @@ export default {
             audioEl: {},
             timeTotal: 0,
             timeCurrent: 0,
-            fallbackImg: 'http://p3.music.126.net/Dev8qwDRGjIxAtopFG0uxg==/3263350512830591.jpg',
+            fallbackImg: 'https://p3.music.126.net/Dev8qwDRGjIxAtopFG0uxg==/3263350512830591.jpg',
             userPlaylistsShown: false,
             currentListShown: false
         };

@@ -56,7 +56,7 @@
                     v-model="inputCaptcha"
                     :errorText="errMsgCaptcha"
                     labelFloat></mu-text-field>
-                <img :src="`http://music.163.com/captcha?id=${captchaId}`"
+                <img :src="`https://music.163.com/captcha?id=${captchaId}`"
                     class="captforce-alignedcha-img"
                     alt="Refresh">
             </div>
