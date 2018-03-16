@@ -55,6 +55,7 @@
 <script>
 import { mapActions, mapGetters } from 'vuex';
 import { remote } from 'electron';
+import { platform } from 'os';
 
 import { getImgSizeOf, HiDpiPx } from "util/image";
 import ApiRenderer from 'util/apiRenderer';
@@ -66,7 +67,7 @@ export default {
     data() {
         return {
             currentWindow: remote.getCurrentWindow(),
-            isDarwin: process.platform === 'darwin',
+            isDarwin: 'darwin' === platform(),
             drawerOpen: false,
             loginDlgShow: false
         };
