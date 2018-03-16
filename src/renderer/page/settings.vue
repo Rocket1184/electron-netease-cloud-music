@@ -172,13 +172,14 @@ export default {
             }
         },
         showVersions() {
+            const versions = remote.getGlobal('process').versions;
             this.$prompt({
                 title: '版本号',
                 text: `<pre>
-                    Electron: ${process.versions.electron}
-                    Chrome: ${process.versions.chrome}
-                    Node: ${process.versions.node}
-                    V8: ${process.versions.v8}
+                    Electron: ${versions.electron}
+                    Chrome: ${versions.chrome}
+                    Node: ${versions.node}
+                    V8: ${versions.v8}
                 </pre>`
             });
         }
