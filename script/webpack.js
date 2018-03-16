@@ -25,6 +25,9 @@ if (argv[0] === 'clean') {
     // copy login.html to dist path, or we cannot use web login
     fs.createReadStream(path.join(projectRoot, 'src/renderer/login.html'))
         .pipe(fs.createWriteStream(path.join(projectRoot, 'dist/login.html')));
+    // copy preload.prod.js to dist/preload.js
+    fs.createReadStream(path.join(projectRoot, 'src/main/preload.prod.js'))
+        .pipe(fs.createWriteStream(path.join(projectRoot, 'dist/preload.js')));
 }
 
 let webpackCfg = [];
@@ -49,5 +52,5 @@ webpack(webpackCfg, (err, stats) => {
         chunkModules: false
     }));
     console.log('\n\nPack for ' + argv.join(', ') + ' succeed.');
-    console.log(`It takes ${(dtEnd - dtStart)/1000} second(s).\n`);
+    console.log(`It takes ${(dtEnd - dtStart) / 1000} second(s).\n`);
 });

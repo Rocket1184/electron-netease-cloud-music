@@ -10,6 +10,8 @@ const BabelMinifyPlugin = require('babel-minify-webpack-plugin');
 const projectRoot = path.resolve('.');
 
 let cfg = {
+    mode: process.env.NODE_ENV || 'development',
+    performance: { hints: false },
     context: projectRoot,
     target: 'electron-renderer',
     entry: {
@@ -19,7 +21,6 @@ let cfg = {
     },
     output: {
         filename: '[name].js',
-        libraryTarget: 'commonjs2',
         path: path.join(projectRoot, 'dist')
     },
     module: {
@@ -70,7 +71,11 @@ let cfg = {
         ]
     },
     plugins: [
-        new ExtractTextPlugin('styles.css')
+        new ExtractTextPlugin('styles.css'),
+        new HtmlWebpackPlugin({
+            filename: 'index.html',
+            template: path.join(projectRoot, 'src/renderer/index.ejs')
+        }),
     ],
     resolve: {
         alias: {
@@ -97,10 +102,6 @@ if (process.env.NODE_ENV === 'production') {
     });
     cfg.plugins.push(
         new BabelMinifyPlugin(),
-        new HtmlWebpackPlugin({
-            filename: 'index.html',
-            template: path.join(projectRoot, 'src/renderer/index.ejs')
-        }),
         new webpack.DefinePlugin({
             'process.env': {
                 PRODUCTION: 'true',
@@ -110,18 +111,12 @@ if (process.env.NODE_ENV === 'production') {
     );
 } else {
     // dev config
-    cfg.devtool = 'cheap-module-eval-source-map';
+    cfg.devtool = 'eval-source-map';
+    cfg.output.libraryTarget = 'commonjs2';
     cfg.externals = Object.keys(packageJson.dependencies);
     cfg.resolve.modules = [
         path.join(projectRoot, 'node_modules')
     ];
-    cfg.plugins.push(
-        new HtmlWebpackPlugin({
-            filename: 'index.html',
-            template: path.join(projectRoot, 'src/renderer/index.ejs'),
-            appModules: path.join(projectRoot, 'node_modules')
-        })
-    );
 }
 
 module.exports = cfg;

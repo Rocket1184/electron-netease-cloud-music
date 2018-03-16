@@ -1,17 +1,22 @@
 'use strict';
 
+import { join } from 'path';
 import { app, BrowserWindow, ipcMain } from 'electron';
 
 import { getCurrent } from './settings';
 
+function isDev() {
+    return process.env.NODE_ENV === 'development';
+}
+
 let shouldAppQuit = true;
 let mainWindow;
-const winURL = process.env.NODE_ENV === 'development'
+const winURL = isDev()
     ? `http://localhost:${require('../../script/config').devPort}`
     : `file://${__dirname}/index.html`;
 
 let loginWindow;
-let loginURL = process.env.NODE_ENV === 'development'
+let loginURL = isDev()
     ? `http://localhost:${require('../../script/config').devPort}/renderer/login.html`
     : `file://${__dirname}/login.html`;
 
@@ -25,7 +30,8 @@ function createWindow(url = winURL) {
         titleBarStyle: settings.windowBorder ? 'default' : 'hidden',
         name: 'Electron Netease Cloud Music',
         webPreferences: {
-            webSecurity: process.env.NODE_ENV !== 'development',
+            preload: join(__dirname, 'preload.js'),
+            nodeIntegration: isDev(),
             blinkFeatures: 'OverlayScrollbars'
         }
     });
@@ -68,9 +74,8 @@ ipcMain.on('showLoginWindow', () => {
         width: 1150,
         name: 'Login',
         webPreferences: {
-            webSecurity: false,
-            blinkFeatures: 'OverlayScrollbars'
-        }
+            blinkFeatures: 'OverlayScrollbars',
+        },
     });
     loginWindow.loadURL(loginURL);
 });
