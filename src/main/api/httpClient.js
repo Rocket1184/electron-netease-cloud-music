@@ -15,7 +15,7 @@ class HttpClient {
             'User-Agent': 'Mozilla/5.0 (X11; Linux x86_64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/60.0.3112.113 Safari/537.36',
             Host: 'music.163.com',
             Accept: '*/*',
-            Referer: 'http://music.163.com/',
+            Referer: 'https://music.163.com/',
             Connection: 'keep-alive'
         };
     }

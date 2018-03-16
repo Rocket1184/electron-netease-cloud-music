@@ -12,7 +12,7 @@ import Client from './httpClient';
 import * as Settings from '../settings';
 import MusicServer from './musicServer';
 
-const BaseURL = 'http://music.163.com';
+const BaseURL = 'https://music.163.com';
 
 const client = new Client();
 
@@ -241,7 +241,7 @@ export function submitListened(id, time) {
     });
 }
 
-export function checkUrlStatus(u = 'http://m10.music.126.net') {
+export function checkUrlStatus(u = 'https://m10.music.126.net') {
     u = String(u);
     if (!~u.indexOf('http')) return new Promise(resolve => resolve(-1));
     const opt = url.parse(u);
