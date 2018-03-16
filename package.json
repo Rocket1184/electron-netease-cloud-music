@@ -19,9 +19,8 @@
     "babel-plugin-transform-es2015-modules-commonjs": "^6.26.0",
     "babel-plugin-transform-object-rest-spread": "^6.26.0",
     "babel-register": "^6.26.0",
-    "css-loader": "^0.28.10",
+    "css-loader": "^0.28.11",
     "devtron": "^1.4.0",
-    "electron": "^2.0.0-beta.3",
     "electron-debug": "^1.5.0",
     "electron-devtools-installer": "^2.2.3",
     "electron-packager": "^11.1.0",
@@ -36,7 +35,7 @@
     "vue-hot-reload-api": "^2.3.0",
     "vue-loader": "^14.2.1",
     "vue-style-loader": "^4.0.2",
-    "vue-template-compiler": "^2.5.14",
+    "vue-template-compiler": "^2.5.16",
     "webpack": "^4.1.1",
     "webpack-dev-server": "^3.1.1"
   },
@@ -45,10 +44,11 @@
     "big-integer": "^1.6.26",
     "cookie": "^0.3.1",
     "debug": "^3.1.0",
+    "electron": "^2.0.0-beta.4",
     "follow-redirects": "^1.4.1",
     "lrc-kit": "^0.4.1",
     "muse-ui": "^2.1.0",
-    "vue": "^2.5.14",
+    "vue": "^2.5.16",
     "vue-router": "^3.0.1",
     "vuex": "^3.0.1"
   }
