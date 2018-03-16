@@ -8,6 +8,8 @@ const BabelMinifyPlugin = require('babel-minify-webpack-plugin');
 const projectRoot = path.resolve('.');
 
 let cfg = {
+    mode: process.env.NODE_ENV || 'development',
+    performance: { hints: false },
     context: path.join(projectRoot, 'src'),
     target: 'electron-main',
     entry: {
