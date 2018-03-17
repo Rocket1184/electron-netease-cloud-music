@@ -1,4 +1,5 @@
 const { remote, ipcRenderer, shell } = require('electron');
+const { stringify } = require('querystring');
 const platform = require('os').platform();
 
 window.require = function (str) {
@@ -19,6 +20,8 @@ window.require = function (str) {
         return {
             platform: () => platform
         };
+    } else if (str === 'querystring') {
+        return { stringify };
     }
     return {};
 };
