@@ -4,7 +4,7 @@
             :key="ar.id"
             class="item">
             <mu-card-media :title="ar | artistTitle"
-                :style="`background-image:url(${ar.picUrl})`"></mu-card-media>
+                :style="ar | artistImgStyle"></mu-card-media>
         </mu-card>
         <div v-for="al in list"
             :key="al.id"
@@ -13,6 +13,8 @@
 </template>
 
 <script>
+import { getImgSizeOf, HiDpiPx } from 'util/image';
+
 export default {
     props: {
         list: {
@@ -24,6 +26,9 @@ export default {
             const name = ar.name;
             const trans = ar.trans && ` (${ar.trans})` || '';
             return name + trans;
+        },
+        artistImgStyle(ar) {
+            return `background-image:url(${getImgSizeOf(ar.picUrl, HiDpiPx(200), HiDpiPx(160))})`
         }
     }
 };

@@ -5,12 +5,12 @@
             class="item">
             <mu-card-header :title="al.artist.name"
                 :subTitle="al.publishTime | shortDate">
-                <mu-avatar :src="al.artist.picUrl"
+                <mu-avatar :src="al | artistAvatarUrl"
                     slot="avatar" />
             </mu-card-header>
             <mu-card-media :title="al.name"
                 class="pic"
-                :style="`background-image:url(${al.picUrl})`">
+                :style="al | albumImgStyle">
             </mu-card-media>
         </mu-card>
         <div v-for="al in list"
@@ -21,6 +21,7 @@
 
 <script>
 import { shortDate } from 'util/formatter';
+import { getImgSizeOf, HiDpiPx } from 'util/image';
 
 export default {
     props: {
@@ -29,7 +30,13 @@ export default {
         }
     },
     filters: {
-        shortDate
+        shortDate,
+        artistAvatarUrl(al) {
+            return `background-image:url(${getImgSizeOf(al.artist.picUrl, HiDpiPx(40))})`
+        },
+        albumImgStyle(al) {
+            return `background-image:url(${getImgSizeOf(al.picUrl, HiDpiPx(200), HiDpiPx(160))})`
+        }
     }
 };
 </script>

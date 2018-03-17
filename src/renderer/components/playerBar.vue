@@ -1,10 +1,9 @@
 <template>
     <mu-paper class="player-bar-wrapper"
         :zDepth="2">
-        <div class="cell">
+        <div class="cell cover">
             <router-link to='/player'>
-                <img :src="getImgAt(64)"
-                    :srcset="`${getImgAt(80)} 1.25x, ${getImgAt(96)} 1.5x, ${getImgAt(128)} 2x`">
+                <img :src="coverImgSrc">
             </router-link>
         </div>
         <div class="cell info">
@@ -75,7 +74,7 @@ import ApiRenderer from 'util/apiRenderer';
 import currentList from './currentList.vue';
 import userPlaylists from './userPlaylists.vue';
 import * as types from '../vuex/mutation-types';
-import { getImgSizeOf } from 'util/image';
+import { getImgSizeOf, HiDpiPx } from 'util/image';
 import { shortTime } from 'util/formatter';
 
 export default {
@@ -96,10 +95,6 @@ export default {
             'restorePlaylist',
             'refreshUserPlaylist'
         ]),
-        getImgAt(size) {
-            const url = this.playing.track.album.picUrl || this.fallbackImg;
-            return getImgSizeOf(url, size);
-        },
         play() {
             this.$store.commit(types.RESUME_PLAYING_MUSIC);
             this.audioEl.play();
@@ -148,6 +143,10 @@ export default {
             'playing',
             'user'
         ]),
+        coverImgSrc() {
+            const url = this.playing.track.album.picUrl || this.fallbackImg;
+            return getImgSizeOf(url, HiDpiPx(64));
+        },
         isFavorite() {
             const { favoriteList } = this.user;
             if (favoriteList) {
@@ -237,6 +236,12 @@ export default {
         vertical-align: top;
         height: 100%;
         display: inline-block;
+    }
+    .cover {
+        img {
+            width: 64px;
+            height: 64px;
+        }
     }
     .info {
         font-size: 14px;
