@@ -7,15 +7,6 @@
             ],
             "assets/*": [
                 "./assets/*"
-            ],
-            "util/*": [
-                "./src/renderer/util/*"
-            ],
-            "page/*": [
-                "./src/renderer/page/*"
-            ],
-            "compo/*": [
-                "./src/renderer/components/*"
             ]
         }
     }

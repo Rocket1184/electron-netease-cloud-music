@@ -15,9 +15,6 @@ process.env.DEBUG_COLORS = true;
 process.env.NODE_ENV = 'development';
 require('babel-register');
 
-// Install `electron-debug` with `devtron`
-require('electron-debug')({ showDevTools: true });
-
 // Install `vue-devtools`
 const EDI = require('electron-devtools-installer');
 const install = EDI.default;

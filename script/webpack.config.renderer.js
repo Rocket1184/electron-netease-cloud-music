@@ -1,27 +1,27 @@
 'use strict';
 
-const path = require('path');
 const webpack = require('webpack');
 const packageJson = require('../package.json');
 const HtmlWebpackPlugin = require('html-webpack-plugin');
+const CopyWebpackPlugin = require('copy-webpack-plugin');
 const ExtractTextPlugin = require('extract-text-webpack-plugin');
 const BabelMinifyPlugin = require('babel-minify-webpack-plugin');
 
-const projectRoot = path.resolve('.');
+const { absPath } = require('./util');
 
 let cfg = {
     mode: process.env.NODE_ENV || 'development',
     performance: { hints: false },
-    context: projectRoot,
+    context: absPath('src/renderer'),
     target: 'electron-renderer',
     entry: {
         renderer: [
-            path.join(projectRoot, 'src/renderer/main.js')
+            './main.js'
         ]
     },
     output: {
         filename: '[name].js',
-        path: path.join(projectRoot, 'dist')
+        path: absPath('dist')
     },
     module: {
         rules: [
@@ -31,10 +31,6 @@ let cfg = {
                     fallback: 'style-loader',
                     use: 'css-loader'
                 })
-            },
-            {
-                test: /\.html$/,
-                use: 'vue-html-loader'
             },
             {
                 test: /\.js$/,
@@ -74,16 +70,13 @@ let cfg = {
         new ExtractTextPlugin('styles.css'),
         new HtmlWebpackPlugin({
             filename: 'index.html',
-            template: path.join(projectRoot, 'src/renderer/index.ejs')
+            template: absPath('src/renderer/index.ejs')
         }),
     ],
     resolve: {
         alias: {
-            'assets': path.join(projectRoot, 'assets/'),
-            '@': path.join(projectRoot, 'src/renderer/'),
-            'util': path.join(projectRoot, 'src/renderer/util/'),
-            'page': path.join(projectRoot, 'src/renderer/page/'),
-            'compo': path.join(projectRoot, 'src/renderer/components/')
+            'assets': absPath('assets'),
+            '@': absPath('src/renderer')
         }
     }
 };
@@ -101,21 +94,21 @@ if (process.env.NODE_ENV === 'production') {
         }
     });
     cfg.plugins.push(
+        new CopyWebpackPlugin([
+            { from: absPath('package.json'), to: absPath('dist') },
+            { from: absPath('src/renderer/login.html'), to: absPath('dist') },
+            { from: absPath('src/main/preload.prod.js'), to: absPath('dist/preload.js') }
+        ]),
         new BabelMinifyPlugin(),
-        new webpack.DefinePlugin({
-            'process.env': {
-                PRODUCTION: 'true',
-                NODE_ENV: '"production"'
-            }
-        })
+        new webpack.DefinePlugin({ 'process.env.NODE_ENV': `"production"` })
     );
 } else {
     // dev config
-    cfg.devtool = 'eval-source-map';
+    cfg.devtool = 'cheap-module-source-map';
     cfg.output.libraryTarget = 'commonjs2';
     cfg.externals = Object.keys(packageJson.dependencies);
     cfg.resolve.modules = [
-        path.join(projectRoot, 'node_modules')
+        absPath('node_modules')
     ];
 }
 

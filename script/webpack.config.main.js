@@ -1,24 +1,23 @@
 'use strict';
 
-const path = require('path');
 const webpack = require('webpack');
 const packageJson = require('../package.json');
 const BabelMinifyPlugin = require('babel-minify-webpack-plugin');
 
-const projectRoot = path.resolve('.');
+const { absPath } = require('./util');
 
 let cfg = {
     mode: process.env.NODE_ENV || 'development',
     performance: { hints: false },
-    context: path.join(projectRoot, 'src'),
+    context: absPath('src/main'),
     target: 'electron-main',
     entry: {
-        main: path.join(projectRoot, 'src/main/index.js')
+        main: './index.js'
     },
     output: {
         filename: '[name].js',
         libraryTarget: 'commonjs2',
-        path: path.join(projectRoot, 'dist')
+        path: absPath('dist')
     },
     module: {
         rules: [
@@ -40,19 +39,14 @@ if (process.env.NODE_ENV === 'production') {
     // release config
     cfg.plugins.push(
         new BabelMinifyPlugin(),
-        new webpack.DefinePlugin({
-            PRODUCTION: 'true',
-            'process.env': {
-                NODE_ENV: '"production"'
-            }
-        })
+        new webpack.DefinePlugin({ 'process.env.NODE_ENV': `"production"` })
     );
 } else {
     // dev config
-    cfg.devtool = 'eval';
+    cfg.devtool = 'cheap-module-source-map';
     cfg.externals = Object.keys(packageJson.dependencies);
     cfg.resolve.modules = [
-        path.join(projectRoot, 'node_modules')
+        absPath('node_modules')
     ];
 }
 

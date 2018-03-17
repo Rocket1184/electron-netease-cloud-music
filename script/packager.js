@@ -1,6 +1,4 @@
-const path = require('path');
-
-const projectRoot = path.resolve('.');
+const { absPath, removeKeepDot } = require('./util');
 const packager = require('electron-packager');
 
 let argv = process.argv.slice(2);
@@ -9,22 +7,16 @@ if (!argv.length) argv = 'all';
 /* eslint-disable no-console */
 
 if (argv[0] === 'clean') {
-    const distPath = path.join(projectRoot, 'build');
-    const cnt = require('fs').readdirSync(distPath).filter(f => f[0] !== '.').length;
-    if (cnt) {
-        require('child_process').execSync(`rm -r ${distPath}/*`);
-        console.log('Clean build dist succeed.\n');
-    }
-    else console.log('Nothing to clean.\n');
+    removeKeepDot(absPath('build'));
     process.exit(0);
 }
 
 const options = {
     arch: 'x64',
     asar: true,
-    icon: path.join(projectRoot, 'assets/icons/icon'),
-    dir: path.join(projectRoot, 'dist'),
-    out: path.join(projectRoot, 'build'),
+    icon: absPath('assets/icons/icon'),
+    dir: absPath('dist'),
+    out: absPath('build'),
     overwrite: true,
     platform: argv
 };

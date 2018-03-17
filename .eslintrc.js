@@ -1,7 +1,7 @@
 module.exports = {
     root: true,
-    parser: 'babel-eslint',
     parserOptions: {
+        ecmaVersion: 8,
         sourceType: 'module'
     },
     env: {
@@ -10,7 +10,13 @@ module.exports = {
         es6: true
     },
     plugins: [
-        'html'
+        'vue'
     ],
-    extends: 'eslint:recommended'
-}
+    extends: [
+        'eslint:recommended',
+        'plugin:vue/essential'
+    ],
+    rules: {
+        'no-case-declarations': 'off'
+    }
+};

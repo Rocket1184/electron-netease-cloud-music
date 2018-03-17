@@ -1,8 +1,6 @@
-const fs = require('fs');
-const path = require('path');
 const webpack = require('webpack');
 
-const projectRoot = path.resolve('.');
+const { absPath, removeKeepDot } = require('./util');
 
 let argv = process.argv.slice(2);
 if (!argv.length) argv = ['main', 'renderer'];
@@ -10,29 +8,13 @@ if (!argv.length) argv = ['main', 'renderer'];
 /* eslint-disable no-console */
 
 if (argv[0] === 'clean') {
-    const distPath = path.join(projectRoot, 'dist');
-    const cnt = require('fs').readdirSync(distPath).filter(f => f[0] !== '.').length;
-    if (cnt) {
-        require('child_process').execSync(`rm -r ${distPath}/*`);
-        console.log('Clean webpack bundle succeed.\n');
-    }
-    else console.log('Nothing to clean.\n');
+    removeKeepDot(absPath('dist'));
     process.exit(0);
-} else {
-    // copy package.json to dist path, or we cannot start app
-    fs.createReadStream(path.join(projectRoot, 'package.json'))
-        .pipe(fs.createWriteStream(path.join(projectRoot, 'dist/package.json')));
-    // copy login.html to dist path, or we cannot use web login
-    fs.createReadStream(path.join(projectRoot, 'src/renderer/login.html'))
-        .pipe(fs.createWriteStream(path.join(projectRoot, 'dist/login.html')));
-    // copy preload.prod.js to dist/preload.js
-    fs.createReadStream(path.join(projectRoot, 'src/main/preload.prod.js'))
-        .pipe(fs.createWriteStream(path.join(projectRoot, 'dist/preload.js')));
 }
 
 let webpackCfg = [];
-if (~argv.indexOf('main')) webpackCfg.push(require('./webpack.config.main'));
-if (~argv.indexOf('renderer')) webpackCfg.push(require('./webpack.config.renderer'));
+if (argv.includes('main')) webpackCfg.push(require('./webpack.config.main'));
+if (argv.includes('renderer')) webpackCfg.push(require('./webpack.config.renderer'));
 
 if (!webpackCfg.length) {
     console.error('No pack target specified.');
@@ -47,7 +29,7 @@ webpack(webpackCfg, (err, stats) => {
     process.stdout.write(stats.toString({
         colors: true,
         modules: false,
-        children: false,
+        children: true,
         chunks: false,
         chunkModules: false
     }));
