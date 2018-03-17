@@ -19,13 +19,12 @@ require('babel-register');
 require('electron-debug')({ showDevTools: true });
 
 // Install `vue-devtools`
+const EDI = require('electron-devtools-installer');
+const install = EDI.default;
+const vueDevTool = EDI.VUEJS_DEVTOOLS.id;
+
 require('electron').app.on('ready', () => {
-    let installExtension = require('electron-devtools-installer');
-    installExtension.default(installExtension.VUEJS_DEVTOOLS)
-        .then(() => { })
-        .catch(err => {
-            console.log('Unable to install `vue-devtools`: \n', err);
-        });
+    install(vueDevTool).catch(console.log);
 });
 
 // Require `main` process to boot app
