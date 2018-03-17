@@ -25,7 +25,7 @@
                     :style="backgroundUrlStyle">
                     <div class="user-info">
                         <mu-avatar :icon="loginValid ? null : 'music_note'"
-                            :src="avatarUrl"
+                            :src="loginValid ? avatarUrl : null"
                             :iconSize="40"
                             :size="80"></mu-avatar>
                         <span class="user-name"
@@ -57,8 +57,8 @@ import { mapActions, mapGetters } from 'vuex';
 import { remote } from 'electron';
 import { platform } from 'os';
 
-import { getImgSizeOf, HiDpiPx } from "util/image";
-import ApiRenderer from 'util/apiRenderer';
+import { sizeImg, HiDpiPx } from "@/util/image";
+import ApiRenderer from '@/util/apiRenderer';
 import loginDialog from './loginDialog.vue';
 import searchBox from './searchBox.vue';
 import Routes from '@/routes';
@@ -89,10 +89,10 @@ export default {
             return !this.isDarwin && !this.currentSettings.windowBorder;
         },
         avatarUrl() {
-            return getImgSizeOf(this.user.avatarUrl, HiDpiPx(80));
+            return sizeImg(this.user.avatarUrl, HiDpiPx(80));
         },
         backgroundUrlStyle() {
-            return this.user.bkgUrl && `background-image: url(${getImgSizeOf(this.user.bkgUrl, HiDpiPx(300), HiDpiPx(200))})`;
+            return this.user.bkgUrl && `background-image: url(${sizeImg(this.user.bkgUrl, HiDpiPx(300), HiDpiPx(200))})`;
         },
         ...mapGetters([
             'loginValid',
@@ -216,7 +216,7 @@ export default {
         width: 100%;
         height: 200px;
         background-size: cover;
-        background-image: url('~assets/img/TealRedYellow.png');
+        background-image: url("~assets/img/TealRedYellow.png");
         background-position-y: 50%;
         &::before {
             position: absolute;

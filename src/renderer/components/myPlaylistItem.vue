@@ -11,7 +11,7 @@
 </template>
 
 <script>
-import { getImgSizeOf, HiDpiPx } from 'util/image';
+import { sizeImg, HiDpiPx } from '@/util/image';
 
 export default {
     props: {
@@ -24,7 +24,7 @@ export default {
     },
     computed: {
         coverUrl() {
-            return getImgSizeOf(this.item.coverImgUrl, HiDpiPx(40));
+            return sizeImg(this.item.coverImgUrl, HiDpiPx(40));
         }
     }
 };

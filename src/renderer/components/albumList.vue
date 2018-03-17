@@ -20,8 +20,8 @@
 </template>
 
 <script>
-import { shortDate } from 'util/formatter';
-import { getImgSizeOf, HiDpiPx } from 'util/image';
+import { shortDate } from '@/util/formatter';
+import { bkgImg, sizeImg, HiDpiPx } from '@/util/image';
 
 export default {
     props: {
@@ -32,10 +32,10 @@ export default {
     filters: {
         shortDate,
         artistAvatarUrl(al) {
-            return `background-image:url(${getImgSizeOf(al.artist.picUrl, HiDpiPx(40))})`
+            return sizeImg(al.artist.picUrl, HiDpiPx(40));
         },
         albumImgStyle(al) {
-            return `background-image:url(${getImgSizeOf(al.picUrl, HiDpiPx(200), HiDpiPx(160))})`
+            return bkgImg(sizeImg(al.picUrl, HiDpiPx(200), HiDpiPx(160)));
         }
     }
 };

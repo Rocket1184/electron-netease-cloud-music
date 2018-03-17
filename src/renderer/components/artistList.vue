@@ -13,7 +13,7 @@
 </template>
 
 <script>
-import { getImgSizeOf, HiDpiPx } from 'util/image';
+import { bkgImg, sizeImg, HiDpiPx } from '@/util/image';
 
 export default {
     props: {
@@ -28,7 +28,7 @@ export default {
             return name + trans;
         },
         artistImgStyle(ar) {
-            return `background-image:url(${getImgSizeOf(ar.picUrl, HiDpiPx(200), HiDpiPx(160))})`
+            return bkgImg(sizeImg(ar.picUrl, HiDpiPx(200), HiDpiPx(160)));
         }
     }
 };

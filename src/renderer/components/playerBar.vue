@@ -70,12 +70,12 @@
 <script>
 import { mapActions, mapGetters } from 'vuex';
 
-import ApiRenderer from 'util/apiRenderer';
+import ApiRenderer from '@/util/apiRenderer';
 import currentList from './currentList.vue';
 import userPlaylists from './userPlaylists.vue';
 import * as types from '../vuex/mutation-types';
-import { getImgSizeOf, HiDpiPx } from 'util/image';
-import { shortTime } from 'util/formatter';
+import { sizeImg, HiDpiPx } from '@/util/image';
+import { shortTime } from '@/util/formatter';
 
 export default {
     data() {
@@ -145,7 +145,7 @@ export default {
         ]),
         coverImgSrc() {
             const url = this.playing.track.album.picUrl || this.fallbackImg;
-            return getImgSizeOf(url, HiDpiPx(64));
+            return sizeImg(url, HiDpiPx(64));
         },
         isFavorite() {
             const { favoriteList } = this.user;
@@ -246,7 +246,7 @@ export default {
     .info {
         font-size: 14px;
         padding: 10px 14px;
-        width: calc(~'100% - 244px');
+        width: calc(~"100% - 244px");
         .song-name,
         .artist-name {
             display: inline-block;
@@ -276,7 +276,7 @@ export default {
         .progress {
             position: relative;
             .slider {
-                width: calc(~'100% - 100px');
+                width: calc(~"100% - 100px");
             }
             .text {
                 position: absolute;

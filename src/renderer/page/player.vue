@@ -53,14 +53,14 @@
 
 <script>
 import { mapGetters } from 'vuex';
-import { getImgSizeOf, HiDpiPx } from 'util/image';
+import { bkgImg, sizeImg, HiDpiPx } from '@/util/image';
 
 export default {
     name: 'page-player',
     data() {
         return {
             isActive: false,
-            _audioEl: {},
+            audioEl: {},
             lyricElemMap: [],
             currentLyricIndex: -1
         };
@@ -70,7 +70,7 @@ export default {
             'playing'
         ]),
         styleAlbumImg() {
-            return `background-image:url(${getImgSizeOf(this.playing.track.album.picUrl, HiDpiPx(220))});`;
+            return bkgImg(sizeImg(this.playing.track.album.picUrl, HiDpiPx(220)));
         },
         lyricScrollerStyle() {
             if (this.lyricElemMap.length === 0 || this.currentLyricIndex === -1) {
@@ -103,8 +103,8 @@ export default {
         }
     },
     created() {
-        this._audioEl = document.getElementById('playerbar-audio');
-        this._audioEl.ontimeupdate = ev => {
+        this.audioEl = document.getElementById('playerbar-audio');
+        this.audioEl.ontimeupdate = ev => {
             // do nothing if element map is empty or compo not acitve
             // it's empty in case:
             // 1. no lyric for this track
@@ -175,7 +175,11 @@ export default {
         background-position: 50% 0%;
         filter: blur(60px);
         opacity: 0.8;
-        transform: translate3d(0, 0, 0); // magic!!! this enables GPU acceleration!!!!
+        transform: translate3d(
+            0,
+            0,
+            0
+        ); // magic!!! this enables GPU acceleration!!!!
     }
     .disk {
         flex: 1;

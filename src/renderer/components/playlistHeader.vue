@@ -31,8 +31,8 @@
 </template>
 
 <script>
-import { getImgSizeOf, HiDpiPx } from 'util/image';
-import { shortDate } from 'util/formatter';
+import { sizeImg, HiDpiPx } from '@/util/image';
+import { shortDate } from '@/util/formatter';
 
 export default {
     props: {
@@ -42,10 +42,10 @@ export default {
     },
     computed: {
         creatorAvatarSrc() {
-            return getImgSizeOf(this.detail.creator.avatarUrl, HiDpiPx(40))
+            return sizeImg(this.detail.creator.avatarUrl, HiDpiPx(40))
         },
         coverSrc() {
-            return getImgSizeOf(this.detail.coverImgUrl, HiDpiPx(160));
+            return sizeImg(this.detail.coverImgUrl, HiDpiPx(160));
         },
         createTime() {
             return shortDate(this.detail.createTime);

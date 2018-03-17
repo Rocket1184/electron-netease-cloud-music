@@ -1,8 +1,12 @@
-export function getImgSizeOf(url = '', width, height = width) {
-    if (url.startsWith('http:')) {
-        return `https${url.slice(4)}?param=${width}y${height}`;
-    }
+export function sizeImg(url, width, height = width) {
+    if (url === null || url === undefined) url = '';
+    if (url.startsWith('http:')) url = 'https' + url.slice(4);
     return `${url}?param=${width}y${height}`;
+}
+
+export function bkgImg(url) {
+    if (url === null || url === undefined) url = '';
+    return `background-image:url(${url})`
 }
 
 export function blurImg(id, width, height = width) {
