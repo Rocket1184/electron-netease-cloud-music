@@ -27,7 +27,7 @@
 </template>
 
 <script>
-import { shortTime } from 'util/formatter';
+import { shortTime } from '@/util/formatter';
 
 export default {
     props: {

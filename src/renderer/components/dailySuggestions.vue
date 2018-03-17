@@ -23,10 +23,10 @@
 <script>
 import { mapGetters } from 'vuex';
 
-import { Track } from 'util/models';
+import { Track } from '@/util/models';
 import PlayAll from './playAll.vue';
 import TrackList from './trackList.vue';
-import ApiRenderer from 'util/apiRenderer';
+import ApiRenderer from '@/util/apiRenderer';
 
 export default {
     data() {

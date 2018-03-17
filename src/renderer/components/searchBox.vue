@@ -13,8 +13,8 @@
 
 <script>
 import { stringify } from 'querystring';
-import ApiRenderer from 'util/apiRenderer';
-import { searchIconMap } from 'util/searchType';
+import ApiRenderer from '@/util/apiRenderer';
+import { searchIconMap } from '@/util/searchType';
 
 export default {
     data() {

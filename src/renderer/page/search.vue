@@ -83,13 +83,13 @@
 <script>
 import { stringify } from 'querystring';
 
-import { Track } from 'util/models';
-import TrackList from 'compo/trackList.vue';
-import ArtistList from 'compo/artistList.vue';
-import AlbumList from 'compo/albumList.vue';
-import UnderConstructionTip from 'compo/underConstructionTip.vue';
-import { searchTypes } from 'util/searchType';
-import ApiRenderer from 'util/apiRenderer';
+import { Track } from '@/util/models';
+import TrackList from '@/components/trackList.vue';
+import ArtistList from '@/components/artistList.vue';
+import AlbumList from '@/components/albumList.vue';
+import UnderConstructionTip from '@/components/underConstructionTip.vue';
+import { searchTypes } from '@/util/searchType';
+import ApiRenderer from '@/util/apiRenderer';
 
 export default {
     name: 'page-search',

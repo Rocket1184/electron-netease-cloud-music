@@ -1,5 +1,5 @@
 import * as types from '../mutation-types';
-import { User, PlayList } from 'util/models';
+import { User, PlayList } from '@/util/models';
 
 const state = {
     loginValid: false,

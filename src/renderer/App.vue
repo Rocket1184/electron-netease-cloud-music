@@ -15,9 +15,9 @@
 <script>
 import { mapActions, mapGetters } from 'vuex';
 
-import AppNav from 'compo/appNav.vue';
-import PlayerBar from 'compo/playerBar.vue';
-import ApiRenderer from 'util/apiRenderer';
+import AppNav from '@/components/appNav.vue';
+import PlayerBar from '@/components/playerBar.vue';
+import ApiRenderer from '@/util/apiRenderer';
 import * as types from './vuex/mutation-types';
 
 export default {
@@ -59,14 +59,14 @@ body,
 }
 
 @font-face {
-    font-family: 'Material Icons';
+    font-family: "Material Icons";
     font-style: normal;
     font-weight: 400;
-    src: url('~assets/font/material-icons.woff2') format('woff2');
+    src: url("~assets/font/material-icons.woff2") format("woff2");
 }
 
 .material-icons {
-    font-family: 'Material Icons';
+    font-family: "Material Icons";
     font-weight: normal;
     font-style: normal;
     font-size: 24px;

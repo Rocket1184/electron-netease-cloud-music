@@ -5,7 +5,7 @@
 </template>
 
 <script>
-import dailySuggestions from 'compo/dailySuggestions.vue';
+import dailySuggestions from '@/components/dailySuggestions.vue';
 
 export default {
     name: 'page-index',

@@ -321,6 +321,7 @@ export function getVersionName() {
         try {
             rev = cp.execSync('git rev-parse --short HEAD').toString().trim();
             version += `.${rev}+`;
+            // eslint-disable-next-line no-empty
         } catch (err) { }
     } else {
         let hash;
@@ -328,6 +329,7 @@ export function getVersionName() {
             const hashFilePath = path.join(app.getPath('exe'), '../ncm_hash');
             hash = fs.readFileSync(hashFilePath).toString().trim();
             version += `-${hash}`;
+            // eslint-disable-next-line no-empty
         } catch (err) { }
     }
     return version;

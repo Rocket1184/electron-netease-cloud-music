@@ -38,10 +38,10 @@
 <script>
 import { mapActions, mapGetters } from 'vuex';
 
-import PlayAll from 'compo/playAll.vue';
-import TrackList from 'compo/trackList.vue';
-import PlaylistItem from 'compo/myPlaylistItem.vue';
-import PlaylistHeader from 'compo/playlistHeader.vue';
+import PlayAll from '@/components/playAll.vue';
+import TrackList from '@/components/trackList.vue';
+import PlaylistItem from '@/components/myPlaylistItem.vue';
+import PlaylistHeader from '@/components/playlistHeader.vue';
 
 export default {
     name: 'page-playlist',

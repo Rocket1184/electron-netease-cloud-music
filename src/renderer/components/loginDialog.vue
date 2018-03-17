@@ -73,7 +73,7 @@
 import { mapActions } from 'vuex';
 import { ipcRenderer } from 'electron';
 
-import ApiRenderer from 'util/apiRenderer';
+import ApiRenderer from '@/util/apiRenderer';
 
 function initData() {
     return {
@@ -89,7 +89,7 @@ function initData() {
         errMsgCaptcha: '',
         posting: false
     };
-};
+}
 
 export default {
     props: {
@@ -130,6 +130,7 @@ export default {
                     this.errMsgCaptcha = '登录过于频繁，请输入验证码';
                     this.captchaId = resp.captchaId;
                     this.needCaptcha = true;
+                    break;
                 case 501:
                     this.errMsgUsr = '用户不存在';
                     break;
