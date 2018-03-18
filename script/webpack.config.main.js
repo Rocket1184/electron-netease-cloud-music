@@ -45,9 +45,11 @@ if (process.env.NODE_ENV === 'production') {
     // dev config
     cfg.devtool = 'cheap-module-source-map';
     cfg.externals = Object.keys(packageJson.dependencies);
-    cfg.resolve.modules = [
-        absPath('node_modules')
-    ];
+    cfg.resolve = {
+        modules: [
+            absPath('node_modules')
+        ]
+    };
 }
 
 module.exports = cfg;

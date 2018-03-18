@@ -1,42 +1,52 @@
-const path = require('path');
+'use strict';
+
+const { exec } = require('child_process');
 const webpack = require('webpack');
 const WebpackDevServer = require('webpack-dev-server');
 
-const projectCfg = require('./config');
-const projectRoot = path.resolve('.');
+const { absPath } = require('./util');
+const config = require('./config');
 
 /* eslint-disable no-console */
 
+// Press Ctrl-C to exit
 process.on('SIGINT', () => {
     console.log('\nCtrl-C Pressed. Exiting...\n');
-    mainProcess.kill();
+    electron.kill();
     process.exit(0);
 });
 
-const mainProcess = require('child_process').exec(`electron ${projectRoot}/src/main/index.dev.js`);
-mainProcess.stdout.pipe(process.stdout);
-mainProcess.stderr.pipe(process.stderr);
-mainProcess.on('close', code => {
-    console.log('\nElectron exited. Exiting...');
+const electron = exec(`electron ${absPath('/src/main/index.dev.js')}`);
+
+electron.stdout.pipe(process.stdout);
+electron.stderr.pipe(process.stderr);
+// terminate webpack-dev-server when Electron closed
+electron.on('close', code => {
+    console.log('\nElectron closed. Exiting...');
     process.exit(code);
 });
 
-let compileCfg = require('./webpack.config.renderer');
-compileCfg.entry.renderer.unshift(
-    `webpack-dev-server/client?http://localhost:${projectCfg.devPort}/`,
-    'webpack/hot/dev-server'
-);
-compileCfg.plugins.push(
-    new webpack.HotModuleReplacementPlugin()
-);
-const compiler = webpack(compileCfg);
+// webpack config
+const compileCfg = require('./webpack.config.renderer');
 
-const serverCfg = {
+// webpack-dev-server option
+const devServerOpt = {
+    // `hot` must be true when using HMR
     hot: true,
     stats: 'minimal',
-    overlay: true,
-    contentBase: path.join(projectRoot, 'src')
+    // `host` and `port` must be specified when using `addDevServerEntrypoints`
+    // see https://github.com/webpack/webpack-dev-server/blob/v3.1.1/lib/util/createDomain.js
+    host: 'localhost',
+    port: config.devPort,
+    overlay: true
 };
 
-const devServer = new WebpackDevServer(compiler, serverCfg);
-devServer.listen(projectCfg.devPort);
+// enable HMR.
+// see https://webpack.js.org/guides/hot-module-replacement/#via-the-node-js-api
+WebpackDevServer.addDevServerEntrypoints(compileCfg, devServerOpt);
+compileCfg.plugins.push(new webpack.HotModuleReplacementPlugin());
+
+const compiler = webpack(compileCfg);
+
+const devServer = new WebpackDevServer(compiler, devServerOpt);
+devServer.listen(config.devPort);
