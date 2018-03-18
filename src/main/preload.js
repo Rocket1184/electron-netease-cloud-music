@@ -1,2 +1,2 @@
 const { resolve, join } = require('path');
-require('module').globalPaths.push(join(resolve('.'), 'node_modules'))
+require('module').globalPaths.push(join(resolve('.'), 'node_modules'));

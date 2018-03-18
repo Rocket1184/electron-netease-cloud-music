@@ -17,6 +17,7 @@ module.exports = {
         'plugin:vue/essential'
     ],
     rules: {
+        'semi': 'error',
         'no-case-declarations': 'off'
     }
 };

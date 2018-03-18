@@ -6,7 +6,7 @@ export function sizeImg(url, width, height = width) {
 
 export function bkgImg(url) {
     if (url === null || url === undefined) url = '';
-    return `background-image:url(${url})`
+    return `background-image:url(${url})`;
 }
 
 export function blurImg(id, width, height = width) {

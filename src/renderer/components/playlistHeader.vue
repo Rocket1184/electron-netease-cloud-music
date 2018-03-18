@@ -42,7 +42,7 @@ export default {
     },
     computed: {
         creatorAvatarSrc() {
-            return sizeImg(this.detail.creator.avatarUrl, HiDpiPx(40))
+            return sizeImg(this.detail.creator.avatarUrl, HiDpiPx(40));
         },
         coverSrc() {
             return sizeImg(this.detail.coverImgUrl, HiDpiPx(160));
