@@ -17,6 +17,7 @@ function removeKeepDot(dir) {
             fs.unlinkSync(fullPath);
         } else if (stat.isDirectory) {
             removeKeepDot(fullPath);
+            fs.rmdirSync(fullPath);
         }
     });
     return true;
