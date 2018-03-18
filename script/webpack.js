@@ -22,17 +22,15 @@ if (!webpackCfg.length) {
     process.exit(1);
 }
 
-const dtStart = Date.now();
 webpack(webpackCfg, (err, stats) => {
-    const dtEnd = Date.now();
     if (err) throw err;
-    process.stdout.write(stats.toString({
-        colors: true,
-        modules: false,
-        children: true,
-        chunks: false,
-        chunkModules: false
-    }));
-    console.log('\n\nPack for ' + argv.join(', ') + ' succeed.');
-    console.log(`It takes ${(dtEnd - dtStart) / 1000} second(s).\n`);
+    else if (stats.hasErrors()) {
+        process.stderr.write(stats.toString({ colors: true, errorDetails: true }));
+        console.log(`'\n\nError when packing ${argv.join(', ')}.`);
+        process.exit(1);
+    } else {
+        process.stdout.write(stats.toString({ colors: true }));
+        console.log(`'\n\nPack for ${argv.join(', ')} succeed.`);
+        process.exit(0);
+    }
 });
