@@ -26,8 +26,19 @@ const musicCache = new Cache(cachePathMap.music);
 const lyricCache = new Cache(cachePathMap.lyric);
 
 const musicServer = new MusicServer(musicCache);
-const musicServerPort = process.env.NODE_ENV === 'development' ? 8210 : 8209;
-musicServer.listen(musicServerPort);
+
+function bindMusicServer(port) {
+    try {
+        musicServer.listen(port);
+        return false;
+    } catch (err) {
+        return true;
+    }
+}
+let port;
+do {
+    port = 1024 + Math.floor(Math.random() * 64511);
+} while (bindMusicServer(port));
 
 export function updateCookie(cookie) {
     client.updateCookie(cookie);
@@ -141,7 +152,15 @@ export function getMusicUrl(idOrIds, quality = 'h') {
 }
 
 export function getMusicUrlCached(id, quality = 'l') {
-    return { url: `http://127.0.0.1:${musicServerPort}/music?id=${id}&quality=${quality}` };
+    return {
+        url: url.format({
+            protocol: 'http:',
+            hostname: '127.0.0.1',
+            port: musicServer.server.address().port,
+            pathname: '/music',
+            query: { id, quality }
+        })
+    };
 }
 
 export function getMusicComments(rid, limit = 20, offset = 0) {
