@@ -29,7 +29,6 @@ const Models = {
             },
             artists: [],
             lyrics: {},
-            urls: {},
             duration: -1,
             commentThreadId: -1
         };
@@ -80,11 +79,6 @@ export class Track {
         this.album = o.al || o.album;
         this.artists = o.ar || o.artists;
         this.lyrics = o.lyrics;
-        this.urls = Object.assign({
-            h: '',
-            m: '',
-            l: ''
-        }, o.urls || {});
         this.duration = o.dt || o.duration;
         this.commentThreadId = o.commentThreadId;
     }
@@ -95,12 +89,6 @@ export class Track {
 
     get artistName() {
         return this.artists.map(a => a.name).join(' / ');
-    }
-
-    setUrl(type, url) {
-        if (type in this.urls) {
-            this.urls[type] = url;
-        } else throw new Error(`Url type '${type}' is not in [h,m,l]`);
     }
 }
 

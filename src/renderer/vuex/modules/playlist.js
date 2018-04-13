@@ -8,6 +8,7 @@ export const LOOP_TYPES = {
 };
 
 const state = {
+    url: '',
     paused: true,
     currentIndex: 0,
     loopMode: LOOP_TYPES.LIST_LOOP,
@@ -17,9 +18,7 @@ const state = {
 
 const mutations = {
     [types.UPDATE_PLAYING_URL](state, payload) {
-        const { list, currentIndex } = state;
-        let target = list[currentIndex];
-        if (payload) Object.assign(target.urls, payload);
+        state.url = payload;
     },
     [types.PAUSE_PLAYING_MUSIC](state) {
         state.paused = true;

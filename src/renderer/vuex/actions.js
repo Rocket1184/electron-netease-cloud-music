@@ -66,7 +66,7 @@ export function logout({ commit }) {
 
 async function updatePlayingUrl(commit, trackId, quality) {
     const oUrl = await ApiRenderer.getMusicUrlCached(trackId, quality);
-    commit(types.UPDATE_PLAYING_URL, { [quality]: oUrl.url });
+    commit(types.UPDATE_PLAYING_URL, oUrl.url);
 }
 
 function playThisTrack(commit, list, index, quality) {
@@ -112,7 +112,9 @@ export function playTrackIndex({ commit, state }, payload) {
 
 export async function restorePlaylist(context, payload) {
     const { playlist } = payload;
-    context.commit(types.RESTORE_PLAYLIST, playlist);
+    const { commit, getters, state } = context;
+    commit(types.RESTORE_PLAYLIST, playlist);
+    updatePlayingUrl(commit, getters.playing.track.id, state.settings.bitRate);
 }
 
 export async function refreshUserPlaylist({ commit }, payload) {
