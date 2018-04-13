@@ -34,7 +34,7 @@ function getRange(req, total) {
                     range[1] = parseInt(ranges[1]);
                     range[1] = range[1] < 16 ? 16 : range[1];
                 }
-            } catch (e) { 
+            } catch (e) {
                 // ignore it
             }
         }
@@ -107,7 +107,7 @@ class MusicServer {
                     let file = fs.createReadStream(filePath);
                     file.pipe(res, { end: false });
                     // eslint-disable-next-line no-inner-declarations
-                    async function endHandler() {
+                    const endHandler = async function () {
                         d('stream end but not finished');
                         const newStat = await statAsync(filePath);
                         if (newStat.size < realLength) {
