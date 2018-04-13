@@ -150,7 +150,7 @@ export default {
         isFavorite() {
             const { favoriteList } = this.user;
             if (favoriteList) {
-                const track = favoriteList.tracks.filter(t => t.id === this.playing.track.id).pop();
+                const track = favoriteList.tracks.find(t => t.id === this.playing.track.id);
                 return typeof track === 'object';
             }
             return false;
