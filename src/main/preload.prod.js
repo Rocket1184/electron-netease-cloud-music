@@ -1,9 +1,11 @@
+'use strict';
+
 const { remote, ipcRenderer, shell } = require('electron');
 const { stringify } = require('querystring');
 const platform = require('os').platform();
 
-window.require = function (str) {
-    if (str === 'electron') {
+window.require = function (id) {
+    if (id === 'electron') {
         const versions = process.versions;
         return {
             remote: {
@@ -12,16 +14,11 @@ window.require = function (str) {
                 getCurrentWebContents: remote.getCurrentWebContents
             },
             ipcRenderer: ipcRenderer,
-            shell: {
-                openExternal: shell.openExternal
-            }
+            shell: { openExternal: shell.openExternal }
         };
-    } else if (str === 'os') {
-        return {
-            platform: () => platform
-        };
-    } else if (str === 'querystring') {
+    } else if (id === 'os') {
+        return { platform: () => platform };
+    } else if (id === 'querystring') {
         return { stringify };
     }
-    return {};
 };
