@@ -1,22 +1,20 @@
 'use strict';
 
 import { join } from 'path';
-import { app, BrowserWindow, ipcMain } from 'electron';
+import { app, BrowserWindow, ipcMain, Menu } from 'electron';
 
 import { getCurrent } from './settings';
 
-function isDev() {
-    return process.env.NODE_ENV === 'development';
-}
+const isDev = process.env.NODE_ENV === 'development';
 
 let shouldAppQuit = true;
 let mainWindow;
-const winURL = isDev()
+const winURL = isDev
     ? `http://localhost:${require('../../script/config').devPort}`
     : `file://${__dirname}/index.html`;
 
 let loginWindow;
-let loginURL = isDev()
+let loginURL = isDev
     ? `http://localhost:${require('../../script/config').devPort}/renderer/login.html`
     : `file://${__dirname}/login.html`;
 
@@ -31,7 +29,7 @@ function createWindow(url = winURL) {
         name: 'Electron Netease Cloud Music',
         webPreferences: {
             preload: join(__dirname, 'preload.js'),
-            nodeIntegration: isDev(),
+            nodeIntegration: isDev,
             blinkFeatures: 'OverlayScrollbars'
         }
     });
@@ -42,6 +40,8 @@ function createWindow(url = winURL) {
 }
 
 app.on('ready', () => {
+    // do not display default menu bar
+    isDev ? null : Menu.setApplicationMenu(null);
     mainWindow = createWindow();
     // boot up ApiHost
     require('./apiHost');
