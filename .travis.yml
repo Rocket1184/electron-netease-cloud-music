@@ -1,8 +1,5 @@
 language: node_js
 node_js: node
-branches:
-  except:
-    - /\d+\.\d+\.\d+-\w+/
 cache:
   yarn: true
   directories:
@@ -19,3 +16,4 @@ deploy:
   skip_cleanup: true
   on:
     repo: Rocket1184/electron-netease-cloud-music
+    tags: true
