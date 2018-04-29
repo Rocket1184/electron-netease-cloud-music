@@ -1,5 +1,5 @@
 language: node_js
-node_js: node # install the latest release of node
+node_js: 9 # install the latest release of node
 cache:
   yarn: true
   directories:
