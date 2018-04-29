@@ -26,18 +26,24 @@ Click here -> [![hreoku status](https://heroku-badge.herokuapp.com/?app=electron
 
 ![音乐播放界面](https://rocka.me/static/img/877509-20170501001930615-1255918997.png)
 
-## Build Setup
+## Development
 
 ``` bash
 # install dependencies
-yarn install
+yarn
 
-# serve with hot reload at localhost:24353
+# serve with hot reload at http://localhost:24353
 yarn dev
+```
 
-# build the app in production mode
+## Build
+
+``` bash
+# bundle JavaScript and CSS
 export NODE_ENV=production
-npm run pack
-npm run build linux
-npm run build darwin
+yarn run pack
+
+# package the app
+yarn run build linux
+yarn run build darwin
 ```
