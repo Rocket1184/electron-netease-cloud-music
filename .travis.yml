@@ -1,5 +1,8 @@
 language: node_js
 node_js: node
+branches:
+  except:
+    - /\d+\.\d+\.\d+-\w+/
 cache:
   yarn: true
   directories:
@@ -11,6 +14,8 @@ deploy:
   provider: releases
   api_key:
     secure: bIY4+HruqkvdigPlUDyCPUTGHZ6IA7PoqCa28DRNwXxJIRg1aSjNL3xcuypG5/8heN1i/1upbKw3tYQ8hHVIJMmgm3rbLIdBhEaUErNRTB+nbvj+0ZB6WfKgNQAZoX2zU6ZlvjyjUxUfLetXGhABHaVk8rD1fIzU0/wo0CpqLP718d6ftEq3i02xcHG1qcakXb1DUuhYNmt5/J6EHjd3hrx3tQjyjJbb3AGmh9eJy/qp/fcuA1IZObwyEuxph0I2Ncs1kFFr6rxxRbO8JG009RAaHS2vnmdogDqBwLzg5AiKpwEznP5Qb4ne/rUz8Rs+4ozsMtXIwDd3aFKvKJQOSXYclIIzihUSawcRJG8eEVgU0L9Xi42tpYKxuo3CMeLCXSDHadiIgokN2e6evseuMRpRKNvVt67mLQzTXdL6jEoF+2RX+723zJ3YDZzve+6kZ5VzN3pt7GE80bl6H4vn4hVmlEqXJadsBn1sZZIGgtKcSABX3s4sV4IEr3JBuNaNxWJ7/6zeUmU2vfEiig8tSCSxPfPg1xF4ARLXdXeU9PVMJBfNEoA9Ky64zwzH8eiI+p5/kB1/PDY4Le06EKWEC8dDdEI5zX6KkP4JvpImZek2Pt1NEDlC5msSPgPIaXX4AvvrxHpXq7H+tR8FQ8wdBAgF4l6TVzC7xsY8C1PzROE=
-  file: app.asar
+  file: 
+    - app.asar
+  skip_cleanup: true
   on:
     repo: Rocket1184/electron-netease-cloud-music

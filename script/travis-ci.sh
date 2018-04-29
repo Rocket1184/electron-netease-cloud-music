@@ -3,11 +3,11 @@
 export NODE_ENV=production
 
 tag() {
-    VER=$(git rev-parse --short HEAD)
-    HASH=$(git log --format=%h -1)
+    VER=$(jq --raw-output .version package.json)
+    HASH=$(git rev-parse --short HEAD)
     git config --local user.name "rocka"
     git config --local user.email "i@rocka.me"
-    git tag "v$VER-$HASH"
+    git tag "$VER-$HASH"
 }
 
 pack() {
