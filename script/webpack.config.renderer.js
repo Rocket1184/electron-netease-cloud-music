@@ -2,12 +2,16 @@
 
 const webpack = require('webpack');
 const packageJson = require('../package.json');
+const { VueLoaderPlugin } = require('vue-loader');
 const HtmlWebpackPlugin = require('html-webpack-plugin');
 const CopyWebpackPlugin = require('copy-webpack-plugin');
 const ExtractTextPlugin = require('extract-text-webpack-plugin');
 const BabelMinifyPlugin = require('babel-minify-webpack-plugin');
 
-const { absPath } = require('./util');
+const { isProd, absPath } = require('./util');
+
+const extractCSS = new ExtractTextPlugin('vender.css');
+const extractLESS = new ExtractTextPlugin('style.css');
 
 let cfg = {
     mode: process.env.NODE_ENV || 'development',
@@ -27,9 +31,17 @@ let cfg = {
         rules: [
             {
                 test: /\.css$/,
-                use: ExtractTextPlugin.extract({
-                    fallback: 'style-loader',
-                    use: 'css-loader'
+                use: extractCSS.extract({
+                    use: { loader: 'css-loader', options: { minimize: isProd } },
+                })
+            },
+            {
+                test: /\.less$/,
+                use: extractLESS.extract({
+                    use: [
+                        { loader: 'css-loader', options: { minimize: isProd } },
+                        { loader: 'less-loader' }
+                    ]
                 })
             },
             {
@@ -67,11 +79,13 @@ let cfg = {
         ]
     },
     plugins: [
-        new ExtractTextPlugin('styles.css'),
+        extractCSS,
+        extractLESS,
         new HtmlWebpackPlugin({
             filename: 'index.html',
             template: absPath('src/renderer/index.ejs')
         }),
+        new VueLoaderPlugin()
     ],
     resolve: {
         alias: {
@@ -88,11 +102,6 @@ if (process.env.NODE_ENV === 'production') {
      * see: https://github.com/mozilla/source-map/issues/304
      */
     // cfg.devtool = 'source-map';
-    cfg.module.rules.map(e => {
-        if (e.loader === 'vue-loader') {
-            e.options.extractCSS = true;
-        }
-    });
     cfg.plugins.push(
         new CopyWebpackPlugin([
             { from: absPath('package.json'), to: absPath('dist') },

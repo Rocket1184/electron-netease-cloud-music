@@ -1,5 +1,11 @@
+'use strict';
+
 const fs = require('fs');
 const path = require('path');
+
+const isDev = process.env.NODE_ENV === 'development';
+
+const isProd = process.env.NODE_ENV === 'production';
 
 const ProjectRoot = path.join(__dirname, '..');
 
@@ -24,6 +30,8 @@ function removeKeepDot(dir) {
 }
 
 module.exports = {
+    isDev,
+    isProd,
     absPath,
     removeKeepDot
 };
