@@ -1,9 +1,16 @@
 language: node_js
-node_js: 9 # install the latest release of node
+node_js: node
 cache:
   yarn: true
   directories:
-  - $HOME/.electron
+  - "$HOME/.electron"
   - node_modules
 script:
-  - script/travis-ci.sh
+- script/travis-ci.sh
+deploy:
+  provider: releases
+  api_key: "$GITHUB_OAUTH_TOKEN"
+  file: app.asar
+  skip_cleanup: true
+  api-key:
+    secure: zhX3dtT4LeBrqM49iZDDWKWuiE0m/J9s04xQa90GfcMZcv3vLQ+d4YAc2lrMQl58sOGLKVhk1u/IyNX7LPOqfDjmU0BcruAzEbOfLTY7LtMlUrzHjMNf7sztC6c1GqPLdRapKaFtuX0UITO4l+tfn8VxbZVO8WW4YHagWzOGvNsIXTcUDd6ILJOGxFTiZikmYhs+iB01H8XyIDSJX5KNeSUh5iRBBtbo1Y4TDqrIOvauqLCKlf3UbCbXk0ej/txkb0qSFbwUSy5L8uHZmILAAwC0Tkob5jKh8bYAVwM/LnQDTmh3LsJHQISH74Alpwdl1ZYQfkhnNRL9miS3AlBq0p/MzwsDC5E1KuzEbXnabo4nNkRZD20iCQXsPkiHmxJ7EFCd/HesnEy/G9zB/E1P4fORQ0ftw3NgsAelXnV0yyuKvh1+Pfbimjsrx4a2Kb4BH4tkunIoW3yrGeug2UG2Bp7Cb9CbxHbdgAYXRGkYqeD4pAub9ue4MCt5ToMJ0zxZpmXupRCMindXduLHlqqp4RKxHjNN0xa0ZAj5NnhWH9clx8c7DmB5OZ6pCl6I0D3FyJDH0jm32dBq8ihwiWTl+PWKeOxmtzQqoBYuaqkIF+1R+cbK+Ec++u+U/9Xa9eUffId+UNJAz9GHvXqaJb++iM8G3zEfP63MdwDbNpE0yjI=
