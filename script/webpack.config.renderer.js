@@ -30,21 +30,6 @@ let cfg = {
     module: {
         rules: [
             {
-                test: /\.css$/,
-                use: extractCSS.extract({
-                    use: { loader: 'css-loader', options: { minimize: isProd } },
-                })
-            },
-            {
-                test: /\.less$/,
-                use: extractLESS.extract({
-                    use: [
-                        { loader: 'css-loader', options: { minimize: isProd } },
-                        { loader: 'less-loader' }
-                    ]
-                })
-            },
-            {
                 test: /\.js$/,
                 loader: 'babel-loader',
                 exclude: /node_modules/
@@ -95,13 +80,30 @@ let cfg = {
     }
 };
 
-if (process.env.NODE_ENV === 'production') {
+if (isProd) {
     // release config
     /**
      * disable source map for now.
      * see: https://github.com/mozilla/source-map/issues/304
      */
     // cfg.devtool = 'source-map';
+    cfg.module.rules.push(
+        {
+            test: /\.css$/,
+            use: extractCSS.extract({
+                use: { loader: 'css-loader', options: { minimize: true } },
+            })
+        },
+        {
+            test: /\.less$/,
+            use: extractLESS.extract({
+                use: [
+                    { loader: 'css-loader', options: { minimize: true } },
+                    { loader: 'less-loader' }
+                ]
+            })
+        }
+    );
     cfg.plugins.push(
         new CopyWebpackPlugin([
             { from: absPath('package.json'), to: absPath('dist') },
@@ -113,6 +115,10 @@ if (process.env.NODE_ENV === 'production') {
     );
 } else {
     // dev config
+    cfg.module.rules.push(
+        { test: /\.css$/, use: ['style-loader', 'css-loader'] },
+        { test: /\.less$/, use: ['style-loader', 'css-loader', 'less-loader'] }
+    );
     cfg.devtool = 'cheap-module-source-map';
     cfg.output.libraryTarget = 'commonjs2';
     cfg.externals = Object.keys(packageJson.dependencies);
