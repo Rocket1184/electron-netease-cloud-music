@@ -1,7 +1,5 @@
 #!/bin/bash
 
-export NODE_ENV=production
-
 pack() {
     rm dist/.gitkeep
     yarn run pack
