@@ -41,7 +41,9 @@ let cfg = {
             {
                 test: /\.vue$/,
                 loader: 'vue-loader',
-                options: {}
+                options: {
+                    compilerOptions: { preserveWhitespace: false }
+                }
             },
             {
                 test: /\.(png|jpe?g|gif|svg)(\?.*)?$/,
