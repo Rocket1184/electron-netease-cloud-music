@@ -13,10 +13,11 @@
             </div>
         </div>
         <div class="info">
-            <p class="name">{{playing.track.name}}</p>
-            <p>
-                歌手：
-                <span class="artists">{{playing.track.artistName}}</span> 专辑：
+            <span class="name">{{playing.track.name}}</span>
+            <p class="producer">
+                <span>歌手：</span>
+                <span class="artists">{{playing.track.artistName}}</span>
+                <span>专辑：</span>
                 <span class="album">{{playing.track.album.name}}</span>
             </p>
             <div class="lyric">
@@ -60,7 +61,8 @@ export default {
     data() {
         return {
             isActive: false,
-            audioEl: {},
+            /** @type {HTMLAudioElement} */
+            audioEl: null,
             lyricElemMap: [],
             currentLyricIndex: -1
         };
@@ -74,7 +76,7 @@ export default {
         },
         lyricScrollerStyle() {
             if (this.lyricElemMap.length === 0 || this.currentLyricIndex === -1) {
-                return 'transform: translateY(150px)';
+                return 'transform: translateY(164px)';
             }
             const currentLyricElem = this.lyricElemMap[this.currentLyricIndex];
             const offset = 150 - currentLyricElem.offsetTop - currentLyricElem.clientHeight;
@@ -82,6 +84,32 @@ export default {
         }
     },
     methods: {
+        listenAudioUpdate() {
+            this.audioEl = document.getElementById('playerbar-audio');
+            this.audioEl.ontimeupdate = ev => {
+                // do nothing if element map is empty or compo not acitve
+                // it's empty in case:
+                // 1. no lyric for this track
+                // 2. the component is mounted but not active yet e.g. it's in <keep-alive/> background
+                if (!this.isActive || !this.lyricElemMap.length) return;
+                // do not loop from 0 every time
+                // loop form current index. if current index equals -1, loop from 0
+                let loopStart = this.currentLyricIndex === -1 ? 0 : this.currentLyricIndex;
+                // the process was darged backword, loop from 0
+                if (ev.target.currentTime < +this.lyricElemMap[loopStart].getAttribute('data-time')) {
+                    loopStart = 0;
+                }
+                // loop and find the smallest whose time larger than currentTime
+                for (let i = loopStart; i < this.lyricElemMap.length; i++) {
+                    if (ev.target.currentTime < +this.lyricElemMap[i].getAttribute('data-time')) {
+                        this.currentLyricIndex = i - 1;
+                        return;
+                    }
+                }
+                // not found any, point to the last element
+                this.currentLyricIndex = this.lyricElemMap.length - 1;
+            };
+        },
         createLyricElemMap() {
             if (this.playing.lyrics.lrc) {
                 this.lyricElemMap = Array.from(document.getElementsByClassName('line'));
@@ -102,33 +130,8 @@ export default {
             }
         }
     },
-    created() {
-        this.audioEl = document.getElementById('playerbar-audio');
-        this.audioEl.ontimeupdate = ev => {
-            // do nothing if element map is empty or compo not acitve
-            // it's empty in case:
-            // 1. no lyric for this track
-            // 2. the component is mounted but not active yet e.g. it's in <keep-alive/> background
-            if (!this.isActive || !this.lyricElemMap.length) return;
-            // do not loop from 0 every time
-            // loop form current index. if current index equals -1, loop from 0
-            let loopStart = this.currentLyricIndex === -1 ? 0 : this.currentLyricIndex;
-            // the process was darged backword, loop from 0
-            if (ev.target.currentTime < +this.lyricElemMap[loopStart].getAttribute('data-time')) {
-                loopStart = 0;
-            }
-            // loop and find the smallest whose time larger than currentTime
-            for (let i = loopStart; i < this.lyricElemMap.length; i++) {
-                if (ev.target.currentTime < +this.lyricElemMap[i].getAttribute('data-time')) {
-                    this.currentLyricIndex = i - 1;
-                    return;
-                }
-            }
-            // not found any, point to the last element
-            this.currentLyricIndex = this.lyricElemMap.length - 1;
-        };
-    },
     mounted() {
+        this.listenAudioUpdate();
         this.createLyricElemMap();
     },
     activated() {
@@ -146,10 +149,10 @@ export default {
 <style lang="less">
 .shadow-text {
     color: white;
-    text-shadow: 1px 1px 3px rgba(0, 0, 0, 1);
+    text-shadow: 0 0 3px black, 0 2px 4px rgba(0, 0, 0, 0.5);
 }
 
-.ellipsis-text(@width: 200px) {
+.ellipsis-text(@width: 175px) {
     display: inline-block;
     max-width: @width;
     overflow: hidden;
@@ -175,18 +178,14 @@ export default {
         background-position: 50% 0%;
         filter: blur(60px);
         opacity: 0.8;
-        transform: translate3d(
-            0,
-            0,
-            0
-        ); // magic!!! this enables GPU acceleration!!!!
+        // magic!!! this enables GPU acceleration!!!!
+        transform: translate3d(0, 0, 0);
     }
     .disk {
         flex: 1;
         position: relative;
         transition: transform 25s;
         .container {
-            width: 500px;
             position: absolute;
             margin: auto;
             right: 0;
@@ -238,12 +237,22 @@ export default {
     }
     .info {
         flex: 1;
-        padding: 10px 0;
-        box-sizing: border-box;
+        & > * {
+            // lyric needs padding, or its text-shadow would be cut off
+            padding-left: 10px;
+        }
         .name {
             .ellipsis-text(500px);
-            font-size: 32px;
-            margin: 8px 0;
+            font-size: 28px;
+            margin-top: 18px;
+        }
+        .producer {
+            span {
+                display: inline-block;
+            }
+        }
+        .artists {
+            margin-right: 1em;
         }
         .artists,
         .album {
@@ -252,11 +261,10 @@ export default {
         .lyric {
             height: 340px;
             overflow: hidden;
-            margin-top: 20px;
             .scroller {
-                transition: transform 0.7s;
+                transition: transform 0.5s cubic-bezier(0.25, 0.46, 0.45, 0.94);
                 .line {
-                    margin: 12px 0;
+                    margin: 14px 0;
                 }
                 .active {
                     .shadow-text;
