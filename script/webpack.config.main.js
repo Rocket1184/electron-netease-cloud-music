@@ -2,7 +2,6 @@
 
 const webpack = require('webpack');
 const packageJson = require('../package.json');
-const BabelMinifyPlugin = require('babel-minify-webpack-plugin');
 
 const { isProd, absPath } = require('./util');
 
@@ -38,7 +37,6 @@ let cfg = {
 if (isProd) {
     // release config
     cfg.plugins.push(
-        new BabelMinifyPlugin(),
         new webpack.DefinePlugin({ 'process.env.NODE_ENV': `"production"` })
     );
 } else {
