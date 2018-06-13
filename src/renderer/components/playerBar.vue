@@ -228,6 +228,8 @@ export default {
 
 <style lang="less">
 .player-bar-wrapper {
+    user-select: none;
+    cursor: default;
     font-size: 0;
     height: 64px;
     position: relative;
@@ -246,7 +248,7 @@ export default {
     .info {
         font-size: 14px;
         padding: 10px 14px;
-        width: calc(~"100% - 244px");
+        width: calc(~'100% - 244px');
         .song-name,
         .artist-name {
             display: inline-block;
@@ -276,7 +278,7 @@ export default {
         .progress {
             position: relative;
             .slider {
-                width: calc(~"100% - 100px");
+                width: calc(~'100% - 100px');
             }
             .text {
                 position: absolute;
