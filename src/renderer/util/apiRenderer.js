@@ -1,26 +1,41 @@
+import debug from 'debug';
 import { ipcRenderer } from 'electron';
 
-const methodKeys = ipcRenderer.sendSync('getApiKeys');
-const modules = {};
+const TAG = 'Api';
+const d = debug(TAG);
 
-let invokeId = Date.now();
-const shouldLog = process.env.NODE_ENV !== 'production';
+let invokeId = 0;
 
-methodKeys.forEach(methodName => {
-    modules[methodName] = function (...args) {
-        invokeId++;
-        // eslint-disable-next-line no-console
-        if (shouldLog) console.info('🔺', methodName, args);
-        return new Promise((resolve, reject) => {
-            ipcRenderer.once(`${methodName}${invokeId}`, (event, data) => {
-                // eslint-disable-next-line no-console
-                if (shouldLog) console.info('🔻', methodName, data);
-                if (data.errno) reject(data);
-                else resolve(data);
-            });
-            ipcRenderer.send(methodName, invokeId, ...args);
-        });
-    };
+const methodMap = new Map();
+const actionMap = new Map();
+
+ipcRenderer.on(TAG, (event, id, data) => {
+    if (actionMap.has(id)) {
+        d('🔻 %d %o', id, data);
+        const action = actionMap.get(id);
+        action(data);
+        actionMap.delete(id);
+    }
+});
+
+function senderFn(methodName, ...args) {
+    invokeId++;
+    return new Promise(resolve => {
+        actionMap.set(invokeId, resolve);
+        ipcRenderer.send(TAG, methodName, invokeId, ...args);
+        d('🔺 %d %s %o', invokeId, methodName, args);
+    });
+}
+
+const modules = new Proxy({}, {
+    get(_, propName) {
+        if (methodMap.has(propName)) {
+            return methodMap.get(propName);
+        }
+        const fn = senderFn.bind(this, propName);
+        methodMap.set(propName, fn);
+        return fn;
+    }
 });
 
 export default modules;
