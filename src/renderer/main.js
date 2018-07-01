@@ -11,7 +11,6 @@ import Prompt from './util/prompt';
 
 Vue.use(Router);
 Vue.use(MuseUI);
-Vue.config.debug = true;
 // the 'Toast' uses mu-toast inside,
 // so it must be installed after MuseUI
 Vue.use(Toast);
