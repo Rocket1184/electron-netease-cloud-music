@@ -2,15 +2,14 @@
     <div class="song-detail">
         <div class="bkg"
             :style="styleAlbumImg"></div>
-        <div :class="['disk', { play: !playing.paused }]">
-            <div class="container">
-                <div class="img"
-                    :style="styleAlbumImg">
-                    <div class="border">
-                    </div>
+        <div class="disk"
+            :class="classAlbumDisk">
+            <div class="img"
+                :style="styleAlbumImg">
+                <div class="border">
                 </div>
-                <div class="needle"></div>
             </div>
+            <div class="needle"></div>
         </div>
         <div class="info">
             <span class="name">{{playing.track.name}}</span>
@@ -23,8 +22,8 @@
             <div class="lyric">
                 <div class="scroller"
                     :style="lyricScrollerStyle">
-                    <template v-if="playing.lyrics.mlrc">
-                        <p v-for="(line, index) in playing.lyrics.mlrc.lyrics"
+                    <template v-if="ui.lyric.mlrc">
+                        <p v-for="(line, index) in ui.lyric.mlrc.lyrics"
                             class="line"
                             :key="index"
                             :class="{active: index == currentLyricIndex}"
@@ -34,8 +33,8 @@
                             <span>{{line.trans}}</span>
                         </p>
                     </template>
-                    <template v-else-if="playing.lyrics.lrc">
-                        <p v-for="(line, index) in playing.lyrics.lrc.lyrics"
+                    <template v-else-if="ui.lyric.lrc">
+                        <p v-for="(line, index) in ui.lyric.lrc.lyrics"
                             :key="index"
                             class="line"
                             :class="{active: index == currentLyricIndex}"
@@ -53,7 +52,7 @@
 </template>
 
 <script>
-import { mapGetters } from 'vuex';
+import { mapGetters, mapState } from 'vuex';
 import { bkgImg, sizeImg, HiDpiPx } from '@/util/image';
 
 export default {
@@ -68,9 +67,16 @@ export default {
         };
     },
     computed: {
+        ...mapState([
+            'playlist',
+            'ui'
+        ]),
         ...mapGetters([
             'playing'
         ]),
+        classAlbumDisk() {
+            return { play: !this.playlist.paused };
+        },
         styleAlbumImg() {
             return bkgImg(sizeImg(this.playing.track.album.picUrl, HiDpiPx(220)));
         },
@@ -86,7 +92,7 @@ export default {
     methods: {
         listenAudioUpdate() {
             this.audioEl = document.getElementById('playerbar-audio');
-            this.audioEl.ontimeupdate = ev => {
+            this.audioEl.addEventListener('timeupdate', ev => {
                 // do nothing if element map is empty or compo not acitve
                 // it's empty in case:
                 // 1. no lyric for this track
@@ -108,25 +114,20 @@ export default {
                 }
                 // not found any, point to the last element
                 this.currentLyricIndex = this.lyricElemMap.length - 1;
-            };
+            });
+            this.audioEl.addEventListener('ended', () => this.currentLyricIndex = -1);
         },
         createLyricElemMap() {
-            if (this.playing.lyrics.lrc) {
+            if (this.ui.lyric.lrc) {
                 this.lyricElemMap = Array.from(document.getElementsByClassName('line'));
             }
         }
     },
     watch: {
-        ['playing.lyrics']: {
-            deep: true,
+        ['ui.lyricSeq']: {
             handler() {
                 // query lyric elements after they are created
                 this.$nextTick(() => this.createLyricElemMap());
-            }
-        },
-        ['playing.track.id']: {
-            handler() {
-                this.currentLyricIndex = -1;
             }
         }
     },
@@ -185,54 +186,45 @@ export default {
         flex: 1;
         position: relative;
         transition: transform 25s;
-        .container {
+        .img {
+            width: 220px;
+            height: 220px;
             position: absolute;
-            margin: auto;
-            right: 0;
-            left: 0;
-            transform: translate3d(0, 0, 0);
-            .img {
-                width: 220px;
-                height: 220px;
-                margin: 130px auto 0;
-                background-size: cover;
-                animation: disk-playing 25s linear infinite;
-                animation-play-state: paused;
-                .border {
-                    right: 65px;
-                    bottom: 65px;
-                    width: 350px;
-                    height: 350px;
-                    background-image: url('~assets/img/disc.png');
-                    background-size: contain;
-                    position: relative;
-                }
-            }
-            .needle {
-                content: 'needle';
-                color: transparent;
-                position: absolute;
-                top: -6px;
-                left: 230px;
-                width: 100px;
-                height: 200px;
-                background-image: url('~assets/img/needle.png');
-                background-repeat: no-repeat;
+            top: 130px;
+            right: calc(~'50% - 110px');
+            background-size: cover;
+            animation: disk-playing 25s linear infinite;
+            animation-play-state: paused;
+            .border {
+                right: 65px;
+                bottom: 65px;
+                width: 350px;
+                height: 350px;
+                background-image: url('~assets/img/disc.png');
                 background-size: contain;
-                transition: transform 0.5s;
-                transform-origin: 15px 0;
-                transform: rotate(-25deg);
+                position: relative;
             }
+        }
+        .needle {
+            position: absolute;
+            top: -6px;
+            left: calc(~'50% - 20px');
+            width: 100px;
+            height: 200px;
+            background-image: url('~assets/img/needle.png');
+            background-repeat: no-repeat;
+            background-size: contain;
+            transition: transform 0.5s;
+            transform-origin: 15px 0;
+            transform: rotate(-25deg);
         }
     }
     .play {
-        .container {
-            .img {
-                animation-play-state: running;
-            }
-            .needle {
-                transform: rotate(0deg);
-            }
+        .img {
+            animation-play-state: running;
+        }
+        .needle {
+            transform: rotate(0deg);
         }
     }
     .info {

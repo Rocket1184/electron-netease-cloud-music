@@ -68,7 +68,7 @@
 </template>
 
 <script>
-import { mapActions, mapGetters } from 'vuex';
+import { mapActions, mapGetters, mapState } from 'vuex';
 
 import ApiRenderer from '@/util/apiRenderer';
 import currentList from './currentList.vue';
@@ -104,7 +104,7 @@ export default {
             this.audioEl.pause();
         },
         handlePlayOrPause() {
-            this.playing.url && (this.audioEl.paused ? this.play() : this.pause());
+            this.ui.audioSrc && (this.audioEl.paused ? this.play() : this.pause());
         },
         handleProgressDrag(value) {
             this.audioEl.currentTime = this.timeTotal * value / 100;
@@ -139,9 +139,12 @@ export default {
     },
     computed: {
         ...mapGetters([
-            'playlist',
             'playing',
             'user'
+        ]),
+        ...mapState([
+            'playlist',
+            'ui'
         ]),
         coverImgSrc() {
             const url = this.playing.track.album.picUrl || this.fallbackImg;
@@ -162,7 +165,7 @@ export default {
     filters: {
         time: shortTime
     },
-    async created() {
+    created() {
         window.onbeforeunload = () => {
             if (!this.$store.state.settings.autoPlay) this.pause();
             localStorage.setItem('playlist', JSON.stringify(this.playlist));
@@ -171,7 +174,7 @@ export default {
             const stored = localStorage.getItem('playlist');
             if (stored) {
                 const playlist = JSON.parse(stored);
-                await this.restorePlaylist({ playlist });
+                this.restorePlaylist({ playlist });
             }
         } catch (e) {
             // eslint-disable-next-line no-console
@@ -188,18 +191,18 @@ export default {
         const _unsetInterval = () => _playingIntervalId = clearInterval(_playingIntervalId);
 
         _slider.onpointerdown = () => _audioEl.pause();
-        _slider.onpointerup = () => !this.playing.paused && _audioEl.play();
+        _slider.onpointerup = () => !this.playlist.paused && _audioEl.play();
 
-        _audioEl.ondurationchange = () => {
+        _audioEl.addEventListener('loadedmetadata', () => {
             _unsetInterval();
             this.timeTotal = _audioEl.duration;
             this.timeCurrent = _audioEl.currentTime = 0;
-            if (!this.playing.paused) _audioEl.play();
-        };
+            if (!this.playlist.paused) _audioEl.play();
+        });
 
-        _audioEl.onseeking = _updateTime;
+        _audioEl.addEventListener('seeking', _updateTime);
 
-        _audioEl.onplaying = () => {
+        _audioEl.addEventListener('playing', () => {
             _updateTime();
             // update playing process time after the time reachs a 'integer' second
             // why use 1.1 not 1 ? maybe there is a little lag in event loop... I dont know
@@ -210,14 +213,14 @@ export default {
                 if (!_playingIntervalId)
                     _playingIntervalId = setInterval(() => _updateTime(), 1000);
             }, timeOut);
-        };
+        });
 
-        _audioEl.onpause = () => _updateTime() && _unsetInterval();
+        _audioEl.addEventListener('pause',() => _updateTime() && _unsetInterval());
 
-        _audioEl.onended = () => {
+        _audioEl.addEventListener('ended', () => {
             this.submitListened();
             this.playNextTrack();
-        };
+        });
     },
     components: {
         currentList,
