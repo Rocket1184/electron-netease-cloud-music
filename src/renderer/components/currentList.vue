@@ -1,6 +1,6 @@
 <template>
     <mu-list class="current-list">
-        <mu-list-item v-for="(track, index) in playlist.list"
+        <mu-list-item v-for="(track, index) in list"
             :key="track.id"
             :title="track.name"
             titleClass="track-name"
@@ -21,15 +21,17 @@
 </template>
 
 <script>
-import { mapActions, mapGetters } from 'vuex';
+import { mapActions, mapGetters, mapState } from 'vuex';
 
 export default {
     data() {
         return {};
     },
     computed: {
+        ...mapState({
+            list: state => state.playlist.list
+        }),
         ...mapGetters([
-            'playlist',
             'playing'
         ])
     },

@@ -1,7 +1,7 @@
 <template>
     <div id="app">
         <audio id="playerbar-audio"
-            :src="playing.url"></audio>
+            :src="ui.audioSrc"></audio>
         <AppNav></AppNav>
         <div class="router-view">
             <keep-alive :include="/^page-\w+$/">
@@ -13,12 +13,10 @@
 </template>
 
 <script>
-import { mapActions, mapGetters } from 'vuex';
+import { mapActions, mapState } from 'vuex';
 
 import AppNav from '@/components/appNav.vue';
 import PlayerBar from '@/components/playerBar.vue';
-import ApiRenderer from '@/util/apiRenderer';
-import * as types from './vuex/mutation-types';
 
 export default {
     components: {
@@ -27,19 +25,17 @@ export default {
     },
     methods: {
         ...mapActions([
-            'restoreUserInfo'
+            'restoreUserInfo',
+            'restoreSettings'
         ])
     },
     computed: {
-        ...mapGetters([
-            'playing',
-        ]),
-    },
-    async beforeCreate() {
-        const st = await ApiRenderer.getCurrentSettings();
-        this.$store.commit(types.UPDATE_SETTINGS, st);
+        ...mapState([
+            'ui'
+        ])
     },
     created() {
+        this.restoreSettings();
         this.restoreUserInfo();
     }
 };
@@ -59,14 +55,14 @@ body,
 }
 
 @font-face {
-    font-family: "Material Icons";
+    font-family: 'Material Icons';
     font-style: normal;
     font-weight: 400;
-    src: url("~assets/font/material-icons.woff2") format("woff2");
+    src: url('~assets/font/material-icons.woff2') format('woff2');
 }
 
 .material-icons {
-    font-family: "Material Icons";
+    font-family: 'Material Icons';
     font-weight: normal;
     font-style: normal;
     font-size: 24px;

@@ -121,8 +121,8 @@ export default {
             switch (resp.code) {
                 case 200:
                     this.$emit('close');
-                    this.setLoginValid();
                     this.setUserInfo(resp);
+                    this.setLoginValid();
                     const cookie = await ApiRenderer.getCookie();
                     this.storeUserInfo({ user: resp, cookie });
                     break;
