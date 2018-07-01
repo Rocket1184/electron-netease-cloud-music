@@ -1,5 +1,13 @@
 {
+    "exclude": [
+        "node_modules",
+        "dist"
+    ],
+    "include": [
+        "src/**/*"
+    ],
     "compilerOptions": {
+        "target": "esnext",
         "baseUrl": ".",
         "paths": {
             "@/*": [
