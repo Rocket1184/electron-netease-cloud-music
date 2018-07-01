@@ -64,31 +64,36 @@ export function logout({ commit }) {
     });
 }
 
-async function updatePlayingUrl(commit, trackId, quality) {
+async function updateUiUrl(commit, trackId, quality) {
     const oUrl = await ApiRenderer.getMusicUrlCached(trackId, quality);
     commit(types.UPDATE_PLAYING_URL, oUrl.url);
 }
 
-function playThisTrack(commit, list, index, quality) {
+async function updateUiLyric(commit, id) {
+    const lyric = await ApiRenderer.getMusicLyricCached(id);
+    commit(types.SET_ACTIVE_LYRIC, lyric);
+}
+
+async function playThisTrack(commit, list, index, quality) {
     commit(types.SET_CURRENT_INDEX, index);
     commit(types.SET_ACTIVE_LYRIC, {});
-    ApiRenderer.getMusicLyricCached(list[index].id)
-        .then(lyric => commit(types.SET_ACTIVE_LYRIC, lyric));
-    updatePlayingUrl(commit, list[index].id, quality)
-        .then(() => commit(types.RESUME_PLAYING_MUSIC));
+    const id = list[index].id;
+    updateUiLyric(commit, id);
+    await updateUiUrl(commit, id, quality);
+    commit(types.RESUME_PLAYING_MUSIC);
 }
 
 export function playNextTrack({ commit, state }) {
     const quality = state.settings.bitRate;
-    const { currentIndex, list } = state.playlist;
-    let nextIndex = (currentIndex + 1) % list.length;
+    const { index, list } = state.playlist;
+    let nextIndex = (index + 1) % list.length;
     playThisTrack(commit, list, nextIndex, quality);
 }
 
 export function playPreviousTrack({ commit, state }) {
     const quality = state.settings.bitRate;
-    const { currentIndex, list } = state.playlist;
-    let nextIndex = (currentIndex + list.length - 1) % list.length;
+    const { index, list } = state.playlist;
+    let nextIndex = (index + list.length - 1) % list.length;
     playThisTrack(commit, list, nextIndex, quality);
 }
 
@@ -99,7 +104,7 @@ export async function playPlaylist({ commit, state }, payload) {
     const quality = state.settings.bitRate;
     const { list, loopMode } = state.playlist;
     let firstIndex = loopMode === LOOP_TYPES.RANDOM
-        ? parseInt(Math.random() * 100000) % list.length
+        ? Math.floor(Math.random() * 100000) % list.length
         : 0;
     playThisTrack(commit, list, firstIndex, quality);
 }
@@ -110,11 +115,12 @@ export function playTrackIndex({ commit, state }, payload) {
     playThisTrack(commit, list, payload.index, quality);
 }
 
-export async function restorePlaylist(context, payload) {
+export async function restorePlaylist({ commit, state }, payload) {
     const { playlist } = payload;
-    const { commit, getters, state } = context;
     commit(types.RESTORE_PLAYLIST, playlist);
-    updatePlayingUrl(commit, getters.playing.track.id, state.settings.bitRate);
+    const id = playlist.list[playlist.index].id;
+    updateUiUrl(commit, id, state.settings.bitRate);
+    updateUiLyric(commit, id);
 }
 
 export async function refreshUserPlaylist({ commit }, payload) {
