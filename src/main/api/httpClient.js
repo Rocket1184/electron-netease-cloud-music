@@ -11,12 +11,12 @@ class HttpClient {
 
     get clientHeaders() {
         return {
-            Cookie: this.getCookieString(),
-            'User-Agent': 'Mozilla/5.0 (X11; Linux x86_64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/60.0.3112.113 Safari/537.36',
-            Host: 'music.163.com',
             Accept: '*/*',
+            'Accept-Language': 'zh',
+            'Accept-Encoding': 'gzip',
+            Cookie: this.getCookieString(),
             Referer: 'https://music.163.com/',
-            Connection: 'keep-alive'
+            'User-Agent': 'Mozilla/5.0 (X11; Linux x86_64; rv:61.0) Gecko/20100101 Firefox/61.0'
         };
     }
 
