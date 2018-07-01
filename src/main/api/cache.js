@@ -28,6 +28,11 @@ class Cache {
         return fs.createWriteStream(this.fullPath(fileName));
     }
 
+    /**
+     * fetch http(s) url as stream
+     * @param {string} url 
+     * @returns {Promise<import('http').IncomingMessage>}
+     */
     fetch(url) {
         const opt = URL.parse(url);
         let request;
@@ -50,6 +55,13 @@ class Cache {
         });
     }
 
+    /**
+     * fetch url as file, with file name specified
+     * @param {string} url url to fetch
+     * @param {string} outputFileName file name to write
+     * @returns {Promise<string>} saved file full path
+     * @throws {number} HTTP Error status code
+     */
     fetchAsFile(url, outputFileName) {
         return new Promise((resolve, reject) => {
             fetch(url).then(res => {
@@ -63,13 +75,19 @@ class Cache {
         });
     }        
 
+    /**
+     * save specified content to cache, with specified file name
+     * @param {string} outputFileName cache file name to save
+     * @param {any} data content to save
+     * @returns {Promise<string>} saved file full path
+     */
     save(outputFileName, data) {
         return new Promise((resolve, reject) => {
             if (data instanceof Readable) {
                 data.pipe(this.writeStream(outputFileName));
                 resolve(this.fullPath(outputFileName));
             } else {
-                if (typeof data === 'object') {
+                if (typeof data === 'object' && !Buffer.isBuffer(data)) {
                     data = JSON.stringify(data);
                 }
                 fs.writeFile(this.fullPath(outputFileName), data, err => {
@@ -80,12 +98,22 @@ class Cache {
         });
     }
 
+    /**
+     * wether file name exists in cache
+     * @param {string} fileName
+     * @returns {Promise<boolean>}
+     */
     has(fileName) {
         return new Promise(resolve => {
             fs.exists(this.fullPath(fileName), resolve);
         });
     }
 
+    /**
+     * delete file name from cache
+     * @param {string} fileName
+     * @returns {Promise<void>}
+     */
     rm(fileName) {
         return new Promise((resolve, reject) => {
             fs.unlink(this.fullPath(fileName), err => {
