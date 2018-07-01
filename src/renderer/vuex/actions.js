@@ -3,6 +3,11 @@ import { LOOP_TYPES } from './modules/playlist';
 import ApiRenderer from '@/util/apiRenderer';
 import { User } from '@/util/models';
 
+export async function restoreSettings({ commit }) {
+    const st = await ApiRenderer.getCurrentSettings();
+    commit(types.UPDATE_SETTINGS, st);
+}
+
 export function setUserInfo({ commit }, payload) {
     commit(types.SET_USER_INFO, payload);
 }
