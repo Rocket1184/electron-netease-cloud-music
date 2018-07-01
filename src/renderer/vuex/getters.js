@@ -18,21 +18,8 @@ export const user = state => {
 };
 
 export const playing = state => {
-    const quality = state.settings.bitRate;
-    const { url, list, currentIndex, paused, activeLyric } = state.playlist;
-    const track = list[currentIndex];
+    const { index, list } = state.playlist;
     return {
-        paused,
-        track,
-        lyrics: activeLyric,
-        url
+        track: list[index]
     };
-};
-
-export const playlist = state => {
-    return state.playlist;
-};
-
-export const playLoopMode = state => {
-    return state.playlist.loopMode;
 };
