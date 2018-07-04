@@ -22,7 +22,7 @@ build() {
     for i in ${PLATFORMS[*]}; do
         yarn run build "$i"
         echo -n "$VERSION_HASH" > "build/$APP_NAME-$i-x64/ncm_hash"
-        tar zcf "$ARTIFACT_NAME-$i-x64_$VERSION_HASH.tar.gz" "$APP_NAME-$i-x64"
+        tar zcf "build/$ARTIFACT_NAME-$i-x64_$VERSION_HASH.tar.gz" -C build "$APP_NAME-$i-x64"
     done
 }
 
