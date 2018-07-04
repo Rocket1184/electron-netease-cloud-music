@@ -2,6 +2,8 @@
 
 # variables
 APP_NAME="electron-netease-cloud-music"
+ARTIFACT_NAME="electron-ncm"
+PLATFORMS=(linux darwin)
 BUCKET_NAME="$APP_NAME"
 VERSION_HASH="${TRAVIS_COMMIT:0:7}"
 PKGVER="$VERSION_HASH"
@@ -13,15 +15,14 @@ pack() {
     rm dist/.gitkeep
     yarn run pack
     cp ./LICENSE dist/
-    npx asar pack dist "build/${APP_NAME}_${PKGVER}.asar"
+    npx asar pack dist "build/${APP_NAME}_$PKGVER.asar"
 }
 
 build() {
-    PLATFORMS=(linux darwin)
     for i in ${PLATFORMS[*]}; do
         yarn run build "$i"
         echo -n "$VERSION_HASH" > "build/$APP_NAME-$i-x64/ncm_hash"
-        tar zcf "electron-ncm-$i-x64-$VERSION_HASH.tar.gz" "$APP_NAME-$ARCH"
+        tar zcf "$ARTIFACT_NAME-$i-x64_$VERSION_HASH.tar.gz" "$APP_NAME-$i-x64"
     done
 }
 
@@ -45,11 +46,13 @@ if [ "$TRAVIS_BRANCH" == "$TRAVIS_TAG" ]; then
     PKGVER="$TRAVIS_TAG"
     pack
     qshell_init
-    qshell_upload build/*.asar
+    qshell_upload "${APP_NAME}_$PKGVER.asar"
 else
     pack
     build
     qshell_init
-    qshell_upload build/*.asar
-    qshell_upload build/*.tar.gz
+    qshell_upload "${APP_NAME}_$PKGVER.asar"
+    for i in ${PLATFORMS[*]}; do
+        qshell_upload "$ARTIFACT_NAME-$i-x64_$VERSION_HASH.tar.gz"
+    done
 fi
