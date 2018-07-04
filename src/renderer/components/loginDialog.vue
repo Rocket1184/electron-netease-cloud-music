@@ -6,10 +6,10 @@
             class="login-tabs"
             lineClass="tab-line"
             @change="handleTabChange">
-            <mu-tab value="web"
-                title="网页登录"></mu-tab>
             <mu-tab value="app"
                 title="应用内登录"></mu-tab>
+            <mu-tab value="web"
+                title="网页登录"></mu-tab>
         </mu-tabs>
         <div v-show="loginType === 'web'">
             <mu-stepper class="web-login-stepper"
@@ -37,7 +37,7 @@
             </mu-stepper>
         </div>
         <div v-show="loginType === 'app'">
-            <mu-text-field label="手机号码"
+            <mu-text-field label="邮箱 / 手机号码"
                 inputClass="app-nav-input-account"
                 v-model="inputUsr"
                 :errorText="errMsgUsr"
@@ -78,7 +78,7 @@ import ApiRenderer from '@/util/apiRenderer';
 function initData() {
     return {
         webLoginStep: 0,
-        loginType: 'web',
+        loginType: 'app',
         inputUsr: '',
         inputPwd: '',
         errMsgUsr: '',
@@ -112,7 +112,7 @@ export default {
         async handleLogin() {
             this.errMsgUsr = '';
             this.errMsgPwd = '';
-            if (!this.inputUsr) return this.errMsgUsr = '用户名不能为空';
+            if (!this.inputUsr) return this.errMsgUsr = '邮箱 / 手机号码 不能为空';
             if (!this.inputPwd) return this.errMsgPwd = '密码不能为空';
             this.posting = true;
             // TODO: Login with captcha
@@ -174,7 +174,6 @@ export default {
     }
 };
 </script>
-
 
 <style lang="less">
 .nav-login-dlg {
