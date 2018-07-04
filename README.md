@@ -64,7 +64,7 @@ yaourt -S electron-netease-cloud-music
 
 ### Other linux distro OR macOS
 
-Download prebuilt binary packages (include bundled electron) [here](https://ncm-release.dokku.rocka.me)) or there -> [![hreoku status](https://heroku-badge.herokuapp.com/?app=electron-ncm-downloads&style=flat&svg=1)](https://electron-ncm-downloads.herokuapp.com/)
+Download prebuilt binary packages (include bundled electron) [here](https://ncm-release.dokku.rocka.me) or there -> [![hreoku status](https://heroku-badge.herokuapp.com/?app=electron-ncm-downloads&style=flat&svg=1)](https://electron-ncm-downloads.herokuapp.com/)
 
 ### asar archive without electron
 
@@ -116,7 +116,6 @@ yarn
 yarn dev
 
 # bundle JavaScript and CSS
-export NODE_ENV=production
 yarn run pack
 
 # package the app
