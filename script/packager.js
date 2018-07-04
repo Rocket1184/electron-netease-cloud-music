@@ -1,3 +1,5 @@
+'use strict';
+
 const { absPath, removeKeepDot } = require('./util');
 const packager = require('electron-packager');
 
@@ -21,12 +23,6 @@ const options = {
     platform: argv
 };
 
-packager(options, (err, path) => {
-    if (err) {
-        console.error('\nBuild failed: ');
-        console.error(err);
-    } else {
-        console.log('\nBuild succeed! Output path:\n');
-        console.log(`${path}\n`);
-    }
-});
+packager(options)
+    .then(path => console.log(`Output: ${path}`))
+    .catch(err => console.error(`Build failed: ${err.message}`));
