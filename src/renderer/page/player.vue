@@ -102,12 +102,12 @@ export default {
                 // loop form current index. if current index equals -1, loop from 0
                 let loopStart = this.currentLyricIndex === -1 ? 0 : this.currentLyricIndex;
                 // the process was darged backword, loop from 0
-                if (ev.target.currentTime < +this.lyricElemMap[loopStart].getAttribute('data-time')) {
+                if (ev.target.currentTime < +this.lyricElemMap[loopStart].dataset.time) {
                     loopStart = 0;
                 }
                 // loop and find the smallest whose time larger than currentTime
                 for (let i = loopStart; i < this.lyricElemMap.length; i++) {
-                    if (ev.target.currentTime < +this.lyricElemMap[i].getAttribute('data-time')) {
+                    if (ev.target.currentTime < +this.lyricElemMap[i].dataset.time) {
                         this.currentLyricIndex = i - 1;
                         return;
                     }
@@ -115,7 +115,6 @@ export default {
                 // not found any, point to the last element
                 this.currentLyricIndex = this.lyricElemMap.length - 1;
             });
-            this.audioEl.addEventListener('ended', () => this.currentLyricIndex = -1);
         },
         createLyricElemMap() {
             if (this.ui.lyric.lrc) {
@@ -124,11 +123,11 @@ export default {
         }
     },
     watch: {
-        ['ui.lyricSeq']: {
-            handler() {
-                // query lyric elements after they are created
-                this.$nextTick(() => this.createLyricElemMap());
-            }
+        ['ui.lyricSeq']() {
+            // reset lyric position
+            this.currentLyricIndex = -1;
+            // query lyric elements after they are created
+            this.$nextTick(() => this.createLyricElemMap());
         }
     },
     mounted() {
