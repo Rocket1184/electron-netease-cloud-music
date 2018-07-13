@@ -51,6 +51,7 @@
 - 播放收藏/创建的歌单
 - 喜欢音乐（加红心）
 - 收藏音乐到歌单
+- Linux 桌面媒体控制（ MPRIS ）集成
 
 ## Installation
 
@@ -58,30 +59,36 @@
 
 [electron-netease-cloud-music<sup>AUR</sup>](https://aur.archlinux.org/packages/electron-netease-cloud-music/) is avalible in AUR now!
 
-```bash[here](https://ncm-release.dokku.rocka.me) or t[here](https://ncm-release.dokku.rocka.me) or t
-yaourt -S electron-netease-cloud-music
+Clone the repo
+
+```sh
+git clone https://aur.archlinux.org/electron-netease-cloud-music.git
 ```
 
-### Other linux distro OR macOS
+or install with your favorite AUR helper
 
-Download prebuilt binary packages (include bundled electron) there -> [![hreoku status](https://heroku-badge.herokuapp.com/?app=electron-ncm-downloads&style=flat&svg=1)](https://electron-ncm-downloads.herokuapp.com/)
+```sh
+yay -S electron-netease-cloud-music
+```
+
+### Other GNU/Linux distro or macOS
+
+Download prebuilt binary packages (include bundled electron) there -> [![hreoku status](https://heroku-badge.herokuapp.com/?app=ncm-releases&style=flat&svg=1)](https://ncm-releases.herokuapp.com/)
 
 ### asar archive without electron
 
 Install electron with `npm` or your distro's package manager first.
 
-Jump to [latest release](https://github.com/Rocket1184/electron-netease-cloud-music/releases/latest) and download `app.asar`, then run with
+Jump to [release page](https://ncm-releases.herokuapp.com/) and download `asar` package, then run with
 
-```bash
-electron /path/to/app.asar
+```sh
+electron /path/to/electron-netease-cloud-music_*.asar
 ```
 
 ## TODOs
 
 <details>
 <summary>Unfold TODOs</summary>
-
-- [x] MPRIS D-Bus integration for linux desktop
 
 - [ ] 各种搜索
   - [ ] 单曲
