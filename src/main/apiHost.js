@@ -1,9 +1,9 @@
 import debug from 'debug';
 import { ipcMain } from 'electron';
 
-import * as Api from './api';
+import * as API from './api';
 
-const TAG = 'Api';
+const TAG = 'API';
 const d = debug(TAG);
 
 async function rejectTimeout(timeOut = 60000) {
@@ -17,7 +17,7 @@ async function rejectTimeout(timeOut = 60000) {
 ipcMain.on(TAG, (event, methodName, invokeId, ...args) => {
     d('↓ %s', methodName);
     Promise.race([
-        Api[methodName](...args),
+        API[methodName](...args),
         rejectTimeout()
     ]).then(data => {
         event.sender.send(TAG, invokeId, data);
