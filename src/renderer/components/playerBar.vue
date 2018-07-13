@@ -68,12 +68,16 @@
 </template>
 
 <script>
+import { platform } from 'os';
 import { mapActions, mapGetters, mapState } from 'vuex';
 
 import ApiRenderer from '@/util/apiRenderer';
 import currentList from './currentList.vue';
 import userPlaylists from './userPlaylists.vue';
-import * as types from '../vuex/mutation-types';
+import {
+    PAUSE_PLAYING_MUSIC,
+    RESUME_PLAYING_MUSIC
+} from '@/vuex/mutation-types';
 import { sizeImg, HiDpiPx } from '@/util/image';
 import { shortTime } from '@/util/formatter';
 
@@ -159,6 +163,7 @@ export default {
         time: shortTime
     },
     mounted() {
+        /** @type {HTMLAudioElement} */
         const _audioEl = document.getElementById('playerbar-audio');
         const _slider = document.getElementById('playerbar-progress');
         let _playingIntervalId;
@@ -192,12 +197,27 @@ export default {
             }, timeOut);
         });
 
-        _audioEl.addEventListener('pause',() => _updateTime() && _unsetInterval());
+        _audioEl.addEventListener('pause', () => _updateTime() && _unsetInterval());
 
         _audioEl.addEventListener('ended', () => {
             this.submitListened();
             this.playNextTrack();
         });
+
+        this.$store.subscribe(mutation => {
+            switch (mutation.type) {
+                case PAUSE_PLAYING_MUSIC:
+                    _audioEl.pause();
+                    break;
+                case RESUME_PLAYING_MUSIC:
+                    _audioEl.play();
+                    break;
+            }
+        });
+
+        if (platform() === 'linux') {
+            require('@/util/mpris').bindEventListener(_audioEl);
+        }
     },
     components: {
         currentList,
