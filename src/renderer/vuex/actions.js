@@ -90,9 +90,9 @@ export function pauseAudio({ commit }) {
 async function playThisTrack(commit, list, index, quality) {
     commit(types.SET_CURRENT_INDEX, index);
     commit(types.SET_ACTIVE_LYRIC, {});
-    const id = list[index].id;
-    updateUiLyric(commit, id);
-    await updateUiUrl(commit, id, quality);
+    const track = list[index];
+    updateUiLyric(commit, track.id);
+    await updateUiUrl(commit, track.id, quality);
     commit(types.RESUME_PLAYING_MUSIC);
 }
 
@@ -140,7 +140,7 @@ export function restorePlaylist({ commit, state }) {
         const stored = localStorage.getItem('playlist');
         if (stored) {
             const playlist = JSON.parse(stored);
-    commit(types.RESTORE_PLAYLIST, playlist);
+            commit(types.RESTORE_PLAYLIST, playlist);
             const track = playlist.list[playlist.index];
             updateUiUrl(commit, track.id, state.settings.bitRate);
             updateUiLyric(commit, track.id);
