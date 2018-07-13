@@ -90,21 +90,15 @@ export default {
     },
     methods: {
         ...mapActions([
+            'playAudio',
+            'pauseAudio',
             'playNextTrack',
             'playPreviousTrack',
             'restorePlaylist',
             'refreshUserPlaylist'
         ]),
-        play() {
-            this.$store.commit(types.RESUME_PLAYING_MUSIC);
-            this.audioEl.play();
-        },
-        pause() {
-            this.$store.commit(types.PAUSE_PLAYING_MUSIC);
-            this.audioEl.pause();
-        },
         handlePlayOrPause() {
-            this.ui.audioSrc && (this.audioEl.paused ? this.play() : this.pause());
+            this.ui.audioSrc && (this.audioEl.paused ? this.playAudio() : this.pauseAudio());
         },
         handleProgressDrag(value) {
             this.audioEl.currentTime = this.timeTotal * value / 100;
@@ -197,7 +191,7 @@ export default {
             _unsetInterval();
             this.timeTotal = _audioEl.duration;
             this.timeCurrent = _audioEl.currentTime = 0;
-            if (!this.playlist.paused) _audioEl.play();
+            if (!this.ui.paused) _audioEl.play();
         });
 
         _audioEl.addEventListener('seeking', _updateTime);

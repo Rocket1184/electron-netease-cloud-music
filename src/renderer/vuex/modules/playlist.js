@@ -9,18 +9,11 @@ export const LOOP_TYPES = {
 
 const state = {
     index: 0,
-    paused: true,
     loopMode: LOOP_TYPES.LIST_LOOP,
     list: [new Track()],
 };
 
 const mutations = {
-    [types.PAUSE_PLAYING_MUSIC](state) {
-        state.paused = true;
-    },
-    [types.RESUME_PLAYING_MUSIC](state) {
-        state.paused = false;
-    },
     [types.SET_PLAY_LIST](state, payload) {
         const { list } = payload;
         state.list = list.map(t => (t instanceof Track) ? t : new Track(t));
@@ -47,9 +40,8 @@ const mutations = {
         state.loopMode = LOOP_TYPES.RANDOM;
     },
     [types.RESTORE_PLAYLIST](state, payload) {
-        const { paused, index, loopMode, list } = payload;
+        const { index, loopMode, list } = payload;
         state.index = index || 0;
-        state.paused = paused || true;
         state.loopMode = loopMode || LOOP_TYPES.LIST_LOOP;
         state.list = list.map(t => new Track(t));
     }

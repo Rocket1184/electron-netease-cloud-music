@@ -1,11 +1,11 @@
 <template>
     <div class="song-detail">
         <div class="bkg"
-            :style="styleAlbumImg"></div>
+            :style="albumImgStyle"></div>
         <div class="disk"
-            :class="classAlbumDisk">
+            :class="albumDiskClass">
             <div class="img"
-                :style="styleAlbumImg">
+                :style="albumImgStyle">
                 <div class="border">
                 </div>
             </div>
@@ -68,16 +68,15 @@ export default {
     },
     computed: {
         ...mapState([
-            'playlist',
             'ui'
         ]),
         ...mapGetters([
             'playing'
         ]),
-        classAlbumDisk() {
-            return { play: !this.playlist.paused };
+        albumDiskClass() {
+            return { play: !this.ui.paused };
         },
-        styleAlbumImg() {
+        albumImgStyle() {
             return bkgImg(sizeImg(this.playing.track.album.picUrl, HiDpiPx(220)));
         },
         lyricScrollerStyle() {

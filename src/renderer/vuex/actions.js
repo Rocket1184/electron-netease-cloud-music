@@ -79,6 +79,14 @@ async function updateUiLyric(commit, id) {
     commit(types.SET_ACTIVE_LYRIC, lyric);
 }
 
+export function playAudio({ commit }) {
+    commit(types.RESUME_PLAYING_MUSIC);
+}
+
+export function pauseAudio({ commit }) {
+    commit(types.PAUSE_PLAYING_MUSIC);
+}
+
 async function playThisTrack(commit, list, index, quality) {
     commit(types.SET_CURRENT_INDEX, index);
     commit(types.SET_ACTIVE_LYRIC, {});
