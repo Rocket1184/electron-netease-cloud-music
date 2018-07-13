@@ -26,7 +26,9 @@ export default {
     methods: {
         ...mapActions([
             'restoreUserInfo',
-            'restoreSettings'
+            'restoreSettings',
+            'storePlaylist',
+            'restorePlaylist'
         ])
     },
     computed: {
@@ -34,9 +36,13 @@ export default {
             'ui'
         ])
     },
+    beforeCreate() {
+        window.addEventListener('beforeunload', () => this.storePlaylist());
+    },
     created() {
         this.restoreSettings();
         this.restoreUserInfo();
+        this.restorePlaylist();
     }
 };
 </script>

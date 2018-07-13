@@ -128,12 +128,27 @@ export function playTrackIndex({ commit, state }, payload) {
     playThisTrack(commit, list, payload.index, quality);
 }
 
-export async function restorePlaylist({ commit, state }, payload) {
-    const { playlist } = payload;
+export function storePlaylist({ commit, state }) {
+    if (!state.settings.autoPlay) {
+        commit(types.PAUSE_PLAYING_MUSIC);
+    }
+    localStorage.setItem('playlist', JSON.stringify(state.playlist));
+}
+
+export function restorePlaylist({ commit, state }) {
+    try {
+        const stored = localStorage.getItem('playlist');
+        if (stored) {
+            const playlist = JSON.parse(stored);
     commit(types.RESTORE_PLAYLIST, playlist);
-    const id = playlist.list[playlist.index].id;
-    updateUiUrl(commit, id, state.settings.bitRate);
-    updateUiLyric(commit, id);
+            const track = playlist.list[playlist.index];
+            updateUiUrl(commit, track.id, state.settings.bitRate);
+            updateUiLyric(commit, track.id);
+        }
+    } catch (e) {
+        // eslint-disable-next-line no-console
+        console.info('Playlist stored in localStorage not valid.');
+    }
 }
 
 export async function refreshUserPlaylist({ commit }, payload) {
