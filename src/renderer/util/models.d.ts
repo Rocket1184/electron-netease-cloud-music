@@ -77,7 +77,7 @@ export class User extends UserModel {
 export class Track extends TrackModel {
     constructor(o: any);
     picUrl: string;
-    artistName: number;
+    artistName: string;
     setUrl(type: string, url: string): void;
 }
 
