@@ -1,6 +1,7 @@
 'use strict';
 
 import { join } from 'path';
+import { platform } from 'os';
 import { app, BrowserWindow, ipcMain, Menu } from 'electron';
 
 import { getCurrent } from './settings';
@@ -45,6 +46,11 @@ app.on('ready', () => {
     mainWindow = createWindow();
     // boot up ApiHost
     require('./apiHost');
+    // boot up MPRIS host if linux
+    if (platform() === 'linux') {
+        const { bindWebContents } = require('./mpris');
+        bindWebContents(mainWindow.webContents);
+    }
 });
 
 app.on('window-all-closed', () => {
