@@ -1,7 +1,9 @@
+'use strict';
+
 import debug from 'debug';
 import { ipcRenderer } from 'electron';
 
-const TAG = 'Api';
+const TAG = 'API';
 const d = debug(TAG);
 
 let invokeId = 0;
@@ -9,7 +11,7 @@ let invokeId = 0;
 const methodMap = new Map();
 const actionMap = new Map();
 
-ipcRenderer.on(TAG, (event, id, data) => {
+ipcRenderer.on(TAG, (_, id, data) => {
     if (actionMap.has(id)) {
         d('🔻 %d %o', id, data);
         const action = actionMap.get(id);
@@ -27,7 +29,7 @@ function senderFn(methodName, ...args) {
     });
 }
 
-const modules = new Proxy({}, {
+export default new Proxy({}, {
     get(_, propName) {
         if (methodMap.has(propName)) {
             return methodMap.get(propName);
@@ -37,5 +39,3 @@ const modules = new Proxy({}, {
         return fn;
     }
 });
-
-export default modules;
