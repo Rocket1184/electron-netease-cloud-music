@@ -22,8 +22,12 @@ let cfg = {
         rules: [
             {
                 test: /\.js$/,
-                loader: 'babel-loader',
+                use: 'babel-loader',
                 exclude: /node_modules/
+            },
+            {
+                test: /\.node$/,
+                use: 'native-ext-loader'
             }
         ]
     },
