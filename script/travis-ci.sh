@@ -45,8 +45,6 @@ if [ "$TRAVIS_BRANCH" == "$TRAVIS_TAG" ]; then
     # build is triggered by a git tag
     PKGVER="$TRAVIS_TAG"
     pack
-    qshell_init
-    qshell_upload "${APP_NAME}_$PKGVER.asar"
 else
     pack
     build
