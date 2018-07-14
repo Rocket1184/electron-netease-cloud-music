@@ -14,7 +14,7 @@ export const appName = process.env.NODE_ENV === 'development'
 export const appVer = pkgJSON.version;
 
 export const defaultSettings = {
-    bitRate: 'h',
+    bitRate: 'l',
     windowBorder: true,
     autoPlay: false
 };
