@@ -1,8 +1,7 @@
 <template>
     <div class="appbar"
         :class="appbarDynamicClassName">
-        <div id="appbar-window-control"
-            v-if="shouldWindowCtlShow">
+        <div id="appbar-window-control">
             <mu-icon-button @click="handleClose()"
                 icon="close"></mu-icon-button>
             <mu-icon-button @click="handleMaximize()"
@@ -13,13 +12,13 @@
         <mu-appbar title="Electron Netease Cloud Music">
             <mu-icon-button icon="menu"
                 slot="left"
-                @click="toggleDrawer()"></mu-icon-button>
+                @click="drawerOpen = true"></mu-icon-button>
             <searchBox slot="right"></searchBox>
         </mu-appbar>
         <mu-drawer :width="300"
             :open="drawerOpen"
             :docked="false"
-            @close="toggleDrawer()">
+            @close="drawerOpen = false">
             <mu-list class="appnav-drawer">
                 <div class="header"
                     :style="backgroundUrlStyle">
@@ -48,16 +47,16 @@
             </mu-list>
         </mu-drawer>
         <loginDialog :show="loginDlgShow"
-            @close="toggleDlg()"></loginDialog>
+            @close="loginDlgShow = false"></loginDialog>
     </div>
 </template>
 
 <script>
-import { mapActions, mapGetters } from 'vuex';
+import { mapActions, mapGetters, mapState } from 'vuex';
 import { remote } from 'electron';
 import { platform } from 'os';
 
-import { sizeImg, HiDpiPx } from "@/util/image";
+import { bkgImg, sizeImg, HiDpiPx } from "@/util/image";
 import ApiRenderer from '@/util/apiRenderer';
 import loginDialog from './loginDialog.vue';
 import searchBox from './searchBox.vue';
@@ -67,42 +66,32 @@ export default {
     data() {
         return {
             currentWindow: remote.getCurrentWindow(),
-            isDarwin: 'darwin' === platform(),
             drawerOpen: false,
             loginDlgShow: false
         };
     },
     computed: {
+        ...mapState(['settings']),
+        ...mapGetters(['loginValid', 'user']),
         validRoutes() {
             return Routes.filter(r => r.icon);
         },
-        currentSettings() {
-            return this.$store.state.settings;
-        },
         appbarDynamicClassName() {
-            return [
-                this.isDarwin && 'appbar-darwin',
-                this.shouldWindowCtlShow && 'appbar-with-ctl'
-            ];
-        },
-        shouldWindowCtlShow() {
-            return !this.isDarwin && !this.currentSettings.windowBorder;
+            return {
+                'not-updated': this.settings._updated === false,
+                'is-darwin': platform() === 'darwin',
+                'is-frameless': this.settings.windowBorder === false
+            };
         },
         avatarUrl() {
             return sizeImg(this.user.avatarUrl, HiDpiPx(80));
         },
         backgroundUrlStyle() {
-            return this.user.bkgUrl && `background-image: url(${sizeImg(this.user.bkgUrl, HiDpiPx(300), HiDpiPx(200))})`;
-        },
-        ...mapGetters([
-            'loginValid',
-            'user'
-        ])
+            return this.user.bkgUrl && bkgImg(sizeImg(this.user.bkgUrl, HiDpiPx(300), HiDpiPx(200)));
+        }
     },
     methods: {
-        ...mapActions([
-            'logout'
-        ]),
+        ...mapActions(['logout']),
         handleClose() {
             this.currentWindow.close();
         },
@@ -115,30 +104,22 @@ export default {
             else
                 this.currentWindow.maximize();
         },
-        toggleDrawer() {
-            this.drawerOpen = !this.drawerOpen;
-        },
         handleNameClick() {
             if (!this.loginValid) {
                 this.loginDlgShow = true;
             } else {
                 this.$prompt({
-                    title: '提示',
-                    text: '确认要退出登录吗？退出登录后将无法查看每日歌曲推荐，收藏的歌单等信息。',
+                    title: '退出登录',
+                    text: '退出登录后将无法查看每日歌曲推荐，收藏的歌单等信息，确定吗？',
                     action: () => this.logout()
                 });
             }
         },
-        toggleDlg() {
-            this.loginDlgShow = !this.loginDlgShow;
-        },
         async handleCheckIn() {
-            let results = [
+            const points = [
                 await ApiRenderer.postDailyTask(0),
                 await ApiRenderer.postDailyTask(1)
-            ];
-            let points = 0;
-            results.forEach(e => e.code === 200 ? points += e.point : null);
+            ].reduce((a, b) => a + b);
             if (points) {
                 this.$toast(`签到成功，获得 ${points} 点积分`);
             } else {
@@ -161,10 +142,37 @@ export default {
     cursor: default;
     user-select: none;
     -webkit-app-region: drag;
+    #appbar-window-control {
+        // hide window control by default
+        display: none;
+    }
     .mu-appbar {
         .left {
             cursor: pointer;
             -webkit-app-region: no-drag;
+        }
+    }
+    &.not-updated {
+        .mu-appbar > div {
+            display: none;
+        }
+    }
+    &.is-frameless {
+        #appbar-window-control {
+            display: block;
+        }
+        .mu-appbar {
+            padding-top: 16px;
+        }
+    }
+    &.is-darwin {
+        #appbar-window-control {
+            display: none;
+        }
+        &.is-frameless {
+            .mu-appbar {
+                padding-top: 12px;
+            }
         }
     }
 }
@@ -190,25 +198,6 @@ export default {
     }
 }
 
-.appbar-with-ctl {
-    .mu-appbar {
-        padding-top: 16px;
-    }
-}
-
-.appbar-no-ctl {
-    .mu-appbar {
-        padding-top: 0;
-    }
-    #appbar-window-control {
-        display: none;
-    }
-}
-
-.appbar-darwin {
-    padding-top: 12px;
-}
-
 .appnav-drawer {
     padding-top: 0;
     .header {
@@ -216,11 +205,11 @@ export default {
         width: 100%;
         height: 200px;
         background-size: cover;
-        background-image: url("~assets/img/TealRedYellow.png");
+        background-image: url('~assets/img/TealRedYellow.png');
         background-position-y: 50%;
         &::before {
             position: absolute;
-            content: "cnt";
+            content: ' ';
             color: transparent;
             width: 100%;
             height: 100%;
