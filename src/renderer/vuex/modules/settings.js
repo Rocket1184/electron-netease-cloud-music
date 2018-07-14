@@ -2,7 +2,7 @@ import * as types from '../mutation-types';
 import ApiRenderer from '@/util/apiRenderer';
 
 let state = {
-    bitRate: 'h',
+    bitRate: 'l',
     windowBorder: false,
     autoPlay: false
 };
