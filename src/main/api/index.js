@@ -130,8 +130,8 @@ export function getListDetail(id) {
 
 const QualityMap = {
     h: 320000,
-    m: 160000,
-    l: 96000
+    m: 192000,
+    l: 128000
 };
 
 export function getMusicUrl(idOrIds, quality = 'h') {
