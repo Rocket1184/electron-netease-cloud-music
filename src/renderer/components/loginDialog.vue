@@ -1,6 +1,7 @@
 <template>
-    <mu-dialog dialogClass="nav-login-dlg"
-        :open="show"
+    <mu-dialog :open="show"
+        dialogClass="nav-login-dlg"
+        bodyClass="dlg-body"
         @close="$emit('close')">
         <mu-tabs :value="loginType"
             class="login-tabs"
@@ -11,60 +12,63 @@
             <mu-tab value="web"
                 title="网页登录"></mu-tab>
         </mu-tabs>
-        <div v-show="loginType === 'web'">
-            <mu-stepper class="web-login-stepper"
-                :activeStep="webLoginStep"
-                orientation="vertical">
-                <mu-step>
-                    <mu-step-label>进行网页登录</mu-step-label>
-                    <mu-step-content>
-                        <mu-raised-button label="点我打开登录页面"
-                            fullWidth
-                            primary
-                            @click="openLoginWeb()"></mu-raised-button>
-                    </mu-step-content>
-                </mu-step>
-                <mu-step>
-                    <mu-step-label>确认登录成功</mu-step-label>
-                    <mu-step-content>
-                        <mu-flat-button label="上一步"
-                            @click="webLoginStep--"></mu-flat-button>
-                        <mu-raised-button label="完成"
-                            primary
-                            @click="handleWebLoginComplete()"></mu-raised-button>
-                    </mu-step-content>
-                </mu-step>
-            </mu-stepper>
-        </div>
-        <div v-show="loginType === 'app'">
-            <mu-text-field label="邮箱 / 手机号码"
-                inputClass="app-nav-input-account"
-                v-model="inputUsr"
-                :errorText="errMsgUsr"
-                fullWidth
-                labelFloat></mu-text-field>
-            <mu-text-field label="密码"
-                id="app-nav-input-password"
-                type="password"
-                v-model="inputPwd"
-                :errorText="errMsgPwd"
-                fullWidth
-                labelFloat></mu-text-field>
-            <div v-if="needCaptcha">
-                <mu-text-field label="验证码"
-                    class="text-field-captcha"
-                    v-model="inputCaptcha"
-                    :errorText="errMsgCaptcha"
-                    labelFloat></mu-text-field>
-                <img :src="`https://music.163.com/captcha?id=${captchaId}`"
-                    class="captforce-alignedcha-img"
-                    alt="Refresh">
+        <div class="login-types">
+            <div v-show="loginType === 'web'">
+                <mu-stepper :activeStep="webLoginStep"
+                    orientation="vertical">
+                    <mu-step>
+                        <mu-step-label>进行网页登录</mu-step-label>
+                        <mu-step-content>
+                            <mu-raised-button label="点我打开登录页面"
+                                fullWidth
+                                primary
+                                @click="openLoginWeb()"></mu-raised-button>
+                        </mu-step-content>
+                    </mu-step>
+                    <mu-step>
+                        <mu-step-label>确认登录成功</mu-step-label>
+                        <mu-step-content>
+                            <div class="web-login-step-2-content">
+                                <mu-flat-button label="上一步"
+                                    @click="webLoginStep--"></mu-flat-button>
+                                <mu-raised-button label="完成"
+                                    primary
+                                    @click="handleWebLoginComplete()"></mu-raised-button>
+                            </div>
+                        </mu-step-content>
+                    </mu-step>
+                </mu-stepper>
             </div>
-            <mu-raised-button label="登录"
-                fullWidth
-                primary
-                @click="handleLogin()"
-                :disabled="posting"></mu-raised-button>
+            <div v-show="loginType === 'app'">
+                <mu-text-field label="邮箱 / 手机号码"
+                    inputClass="app-nav-input-account"
+                    v-model="inputUsr"
+                    :errorText="errMsgUsr"
+                    fullWidth
+                    labelFloat></mu-text-field>
+                <mu-text-field label="密码"
+                    id="app-nav-input-password"
+                    type="password"
+                    v-model="inputPwd"
+                    :errorText="errMsgPwd"
+                    fullWidth
+                    labelFloat></mu-text-field>
+                <div v-if="needCaptcha">
+                    <mu-text-field label="验证码"
+                        class="text-field-captcha"
+                        v-model="inputCaptcha"
+                        :errorText="errMsgCaptcha"
+                        labelFloat></mu-text-field>
+                    <img :src="`https://music.163.com/captcha?id=${captchaId}`"
+                        class="captforce-alignedcha-img"
+                        alt="Refresh">
+                </div>
+                <mu-raised-button label="登录"
+                    fullWidth
+                    primary
+                    @click="handleLogin()"
+                    :disabled="posting"></mu-raised-button>
+            </div>
         </div>
     </mu-dialog>
 </template>
@@ -179,7 +183,14 @@ export default {
 .nav-login-dlg {
     @theme-color: #7e57c2;
     width: 400px;
+    .dlg-body {
+        padding: 0;
+        .login-types {
+            margin: 20px;
+        }
+    }
     .login-tabs {
+        margin-bottom: 20px;
         background-color: transparent;
         .mu-tab-link-highlight {
             background-color: @theme-color;
@@ -194,8 +205,10 @@ export default {
     .tab-line {
         background-color: @theme-color;
     }
-    .web-login-stepper {
-        margin: 30px 0;
+    .web-login-step-2-content {
+        margin-top: 5px;
+        display: flex;
+        justify-content: space-between;
     }
     .text-field-captcha {
         display: inline-block;
