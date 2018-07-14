@@ -1,20 +1,20 @@
 <template>
     <div class="settings">
         <mu-sub-header>基本设置</mu-sub-header>
-        <mu-list-item title="试听音质"
+        <mu-list-item title="试听音频码率"
             disableRipple></mu-list-item>
         <div class="margin-block">
-            <mu-radio label="高 (320 kbit/s)"
+            <mu-radio label="极高 (320 kbit/s)"
                 name="bitRate"
                 nativeValue="h"
                 v-model="settings.bitRate"></mu-radio>
             <br>
-            <mu-radio label="中 (160 kbit/s)"
+            <mu-radio label="较高 (192 kbit/s)"
                 name="bitRate"
                 nativeValue="m"
                 v-model="settings.bitRate"></mu-radio>
             <br>
-            <mu-radio label="低 (96 kbit/s)"
+            <mu-radio label="标准 (128 kbit/s)"
                 name="bitRate"
                 nativeValue="l"
                 v-model="settings.bitRate"></mu-radio>
@@ -31,26 +31,26 @@
             <mu-switch v-model="settings.autoPlay"
                 slot="right"></mu-switch>
         </mu-list-item>
-        <mu-sub-header>缓存管理</mu-sub-header>
-        <mu-list-item title="清除浏览器缓存"
+        <mu-sub-header>存储空间</mu-sub-header>
+        <mu-list-item title="浏览器缓存"
             @click="clearCache('chrome')"
             disableRipple>
             <span slot="right"
                 class="nowrap">{{cacheSize | hunamSize}}</span>
         </mu-list-item>
-        <mu-list-item title="清除歌曲缓存"
+        <mu-list-item title="歌曲缓存"
             @click="clearCache('music')"
             disableRipple>
             <span slot="right"
                 class="nowrap">{{musicSize | hunamSize}}</span>
         </mu-list-item>
-        <mu-list-item title="清除歌词缓存"
+        <mu-list-item title="歌词缓存"
             @click="clearCache('lyric')"
             disableRipple>
             <span slot="right"
                 class="nowrap">{{lyricSize | hunamSize}}</span>
         </mu-list-item>
-        <mu-list-item title="清除所有应用数据"
+        <mu-list-item title="所有应用数据"
             @click="wipeAppData"
             disableRipple>
             <span slot="right"
@@ -117,30 +117,41 @@ export default {
             }, resolve));
         },
         clearCache(type) {
-            switch (type) {
-                case 'chrome':
-                    remote.getCurrentWebContents().session.clearCache(() => {
-                        this.refreshSize();
-                        this.$toast('成功清除浏览器缓存');
-                    });
-                    break;
-                case 'music':
-                    ApiRenderer.clearCache('music')
-                        .then(() => this.$toast('成功清除歌曲缓存'));
-                    break;
-                case 'lyric':
-                    ApiRenderer.clearCache('lyric')
-                        .then(() => this.$toast('成功清除歌词缓存'));
-                    break;
-                default:
-                    this.$toast('搞啥呢？？？');
-            }
-            this.refreshSize();
+            const cacheName = {
+                chrome: '浏览器',
+                music: '歌曲',
+                lyric: '歌词'
+            }[type];
+            this.$prompt({
+                title: '清除缓存',
+                text: `${cacheName}缓存将被清除，确定吗？`,
+                action: async () => {
+                    switch (type) {
+                        case 'chrome':
+                            remote.getCurrentWebContents().session.clearCache(() => {
+                                this.refreshSize();
+                                this.$toast('浏览器缓存清除完成');
+                            });
+                            break;
+                        case 'music':
+                            ApiRenderer.clearCache('music')
+                                .then(() => this.$toast('歌曲缓存清除完成'));
+                            break;
+                        case 'lyric':
+                            ApiRenderer.clearCache('lyric')
+                                .then(() => this.$toast('歌词缓存清除完成'));
+                            break;
+                        default:
+                            this.$toast('搞啥呢？？？');
+                    }
+                    this.refreshSize();
+                }
+            });
         },
         wipeAppData() {
             this.$prompt({
-                title: '提示',
-                text: '这将清除所有应用数据，包括缓存以及账号登录状态，确定吗？',
+                title: '清除所有应用数据',
+                text: '所有应用数据都将被清除，包括缓存以及账号登录状态，之后窗口将重新加载。确定吗？',
                 action: async () => {
                     window.onbeforeunload = null;
                     await Promise.all([
@@ -175,12 +186,13 @@ export default {
             const versions = remote.getGlobal('process').versions;
             this.$prompt({
                 title: '版本号',
-                text: `<pre>
-                    Electron: ${versions.electron}
-                    Chrome: ${versions.chrome}
-                    Node: ${versions.node}
-                    V8: ${versions.v8}
-                </pre>`
+                text: `
+<pre>
+        Electron: ${versions.electron}
+        Chrome: ${versions.chrome}
+        Node: ${versions.node}
+        V8: ${versions.v8}
+</pre>`.trim()
             });
         }
     },
@@ -215,9 +227,8 @@ export default {
 
 <style lang="less">
 .settings {
-    width: 600px;
-    margin-left: calc(~"50% - 300px");
-    margin-bottom: 100px;
+    max-width: 600px;
+    margin: 0 auto 100px;
     .margin-block {
         margin: 4px 16px;
     }
