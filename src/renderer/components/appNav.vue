@@ -57,7 +57,7 @@ import { remote } from 'electron';
 import { platform } from 'os';
 
 import { bkgImg, sizeImg, HiDpiPx } from "@/util/image";
-import ApiRenderer from '@/util/apiRenderer';
+import { postDailyTask as checkIn } from '@/util/apiRenderer';
 import loginDialog from './loginDialog.vue';
 import searchBox from './searchBox.vue';
 import Routes from '@/routes';
@@ -116,10 +116,11 @@ export default {
             }
         },
         async handleCheckIn() {
-            const points = [
-                await ApiRenderer.postDailyTask(0),
-                await ApiRenderer.postDailyTask(1)
-            ].reduce((a, b) => a + b);
+            // write them as array literal, then async functions would be
+            // executed serially ( like `async.waterfall` )
+            const points = [await checkIn(0), await checkIn(1)]
+                .map(r => r.code === 200 ? r.point : 0)
+                .reduce((a, b) => a + b);
             if (points) {
                 this.$toast(`签到成功，获得 ${points} 点积分`);
             } else {
