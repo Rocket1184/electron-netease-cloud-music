@@ -22,9 +22,9 @@ build() {
     for i in ${PLATFORMS[*]}; do
         yarn run build "$i"
         echo -n "$VERSION_HASH" > "build/$APP_NAME-$i-x64/ncm_hash"
-        if [ -d "$APP_NAME-$i-x64/$APP_NAME.app" ]; then
+        if [ -d "build/$APP_NAME-$i-x64/$APP_NAME.app" ]; then
             # rename macOS Application
-            mv "$APP_NAME-$i-x64/$APP_NAME.app" "$APP_NAME-$i-x64/Electron NCM.app"
+            mv "build/$APP_NAME-$i-x64/$APP_NAME.app" "build/$APP_NAME-$i-x64/Electron NCM.app"
         fi
         tar zcf "build/$ARTIFACT_NAME-$i-x64_$VERSION_HASH.tar.gz" -C build "$APP_NAME-$i-x64"
     done
