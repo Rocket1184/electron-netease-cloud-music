@@ -151,7 +151,7 @@ export function restorePlaylist({ commit, state }) {
     }
 }
 
-export async function refreshUserPlaylist({ commit }, payload) {
-    const resp = await ApiRenderer.getListDetail(payload);
+export async function refreshUserPlaylist({ commit }, { id }) {
+    const resp = await ApiRenderer.getListDetail(id);
     commit(types.UPDATE_USER_PLAYLIST, resp.playlist);
 }
