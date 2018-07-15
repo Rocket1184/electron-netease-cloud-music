@@ -1,6 +1,7 @@
 <template>
     <mu-dialog :open="prompt"
         :title="promptTitle"
+        @close="prompt=false"
         dialogClass="ncm-global-prompt">
         <div v-html="promptText"></div>
         <mu-flat-button slot="actions"
