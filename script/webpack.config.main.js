@@ -22,7 +22,16 @@ let cfg = {
         rules: [
             {
                 test: /\.js$/,
-                use: 'babel-loader',
+                use: {
+                    loader: 'babel-loader',
+                    options: {
+                        babelrc: false,
+                        plugins: [
+                            'syntax-object-rest-spread',
+                            'transform-es2015-modules-commonjs'
+                        ]
+                    },
+                },
                 exclude: /node_modules/
             },
             {

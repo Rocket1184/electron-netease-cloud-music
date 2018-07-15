@@ -30,7 +30,15 @@ let cfg = {
         rules: [
             {
                 test: /\.js$/,
-                loader: 'babel-loader',
+                use: {
+                    loader: 'babel-loader',
+                    options: {
+                        babelrc: false,
+                        plugins: [
+                            'syntax-object-rest-spread'
+                        ]
+                    },
+                },
                 exclude: /node_modules/
             },
             {
@@ -39,10 +47,12 @@ let cfg = {
             },
             {
                 test: /\.vue$/,
-                loader: 'vue-loader',
-                options: {
-                    compilerOptions: { preserveWhitespace: false }
-                }
+                use: {
+                    loader: 'vue-loader',
+                    options: {
+                        compilerOptions: { preserveWhitespace: false }
+                    }
+                },
             },
             {
                 test: /\.(png|jpe?g|gif|svg|webp)(\?.*)?$/,
