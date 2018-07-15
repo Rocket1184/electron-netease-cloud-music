@@ -10,7 +10,7 @@ export const LOOP_TYPES = {
 const state = {
     index: 0,
     loopMode: LOOP_TYPES.LIST_LOOP,
-    list: [new Track()],
+    list: [],
 };
 
 const mutations = {
@@ -19,7 +19,7 @@ const mutations = {
         state.list = list.map(t => (t instanceof Track) ? t : new Track(t));
     },
     [types.CLEAR_PLAY_LIST](state) {
-        state.list = [new Track()];
+        state.list = [];
     },
     [types.SET_CURRENT_INDEX](state, payload) {
         if (typeof payload === 'number') {
