@@ -1,0 +1,13 @@
+<svg xmlns="http://www.w3.org/2000/svg" xmlns:xlink="http://www.w3.org/1999/xlink" width="300" height="300" version="1.1" viewBox="">
+  <defs>
+    <filter id="shadow">
+      <feDropShadow dx="3" dy="3" flood-color="#000000" flood-opacity="0.3" stdDeviation="2"/>
+    </filter>
+  </defs>
+  <rect width="300" height="300" x="0" y="0" fill="#002742"/>
+  <polygon fill="#07507e" points="0,-200 -60,300 500,300" filter="url(#shadow)"/>
+  <polygon fill="#d9aa18" points="-60,0 -60,300 300,360" filter="url(#shadow)"/>
+  <polygon fill="#347daa" points="300,240 240,180 300,120" filter="url(#shadow)"/>
+  <polygon fill="#c33807" points="0,90 -60,300 210,300" filter="url(#shadow)"/>
+  <polygon fill="#0894a4" points="-60,-60 300,-60 -60,300" filter="url(#shadow)"/>
+</svg>
