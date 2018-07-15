@@ -49,6 +49,7 @@ let cfg = {
 
 if (isProd) {
     // release config
+    cfg.devtool = 'source-map';
     cfg.plugins.push(
         new webpack.DefinePlugin({ 'process.env.NODE_ENV': `"production"` })
     );

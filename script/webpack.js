@@ -26,14 +26,27 @@ if (!webpackCfg.length) {
     process.exit(1);
 }
 
+/** @type {import('webpack').Stats.ToStringOptions} */
+const toStrOpt = {
+    all: undefined,
+    errorDetails: true,
+    env: true,
+    hash: false,
+    builtAt: false,
+    colors: true,
+    modules: false,
+    entrypoints: false,
+    performance: false
+};
+
 webpack(webpackCfg, (err, stats) => {
     if (err) throw err;
     else if (stats.hasErrors()) {
-        process.stderr.write(stats.toString({ colors: true, errorDetails: true }));
+        process.stderr.write(stats.toString(toStrOpt));
         console.log(`'\n\nError when packing ${argv.join(', ')}.`);
         process.exit(1);
     } else {
-        process.stdout.write(stats.toString({ colors: true }));
+        process.stdout.write(stats.toString(toStrOpt));
         console.log(`'\n\nPack for ${argv.join(', ')} succeed.`);
         process.exit(0);
     }

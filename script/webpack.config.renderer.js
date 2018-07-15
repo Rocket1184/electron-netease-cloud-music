@@ -93,11 +93,7 @@ let cfg = {
 
 if (isProd) {
     // release config
-    /**
-     * disable source map for now.
-     * see: https://github.com/mozilla/source-map/issues/304
-     */
-    // cfg.devtool = 'source-map';
+    cfg.devtool = 'source-map';
     cfg.module.rules.push(
         {
             test: /\.css$/,
