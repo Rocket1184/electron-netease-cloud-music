@@ -6,18 +6,17 @@
             :class="albumDiskClass">
             <div class="img"
                 :style="albumImgStyle">
-                <div class="border">
-                </div>
+                <div class="border"></div>
             </div>
             <div class="needle"></div>
         </div>
         <div class="info">
-            <span class="name">{{playing.track.name}}</span>
+            <span class="name">{{track.name}}</span>
             <p class="producer">
                 <span>歌手：</span>
-                <span class="artists">{{playing.track.artistName}}</span>
+                <span class="artists">{{track.artistName}}</span>
                 <span>专辑：</span>
-                <span class="album">{{playing.track.album.name}}</span>
+                <span class="album">{{track.album.name}}</span>
             </p>
             <div class="lyric">
                 <div class="scroller"
@@ -67,17 +66,18 @@ export default {
         };
     },
     computed: {
-        ...mapState([
-            'ui'
-        ]),
-        ...mapGetters([
-            'playing'
-        ]),
+        ...mapState(['ui']),
+        ...mapGetters(['playing']),
         albumDiskClass() {
             return { play: !this.ui.paused };
         },
+        track() {
+            return this.playing.track || ({ name: '（暂无歌曲）', album: { name: '', picUrl: '' } });
+        },
         albumImgStyle() {
-            return bkgImg(sizeImg(this.playing.track.album.picUrl, HiDpiPx(220)));
+            if (this.playing.track) {
+                return bkgImg(sizeImg(this.playing.track.album.picUrl, HiDpiPx(220)));
+            }
         },
         lyricScrollerStyle() {
             if (this.lyricElemMap.length === 0 || this.currentLyricIndex === -1) {
@@ -175,6 +175,7 @@ export default {
         background-size: 80% 450px;
         background-repeat: no-repeat;
         background-position: 50% 0%;
+        background-image: url('~assets/img/cover_default.webp');
         filter: blur(60px);
         opacity: 0.8;
         // magic!!! this enables GPU acceleration!!!!
@@ -190,6 +191,8 @@ export default {
             position: absolute;
             top: 130px;
             right: calc(~'50% - 110px');
+            // fallback album cover image
+            background-image: url('~assets/img/disc_default.webp');
             background-size: cover;
             animation: disk-playing 25s linear infinite;
             animation-play-state: paused;
@@ -198,7 +201,7 @@ export default {
                 bottom: 65px;
                 width: 350px;
                 height: 350px;
-                background-image: url('~assets/img/disc.png');
+                background-image: url('~assets/img/disc.webp');
                 background-size: contain;
                 position: relative;
             }
@@ -209,7 +212,7 @@ export default {
             left: calc(~'50% - 20px');
             width: 100px;
             height: 200px;
-            background-image: url('~assets/img/needle.png');
+            background-image: url('~assets/img/needle.webp');
             background-repeat: no-repeat;
             background-size: contain;
             transition: transform 0.5s;

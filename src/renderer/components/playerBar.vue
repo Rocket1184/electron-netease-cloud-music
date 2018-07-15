@@ -3,12 +3,13 @@
         :zDepth="2">
         <div class="cell cover">
             <router-link to='/player'>
-                <img :src="coverImgSrc">
+                <div class="img"
+                    :style="coverImgStyle"></div>
             </router-link>
         </div>
         <div class="cell info">
-            <span class="song-name">{{playing.track.name}}</span>
-            <span class="artist-name">{{playing.track.artistName}}</span>
+            <span class="song-name">{{track.name}}</span>
+            <span class="artist-name">{{track.artistName}}</span>
             <div class="quick-actions">
                 <mu-icon-button title="喜欢"
                     :iconClass="{ favorite: isFavorite }"
@@ -16,9 +17,10 @@
                     @click="handleFavorite"></mu-icon-button>
                 <mu-checkbox title="收藏到歌单"
                     class="action-item"
+                    ref="chkShowPlaylists"
                     uncheckIcon="bookmark_border"
                     checkedIcon="bookmark"
-                    v-model="userPlaylistsShown"></mu-checkbox>
+                    v-model="playlistsShown"></mu-checkbox>
                 <mu-checkbox title="播放列表"
                     class="action-item"
                     uncheckIcon="queue_music"
@@ -50,13 +52,13 @@
                 @click="playNextTrack"></mu-float-button>
         </div>
         <mu-popup position="bottom"
-            :open="userPlaylistsShown"
-            @close="userPlaylistsShown=false">
+            :open="playlistsShown"
+            @close="playlistsShown=false">
             <mu-appbar title="收藏到歌单">
                 <mu-icon-button slot="right"
                     icon="close"
                     color="white"
-                    @click="userPlaylistsShown=false"></mu-icon-button>
+                    @click="playlistsShown=false"></mu-icon-button>
             </mu-appbar>
             <userPlaylists @rowClick="handleCollect"></userPlaylists>
         </mu-popup>
@@ -78,7 +80,7 @@ import {
     PAUSE_PLAYING_MUSIC,
     RESUME_PLAYING_MUSIC
 } from '@/vuex/mutation-types';
-import { sizeImg, HiDpiPx } from '@/util/image';
+import { sizeImg, HiDpiPx, bkgImg } from '@/util/image';
 import { shortTime } from '@/util/formatter';
 
 export default {
@@ -87,8 +89,7 @@ export default {
             audioEl: {},
             timeTotal: 0,
             timeCurrent: 0,
-            fallbackImg: 'https://p3.music.126.net/Dev8qwDRGjIxAtopFG0uxg==/3263350512830591.jpg',
-            userPlaylistsShown: false,
+            realPlaylistsShown: false,
             currentListShown: false
         };
     },
@@ -110,6 +111,10 @@ export default {
             ApiRenderer.submitListened(this.playing.track.id, this.timeTotal);
         },
         async handleFavorite() {
+            if (!this.loginValid || !this.playing.track) {
+                this.$toast('真的这么喜欢我吗 o(*////▽////*)q');
+                return;
+            }
             const listId = this.user.favoriteList.id;
             const trackId = this.playing.track.id;
             if (this.isFavorite) {
@@ -122,6 +127,10 @@ export default {
             setTimeout(() => this.refreshUserPlaylist(listId), 200);
         },
         async handleCollect(list) {
+            if (!this.loginValid) {
+                this.$toast('讲道理不应该这样的呀  (✘﹏✘ა)');
+                return;
+            }
             const resp = await ApiRenderer.collectTrack(list.id, this.playing.track.id);
             if (resp.code === 200) {
                 this.$toast('成功添加到歌单     (๑•̀ㅂ•́)و✧');
@@ -135,25 +144,45 @@ export default {
         }
     },
     computed: {
-        ...mapGetters([
-            'playing',
-            'user'
-        ]),
-        ...mapState([
-            'playlist',
-            'ui'
-        ]),
-        coverImgSrc() {
-            const url = this.playing.track.album.picUrl || this.fallbackImg;
-            return sizeImg(url, HiDpiPx(64));
+        ...mapGetters(['playing', 'user', 'loginValid']),
+        ...mapState(['playlist', 'ui']),
+        track() {
+            return this.playing.track || ({ name: 'Electron Netease Cloud Music' });
+        },
+        coverImgStyle() {
+            if (this.playing.track) {
+                return bkgImg(sizeImg(this.playing.track.album.picUrl, HiDpiPx(64)));
+            }
+            return '';
         },
         isFavorite() {
+            if (!this.loginValid || !this.playing.track) {
+                return false;
+            }
             const { favoriteList } = this.user;
             if (favoriteList) {
                 const track = favoriteList.tracks.find(t => t.id === this.playing.track.id);
                 return typeof track === 'object';
             }
             return false;
+        },
+        playlistsShown: {
+            get() { return this.realPlaylistsShown; },
+            set(val) {
+                if (!this.loginValid && val === true && this.realPlaylistsShown === false) {
+                    this.$toast('汝还没有登录呀      (눈‸눈)');
+                    // set value of real `<input>` element to `false`.
+                    // it depends on MuseUI impl
+                    this.$refs.chkShowPlaylists.inputValue = false;
+                    return;
+                }
+                if (!this.playing.track) {
+                    this.$toast('究竟想收藏什么呢     (｡ŏ_ŏ)');
+                    this.$refs.chkShowPlaylists.inputValue = false;
+                    return;
+                }
+                this.realPlaylistsShown = val;
+            }
         },
         songProgress() {
             return 100 * this.timeCurrent / this.timeTotal || 0;
@@ -240,7 +269,9 @@ export default {
         display: inline-block;
     }
     .cover {
-        img {
+        .img {
+            background-image: url('~assets/img/cover_default.webp');
+            background-size: cover;
             width: 64px;
             height: 64px;
         }
