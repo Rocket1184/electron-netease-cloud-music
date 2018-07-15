@@ -32,12 +32,14 @@ export default {
         ])
     },
     computed: {
-        ...mapState([
-            'ui'
-        ])
+        ...mapState(['ui'])
     },
     beforeCreate() {
-        window.addEventListener('beforeunload', () => this.storePlaylist());
+        // if return value of this handler is something other than `undefined`,
+        // 'unload' would be prevented.
+        window.onbeforeunload = () => {
+            this.storePlaylist();
+        };
     },
     created() {
         this.restoreSettings();
