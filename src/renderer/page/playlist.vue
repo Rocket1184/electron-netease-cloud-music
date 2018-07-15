@@ -1,7 +1,7 @@
 <template>
     <div class="myplaylist">
         <mu-paper class="aside">
-            <mu-list>
+            <mu-list v-if="loginValid">
                 <mu-list-item v-for="group in listGroups"
                     :key="group.name"
                     :title="group.name"
@@ -14,6 +14,13 @@
                     </PlaylistItem>
                 </mu-list-item>
             </mu-list>
+            <div v-else
+                class="myplaylist-login-tip">
+                <mu-icon value="nature_people"
+                    color="grey"
+                    :size="128"></mu-icon>
+                <p>登录后查看创建/收藏的歌单</p>
+            </div>
         </mu-paper>
         <div class="content">
             <template v-if="detail">
@@ -21,7 +28,8 @@
                 <mu-sub-header>曲目列表</mu-sub-header>
                 <PlayAll :tracks="tracks"></PlayAll>
             </template>
-            <TrackList :tracks="tracksToShow"
+            <TrackList v-if="loginValid"
+                :tracks="tracksToShow"
                 :indexOffset="tracksOffset"></TrackList>
             <div class="pagination"
                 v-if="tracks.length > 50">
@@ -42,26 +50,32 @@ import PlayAll from '@/components/playAll.vue';
 import TrackList from '@/components/trackList.vue';
 import PlaylistItem from '@/components/myPlaylistItem.vue';
 import PlaylistHeader from '@/components/playlistHeader.vue';
+import { SET_USER_PLAYLISTS } from '@/vuex/mutation-types';
 
 export default {
     name: 'page-playlist',
     data() {
         return {
-            detail: {},
+            detail: null,
+            listGroups: [],
             tracks: [],
             currentPage: 1,
             pageSize: 50
         };
     },
     computed: {
-        ...mapActions([
-            'refreshUserPlaylist'
-        ]),
-        ...mapGetters([
-            'user'
-        ]),
-        listGroups() {
-            return [
+        ...mapGetters(['user', 'loginValid']),
+        tracksOffset() {
+            return (this.currentPage - 1) * this.pageSize;
+        },
+        tracksToShow() {
+            return this.tracks.slice(this.tracksOffset, this.tracksOffset + this.pageSize);
+        }
+    },
+    methods: {
+        ...mapActions(['refreshUserPlaylist']),
+        updateListGroups() {
+            this.listGroups = [
                 {
                     name: '创建的歌单',
                     lists: this.user.playlist.filter(e => e.creator.id == this.user.id)
@@ -72,23 +86,11 @@ export default {
                 }
             ];
         },
-        tracksOffset() {
-            return (this.currentPage - 1) * this.pageSize;
-        },
-        tracksToShow() {
-            return this.tracks.slice(this.tracksOffset, this.tracksOffset + this.pageSize);
-        }
-    },
-    methods: {
         async loadPlaylist(id) {
             this.detail = null;
             this.tracks = [];
-            await this.$store.dispatch('refreshUserPlaylist', id);
-            // why don't use
-            // `this.refreshUserPlaylist(id);`
-            // here? If so, vuex action `refreshUserPlaylist` would receive
-            // wrong params. Maybe a bug?
-            const target = this.user.playlist.filter(p => p.id === id).pop();
+            await this.refreshUserPlaylist({ id });
+            const target = this.user.playlist.find(p => p.id === id);
             if (target) {
                 this.detail = target;
                 this.tracks = target.tracks;
@@ -99,7 +101,17 @@ export default {
         }
     },
     created() {
-        this.loadPlaylist(this.listGroups[0].lists[0].id);
+        if (this.loginValid) {
+            this.updateListGroups();
+            this.loadPlaylist(this.user.playlist[0].id);
+        } else {
+            this.$store.subscribe((mutation) => {
+                if (mutation.type === SET_USER_PLAYLISTS) {
+                    this.updateListGroups();
+                    this.loadPlaylist(this.user.playlist[0].id);
+                }
+            });
+        }
     },
     components: {
         PlayAll,
@@ -120,6 +132,14 @@ export default {
         z-index: 1;
         height: 100%;
         overflow: auto;
+        .myplaylist-login-tip {
+            height: 100%;
+            color: grey;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            justify-content: center;
+        }
     }
     .content {
         flex: 3;
