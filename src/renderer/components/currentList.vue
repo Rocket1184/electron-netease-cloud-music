@@ -1,23 +1,33 @@
 <template>
-    <mu-list class="current-list">
-        <mu-list-item v-for="(track, index) in list"
-            :key="track.id"
-            :title="track.name"
-            titleClass="track-name"
-            :afterText="track.artistName"
-            afterTextClass="track-artist"
-            @click="handleListClick(index)">
-            <mu-icon v-if="track.id == playing.track.id"
-                slot="left"
-                value="volume_up">
-            </mu-icon>
-            <span v-else
-                slot="left"
-                class="ellipsis-text-16px">
-                {{index + 1}}
-            </span>
-        </mu-list-item>
-    </mu-list>
+    <div class="current-list">
+        <div v-if="playlist.list.length === 0"
+            class="tip">
+            <mu-icon value="equalizer"
+                color="grey"
+                :size="128"></mu-icon>
+            <p>列表里什么都没有，快去找几首歌吧 φ(≧ω≦*)♪</p>
+        </div>
+        <mu-list v-else
+            class="list">
+            <mu-list-item v-for="(track, index) in playlist.list"
+                :key="track.id"
+                :title="track.name"
+                titleClass="track-name"
+                :afterText="track.artistName"
+                afterTextClass="track-artist"
+                @click="handleListClick(index)">
+                <mu-icon v-if="track.id == playing.track.id"
+                    slot="left"
+                    value="volume_up">
+                </mu-icon>
+                <span v-else
+                    slot="left"
+                    class="ellipsis-text-16px">
+                    {{index + 1}}
+                </span>
+            </mu-list-item>
+        </mu-list>
+    </div>
 </template>
 
 <script>
@@ -28,17 +38,11 @@ export default {
         return {};
     },
     computed: {
-        ...mapState({
-            list: state => state.playlist.list
-        }),
-        ...mapGetters([
-            'playing'
-        ])
+        ...mapState(['playlist']),
+        ...mapGetters(['playing'])
     },
     methods: {
-        ...mapActions([
-            'playTrackIndex'
-        ]),
+        ...mapActions(['playTrackIndex']),
         handleListClick(index) {
             this.playTrackIndex({ index });
         }
@@ -51,20 +55,32 @@ export default {
     width: 600px;
     background-color: white;
     overflow-y: scroll;
-    .ellipsis-text-16px {
-        font-size: 16px;
-        overflow: hidden;
-        white-space: nowrap;
-        text-overflow: ellipsis;
+    font-size: 14px;
+    .tip {
+        width: 100%;
+        height: 100%;
+        color: grey;
+        display: flex;
+        flex-direction: column;
+        align-items: center;
+        justify-content: center;
     }
-    .track-name {
-        max-width: 70%;
-        .ellipsis-text-16px;
-    }
-    .track-artist {
-        display: block;
-        max-width: 30%;
-        .ellipsis-text-16px;
+    .list {
+        .ellipsis-text-16px {
+            font-size: 16px;
+            overflow: hidden;
+            white-space: nowrap;
+            text-overflow: ellipsis;
+        }
+        .track-name {
+            max-width: 70%;
+            .ellipsis-text-16px;
+        }
+        .track-artist {
+            display: block;
+            max-width: 30%;
+            .ellipsis-text-16px;
+        }
     }
 }
 </style>
