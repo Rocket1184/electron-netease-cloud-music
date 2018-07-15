@@ -57,10 +57,14 @@ import { remote } from 'electron';
 import { platform } from 'os';
 
 import { bkgImg, sizeImg, HiDpiPx } from "@/util/image";
-import { postDailyTask as checkIn } from '@/util/apiRenderer';
+import ApiRenderer from '@/util/apiRenderer';
 import loginDialog from './loginDialog.vue';
 import searchBox from './searchBox.vue';
 import Routes from '@/routes';
+
+function checkIn(...args) {
+    return ApiRenderer.postDailyTask(...args);
+}
 
 export default {
     data() {
@@ -206,7 +210,7 @@ export default {
         width: 100%;
         height: 200px;
         background-size: cover;
-        background-image: url('~assets/img/TealRedYellow.png');
+        background-image: url('~assets/img/bkg.svg');
         background-position-y: 50%;
         &::before {
             position: absolute;
