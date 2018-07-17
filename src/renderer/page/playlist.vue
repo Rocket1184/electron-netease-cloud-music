@@ -1,44 +1,32 @@
 <template>
     <div class="myplaylist">
-        <mu-paper class="aside">
-            <mu-list v-if="loginValid">
-                <mu-list-item v-for="group in listGroups"
-                    :key="group.name"
-                    :title="group.name"
-                    toggleNested>
-                    <PlaylistItem v-for="(list, index) in group.lists"
-                        slot="nested"
-                        :key="index"
-                        :item="list"
-                        @click="loadPlaylist(list.id)">
-                    </PlaylistItem>
-                </mu-list-item>
-            </mu-list>
-            <div v-else
-                class="myplaylist-login-tip">
-                <mu-icon value="nature_people"
-                    color="grey"
-                    :size="128"></mu-icon>
-                <p>登录后查看创建/收藏的歌单</p>
+        <template v-if="loginValid">
+            <mu-paper class="aside">
+                <mu-list>
+                    <mu-list-item v-for="group in listGroups"
+                        :key="group.name"
+                        :title="group.name"
+                        toggleNested>
+                        <PlaylistItem v-for="(list, index) in group.lists"
+                            slot="nested"
+                            :key="index"
+                            :item="list"
+                            @click="loadPlaylist(list.id)">
+                        </PlaylistItem>
+                    </mu-list-item>
+                </mu-list>
+            </mu-paper>
+            <div class="content">
+                <PlaylistDetail :detail="detail"
+                    v-if="detail"></PlaylistDetail>
             </div>
-        </mu-paper>
-        <div class="content">
-            <template v-if="detail">
-                <PlaylistHeader :detail="detail"></PlaylistHeader>
-                <mu-sub-header>曲目列表</mu-sub-header>
-                <PlayAll :tracks="tracks"></PlayAll>
-            </template>
-            <TrackList v-if="loginValid"
-                :tracks="tracksToShow"
-                :indexOffset="tracksOffset"></TrackList>
-            <div class="pagination"
-                v-if="tracks.length > 50">
-                <mu-pagination :total="tracks.length"
-                    :current="currentPage"
-                    :pageSize="pageSize"
-                    @pageChange="handlePageChange">
-                </mu-pagination>
-            </div>
+        </template>
+        <div v-else
+            class="tip">
+            <mu-icon value="nature_people"
+                color="grey"
+                :size="128"></mu-icon>
+            <p>登录后查看创建/收藏的歌单</p>
         </div>
     </div>
 </template>
@@ -46,10 +34,8 @@
 <script>
 import { mapActions, mapGetters } from 'vuex';
 
-import PlayAll from '@/components/playAll.vue';
-import TrackList from '@/components/trackList.vue';
 import PlaylistItem from '@/components/myPlaylistItem.vue';
-import PlaylistHeader from '@/components/playlistHeader.vue';
+import PlaylistDetail from '@/components/playlistDetail.vue';
 import { SET_USER_PLAYLISTS } from '@/vuex/mutation-types';
 
 export default {
@@ -57,20 +43,11 @@ export default {
     data() {
         return {
             detail: null,
-            listGroups: [],
-            tracks: [],
-            currentPage: 1,
-            pageSize: 50
+            listGroups: []
         };
     },
     computed: {
-        ...mapGetters(['user', 'loginValid']),
-        tracksOffset() {
-            return (this.currentPage - 1) * this.pageSize;
-        },
-        tracksToShow() {
-            return this.tracks.slice(this.tracksOffset, this.tracksOffset + this.pageSize);
-        }
+        ...mapGetters(['user', 'loginValid'])
     },
     methods: {
         ...mapActions(['refreshUserPlaylist']),
@@ -87,20 +64,15 @@ export default {
             ];
         },
         async loadPlaylist(id) {
-            this.detail = null;
-            this.tracks = [];
-            await this.refreshUserPlaylist({ id });
+            this.detail = this.user.playlist.find(p => p.id === id);
+            await this.refreshUserPlaylist(id);
             const target = this.user.playlist.find(p => p.id === id);
             if (target) {
                 this.detail = target;
-                this.tracks = target.tracks;
             }
-        },
-        handlePageChange(newIndex) {
-            this.currentPage = newIndex;
         }
     },
-    created() {
+    mounted() {
         if (this.loginValid) {
             this.updateListGroups();
             this.loadPlaylist(this.user.playlist[0].id);
@@ -114,10 +86,8 @@ export default {
         }
     },
     components: {
-        PlayAll,
-        TrackList,
         PlaylistItem,
-        PlaylistHeader
+        PlaylistDetail
     }
 };
 </script>
@@ -132,23 +102,23 @@ export default {
         z-index: 1;
         height: 100%;
         overflow: auto;
-        .myplaylist-login-tip {
-            height: 100%;
-            color: grey;
-            display: flex;
-            flex-direction: column;
-            align-items: center;
-            justify-content: center;
-        }
     }
     .content {
         flex: 3;
         height: 100%;
         overflow: auto;
-        .pagination {
-            width: 100%;
-            padding: 16px;
+        .loading-wrapper {
+            height: 200px;
         }
+    }
+    .tip {
+        width: 100%;
+        height: 100%;
+        color: grey;
+        display: flex;
+        flex-direction: column;
+        align-items: center;
+        justify-content: center;
     }
 }
 </style>
