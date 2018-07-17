@@ -193,15 +193,11 @@ export default {
     mounted() {
         /** @type {HTMLAudioElement} */
         const _audioEl = document.getElementById('playerbar-audio');
-        const _slider = document.getElementById('playerbar-progress');
         let _playingIntervalId;
         this.audioEl = _audioEl;
 
         const _updateTime = () => this.timeCurrent = this.audioEl.currentTime;
         const _unsetInterval = () => _playingIntervalId = clearInterval(_playingIntervalId);
-
-        _slider.onpointerdown = () => _audioEl.pause();
-        _slider.onpointerup = () => !this.playlist.paused && _audioEl.play();
 
         _audioEl.addEventListener('loadedmetadata', () => {
             _unsetInterval();
