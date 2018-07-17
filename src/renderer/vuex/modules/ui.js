@@ -4,7 +4,9 @@ const state = {
     audioSrc: '',
     paused: true,
     lyric: {},
-    lyricSeq: 0
+    lyricSeq: 0,
+    collectPopupShow: false,
+    collectTrackIds: []
 };
 
 const mutations = {
@@ -20,6 +22,15 @@ const mutations = {
     [types.SET_ACTIVE_LYRIC](state, payload) {
         state.lyric = payload;
         state.lyricSeq = state.lyricSeq + 1;
+    },
+    [types.SHOW_COLLECT_POPUP](state) {
+        state.collectPopupShow = true;
+    },
+    [types.HIDE_COLLECT_POPUP](state) {
+        state.collectPopupShow = false;
+    },
+    [types.SET_COLLECT_TRACKS](state, payload) {
+        state.collectTrackIds = payload.ids;
     }
 };
 

@@ -155,3 +155,19 @@ export async function refreshUserPlaylist({ commit }, { id }) {
     const resp = await ApiRenderer.getListDetail(id);
     commit(types.UPDATE_USER_PLAYLIST, resp.playlist);
 }
+
+export function toggleCollectPopup({ commit, state }, payload = {}) {
+    const tracks = typeof payload === 'number'
+        ? { ids: [payload] }
+        : Array.isArray(payload)
+            ? { ids: payload }
+            : Array.isArray(payload.ids)
+                ? { ids: payload.ids }
+                : { ids: [] };
+    commit(types.SET_COLLECT_TRACKS, tracks);
+    if (state.ui.collectPopupShow === true) {
+        commit(types.HIDE_COLLECT_POPUP);
+        return;
+    }
+    commit(types.SHOW_COLLECT_POPUP);
+}
