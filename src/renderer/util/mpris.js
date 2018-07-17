@@ -66,11 +66,18 @@ export function getTrackMeta(track) {
  */
 export function bindEventListener(audioEl) {
     if (audioEl) {
+        // set 'Rate' to `0` before playback starts, so the progress won't increase
+        // not sure wether it wroks
+        audioEl.addEventListener('durationchange', () => MPRIS.rate(0));
         audioEl.addEventListener('loadedmetadata', () => {
             MPRIS.patchMetadata({ 'mpris:length': audioEl.duration * 1e6 });
         });
         audioEl.addEventListener('seeked', () => MPRIS.seeked(audioEl.currentTime));
-        audioEl.addEventListener('playing', () => MPRIS.play());
+        audioEl.addEventListener('playing', () => {
+            // when playback resumes, set 'Rate' back to `1`
+            MPRIS.rate(1);
+            MPRIS.play();
+        });
         audioEl.addEventListener('pause', () => MPRIS.pause());
         audioEl.addEventListener('stalled', () => MPRIS.pause());
         MPRISEmitter.on('getPosition', (_, id) => {
