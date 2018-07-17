@@ -31,8 +31,10 @@ electron.on('close', code => {
 // webpack config
 const compileCfg = require('./webpack.config.renderer');
 
-// webpack-dev-server option
+/** @type {WebpackDevServer.Configuration} */
 const devServerOpt = {
+    // serve '/login/html'
+    contentBase: absPath('/src/renderer'),
     // `hot` must be true when using HMR
     hot: true,
     stats: 'minimal',
