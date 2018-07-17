@@ -98,12 +98,12 @@ IMP2.addProperty('SupportedMimeTypes', makeReadonly('as', ['audio/mpeg']));
 
 // Interface MediaPlayer2 => methods
 IMP2.addMethod('Quit', {}, () => {
-    emitter.emit('quit');
+    emitter.emit('dbus:quit');
     d('Quit Now');
 });
 
 IMP2.addMethod('Raise', {}, () => {
-    emitter.emit('raise');
+    emitter.emit('dbus:raise');
     d('Raise Now');
 });
 
@@ -212,7 +212,7 @@ IMP2Player.addProperty('Position', {
     }
 });
 
-const MinimumRate = makeProp('MinimumRate', 1.0);
+const MinimumRate = makeProp('MinimumRate', 0);
 
 IMP2Player.addProperty('MinimumRate', {
     type: DBus.Define(Number),
@@ -228,18 +228,18 @@ IMP2Player.addProperty('MaximumRate', {
 
 // Interface MediaPlayer2.Player => Methods
 IMP2Player.addMethod('Next', {}, () => {
-    emitter.emit('next');
+    emitter.emit('dbus:next');
     d('Switch Next');
 });
 
 IMP2Player.addMethod('Previous', {}, () => {
-    emitter.emit('prev');
+    emitter.emit('dbus:prev');
     d('Switch Previous');
 });
 
 IMP2Player.addMethod('Pause', {}, () => {
     PlaybackStatus.value = PlaybackStatus.type.Paused;
-    emitter.emit('pause');
+    emitter.emit('dbus:pause');
     d('Let Pause');
 });
 
@@ -247,11 +247,11 @@ IMP2Player.addMethod('PlayPause', {}, () => {
     switch (PlaybackStatus._value) {
         case PlaybackStatus.type.Playing:
             PlaybackStatus.value = PlaybackStatus.type.Paused;
-            emitter.emit('pause');
+            emitter.emit('dbus:pause');
             break;
         default:
             PlaybackStatus.value = PlaybackStatus.type.Playing;
-            emitter.emit('play');
+            emitter.emit('dbus:play');
             break;
     }
     d('Toggle PlayPause');
@@ -259,13 +259,13 @@ IMP2Player.addMethod('PlayPause', {}, () => {
 
 IMP2Player.addMethod('Stop', {}, () => {
     PlaybackStatus.value = PlaybackStatus.type.Stopped;
-    emitter.emit('stop');
+    emitter.emit('dbus:stop');
     d('Let Stop');
 });
 
 IMP2Player.addMethod('Play', {}, () => {
     PlaybackStatus.value = PlaybackStatus.type.Playing;
-    emitter.emit('play');
+    emitter.emit('dbus:play');
     d('Let Play');
 });
 
@@ -273,7 +273,7 @@ IMP2Player.addMethod('Seek', {
     in: [{ type: 'x', name: 'Offset' }]
 }, (Offset) => {
     // emit seconds
-    emitter.emit('seek', Offset / 1e6);
+    emitter.emit('dbus:seek', Offset / 1e6);
     d('Seek to Offset', typeof Offset, Offset);
 });
 
@@ -283,14 +283,14 @@ IMP2Player.addMethod('SetPosition', {
         { type: 'x', name: 'Position' }
     ]
 }, (TrackId, Position) => {
-    emitter.emit('seek', Position / 1e6);
+    emitter.emit('dbus:seek', Position / 1e6);
     d('SetPosition to TrackId', typeof TrackId, TrackId, 'Position', typeof Position, Position);
 });
 
 IMP2Player.addMethod('OpenUri', {
     in: [{ type: 's', name: 'Uri' }]
 }, (Uri) => {
-    emitter.emit('openuri', Uri);
+    emitter.emit('dbus:openuri', Uri);
     d('Open Uri', typeof Uri, Uri);
 });
 

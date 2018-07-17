@@ -12,10 +12,10 @@ const d = debug(TAG);
 let msgId = 0;
 const cbMap = new Map();
 const getters = ['getPosition'];
-const events = ['raise', 'quit', 'next', 'prev', 'play', 'pause', 'stop', 'seek', 'openuri'];
+const dbusEvents = ['raise', 'quit', 'next', 'prev', 'play', 'pause', 'stop', 'seek', 'openuri'];
 
 ipcMain.on(TAG, (_, type, ...args) => {
-    if (type === 'getPosition') {
+    if (getters.includes(type)) {
         const [id, ...payload] = args;
         d('↓ %s %d', type, id);
         if (cbMap.has(id)) {
@@ -35,7 +35,7 @@ function bindWebContents(wc) {
         d('↑ %s %d', type, msgId);
         cbMap.set(msgId, cb);
     });
-    const eventListeners = events.map(type => (...args) => {
+    const dbusListeners = dbusEvents.map(type => (...args) => {
         msgId++;
         wc.send(TAG, type, msgId, ...args);
         d('↑ %s %d', type, msgId, ...args);
@@ -46,8 +46,8 @@ function bindWebContents(wc) {
             getters.forEach((type, index) => {
                 MPRISEmitter.on(type, getterListeners[index]);
             });
-            events.forEach((type, index) => {
-                MPRISEmitter.on(type, eventListeners[index]);
+            dbusEvents.forEach((type, index) => {
+                MPRISEmitter.on(`dbus:${type}`, dbusListeners[index]);
             });
         }
     });
@@ -55,8 +55,8 @@ function bindWebContents(wc) {
         getters.forEach((type, index) => {
             MPRISEmitter.removeListener(type, getterListeners[index]);
         });
-        events.forEach((type, index) => {
-            MPRISEmitter.removeListener(type, eventListeners[index]);
+        dbusEvents.forEach((type, index) => {
+            MPRISEmitter.removeListener(`dbus:${type}`, dbusListeners[index]);
         });
     });
 }
