@@ -51,17 +51,6 @@
                 color="#FFF"
                 @click="playNextTrack"></mu-float-button>
         </div>
-        <mu-popup position="bottom"
-            :open="playlistsShown"
-            @close="playlistsShown=false">
-            <mu-appbar title="收藏到歌单">
-                <mu-icon-button slot="right"
-                    icon="close"
-                    color="white"
-                    @click="playlistsShown=false"></mu-icon-button>
-            </mu-appbar>
-            <userPlaylists @rowClick="handleCollect"></userPlaylists>
-        </mu-popup>
         <transition name="list-open-up">
             <!-- TODO: Click outside to close the list -->
             <currentList v-show="currentListShown"></currentList>
@@ -75,8 +64,8 @@ import { mapActions, mapGetters, mapState } from 'vuex';
 
 import ApiRenderer from '@/util/apiRenderer';
 import currentList from './currentList.vue';
-import userPlaylists from './userPlaylists.vue';
 import {
+    HIDE_COLLECT_POPUP,
     PAUSE_PLAYING_MUSIC,
     RESUME_PLAYING_MUSIC
 } from '@/vuex/mutation-types';
@@ -99,7 +88,8 @@ export default {
             'pauseAudio',
             'playNextTrack',
             'playPreviousTrack',
-            'refreshUserPlaylist'
+            'refreshUserPlaylist',
+            'toggleCollectPopup'
         ]),
         handlePlayOrPause() {
             this.ui.audioSrc && (this.audioEl.paused ? this.playAudio() : this.pauseAudio());
@@ -125,22 +115,6 @@ export default {
             // it would take some time for NetEase to update playlist cover
             // img, so we just wait 200 ms
             setTimeout(() => this.refreshUserPlaylist(listId), 200);
-        },
-        async handleCollect(list) {
-            if (!this.loginValid) {
-                this.$toast('讲道理不应该这样的呀  (✘﹏✘ა)');
-                return;
-            }
-            const resp = await ApiRenderer.collectTrack(list.id, this.playing.track.id);
-            if (resp.code === 200) {
-                this.$toast('成功添加到歌单     (๑•̀ㅂ•́)و✧');
-                // same to above
-                setTimeout(() => this.refreshUserPlaylist(list.id), 200);
-            } else if (resp.code === 502) {
-                this.$toast('歌曲已存在        ¯\\_(ツ)_/¯');
-            } else {
-                this.$toast(`失败了 ∑(っ °Д °;)っ 错误代码 ${resp.code}`);
-            }
         }
     },
     computed: {
@@ -181,6 +155,9 @@ export default {
                     return;
                 }
                 this.realPlaylistsShown = val;
+                if (val === true) {
+                    this.toggleCollectPopup(this.playing.track.id);
+                }
             }
         },
         songProgress() {
@@ -236,6 +213,9 @@ export default {
                 case RESUME_PLAYING_MUSIC:
                     _audioEl.play();
                     break;
+                case HIDE_COLLECT_POPUP:
+                    this.playlistsShown = false;
+                    break;
             }
         });
 
@@ -244,8 +224,7 @@ export default {
         }
     },
     components: {
-        currentList,
-        userPlaylists
+        currentList
     }
 };
 </script>

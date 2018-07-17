@@ -9,6 +9,7 @@
             </keep-alive>
         </div>
         <PlayerBar></PlayerBar>
+        <CollectPopup></CollectPopup>
     </div>
 </template>
 
@@ -17,11 +18,13 @@ import { mapActions, mapState } from 'vuex';
 
 import AppNav from '@/components/appNav.vue';
 import PlayerBar from '@/components/playerBar.vue';
+import CollectPopup from '@/components/collectPopup.vue';
 
 export default {
     components: {
         AppNav,
-        PlayerBar
+        PlayerBar,
+        CollectPopup
     },
     methods: {
         ...mapActions([
