@@ -75,7 +75,7 @@ export default {
             return this.playing.track || ({ name: '（暂无歌曲）', album: { name: '', picUrl: '' } });
         },
         albumImgStyle() {
-            if (this.playing.track) {
+            if (this.playing.track && this.playing.track.album.picUrl) {
                 return bkgImg(sizeImg(this.playing.track.album.picUrl, HiDpiPx(220)));
             }
         },
