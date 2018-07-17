@@ -25,7 +25,7 @@ const mutations = {
         state.playlist = payload.map(l => new PlayList(l));
     },
     [types.UPDATE_USER_PLAYLIST](state, payload) {
-        const target = state.playlist.filter(l => l.id === payload.id).pop();
+        const target = state.playlist.find(l => l.id === payload.id);
         if (target) {
             let newList = new PlayList(payload);
             for (const key in newList) {
