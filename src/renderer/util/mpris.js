@@ -47,12 +47,12 @@ export function getTrackMeta(track) {
     return {
         id: track.id,
         'mpris:length': 300 * 1e6, // this should be changed when track loaded
-        'mpris:artUrl': track.album.picUrl,
-        'xesam:album': track.album.name,
-        'xesam:albumArtist': track.artists.map(ar => ar.name),
-        'xesam:artist': track.artistName,
+        'mpris:artUrl': track.album.picUrl || 'file:///dev/null',
+        'xesam:album': track.album.name || '未知专辑',
+        'xesam:albumArtist': track.artists.map(ar => ar.name || '未知歌手'),
+        'xesam:artist': track.artistName || '未知歌手',
         // 'xesam:discNumber': 0,
-        'xesam:title': track.name,
+        'xesam:title': track.name || '未知歌曲',
         // 'xesam:tarckNumber': 0,
         // 'xesam:url': 'file:///dev/null', // at least It's unusable in KDE
         // 'xesam:useCount': 0,
