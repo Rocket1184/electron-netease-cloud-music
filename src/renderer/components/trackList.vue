@@ -10,8 +10,9 @@
                     <div class="col artist">{{track.artistName}}</div>
                     <div class="col duration">{{track.duration / 1000 | shortTime}}</div>
                     <div class="col buttons">
-                        <mu-icon-button icon="add"
-                            title="收藏到歌单"></mu-icon-button>
+                        <mu-icon-button icon="bookmark_border"
+                            title="收藏到歌单"
+                            @click="handleCollect(track.id)"></mu-icon-button>
                         <mu-icon-button icon="playlist_add"
                             title="添加到播放列表"></mu-icon-button>
                     </div>
@@ -27,6 +28,7 @@
 </template>
 
 <script>
+import { mapActions, mapGetters } from 'vuex';
 import { shortTime } from '@/util/formatter';
 
 export default {
@@ -43,6 +45,19 @@ export default {
     },
     filters: {
         shortTime
+    },
+    computed: {
+        ...mapGetters(['loginValid'])
+    },
+    methods: {
+        ...mapActions(['toggleCollectPopup']),
+        handleCollect(id) {
+            if (!this.loginValid) {
+                this.$toast('汝还没有登录呀      (눈‸눈)');
+                return;
+            }
+            this.toggleCollectPopup(id);
+        }
     }
 };
 </script>
