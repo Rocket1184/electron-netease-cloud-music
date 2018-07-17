@@ -156,6 +156,8 @@ IMP2Player.addProperty(Rate._name, {
     ...makeGetterSetter(Rate)
 });
 
+emitter.on('rate', rate => Rate.value = rate);
+
 const Shuffle = makeProp('Shuffle', false);
 
 IMP2Player.addProperty('Shuffle', {
