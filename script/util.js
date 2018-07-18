@@ -18,10 +18,11 @@ function removeKeepDot(dir) {
     if (!toRemove.length) return false;
     toRemove.forEach(file => {
         const fullPath = path.join(dir, file);
-        const stat = fs.statSync(fullPath);
-        if (stat.isFile() && !file.startsWith('.')) {
+        // lstat do not follow symbolic link
+        const stat = fs.lstatSync(fullPath);
+        if (!file.startsWith('.') && (stat.isFile() || stat.isSymbolicLink())) {
             fs.unlinkSync(fullPath);
-        } else if (stat.isDirectory) {
+        } else if (stat.isDirectory()) {
             removeKeepDot(fullPath);
             fs.rmdirSync(fullPath);
         }
