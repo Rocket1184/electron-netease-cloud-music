@@ -66,9 +66,12 @@ export function getTrackMeta(track) {
  */
 export function bindEventListener(audioEl) {
     if (audioEl) {
-        // set 'Rate' to `0` before playback starts, so the progress won't increase
-        // not sure wether it wroks
-        audioEl.addEventListener('durationchange', () => MPRIS.rate(0));
+        audioEl.addEventListener('durationchange', () => {
+            // set 'Rate' to `0` before playback starts, so the progress won't increase
+            // not sure wether it wroks
+            // MPRIS.rate(0); // at least it doesn't work on KDE
+            MPRIS.pause();
+        });
         audioEl.addEventListener('loadedmetadata', () => {
             MPRIS.patchMetadata({ 'mpris:length': audioEl.duration * 1e6 });
         });
