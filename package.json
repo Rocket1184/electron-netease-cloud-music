@@ -5,7 +5,7 @@
   "main": "main.js",
   "scripts": {
     "dev": "node script/dev-server.js",
-    "pack": "node script/webpack.js",
+    "dist": "node script/webpack.js",
     "build": "node script/packager.js"
   },
   "author": "rocka <i@rocka.me> (https://rocka.me)",

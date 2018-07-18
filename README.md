@@ -124,9 +124,9 @@ yarn
 yarn dev
 
 # bundle JavaScript and CSS
-yarn run pack
+yarn dist
 
 # package the app
-yarn run build linux
-yarn run build darwin
+yarn build linux
+yarn build darwin
 ```
