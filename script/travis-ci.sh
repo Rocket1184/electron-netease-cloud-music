@@ -1,31 +1,28 @@
 #!/bin/bash
 
 # variables
-APP_NAME="electron-netease-cloud-music"
+APP_NAME="Electron NCM"
+PKG_NAME="electron-netease-cloud-music"
 ARTIFACT_NAME="electron-ncm"
 PLATFORMS=(linux darwin)
-BUCKET_NAME="$APP_NAME"
+BUCKET_NAME="$PKG_NAME"
 VERSION_HASH="${TRAVIS_COMMIT:0:7}"
-PKGVER="$VERSION_HASH"
+PKG_VER="$VERSION_HASH"
 TEMP_DIR="/tmp/ncm-build-temp_$VERSION_HASH"
 QSHELL_BIN="exit 1"
 
 # functions
-pack() {
+dist() {
     rm dist/.gitkeep
-    yarn run pack
+    yarn run dist
     cp ./LICENSE dist/
-    npx asar pack dist "build/${APP_NAME}_$PKGVER.asar"
+    npx asar pack dist "build/${PKG_NAME}_$PKG_VER.asar"
 }
 
 build() {
     for i in ${PLATFORMS[*]}; do
         yarn run build "$i"
         echo -n "$VERSION_HASH" > "build/$APP_NAME-$i-x64/ncm_hash"
-        if [ -d "build/$APP_NAME-$i-x64/$APP_NAME.app" ]; then
-            # rename macOS Application
-            mv "build/$APP_NAME-$i-x64/$APP_NAME.app" "build/$APP_NAME-$i-x64/Electron NCM.app"
-        fi
         tar zcf "build/$ARTIFACT_NAME-$i-x64_$VERSION_HASH.tar.gz" -C build "$APP_NAME-$i-x64"
     done
 }
@@ -47,13 +44,13 @@ qshell_upload() {
 # entrypoint
 if [ "$TRAVIS_BRANCH" == "$TRAVIS_TAG" ]; then
     # build is triggered by a git tag
-    PKGVER="$TRAVIS_TAG"
-    pack
+    PKG_VER="$TRAVIS_TAG"
+    dist
 else
-    pack
+    dist
     build
     qshell_init
-    qshell_upload "${APP_NAME}_$PKGVER.asar"
+    qshell_upload "${APP_NAME}_$PKG_VER.asar"
     for i in ${PLATFORMS[*]}; do
         qshell_upload "$ARTIFACT_NAME-$i-x64_$VERSION_HASH.tar.gz"
     done

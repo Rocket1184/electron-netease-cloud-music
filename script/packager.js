@@ -1,10 +1,9 @@
 'use strict';
 
 const { absPath, removeKeepDot } = require('./util');
-const packager = require('electron-packager');
 
 let argv = process.argv.slice(2);
-if (!argv.length) argv = 'all';
+if (!argv.length) argv = process.platform;
 
 /* eslint-disable no-console */
 
@@ -13,7 +12,9 @@ if (argv[0] === 'clean') {
     process.exit(0);
 }
 
-const options = {
+require('electron-packager')({
+    name: 'Electron NCM',
+    executableName: 'electron-netease-cloud-music',
     arch: 'x64',
     asar: true,
     icon: absPath('assets/icons/icon'),
@@ -21,8 +22,6 @@ const options = {
     out: absPath('build'),
     overwrite: true,
     platform: argv
-};
-
-packager(options)
+})
     .then(path => console.log(`Output: ${path}`))
     .catch(err => console.error(`Build failed: ${err.message}`));
