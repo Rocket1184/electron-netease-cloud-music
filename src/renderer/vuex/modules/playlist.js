@@ -24,7 +24,7 @@ const mutations = {
     [types.SET_CURRENT_INDEX](state, payload) {
         if (typeof payload === 'number') {
             state.index = payload;
-        } else if(typeof payload === 'object' && typeof payload.index === 'number') {
+        } else if (typeof payload === 'object' && typeof payload.index === 'number') {
             state.index = payload.index;
         } else {
             throw new Error('Wrong mutation payload in SET_CURRENT_INDEX.');
@@ -44,6 +44,10 @@ const mutations = {
         state.index = index || 0;
         state.loopMode = loopMode || LOOP_TYPES.LIST_LOOP;
         state.list = list.map(t => new Track(t));
+    },
+    [types.ADD_TRACK_TO_PLAYLIST](state, payload) {
+        const { tracks } = payload;
+        state.list.splice(state.index + 1, 0, ...tracks);
     }
 };
 

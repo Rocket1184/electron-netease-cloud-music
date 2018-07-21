@@ -172,3 +172,10 @@ export function toggleCollectPopup({ commit, state }, payload = {}) {
     }
     commit(types.SHOW_COLLECT_POPUP);
 }
+
+export function addTrackToPlaylist({ commit }, payload) {
+    const tracks = Array.isArray(payload.tracks)
+        ? payload.tracks
+        : [payload.tracks];
+    commit(types.ADD_TRACK_TO_PLAYLIST, { tracks });
+}
