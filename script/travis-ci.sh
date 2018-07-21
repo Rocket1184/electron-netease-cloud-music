@@ -50,7 +50,7 @@ else
     dist
     build
     qshell_init
-    qshell_upload "${APP_NAME}_$PKG_VER.asar"
+    qshell_upload "${PKG_NAME}_$PKG_VER.asar"
     for i in ${PLATFORMS[*]}; do
         qshell_upload "$ARTIFACT_NAME-$i-x64_$VERSION_HASH.tar.gz"
     done
