@@ -14,7 +14,8 @@
                             title="收藏到歌单"
                             @click="handleCollect(track.id)"></mu-icon-button>
                         <mu-icon-button icon="playlist_add"
-                            title="添加到播放列表"></mu-icon-button>
+                            title="添加到播放列表"
+                            @click="handleAdd(index)"></mu-icon-button>
                     </div>
                 </div>
             </div>
@@ -50,13 +51,19 @@ export default {
         ...mapGetters(['loginValid'])
     },
     methods: {
-        ...mapActions(['toggleCollectPopup']),
+        ...mapActions(['toggleCollectPopup', 'addTrackToPlaylist']),
         handleCollect(id) {
             if (!this.loginValid) {
                 this.$toast('汝还没有登录呀      (눈‸눈)');
                 return;
             }
             this.toggleCollectPopup(id);
+        },
+        handleAdd(index) {
+            try {
+                this.addTrackToPlaylist({ tracks: [this.tracks[index]] });
+                this.$toast('已添加到播放列表  _(:з」∠)_');
+            } catch (e) { /* 为什么会这样呢 */ }
         }
     }
 };
