@@ -41,7 +41,7 @@ export default {
 };
 </script>
 
-<style>
+<style lang="less">
 .ncm-global-prompt {
     width: 400px;
 }

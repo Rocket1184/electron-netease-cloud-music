@@ -5,12 +5,9 @@ const packageJson = require('../package.json');
 const { VueLoaderPlugin } = require('vue-loader');
 const HtmlWebpackPlugin = require('html-webpack-plugin');
 const CopyWebpackPlugin = require('copy-webpack-plugin');
-const ExtractTextPlugin = require('extract-text-webpack-plugin');
+const MiniCSSExtractPlugin = require('mini-css-extract-plugin');
 
 const { isProd, absPath } = require('./util');
-
-const extractCSS = new ExtractTextPlugin('vender.css');
-const extractLESS = new ExtractTextPlugin('style.css');
 
 let cfg = {
     mode: process.env.NODE_ENV || 'development',
@@ -75,8 +72,6 @@ let cfg = {
         ]
     },
     plugins: [
-        extractCSS,
-        extractLESS,
         new HtmlWebpackPlugin({
             filename: 'index.html',
             template: absPath('src/renderer/index.ejs')
@@ -93,25 +88,30 @@ let cfg = {
 
 if (isProd) {
     // release config
+    const CleanCSSPlugin = require('less-plugin-clean-css');
     cfg.devtool = 'source-map';
     cfg.module.rules.push(
         {
             test: /\.css$/,
-            use: extractCSS.extract({
-                use: { loader: 'css-loader', options: { minimize: true } },
-            })
+            use: [
+                { loader: MiniCSSExtractPlugin.loader },
+                { loader: 'css-loader' }
+            ]
         },
         {
             test: /\.less$/,
-            use: extractLESS.extract({
-                use: [
-                    { loader: 'css-loader', options: { minimize: true } },
-                    { loader: 'less-loader' }
-                ]
-            })
+            use: [
+                { loader: MiniCSSExtractPlugin.loader },
+                { loader: 'css-loader' },
+                {
+                    loader: 'less-loader',
+                    options: { plugins: [new CleanCSSPlugin({ level: 2 })] }
+                }
+            ]
         }
     );
     cfg.plugins.push(
+        new MiniCSSExtractPlugin(),
         new CopyWebpackPlugin([
             { from: absPath('package.json'), to: absPath('dist') },
             { from: absPath('src/renderer/login.html'), to: absPath('dist') },

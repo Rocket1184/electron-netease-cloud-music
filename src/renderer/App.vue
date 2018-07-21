@@ -1,5 +1,5 @@
 <template>
-    <div id="app">
+    <div>
         <audio id="playerbar-audio"
             :src="ui.audioSrc"></audio>
         <AppNav></AppNav>
@@ -52,16 +52,9 @@ export default {
 };
 </script>
 
-<style>
-html,
-body,
-#app {
-    height: 100%;
-    overflow: hidden;
-}
-
+<style lang="less">
 .router-view {
-    height: calc(100% - 128px);
+    height: calc(100vh - 128px);
     overflow: auto;
 }
 
