@@ -60,6 +60,7 @@ export default {
     },
     data() {
         return {
+            scrollHeight: 200,
             currentPage: 1,
             pageSize: 50
         };
@@ -86,7 +87,18 @@ export default {
             return typeof cnt === 'number' ? cnt : '...';
         },
         handlePageChange(newIndex) {
+            this.$emit('detail-scroll', this.scrollHeight);
             this.currentPage = newIndex;
+        }
+    },
+    mounted() {
+        try {
+            this.scrollHeight = document.querySelector('.playlist-detail .header').clientHeight;
+        } catch (e) { /* we will use the default height 200px now */ }
+    },
+    watch: {
+        ['detail.id']() {
+            this.currentPage = 1;
         }
     },
     components: {

@@ -17,8 +17,9 @@
                 </mu-list>
             </div>
             <div class="content">
-                <PlaylistDetail :detail="detail"
-                    v-if="detail"></PlaylistDetail>
+                <PlaylistDetail v-if="detail"
+                    :detail="detail"
+                    @detail-scroll="scrollContent"></PlaylistDetail>
             </div>
         </template>
         <div v-else
@@ -42,8 +43,8 @@ export default {
     name: 'page-playlist',
     data() {
         return {
-            detail: null,
-            listGroups: []
+            listGroups: [],
+            detail: null
         };
     },
     computed: {
@@ -64,12 +65,16 @@ export default {
             ];
         },
         async loadPlaylist(id) {
+            this.scrollContent(0);
             this.detail = this.user.playlist.find(p => p.id === id);
             await this.refreshUserPlaylist(id);
             const target = this.user.playlist.find(p => p.id === id);
             if (target) {
                 this.detail = target;
             }
+        },
+        scrollContent(top) {
+            document.querySelector('.myplaylist .content').scrollTo({ top, behavior: 'smooth' });
         }
     },
     mounted() {
