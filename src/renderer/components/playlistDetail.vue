@@ -13,9 +13,9 @@
                     <span class="create-time">创建于 {{createTime}}</span>
                 </div>
                 <div class="actions">
-                    <mu-flat-button :label="`收藏 (${detail.subscribedCount})`"
+                    <mu-flat-button :label="`收藏 (${formatCount(detail.subscribedCount)})`"
                         :icon="detail.subscribed ? 'star' : 'star_border'" />
-                    <mu-flat-button :label="`评论 (${detail.commentCount})`"
+                    <mu-flat-button :label="`评论 (${formatCount(detail.commentCount)})`"
                         icon="comment" />
                 </div>
                 <div class="intro">
@@ -82,6 +82,9 @@ export default {
         }
     },
     methods: {
+        formatCount(cnt) {
+            return typeof cnt === 'number' ? cnt : '...';
+        },
         handlePageChange(newIndex) {
             this.currentPage = newIndex;
         }
@@ -133,6 +136,7 @@ export default {
         }
     }
     .tracks {
+        margin-right: 16px;
         .pagination {
             width: 100%;
             padding: 16px;

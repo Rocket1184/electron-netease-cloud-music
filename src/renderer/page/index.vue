@@ -17,7 +17,9 @@ export default {
 
 <style lang="less">
 .index-wrapper {
-    width: 900px;
-    margin: 2rem auto;
+    padding: 2em 0;
+    display: flex;
+    align-items: center;
+    justify-content: center;
 }
 </style>

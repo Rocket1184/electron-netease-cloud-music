@@ -1,5 +1,5 @@
 <template>
-    <mu-paper class="player-bar-wrapper"
+    <div class="player-bar-wrapper"
         :zDepth="2">
         <div class="cell cover">
             <router-link to='/player'>
@@ -55,7 +55,7 @@
             <!-- TODO: Click outside to close the list -->
             <currentList v-show="currentListShown"></currentList>
         </transition>
-    </mu-paper>
+    </div>
 </template>
 
 <script>
@@ -231,6 +231,7 @@ export default {
 
 <style lang="less">
 .player-bar-wrapper {
+    box-shadow: 0 2px 12px rgba(0, 0, 0, 0.4);
     user-select: none;
     cursor: default;
     font-size: 0;
@@ -283,6 +284,7 @@ export default {
         .progress {
             position: relative;
             .slider {
+                margin: 0;
                 width: calc(~'100% - 100px');
             }
             .text {

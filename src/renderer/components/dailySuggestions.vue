@@ -69,6 +69,7 @@ export default {
 
 <style lang="less">
 .daily-suggestions {
+    width: 900px;
     min-height: 400px;
     display: flex;
     .cell {

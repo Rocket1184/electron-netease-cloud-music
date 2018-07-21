@@ -6,8 +6,8 @@
             <mu-card-media :title="ar | artistTitle"
                 :style="ar | artistImgStyle"></mu-card-media>
         </mu-card>
-        <div v-for="al in list"
-            :key="al.id"
+        <div v-for="i in 10"
+            :key="i"
             class="empty"></div>
     </div>
 </template>

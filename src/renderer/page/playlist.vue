@@ -1,7 +1,7 @@
 <template>
     <div class="myplaylist">
         <template v-if="loginValid">
-            <mu-paper class="aside">
+            <div class="aside">
                 <mu-list>
                     <mu-list-item v-for="group in listGroups"
                         :key="group.name"
@@ -15,7 +15,7 @@
                         </PlaylistItem>
                     </mu-list-item>
                 </mu-list>
-            </mu-paper>
+            </div>
             <div class="content">
                 <PlaylistDetail :detail="detail"
                     v-if="detail"></PlaylistDetail>
@@ -99,9 +99,9 @@ export default {
     height: 100%;
     .aside {
         flex: 1;
-        z-index: 1;
         height: 100%;
         overflow: auto;
+        box-shadow: 0 0 6px rgba(0, 0, 0, 0.2);
     }
     .content {
         flex: 3;
@@ -112,8 +112,7 @@ export default {
         }
     }
     .tip {
-        width: 100%;
-        height: 100%;
+        flex-grow: 1;
         color: grey;
         display: flex;
         flex-direction: column;
