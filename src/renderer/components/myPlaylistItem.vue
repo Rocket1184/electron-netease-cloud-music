@@ -1,12 +1,17 @@
 <template>
-    <mu-list-item class="my-playlist-item"
-        titleClass="name"
-        :title="item.name"
-        @click="$emit('click')"
-        :describeText="`共 ${item.trackCount} 首`">
-        <mu-avatar :src="coverUrl"
-            slot="leftAvatar">
-        </mu-avatar>
+    <mu-list-item avatar
+        button
+        class="my-playlist-item"
+        @click="$emit('click')">
+        <mu-list-item-action>
+            <mu-avatar>
+                <img :src="coverUrl">
+            </mu-avatar>
+        </mu-list-item-action>
+        <mu-list-item-content>
+            <mu-list-item-title class="name">{{item.name}}</mu-list-item-title>
+            <mu-list-item-sub-title>共 {{item.trackCount}} 首</mu-list-item-sub-title>
+        </mu-list-item-content>
     </mu-list-item>
 </template>
 

@@ -5,8 +5,9 @@
             class="item">
             <mu-card-header :title="al.artist.name"
                 :subTitle="al.publishTime | shortDate">
-                <mu-avatar :src="al | artistAvatarUrl"
-                    slot="avatar" />
+                <mu-avatar slot="avatar">
+                    <img :src="al | artistAvatarUrl">
+                </mu-avatar>
             </mu-card-header>
             <mu-card-media :title="al.name"
                 class="pic"

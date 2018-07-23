@@ -1,16 +1,16 @@
 <template>
-    <div class="play-all">
-        <mu-list-item title="播放全部"
-            @click="handlePlayAll">
-            <mu-icon slot="left"
-                value="play_circle_filled"></mu-icon>
-        </mu-list-item>
+    <div class="play-all"
+        @click="handlePlayAll">
+        <mu-ripple class="ripple-wrapper">
+            <mu-icon value="play_circle_filled"></mu-icon>
+            <span>播放全部</span>
+        </mu-ripple>
         <mu-divider></mu-divider>
     </div>
 </template>
 
 <script>
-import {mapActions} from 'vuex';
+import { mapActions } from 'vuex';
 
 export default {
     props: {
@@ -31,15 +31,23 @@ export default {
 </script>
 
 <style lang="less">
-    .play-all {
-        .mu-icon {
+.play-all {
+    cursor: pointer;
+    position: relative;
+    .ripple-wrapper {
+        i {
+            vertical-align: top;
+            line-height: 48px;
+            text-align: center;
             font-size: 20px;
+            width: 48px;
+            color: grey;
         }
-        .mu-item {
-            .mu-item-title {
-                padding-left: 8px;
-                font-size: 14px;
-            }
+        span {
+            line-height: 48px;
+            padding: 0 8px;
+            user-select: none;
         }
     }
+}
 </style>

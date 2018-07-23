@@ -17,7 +17,7 @@ const winURL = isDev
 
 let loginWindow;
 let loginURL = isDev
-    ? `http://localhost:${devPort}/renderer/login.html`
+    ? `http://localhost:${devPort}/login.html`
     : `file://${__dirname}/login.html`;
 
 function createWindow(url = winURL) {

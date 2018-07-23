@@ -178,14 +178,13 @@ export default {
         background-image: url('~assets/img/cover_default.webp');
         filter: blur(60px);
         opacity: 0.8;
-        // magic!!! this enables GPU acceleration!!!!
-        transform: translate3d(0, 0, 0);
     }
     .disk {
         flex: 1;
         position: relative;
         transition: transform 25s;
         .img {
+            will-change: transform;
             width: 220px;
             height: 220px;
             position: absolute;

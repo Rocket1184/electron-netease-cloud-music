@@ -1,39 +1,36 @@
 <template>
     <mu-dialog :open="show"
-        dialogClass="nav-login-dlg"
-        bodyClass="dlg-body"
+        dialog-class="nav-login-dlg"
         @close="$emit('close')">
         <mu-tabs :value="loginType"
-            class="login-tabs"
-            lineClass="tab-line"
+            inverse
+            full-width
             @change="handleTabChange">
-            <mu-tab value="app"
-                title="应用内登录"></mu-tab>
-            <mu-tab value="web"
-                title="网页登录"></mu-tab>
+            <mu-tab value="app">应用内登录</mu-tab>
+            <mu-tab value="web">网页登录</mu-tab>
         </mu-tabs>
         <div class="login-types">
             <div v-show="loginType === 'web'">
-                <mu-stepper :activeStep="webLoginStep"
+                <mu-stepper :active-step="webLoginStep"
                     orientation="vertical">
                     <mu-step>
                         <mu-step-label>进行网页登录</mu-step-label>
                         <mu-step-content>
-                            <mu-raised-button label="点我打开登录页面"
-                                fullWidth
-                                primary
-                                @click="openLoginWeb()"></mu-raised-button>
+                            <div class="web-login-step-1-content">
+                                <mu-button full-width
+                                    color="primary"
+                                    @click="openLoginWeb()">点我打开登录页面</mu-button>
+                            </div>
                         </mu-step-content>
                     </mu-step>
                     <mu-step>
                         <mu-step-label>确认登录成功</mu-step-label>
                         <mu-step-content>
                             <div class="web-login-step-2-content">
-                                <mu-flat-button label="上一步"
-                                    @click="webLoginStep--"></mu-flat-button>
-                                <mu-raised-button label="完成"
-                                    primary
-                                    @click="handleWebLoginComplete()"></mu-raised-button>
+                                <mu-button flat
+                                    @click="webLoginStep--">上一步</mu-button>
+                                <mu-button color="primary"
+                                    @click="handleWebLoginComplete()">完成</mu-button>
                             </div>
                         </mu-step-content>
                     </mu-step>
@@ -41,33 +38,32 @@
             </div>
             <div v-show="loginType === 'app'">
                 <mu-text-field label="邮箱 / 手机号码"
-                    inputClass="app-nav-input-account"
+                    ref="inputUsr"
                     v-model="inputUsr"
-                    :errorText="errMsgUsr"
-                    fullWidth
-                    labelFloat></mu-text-field>
+                    :error-text="errMsgUsr"
+                    full-width
+                    label-float></mu-text-field>
                 <mu-text-field label="密码"
-                    id="app-nav-input-password"
+                    ref="inputPwd"
                     type="password"
                     v-model="inputPwd"
-                    :errorText="errMsgPwd"
-                    fullWidth
-                    labelFloat></mu-text-field>
+                    :error-text="errMsgPwd"
+                    full-width
+                    label-float></mu-text-field>
                 <div v-if="needCaptcha">
                     <mu-text-field label="验证码"
                         class="text-field-captcha"
                         v-model="inputCaptcha"
-                        :errorText="errMsgCaptcha"
-                        labelFloat></mu-text-field>
+                        :error-text="errMsgCaptcha"
+                        label-float></mu-text-field>
                     <img :src="`https://music.163.com/captcha?id=${captchaId}`"
                         class="captforce-alignedcha-img"
                         alt="Refresh">
                 </div>
-                <mu-raised-button label="登录"
-                    fullWidth
-                    primary
+                <mu-button full-width
+                    color="primary"
                     @click="handleLogin()"
-                    :disabled="posting"></mu-raised-button>
+                    :disabled="posting">登录</mu-button>
             </div>
         </div>
     </mu-dialog>
@@ -116,8 +112,14 @@ export default {
         async handleLogin() {
             this.errMsgUsr = '';
             this.errMsgPwd = '';
-            if (!this.inputUsr) return this.errMsgUsr = '邮箱 / 手机号码 不能为空';
-            if (!this.inputPwd) return this.errMsgPwd = '密码不能为空';
+            if (!this.inputUsr) {
+                this.$refs.inputUsr.$el.querySelector('input').focus();
+                return this.errMsgUsr = '邮箱 / 手机号码 不能为空';
+            }
+            if (!this.inputPwd) {
+                this.$refs.inputPwd.$el.querySelector('input').focus();
+                return this.errMsgPwd = '密码不能为空';
+            }
             this.posting = true;
             // TODO: Login with captcha
             let resp = await ApiRenderer.login(this.inputUsr, this.inputPwd);
@@ -146,12 +148,10 @@ export default {
             }
         },
         bindKeybordEvent() {
-            const inputAccRef = document.querySelector('.app-nav-input-account');
-            const inputPwdRef = document.querySelector('#app-nav-input-password');
-            inputPwdRef.onkeydown = e => {
+            this.$refs.inputPwd.$el.querySelector('input').onkeydown = e => {
                 if (e.key === 'Enter') this.handleLogin();
             };
-            setTimeout(() => inputAccRef.focus(), 200);
+            setTimeout(() => this.$refs.inputUsr.$el.querySelector('input').focus(), 200);
         },
         openLoginWeb() {
             this.webLoginStep++;
@@ -162,7 +162,7 @@ export default {
             if (valid) {
                 this.$emit('close');
             } else {
-                this.$toast('根本没有登录成功啊喂 (╯‵□′)╯︵┻━┻');
+                this.$toast.message('根本没有登录成功啊喂 (╯‵□′)╯︵┻━┻');
             }
             this.webLoginStep = 0;
         }
@@ -181,32 +181,18 @@ export default {
 
 <style lang="less">
 .nav-login-dlg {
-    @theme-color: #7e57c2;
     width: 400px;
-    .dlg-body {
+    .mu-dialog-body {
         padding: 0;
         .login-types {
             margin: 20px;
         }
     }
-    .login-tabs {
-        margin-bottom: 20px;
-        background-color: transparent;
-        .mu-tab-link-highlight {
-            background-color: @theme-color;
-        }
-        .mu-tab-link {
-            color: grey;
-        }
-        .mu-tab-active {
-            color: @theme-color;
-        }
-    }
-    .tab-line {
-        background-color: @theme-color;
+    .web-login-step-1-content {
+        padding-bottom: 4px;
     }
     .web-login-step-2-content {
-        margin-top: 5px;
+        padding: 4px 0;
         display: flex;
         justify-content: space-between;
     }

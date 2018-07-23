@@ -1,22 +1,18 @@
 <template>
     <div class="search">
-        <mu-paper>
-            <mu-tabs :value="searchType"
+        <div v-elevation="4">
+            <mu-tabs full-width
+                inverse
+                :value="searchType"
                 @change="handleTabChange">
-                <mu-tab value="song"
-                    title="单曲"></mu-tab>
-                <mu-tab value="artist"
-                    title="歌手"></mu-tab>
-                <mu-tab value="album"
-                    title="专辑"></mu-tab>
-                <mu-tab value="playlist"
-                    title="歌单"></mu-tab>
-                <mu-tab value="mv"
-                    title="MV"></mu-tab>
-                <mu-tab value="user"
-                    title="用户"></mu-tab>
+                <mu-tab value="song">单曲</mu-tab>
+                <mu-tab value="artist">歌手</mu-tab>
+                <mu-tab value="album">专辑</mu-tab>
+                <mu-tab value="playlist">歌单</mu-tab>
+                <mu-tab value="mv">MV</mu-tab>
+                <mu-tab value="user">用户</mu-tab>
             </mu-tabs>
-        </mu-paper>
+        </div>
         <div v-if="!haveSearched"
             class="search-tip">
             <mu-icon value="search"
@@ -26,8 +22,9 @@
         </div>
         <div v-else-if="isPosting"
             class="search-tip">
-            <mu-circular-progress :size="60"
-                :strokeWidth="5"></mu-circular-progress>
+            <mu-circular-progress color="secondary"
+                :size="60"
+                :stroke-width="5"></mu-circular-progress>
         </div>
         <div v-else-if="!haveValidResults"
             class="search-tip">
@@ -73,8 +70,8 @@
             v-if="totalItems > 20">
             <mu-pagination :total="totalItems"
                 :current="currentPage"
-                :pageSize="pageSize"
-                @pageChange="handlePageChange">
+                :page-size="pageSize"
+                @change="handlePageChange">
             </mu-pagination>
         </div>
     </div>

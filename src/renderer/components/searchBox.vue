@@ -1,12 +1,11 @@
 <template>
-    <mu-auto-complete icon="search"
+    <mu-auto-complete dense
+        icon="search"
         class="appbar-search-field"
-        inputClass="appbar-search-input"
-        hintText="搜索歌曲、歌单、用户"
-        :maxHeight="400"
-        openOnFocus
+        placeholder="搜索歌曲、歌单、用户"
+        :max-height="400"
         v-model="searchText"
-        :dataSource="searchAutoComplete"
+        :data="searchAutoComplete"
         @input="handleSearchInput()">
     </mu-auto-complete>
 </template>
@@ -14,7 +13,6 @@
 <script>
 import { stringify } from 'querystring';
 import ApiRenderer from '@/util/apiRenderer';
-import { searchIconMap } from '@/util/searchType';
 
 export default {
     data() {
@@ -31,10 +29,7 @@ export default {
                 for (const key in resp.result) {
                     const current = resp.result[key];
                     if (Array.isArray(current) && typeof current[0] === 'object') {
-                        tmp.push(...current.map(e => ({
-                            text: e.name,
-                            rightIcon: searchIconMap[key]
-                        })));
+                        tmp.push(...current.map(e => e.name));
                     }
                 }
                 this.searchAutoComplete = tmp;
@@ -50,7 +45,7 @@ export default {
         }
     },
     mounted() {
-        document.querySelector('.appbar-search-input').onkeydown = ev => {
+        document.querySelector('.appbar-search-field input').onkeydown = ev => {
             if (ev.key === 'Enter') this.handleSearch();
         };
     }
@@ -59,22 +54,10 @@ export default {
 
 <style lang="less">
 .appbar-search-field {
-    .mu-text-field {
-        color: #FFF;
-        margin-bottom: 0;
+    width: 400px;
+    margin-bottom: 0;
+    .mu-input {
         -webkit-app-region: no-drag;
-        &.focus-state {
-            color: #FFF;
-        }
-        .mu-text-field-hint {
-            color: fade(#FFF, 54%);
-        }
-        .mu-text-field-input {
-            color: #FFF;
-        }
-        .mu-text-field-focus-line {
-            background-color: #FFF;
-        }
     }
 }
 </style>

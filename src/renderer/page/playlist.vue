@@ -2,18 +2,28 @@
     <div class="myplaylist">
         <template v-if="loginValid">
             <div class="aside">
-                <mu-list>
-                    <mu-list-item v-for="group in listGroups"
-                        :key="group.name"
-                        :title="group.name"
-                        toggleNested>
-                        <PlaylistItem v-for="(list, index) in group.lists"
-                            slot="nested"
-                            :key="index"
-                            :item="list"
-                            @click="loadPlaylist(list.id)">
-                        </PlaylistItem>
-                    </mu-list-item>
+                <mu-list toggle-nested
+                    :nested-indent="false">
+                    <template v-for="group in listGroups">
+                        <mu-list-item button
+                            nested
+                            :key="group.name"
+                            :open="group.open"
+                            @click="group.open = !group.open">
+                            <mu-list-item-title>{{group.name}}</mu-list-item-title>
+                            <mu-list-item-action>
+                                <mu-icon class="toggle-icon"
+                                    size="24"
+                                    value="keyboard_arrow_down"></mu-icon>
+                            </mu-list-item-action>
+                            <template v-for="(list, index) in group.lists">
+                                <PlaylistItem :key="index"
+                                    :item="list"
+                                    slot="nested"
+                                    @click="loadPlaylist(list.id)"></PlaylistItem>
+                            </template>
+                        </mu-list-item>
+                    </template>
                 </mu-list>
             </div>
             <div class="content">
@@ -56,10 +66,12 @@ export default {
             this.listGroups = [
                 {
                     name: '创建的歌单',
+                    open: true,
                     lists: this.user.playlist.filter(e => e.creator.id == this.user.id)
                 },
                 {
                     name: '收藏的歌单',
+                    open: true,
                     lists: this.user.playlist.filter(e => e.creator.id != this.user.id)
                 }
             ];

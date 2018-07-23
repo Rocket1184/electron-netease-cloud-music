@@ -2,28 +2,33 @@
     <div class="tracklist">
         <template v-if="tracks.length !== 0">
             <div class="list">
-                <div class="row"
+                <div class="track-row"
                     v-for="(track, index) in tracks"
                     :key="index">
-                    <div class="col index">{{index + 1 + indexOffset}}</div>
-                    <div class="col name">{{track.name}}</div>
-                    <div class="col artist">{{track.artistName}}</div>
-                    <div class="col duration">{{track.duration / 1000 | shortTime}}</div>
-                    <div class="col buttons">
-                        <mu-icon-button icon="bookmark_border"
+                    <div class="track-col index">{{index + 1 + indexOffset}}</div>
+                    <div class="track-col name">{{track.name}}</div>
+                    <div class="track-col artist">{{track.artistName}}</div>
+                    <div class="track-col duration">{{track.duration / 1000 | shortTime}}</div>
+                    <div class="track-col buttons">
+                        <mu-button icon
                             title="收藏到歌单"
-                            @click="handleCollect(track.id)"></mu-icon-button>
-                        <mu-icon-button icon="playlist_add"
+                            @click="handleCollect(track.id)">
+                            <mu-icon value="bookmark_border"></mu-icon>
+                        </mu-button>
+                        <mu-button icon
                             title="添加到播放列表"
-                            @click="handleAdd(index)"></mu-icon-button>
+                            @click="handleAdd(index)">
+                            <mu-icon value="playlist_add"></mu-icon>
+                        </mu-button>
                     </div>
                 </div>
             </div>
         </template>
         <div v-else
             class="loading-wrapper">
-            <mu-circular-progress :size="60"
-                :strokeWidth="5"></mu-circular-progress>
+            <mu-circular-progress color="secondary"
+                :size="60"
+                :stroke-width="5"></mu-circular-progress>
         </div>
     </div>
 </template>
@@ -54,7 +59,7 @@ export default {
         ...mapActions(['toggleCollectPopup', 'addTrackToPlaylist']),
         handleCollect(id) {
             if (!this.loginValid) {
-                this.$toast('汝还没有登录呀      (눈‸눈)');
+                this.$toast.message('汝还没有登录呀      (눈‸눈)');
                 return;
             }
             this.toggleCollectPopup(id);
@@ -62,7 +67,7 @@ export default {
         handleAdd(index) {
             try {
                 this.addTrackToPlaylist({ tracks: [this.tracks[index]] });
-                this.$toast('已添加到播放列表  _(:з」∠)_');
+                this.$toast.message('已添加到播放列表  _(:з」∠)_');
             } catch (e) { /* 为什么会这样呢 */ }
         }
     }
@@ -73,34 +78,36 @@ export default {
 .tracklist {
     width: 100%;
     .list {
-        .row {
+        .track-row {
             display: flex;
             flex-direction: row;
-            .col {
+            justify-content: space-between;
+            .track-col {
                 height: 48px;
                 line-height: 48px;
             }
             .index {
-                flex: 1;
+                flex: 1 0 0;
                 max-width: 48px;
                 text-align: center;
             }
             .name,
             .artist {
-                flex: 6;
-                flex-grow: 1;
+                flex: 1 1 0;
                 white-space: nowrap;
                 overflow: hidden;
                 text-overflow: ellipsis;
                 padding: 0 8px;
             }
             .duration {
-                flex: 2;
-                flex-grow: 0.2;
+                flex: 0 0 64px;
             }
             .buttons {
                 i {
                     color: grey;
+                }
+                .mu-button.hover:before {
+                    border-radius: 50%;
                 }
             }
         }

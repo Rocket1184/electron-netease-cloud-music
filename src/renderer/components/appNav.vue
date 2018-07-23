@@ -2,17 +2,26 @@
     <div class="appbar"
         :class="appbarDynamicClassName">
         <div id="appbar-window-control">
-            <mu-icon-button @click="handleClose()"
-                icon="close"></mu-icon-button>
-            <mu-icon-button @click="handleMaximize()"
-                icon="keyboard_arrow_up"></mu-icon-button>
-            <mu-icon-button @click="handleMinimize()"
-                icon="keyboard_arrow_down"></mu-icon-button>
+            <mu-button icon
+                @click="handleClose()">
+                <mu-icon value="close"></mu-icon>
+            </mu-button>
+            <mu-button icon
+                @click="handleMaximize()">
+                <mu-icon value="keyboard_arrow_up"></mu-icon>
+            </mu-button>
+            <mu-button icon
+                @click="handleMinimize()">
+                <mu-icon value="keyboard_arrow_down"></mu-icon>
+            </mu-button>
         </div>
-        <mu-appbar title="Electron Netease Cloud Music">
-            <mu-icon-button icon="menu"
+        <mu-appbar title="Electron Netease Cloud Music"
+            color="primary">
+            <mu-button icon
                 slot="left"
-                @click="drawerOpen = true"></mu-icon-button>
+                @click="drawerOpen = true">
+                <mu-icon value="menu"></mu-icon>
+            </mu-button>
             <searchBox slot="right"></searchBox>
         </mu-appbar>
         <mu-drawer :width="300"
@@ -23,27 +32,34 @@
                 <div class="header"
                     :style="backgroundUrlStyle">
                     <div class="user-info">
-                        <mu-avatar :icon="loginValid ? null : 'music_note'"
-                            :src="loginValid ? avatarUrl : null"
-                            :iconSize="40"
-                            :size="80"></mu-avatar>
+                        <mu-avatar :size="80">
+                            <img v-if="loginValid"
+                                :src="avatarUrl">
+                            <mu-icon v-else
+                                value="music_note"
+                                :size="40"></mu-icon>
+                        </mu-avatar>
                         <span class="user-name"
                             @click="handleNameClick()">{{user.name}}</span>
-                        <mu-flat-button v-if="loginValid"
-                            label="签到"
+                        <mu-button flat
+                            v-if="loginValid"
                             class="button-checkin"
                             color="white"
-                            @click="handleCheckIn()"></mu-flat-button>
+                            @click="handleCheckIn()">签到</mu-button>
                     </div>
                 </div>
-                <router-link v-for="route in validRoutes"
-                    :key="route.name"
-                    :to="route.path">
-                    <mu-list-item :title="route.title">
-                        <mu-icon slot="left"
-                            :value="route.icon"></mu-icon>
-                    </mu-list-item>
-                </router-link>
+                <mu-list>
+                    <template v-for="route in validRoutes">
+                        <mu-list-item button
+                            :key="route.name"
+                            :to="route.path">
+                            <mu-list-item-action>
+                                <mu-icon :value="route.icon"></mu-icon>
+                            </mu-list-item-action>
+                            <mu-list-item-title>{{route.title}}</mu-list-item-title>
+                        </mu-list-item>
+                    </template>
+                </mu-list>
             </mu-list>
         </mu-drawer>
         <loginDialog :show="loginDlgShow"
@@ -112,10 +128,13 @@ export default {
             if (!this.loginValid) {
                 this.loginDlgShow = true;
             } else {
-                this.$prompt({
-                    title: '退出登录',
-                    text: '退出登录后将无法查看每日歌曲推荐，收藏的歌单等信息，确定吗？',
-                    action: () => this.logout()
+                this.$confirm(
+                    '退出登录后将无法查看每日歌曲推荐，收藏的歌单等信息，确定吗？',
+                    '退出登录'
+                ).then(({ result }) => {
+                    if (result) {
+                        this.logout();
+                    }
                 });
             }
         },
@@ -126,9 +145,9 @@ export default {
                 .map(r => r.code === 200 ? r.point : 0)
                 .reduce((a, b) => a + b);
             if (points) {
-                this.$toast(`签到成功，获得 ${points} 点积分`);
+                this.$toast.message(`签到成功，获得 ${points} 点积分`);
             } else {
-                this.$toast('是不是已经签到过了呢 ：）');
+                this.$toast.message('是不是已经签到过了呢 ：）');
             }
         }
     },
@@ -144,6 +163,7 @@ export default {
 
 <style lang="less">
 .appbar {
+    z-index: 1;
     cursor: default;
     user-select: none;
     -webkit-app-region: drag;

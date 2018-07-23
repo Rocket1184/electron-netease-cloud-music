@@ -1,6 +1,5 @@
 <template>
-    <div class="player-bar-wrapper"
-        :zDepth="2">
+    <div class="player-bar-wrapper">
         <div class="cell cover">
             <router-link to='/player'>
                 <div class="img"
@@ -11,24 +10,28 @@
             <span class="song-name">{{track.name}}</span>
             <span class="artist-name">{{track.artistName}}</span>
             <div class="quick-actions">
-                <mu-icon-button title="喜欢"
-                    :iconClass="{ favorite: isFavorite }"
-                    :icon="isFavorite ? 'favorite' :'favorite_border'"
-                    @click="handleFavorite"></mu-icon-button>
+                <mu-checkbox title="喜欢"
+                    class="action-item"
+                    ref="chkFavorite"
+                    uncheck-icon="favorite_border"
+                    checked-icon="favorite"
+                    color="red"
+                    v-model="isFavorite"></mu-checkbox>
                 <mu-checkbox title="收藏到歌单"
                     class="action-item"
                     ref="chkShowPlaylists"
-                    uncheckIcon="bookmark_border"
-                    checkedIcon="bookmark"
+                    uncheck-icon="bookmark_border"
+                    checked-icon="bookmark"
                     v-model="playlistsShown"></mu-checkbox>
                 <mu-checkbox title="播放列表"
                     class="action-item"
-                    uncheckIcon="queue_music"
-                    checkedIcon="queue_music"
+                    uncheck-icon="queue_music"
+                    checked-icon="queue_music"
                     v-model="currentListShown"></mu-checkbox>
             </div>
             <div class="progress">
                 <mu-slider id="playerbar-progress"
+                    :display-value="false"
                     class="slider"
                     :value="songProgress"
                     @change="handleProgressDrag"></mu-slider>
@@ -36,25 +39,25 @@
             </div>
         </div>
         <div class="cell control">
-            <mu-float-button icon="skip_previous"
-                mini
+            <mu-button fab
+                small
                 class="button"
-                color="#FFF"
-                @click="playPreviousTrack"></mu-float-button>
-            <mu-float-button :icon="this.audioEl.paused ? 'play_arrow' : 'pause'"
+                @click="playPreviousTrack">
+                <mu-icon value="skip_previous"></mu-icon>
+            </mu-button>
+            <mu-button fab
                 class="button"
-                color="#FFF"
-                @click="handlePlayOrPause"></mu-float-button>
-            <mu-float-button icon="skip_next"
-                mini
+                @click="handlePlayOrPause">
+                <mu-icon :value="this.audioEl.paused ? 'play_arrow' : 'pause'"></mu-icon>
+            </mu-button>
+            <mu-button fab
+                small
                 class="button"
-                color="#FFF"
-                @click="playNextTrack"></mu-float-button>
+                @click="playNextTrack">
+                <mu-icon value="skip_next"></mu-icon>
+            </mu-button>
         </div>
-        <transition name="list-open-up">
-            <!-- TODO: Click outside to close the list -->
-            <currentList v-show="currentListShown"></currentList>
-        </transition>
+        <currentList :open="currentListShown"></currentList>
     </div>
 </template>
 
@@ -78,6 +81,7 @@ export default {
             audioEl: {},
             timeTotal: 0,
             timeCurrent: 0,
+            shouldFavorite: null,
             realPlaylistsShown: false,
             currentListShown: false
         };
@@ -102,19 +106,22 @@ export default {
         },
         async handleFavorite() {
             if (!this.loginValid || !this.playing.track) {
-                this.$toast('真的这么喜欢我吗 o(*////▽////*)q');
+                this.$toast.message('真的这么喜欢我吗 o(*////▽////*)q');
                 return;
             }
-            const listId = this.user.favoriteList.id;
-            const trackId = this.playing.track.id;
-            if (this.isFavorite) {
-                await ApiRenderer.uncollectTrack(listId, trackId);
+            const list = this.user.favoriteList;
+            const track = this.playing.track;
+            if (list.tracks.find(t => t.id === track.id)) {
+                await ApiRenderer.uncollectTrack(list.id, track.id);
             } else {
-                await ApiRenderer.collectTrack(listId, trackId);
+                await ApiRenderer.collectTrack(list.id, track.id);
             }
             // it would take some time for NetEase to update playlist cover
             // img, so we just wait 200 ms
-            setTimeout(() => this.refreshUserPlaylist(listId), 200);
+            setTimeout(async () => {
+                await this.refreshUserPlaylist(list.id);
+                this.shouldFavorite = null;
+            }, 0);
         }
     },
     computed: {
@@ -128,29 +135,42 @@ export default {
                 return bkgImg(sizeImg(this.playing.track.album.picUrl, HiDpiPx(64)));
             }
         },
-        isFavorite() {
-            if (!this.loginValid || !this.playing.track) {
+        isFavorite: {
+            get() {
+                if (!this.loginValid || !this.playing.track) {
+                    return false;
+                }
+                if (this.shouldFavorite !== null) {
+                    return this.shouldFavorite;
+                }
+                const { favoriteList } = this.user;
+                if (favoriteList) {
+                    const track = favoriteList.tracks.find(t => t.id === this.playing.track.id);
+                    return typeof track === 'object';
+                }
                 return false;
+            },
+            set(val) {
+                if (val === true) {
+                    this.shouldFavorite = true;
+                } else {
+                    this.shouldFavorite = false;
+                }
+                this.handleFavorite();
             }
-            const { favoriteList } = this.user;
-            if (favoriteList) {
-                const track = favoriteList.tracks.find(t => t.id === this.playing.track.id);
-                return typeof track === 'object';
-            }
-            return false;
         },
         playlistsShown: {
             get() { return this.realPlaylistsShown; },
             set(val) {
                 if (!this.loginValid && val === true && this.realPlaylistsShown === false) {
-                    this.$toast('汝还没有登录呀      (눈‸눈)');
+                    this.$toast.message('汝还没有登录呀      (눈‸눈)');
                     // set value of real `<input>` element to `false`.
                     // it depends on MuseUI impl
                     this.$refs.chkShowPlaylists.inputValue = false;
                     return;
                 }
                 if (!this.playing.track) {
-                    this.$toast('究竟想收藏什么呢     (｡ŏ_ŏ)');
+                    this.$toast.message('究竟想收藏什么呢     (｡ŏ_ŏ)');
                     this.$refs.chkShowPlaylists.inputValue = false;
                     return;
                 }
@@ -232,6 +252,7 @@ export default {
 <style lang="less">
 .player-bar-wrapper {
     box-shadow: 0 2px 12px rgba(0, 0, 0, 0.4);
+    display: flex;
     user-select: none;
     cursor: default;
     font-size: 0;
@@ -240,8 +261,7 @@ export default {
     .cell {
         min-width: 64px;
         vertical-align: top;
-        height: 100%;
-        display: inline-block;
+        height: 64px;
     }
     .cover {
         .img {
@@ -255,6 +275,7 @@ export default {
         font-size: 14px;
         padding: 10px 14px;
         width: calc(~'100% - 244px');
+        overflow: hidden;
         .song-name,
         .artist-name {
             display: inline-block;
@@ -271,12 +292,6 @@ export default {
             position: absolute;
             top: -5px;
             right: 180px;
-            i {
-                transition: color 0.5s;
-            }
-            .favorite {
-                color: red;
-            }
             .action-item {
                 margin: 12px 12px 0 0;
             }
@@ -299,11 +314,11 @@ export default {
     .control {
         width: 180px;
         padding: 4px;
+        display: flex;
+        justify-content: space-around;
+        align-items: center;
         .button {
-            margin-left: 10px;
-            display: inline-block;
-            vertical-align: middle;
-            box-shadow: transparent 0 0 0;
+            box-shadow: white 0 0 0;
         }
     }
     .current-list {

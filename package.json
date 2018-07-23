@@ -45,7 +45,9 @@
     "electron": "^2.0.5",
     "follow-redirects": "^1.5.0",
     "lrc-kit": "^0.4.1",
-    "muse-ui": "^2.1.0",
+    "muse-ui": "^3.0.0-rc.5",
+    "muse-ui-message": "^0.2.0",
+    "muse-ui-toast": "^0.3.0",
     "vue": "^2.5.16",
     "vue-router": "^3.0.1",
     "vuex": "^3.0.1"

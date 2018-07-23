@@ -1,11 +1,12 @@
 <template>
-    <mu-paper class="daily-suggestions">
-        <div class="cell title">
+    <mu-paper class="daily-suggestions"
+        :z-depth="1">
+        <div class="title">
             <p>{{dayNumber}}</p>
             <br>
             <p>每日歌曲推荐</p>
         </div>
-        <div class="cell content">
+        <div class="content">
             <template v-if="loginValid">
                 <PlayAll :tracks="dailyList"></PlayAll>
                 <TrackList :tracks="dailyList"></TrackList>
@@ -71,13 +72,9 @@ export default {
 .daily-suggestions {
     width: 900px;
     min-height: 400px;
-    display: flex;
-    .cell {
-        flex-direction: row;
-        flex-wrap: nowrap;
-    }
+    display: grid;
+    grid-template-columns: 2fr 7fr;
     .title {
-        flex: 2;
         background-color: indianred;
         text-align: center;
         color: white;
@@ -85,7 +82,6 @@ export default {
         padding-top: 20px;
     }
     .content {
-        flex: 7;
         .tip {
             color: grey;
             text-align: center;

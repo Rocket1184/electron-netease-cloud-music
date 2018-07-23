@@ -1,15 +1,13 @@
 <template>
-    <mu-popup position="bottom"
+    <mu-dialog title="收藏到歌单"
+        scrollable
         :open="ui.collectPopupShow"
         @close="handleClose">
-        <mu-appbar title="收藏到歌单">
-            <mu-icon-button slot="right"
-                icon="close"
-                color="white"
-                @click="handleClose"></mu-icon-button>
-        </mu-appbar>
         <userPlaylists @rowClick="handleCollect"></userPlaylists>
-    </mu-popup>
+        <mu-button slot="actions"
+            flat
+            @click="handleClose">关闭</mu-button>
+    </mu-dialog>
 </template>
 
 <script>
@@ -33,18 +31,18 @@ export default {
         },
         async handleCollect(list) {
             if (!this.loginValid) {
-                this.$toast('讲道理不应该这样的呀  (✘﹏✘ა)');
+                this.$toast.message('讲道理不应该这样的呀  (✘﹏✘ა)');
                 return;
             }
             const resp = await ApiRenderer.collectTrack(list.id, ...this.ui.collectTrackIds);
             if (resp.code === 200) {
-                this.$toast('成功添加到歌单     (๑•̀ㅂ•́)و✧');
+                this.$toast.message('成功添加到歌单     (๑•̀ㅂ•́)و✧');
                 // same to above
                 setTimeout(() => this.refreshUserPlaylist(list.id), 200);
             } else if (resp.code === 502) {
-                this.$toast('歌曲已存在        ¯\\_(ツ)_/¯');
+                this.$toast.message('歌曲已存在        ¯\\_(ツ)_/¯');
             } else {
-                this.$toast(`失败了 ∑(っ °Д °;)っ 错误代码 ${resp.code}`);
+                this.$toast.message(`失败了 ∑(っ °Д °;)っ 错误代码 ${resp.code}`);
             }
         }
     }

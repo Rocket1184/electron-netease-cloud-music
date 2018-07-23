@@ -6,26 +6,41 @@
             <div class="desc">
                 <p class="name">{{detail.name}}</p>
                 <div class="creator">
-                    <mu-avatar slot="left"
-                        class="avatar"
-                        :src="creatorAvatarSrc" />
+                    <mu-avatar class="avatar">
+                        <img :src="creatorAvatarSrc">
+                    </mu-avatar>
                     <span class="creator-name">{{detail.creator.nickname}}</span>
                     <span class="create-time">创建于 {{createTime}}</span>
                 </div>
                 <div class="actions">
-                    <mu-flat-button :label="`收藏 (${formatCount(detail.subscribedCount)})`"
-                        :icon="detail.subscribed ? 'star' : 'star_border'" />
-                    <mu-flat-button :label="`评论 (${formatCount(detail.commentCount)})`"
-                        icon="comment" />
+                    <mu-button flat>
+                        <mu-icon left
+                            :value="detail.subscribed ? 'star' : 'star_border'"></mu-icon>
+                        收藏 ({{formatCount(detail.subscribedCount)}})
+                    </mu-button>
+                    <mu-button flat>
+                        <mu-icon left
+                            value="comment"></mu-icon>
+                        评论 ({{formatCount(detail.commentCount)}})
+                    </mu-button>
                 </div>
                 <div class="intro">
-                    <mu-list-item title="歌单介绍"
-                        toggleNested
-                        :open="false">
-                        <mu-content-block slot="nested">
-                            <pre>{{detail.description}}</pre>
-                        </mu-content-block>
-                    </mu-list-item>
+                    <mu-list toggle-nested>
+                        <mu-list-item button
+                            nested
+                            :open="detailOpen"
+                            @click="detailOpen = !detailOpen">
+                            <mu-list-item-title>歌单介绍</mu-list-item-title>
+                            <mu-list-item-action>
+                                <mu-icon class="toggle-icon"
+                                    size="24"
+                                    value="keyboard_arrow_down"></mu-icon>
+                            </mu-list-item-action>
+                            <mu-list-item-content slot="nested">
+                                <pre>{{detail.description}}</pre>
+                            </mu-list-item-content>
+                        </mu-list-item>
+                    </mu-list>
                 </div>
             </div>
         </div>
@@ -38,8 +53,8 @@
                 v-if="detail.tracks.length > 50">
                 <mu-pagination :total="detail.tracks.length"
                     :current="currentPage"
-                    :pageSize="pageSize"
-                    @pageChange="handlePageChange">
+                    :page-size="pageSize"
+                    @change="handlePageChange">
                 </mu-pagination>
             </div>
         </div>
@@ -60,6 +75,7 @@ export default {
     },
     data() {
         return {
+            detailOpen: false,
             scrollHeight: 200,
             currentPage: 1,
             pageSize: 50
