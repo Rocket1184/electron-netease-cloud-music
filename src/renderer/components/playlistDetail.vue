@@ -132,22 +132,19 @@ export default {
         .cover {
             height: 160px;
             width: 160px;
-            margin-right: 16px;
+            min-width: 160px;
+            margin-right: 10px;
         }
         .desc {
             flex-grow: 1;
             .name {
                 font-size: 20px;
-                margin-top: 0;
-                margin-left: 12px;
+                margin: 0 0 8px 12px;
             }
             .creator {
-                margin: 10px 0 10px 16px;
-                .avatar,
-                .creator-name,
-                .create-time {
-                    vertical-align: middle;
-                }
+                margin: 8px 12px;
+                display: flex;
+                align-items: center;
                 .creator-name {
                     margin: 0 10px;
                 }
@@ -156,9 +153,14 @@ export default {
                 }
             }
             .actions {
-                span {
-                    line-height: 48px;
-                    display: inline-block;
+                display: flex;
+            }
+            .intro {
+                .mu-list {
+                    padding: 0;
+                }
+                pre {
+                    margin: 8px;
                 }
             }
         }
