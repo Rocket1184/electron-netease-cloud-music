@@ -77,7 +77,7 @@ export default {
             ];
         },
         async loadPlaylist(id) {
-            this.scrollContent(0);
+            this.scrollContent(0, 'instant');
             this.detail = this.user.playlist.find(p => p.id === id);
             await this.refreshUserPlaylist(id);
             const target = this.user.playlist.find(p => p.id === id);
@@ -85,8 +85,12 @@ export default {
                 this.detail = target;
             }
         },
-        scrollContent(top) {
-            document.querySelector('.myplaylist .content').scrollTo({ top, behavior: 'smooth' });
+        /**
+         * @param {number} top
+         * @param {ScrollBehavior} behavior
+         */
+        scrollContent(top, behavior = 'smooth') {
+            document.querySelector('.myplaylist .content').scrollTo({ top, behavior });
         }
     },
     mounted() {
