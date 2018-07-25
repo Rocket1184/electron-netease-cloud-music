@@ -3,10 +3,9 @@
         icon="search"
         class="appbar-search-field"
         placeholder="搜索歌曲、歌单、用户"
-        :max-height="400"
         v-model="searchText"
-        :data="searchAutoComplete"
-        @input="handleSearchInput()">
+        :filter="filterData"
+        @select="handleSearch">
     </mu-auto-complete>
 </template>
 
@@ -17,25 +16,44 @@ import ApiRenderer from '@/util/apiRenderer';
 export default {
     data() {
         return {
-            searchText: '',
-            searchAutoComplete: [],
+            searchText: ''
         };
     },
     methods: {
-        async handleSearchInput() {
-            const resp = await ApiRenderer.getSearchSuggest(this.searchText);
-            if (resp.code === 200) {
-                let tmp = [];
-                for (const key in resp.result) {
-                    const current = resp.result[key];
-                    if (Array.isArray(current) && typeof current[0] === 'object') {
-                        tmp.push(...current.map(e => e.name));
-                    }
-                }
-                this.searchAutoComplete = tmp;
-            } else {
-                this.searchAutoComplete = [];
+        async filterData(query) {
+            if (query <= 0) {
+                return [];
             }
+            const resp = await ApiRenderer.getSearchSuggest(query);
+            if (resp.code !== 200) {
+                return [];
+            }
+            const tmp = [];
+            for (const [k, v] of Object.entries(resp.result)) {
+                if (k === 'order') {
+                    continue;
+                }
+                for (const item of v) {
+                    const index = item.name.toLowerCase().indexOf(query.toLowerCase());
+                    if (index === -1) {
+                        tmp.push({
+                            value: item.name,
+                            item,
+                            highlight: item.name
+                        });
+                        continue;
+                    }
+                    const before = item.name.substring(0, index);
+                    const highlight = item.name.substring(index, index + query.length);
+                    const after = item.name.substring(index + query.length);
+                    tmp.push({
+                        value: item.name,
+                        item,
+                        highlight: `${before}<span class="mu-secondary-text-color">${highlight}</span>${after}`
+                    });
+                }
+            }
+            return tmp;
         },
         handleSearch() {
             const qs = stringify({
