@@ -62,6 +62,7 @@ export default {
 
 <style lang="less">
 .current-list {
+    height: inherit;
     .tip {
         width: 100%;
         height: 100%;
