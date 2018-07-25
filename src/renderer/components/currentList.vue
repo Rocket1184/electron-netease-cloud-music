@@ -1,7 +1,5 @@
 <template>
-    <mu-popover :open="open"
-        placement="top"
-        class="current-list">
+    <div class="current-list">
         <div v-if="playlist.list.length === 0"
             class="tip">
             <mu-icon value="equalizer"
@@ -30,19 +28,13 @@
                 </mu-list-item-title>
             </mu-list-item>
         </mu-list>
-    </mu-popover>
+    </div>
 </template>
 
 <script>
 import { mapActions, mapGetters, mapState } from 'vuex';
 
 export default {
-    props: {
-        open: {
-            required: true,
-            type: Boolean
-        }
-    },
     data() {
         return {};
     },
@@ -70,13 +62,6 @@ export default {
 
 <style lang="less">
 .current-list {
-    border-radius: 0; // avoid 'repaint on scroll'
-    width: 420px;
-    height: 360px;
-    font-size: 14px;
-    position: fixed;
-    right: 8px;
-    bottom: 72px;
     .tip {
         width: 100%;
         height: 100%;
