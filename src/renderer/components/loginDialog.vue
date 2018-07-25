@@ -1,7 +1,7 @@
 <template>
     <mu-dialog :open="show"
         dialog-class="nav-login-dlg"
-        @close="$emit('close')">
+        @close="$emit('update:show', false)">
         <mu-tabs :value="loginType"
             inverse
             full-width

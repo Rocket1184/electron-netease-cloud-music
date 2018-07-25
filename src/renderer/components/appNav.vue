@@ -25,45 +25,41 @@
             <searchBox slot="right"></searchBox>
         </mu-appbar>
         <mu-drawer :width="300"
-            :open="drawerOpen"
             :docked="false"
-            @close="drawerOpen = false">
-            <mu-list class="appnav-drawer">
-                <div class="header"
-                    :style="backgroundUrlStyle">
-                    <div class="user-info">
-                        <mu-avatar :size="80">
-                            <img v-if="loginValid"
-                                :src="avatarUrl">
-                            <mu-icon v-else
-                                value="music_note"
-                                :size="40"></mu-icon>
-                        </mu-avatar>
-                        <span class="user-name"
-                            @click="handleNameClick()">{{user.name}}</span>
-                        <mu-button flat
-                            v-if="loginValid"
-                            class="button-checkin"
-                            color="white"
-                            @click="handleCheckIn()">签到</mu-button>
-                    </div>
+            :open.sync="drawerOpen"
+            class="appbar-drawer">
+            <div class="header"
+                :style="backgroundUrlStyle">
+                <div class="user-info">
+                    <mu-avatar :size="80">
+                        <img v-if="loginValid"
+                            :src="avatarUrl">
+                        <mu-icon v-else
+                            value="music_note"
+                            :size="40"></mu-icon>
+                    </mu-avatar>
+                    <span class="user-name"
+                        @click="handleNameClick()">{{user.name}}</span>
+                    <mu-button flat
+                        v-if="loginValid"
+                        class="button-checkin"
+                        color="white"
+                        @click="handleCheckIn()">签到</mu-button>
                 </div>
-                <mu-list>
-                    <template v-for="route in validRoutes">
-                        <mu-list-item button
-                            :key="route.name"
-                            :to="route.path">
-                            <mu-list-item-action>
-                                <mu-icon :value="route.icon"></mu-icon>
-                            </mu-list-item-action>
-                            <mu-list-item-title>{{route.title}}</mu-list-item-title>
-                        </mu-list-item>
-                    </template>
-                </mu-list>
+            </div>
+            <mu-list>
+                <mu-list-item v-for="route in validRoutes"
+                    button
+                    :key="route.name"
+                    :to="route.path">
+                    <mu-list-item-action>
+                        <mu-icon :value="route.icon"></mu-icon>
+                    </mu-list-item-action>
+                    <mu-list-item-title>{{route.title}}</mu-list-item-title>
+                </mu-list-item>
             </mu-list>
         </mu-drawer>
-        <loginDialog :show="loginDlgShow"
-            @close="loginDlgShow = false"></loginDialog>
+        <loginDialog :show.sync="loginDlgShow"></loginDialog>
     </div>
 </template>
 
@@ -223,8 +219,7 @@ export default {
     }
 }
 
-.appnav-drawer {
-    padding-top: 0;
+.appbar-drawer {
     .header {
         position: relative;
         width: 100%;
