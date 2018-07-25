@@ -1,33 +1,36 @@
 <template>
     <div class="player-bar-wrapper">
-        <div class="cell cover">
-            <router-link to='/player'>
-                <div class="img"
-                    :style="coverImgStyle"></div>
-            </router-link>
-        </div>
-        <div class="cell info">
-            <span class="song-name">{{track.name}}</span>
-            <span class="artist-name">{{track.artistName}}</span>
+        <router-link to='/player'
+            class="cover">
+            <div class="img"
+                :style="coverImgStyle"></div>
+        </router-link>
+        <div class="info">
+            <div class="name">
+                <span class="song">{{track.name}}</span>
+                <span class="artist">{{track.artistName}}</span>
+            </div>
             <div class="quick-actions">
                 <mu-checkbox title="喜欢"
-                    class="action-item"
                     ref="chkFavorite"
                     uncheck-icon="favorite_border"
                     checked-icon="favorite"
                     color="red"
                     v-model="isFavorite"></mu-checkbox>
                 <mu-checkbox title="收藏到歌单"
-                    class="action-item"
                     ref="chkShowPlaylists"
                     uncheck-icon="bookmark_border"
                     checked-icon="bookmark"
                     v-model="playlistsShown"></mu-checkbox>
-                <mu-checkbox title="播放列表"
-                    class="action-item"
-                    uncheck-icon="queue_music"
-                    checked-icon="queue_music"
-                    v-model="currentListShown"></mu-checkbox>
+                <mu-menu :open.sync="currentListShown"
+                    placement="top"
+                    popover-class="playerbar-current-list">
+                    <mu-checkbox title="播放列表"
+                        uncheck-icon="queue_music"
+                        checked-icon="queue_music"
+                        v-model="currentListShown"></mu-checkbox>
+                    <currentList slot="content"></currentList>
+                </mu-menu>
             </div>
             <div class="progress">
                 <mu-slider id="playerbar-progress"
@@ -35,10 +38,10 @@
                     class="slider"
                     :value="songProgress"
                     @change="handleProgressDrag"></mu-slider>
-                <span class="text">{{ timeCurrent | time }} / {{ timeTotal | time }}</span>
             </div>
+            <span class="time">{{ timeCurrent | time }} / {{ timeTotal | time }}</span>
         </div>
-        <div class="cell control">
+        <div class="control">
             <mu-button fab
                 small
                 class="button"
@@ -57,7 +60,6 @@
                 <mu-icon value="skip_next"></mu-icon>
             </mu-button>
         </div>
-        <currentList :open="currentListShown"></currentList>
     </div>
 </template>
 
@@ -258,11 +260,6 @@ export default {
     font-size: 0;
     height: 64px;
     position: relative;
-    .cell {
-        min-width: 64px;
-        vertical-align: top;
-        height: 64px;
-    }
     .cover {
         .img {
             background-image: url('~assets/img/cover_default.webp');
@@ -273,42 +270,38 @@ export default {
     }
     .info {
         font-size: 14px;
-        padding: 10px 14px;
-        width: calc(~'100% - 244px');
+        padding: 10px 10px 2px;
+        flex-grow: 1;
         overflow: hidden;
-        .song-name,
-        .artist-name {
-            display: inline-block;
-            max-width: 310px;
-            overflow: hidden;
-            text-overflow: ellipsis;
-            white-space: nowrap;
-        }
-        .artist-name {
-            margin-left: 10px;
-            color: dimgrey;
+        display: grid;
+        grid-template-columns: 1fr 100px;
+        grid-template-rows: 50% 50%;
+        .name {
+            display: flex;
+            span {
+                max-width: 310px;
+                overflow: hidden;
+                text-overflow: ellipsis;
+                white-space: nowrap;
+            }
+            .artist {
+                margin-left: 10px;
+                color: dimgrey;
+            }
         }
         .quick-actions {
-            position: absolute;
-            top: -5px;
-            right: 180px;
-            .action-item {
-                margin: 12px 12px 0 0;
-            }
+            width: 100px;
+            display: flex;
+            justify-content: space-between;
         }
         .progress {
-            position: relative;
             .slider {
                 margin: 0;
-                width: calc(~'100% - 100px');
             }
-            .text {
-                position: absolute;
-                right: 0;
-                top: 0;
-                width: 100px;
-                text-align: right;
-            }
+        }
+        .time {
+            width: 100px;
+            text-align: right;
         }
     }
     .control {
@@ -321,24 +314,17 @@ export default {
             box-shadow: white 0 0 0;
         }
     }
-    .current-list {
-        position: fixed;
-        right: 4px;
-        bottom: 68px;
-        height: 496px;
-        -webkit-transform-origin-y: 496px;
-        box-shadow: 0 3px 10px rgba(0, 0, 0, 0.15);
-    }
 }
 
-.list-open-up-enter-active,
-.list-open-up-leave-active {
-    transition: transform 0.5s;
-    transition-timing-function: cubic-bezier(0.23, 1, 0.32, 1);
-}
-
-.list-open-up-enter,
-.list-open-up-leave-active {
-    transform: scaleY(0);
+.playerbar-current-list {
+    border-radius: 0; // avoid 'repaint on scroll'
+    width: 420px;
+    height: 360px;
+    font-size: 14px;
+    position: fixed;
+    top: unset !important;
+    left: unset !important;
+    right: 8px !important;
+    bottom: 72px !important;
 }
 </style>
