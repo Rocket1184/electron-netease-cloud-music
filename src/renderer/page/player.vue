@@ -1,9 +1,11 @@
 <template>
-    <div class="song-detail">
-        <div class="bkg"
-            :style="albumImgStyle"></div>
-        <div class="disk"
-            :class="albumDiskClass">
+    <div class="player">
+        <div class="bkg">
+            <canvas ref="cvs"
+                width="1000"
+                height="600"></canvas>
+        </div>
+        <div :class="{ disk: true, play: !this.ui.paused }">
             <div class="img"
                 :style="albumImgStyle">
                 <div class="border"></div>
@@ -53,6 +55,7 @@
 <script>
 import { mapGetters, mapState } from 'vuex';
 import { bkgImg, sizeImg, HiDpiPx } from '@/util/image';
+import defaultCoverImg from 'assets/img/cover_default.webp';
 
 export default {
     name: 'page-player',
@@ -66,18 +69,15 @@ export default {
         };
     },
     computed: {
-        ...mapState(['ui']),
+        ...mapState(['ui', 'playlist']),
         ...mapGetters(['playing']),
-        albumDiskClass() {
-            return { play: !this.ui.paused };
-        },
         track() {
             return this.playing.track || ({ name: '（暂无歌曲）', album: { name: '', picUrl: '' } });
         },
         albumImgStyle() {
-            if (this.playing.track && this.playing.track.album.picUrl) {
+            try {
                 return bkgImg(sizeImg(this.playing.track.album.picUrl, HiDpiPx(220)));
-            }
+            } catch (e) { /* picUrl unavaliable */ }
         },
         lyricScrollerStyle() {
             if (this.lyricElemMap.length === 0 || this.currentLyricIndex === -1) {
@@ -119,6 +119,26 @@ export default {
             if (this.ui.lyric.lrc) {
                 this.lyricElemMap = Array.from(document.getElementsByClassName('line'));
             }
+        },
+        paintBkgCanvas() {
+            if (!this.isActive) return;
+            const img = new Image();
+            try {
+                img.src = sizeImg(this.playing.track.album.picUrl, HiDpiPx(64));
+            } catch (e) {
+                img.src = defaultCoverImg;
+            }
+            const w = 1000;
+            const h = 600;
+            /** @type {CanvasRenderingContext2D} */
+            const ctx = this.$refs.cvs.getContext('2d');
+            ctx.clearRect(0, 0, w, h);
+            const handler = () => {
+                img.removeEventListener('load', handler);
+                ctx.drawImage(img, 0, 0, w, h);
+                ctx.fillRect(0, 0, w, h);
+            };
+            img.addEventListener('load', handler);
         }
     },
     watch: {
@@ -127,14 +147,22 @@ export default {
             this.currentLyricIndex = -1;
             // query lyric elements after they are created
             this.$nextTick(() => this.createLyricElemMap());
+        },
+        ['playing.index']() {
+            this.paintBkgCanvas();
         }
     },
     mounted() {
+        const ctx = this.$refs.cvs.getContext('2d');
+        ctx.fillStyle = 'rgba(0, 0, 0, 0.1)';
+        ctx.filter = 'blur(60px)';
+        this.paintBkgCanvas();
         this.listenAudioUpdate();
         this.createLyricElemMap();
     },
     activated() {
         this.isActive = true;
+        this.paintBkgCanvas();
         if (!this.lyricElemMap.length) {
             this.createLyricElemMap();
         }
@@ -160,7 +188,7 @@ export default {
     vertical-align: bottom;
 }
 
-.song-detail {
+.player {
     height: 100%;
     position: relative;
     display: flex;
@@ -170,14 +198,13 @@ export default {
         position: absolute;
         top: 0;
         left: 0;
-        width: 100%;
-        height: 100%;
-        background-size: 80% 450px;
-        background-repeat: no-repeat;
-        background-position: 50% 0%;
-        background-image: url('~assets/img/cover_default.webp');
-        filter: blur(60px);
-        opacity: 0.8;
+        right: 0;
+        bottom: 0;
+        overflow: hidden;
+        canvas {
+            width: 100%;
+            height: 100%;
+        }
     }
     .disk {
         flex: 1;
