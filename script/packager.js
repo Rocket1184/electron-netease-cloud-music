@@ -1,6 +1,7 @@
 'use strict';
 
 const { absPath, removeKeepDot } = require('./util');
+const config = require('./config');
 
 let argv = process.argv.slice(2);
 if (!argv.length) argv = process.platform;
@@ -13,8 +14,8 @@ if (argv[0] === 'clean') {
 }
 
 require('electron-packager')({
-    name: 'Electron NCM',
-    executableName: 'electron-netease-cloud-music',
+    name: config.appName ,
+    executableName: config.packageName,
     arch: 'x64',
     asar: true,
     icon: absPath('assets/icons/icon'),
