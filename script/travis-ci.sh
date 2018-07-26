@@ -28,7 +28,7 @@ build() {
 }
 
 qshell_init() {
-    curl -Lo "$TEMP_DIR/qshell.zip" --retry-connrefused --retry 5 --create-dirs "http://devtools.qiniu.com/qshell-v2.2.0.zip"
+    curl -Lo "$TEMP_DIR/qshell.zip" --retry 5 --create-dirs "http://devtools.qiniu.com/qshell-v2.2.0.zip"
     unzip "$TEMP_DIR/qshell.zip" -d "$TEMP_DIR/qshell"
     QSHELL_BIN="$TEMP_DIR/qshell/qshell-linux-x64"
     chmod +x "$QSHELL_BIN"
