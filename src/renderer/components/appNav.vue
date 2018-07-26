@@ -3,16 +3,25 @@
         :class="appbarDynamicClassName">
         <div id="appbar-window-control">
             <mu-button icon
+                small
+                color="white"
                 @click="handleClose()">
-                <mu-icon value="close"></mu-icon>
+                <mu-icon value="close"
+                    :size="16"></mu-icon>
             </mu-button>
             <mu-button icon
+                small
+                color="white"
                 @click="handleMaximize()">
-                <mu-icon value="keyboard_arrow_up"></mu-icon>
+                <mu-icon value="keyboard_arrow_up"
+                    :size="16"></mu-icon>
             </mu-button>
             <mu-button icon
+                small
+                color="white"
                 @click="handleMinimize()">
-                <mu-icon value="keyboard_arrow_down"></mu-icon>
+                <mu-icon value="keyboard_arrow_down"
+                    :size="16"></mu-icon>
             </mu-button>
         </div>
         <mu-appbar title="Electron Netease Cloud Music"
@@ -30,15 +39,15 @@
             class="appbar-drawer">
             <div class="header"
                 :style="backgroundUrlStyle">
-                <div class="user-info">
-                    <mu-avatar :size="80">
-                        <img v-if="loginValid"
-                            :src="avatarUrl">
-                        <mu-icon v-else
-                            value="music_note"
-                            :size="40"></mu-icon>
-                    </mu-avatar>
-                    <span class="user-name"
+                <mu-avatar :size="80">
+                    <img v-if="loginValid"
+                        :src="avatarUrl">
+                    <mu-icon v-else
+                        value="music_note"
+                        :size="40"></mu-icon>
+                </mu-avatar>
+                <div class="text">
+                    <span class="username"
                         @click="handleNameClick()">{{user.name}}</span>
                     <mu-button flat
                         v-if="loginValid"
@@ -167,11 +176,9 @@ export default {
         // hide window control by default
         display: none;
     }
-    .mu-appbar {
-        .left {
-            cursor: pointer;
-            -webkit-app-region: no-drag;
-        }
+    .mu-appbar-left,
+    .mu-appbar-right {
+        -webkit-app-region: no-drag;
     }
     &.not-updated {
         .mu-appbar > div {
@@ -201,63 +208,44 @@ export default {
 #appbar-window-control {
     z-index: 10;
     -webkit-app-region: no-drag;
-    transform: scale(0.6);
     position: absolute;
-    left: -27px;
-    top: -9px;
-    color: white;
+    top: 0;
+    left: 0;
     button {
         cursor: default !important;
-        margin-right: -2px;
-        .mu-ripple-wrapper {
-            border-radius: 100%;
-            transition: background-color 0.2s;
-        }
-        &:hover .mu-ripple-wrapper {
-            background-color: rgba(0, 0, 0, 0.1);
-        }
+        width: 28px;
+        height: 28px;
     }
 }
 
 .appbar-drawer {
     .header {
         position: relative;
+        display: flex;
+        flex-direction: column;
+        justify-content: flex-end;
+        padding: 14px;
         width: 100%;
         height: 200px;
         background-size: cover;
         background-image: url('~assets/img/bkg.svg');
         background-position-y: 50%;
-        &::before {
-            position: absolute;
-            content: ' ';
-            color: transparent;
-            width: 100%;
-            height: 100%;
-            background-color: rgba(0, 0, 0, 0.2);
-        }
-        .user-info {
-            position: absolute;
-            padding: 20px;
-            bottom: 0;
-            left: 0;
-            .mu-avatar {
-                display: block;
-            }
-            .user-name {
-                margin-top: 10px;
+        .text {
+            margin-top: 14px;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            .username {
+                font-family: monospace;
                 color: white;
+                text-shadow: 0 0 4px black;
                 font-size: 20px;
                 cursor: pointer;
-                display: inline-block;
                 line-height: 36px;
                 width: 160px;
                 white-space: nowrap;
                 overflow: hidden;
                 text-overflow: ellipsis;
-                vertical-align: bottom;
-            }
-            .button-checkin {
-                display: inline-block;
             }
         }
     }
