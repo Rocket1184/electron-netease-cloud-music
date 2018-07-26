@@ -53,6 +53,10 @@ export default {
 </script>
 
 <style lang="less">
+body {
+    font-family: Roboto, 'Noto Sans', 'Segoe UI', 'Noto Sans CJK SC', 'Source Han Sans CN', 'Microsoft Yahei', sans-serif;
+}
+
 .router-view {
     height: calc(100vh - 128px);
     overflow: auto;
