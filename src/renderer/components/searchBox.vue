@@ -1,12 +1,24 @@
 <template>
-    <mu-auto-complete dense
-        icon="search"
-        class="appbar-search-field"
-        placeholder="搜索歌曲、歌单、用户"
-        v-model="searchText"
-        :filter="filterData"
-        @select="handleSearch">
-    </mu-auto-complete>
+    <mu-menu class="searchbox"
+        cover
+        placement="left"
+        popover-class="searchbox-popover">
+        <mu-button icon
+            @click="focusInput">
+            <mu-icon value="search"></mu-icon>
+        </mu-button>
+        <mu-auto-complete dense
+            solo
+            full-width
+            slot="content"
+            icon="search"
+            ref="textField"
+            placeholder="搜索单曲、歌手、专辑、用户 ..."
+            v-model="searchText"
+            :filter="filterData"
+            @select="handleSearch">
+        </mu-auto-complete>
+    </mu-menu>
 </template>
 
 <script>
@@ -20,6 +32,9 @@ export default {
         };
     },
     methods: {
+        focusInput() {
+            setTimeout(() => this.$refs.textField.$el.querySelector('input').focus(), 200);
+        },
         async filterData(query) {
             if (query <= 0) {
                 return [];
@@ -63,7 +78,7 @@ export default {
         }
     },
     mounted() {
-        document.querySelector('.appbar-search-field input').onkeydown = ev => {
+        this.$refs.textField.$el.querySelector('input').onkeydown = ev => {
             if (ev.key === 'Enter') this.handleSearch();
         };
     }
@@ -71,11 +86,10 @@ export default {
 </script>
 
 <style lang="less">
-.appbar-search-field {
-    width: 400px;
-    margin-bottom: 0;
-    .mu-input {
-        -webkit-app-region: no-drag;
-    }
+.searchbox {
+    height: unset !important;
+}
+.searchbox-popover {
+    width: 340px;
 }
 </style>
