@@ -164,6 +164,7 @@ export default {
         }
     },
     mounted() {
+        this.searchType = this.$route.query.type || searchTypes.song;
         this.handleSearch();
     },
     beforeRouteUpdate(to, from, next) {
