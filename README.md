@@ -1,6 +1,6 @@
 # Electron Netease Cloud Music
 
-**UNOFFICAL** client for music.163.com . Powered by [Vue](https://vuejs.org) and [Electron](https://electronjs.org) .
+**UNOFFICAL** client for music.163.com . Powered by [Electron](https://electronjs.org), [Vue](https://vuejs.org), and [Muse-UI](https://muse-ui.org).
 
 [![build status](https://api.travis-ci.org/Rocket1184/electron-netease-cloud-music.svg?branch=master)](https://travis-ci.org/Rocket1184/electron-netease-cloud-music/builds)
 [![dependencies staus](https://david-dm.org/rocket1184/electron-netease-cloud-music/status.svg)](https://david-dm.org/rocket1184/electron-netease-cloud-music)
@@ -10,35 +10,47 @@
 
 ### Now Playing
 
-![Player](https://user-images.githubusercontent.com/13914967/42136788-64f73da6-7d94-11e8-86b8-683a49a7074d.png)
+![Player](https://user-images.githubusercontent.com/13914967/43312528-32f7d44c-91c0-11e8-8098-124b86d2d260.png)
 
 <details>
 
 <summary>All screenshots</summary>
 
-### 歌单
+### 收藏歌曲到歌单
 
-![Playlists](https://user-images.githubusercontent.com/13914967/42136809-a6cfebf6-7d94-11e8-9eb5-e5740ffb30c4.png)
+![Add to Playlist](https://user-images.githubusercontent.com/13914967/43312533-34e6c5e2-91c0-11e8-8d7d-1dac526bdb63.png)
 
-### 收藏到歌单
+### 我的歌单
 
-![Add to Playlist](https://user-images.githubusercontent.com/13914967/42136909-24ecbe8c-7d96-11e8-87e8-7e3a81d6f718.png)
+![Playlists](https://user-images.githubusercontent.com/13914967/43312550-3d2664e2-91c0-11e8-81db-dc709f7c89f4.png)
 
 ### 侧栏
 
-![Sidebar](https://user-images.githubusercontent.com/13914967/42136870-9e7943ca-7d95-11e8-8474-b77f045c372f.png)
+![Sidebar](https://user-images.githubusercontent.com/13914967/43313146-ce4a345c-91c1-11e8-86b9-a85962451769.png)
 
-### 首页
+### 首页（目前仅有每日推荐歌曲）
 
-![Index](https://user-images.githubusercontent.com/13914967/42136855-662f877c-7d95-11e8-823d-6a94eac99289.png)
+![Index](https://user-images.githubusercontent.com/13914967/43312538-37863dbe-91c0-11e8-98a5-ad1ffbb82a62.png)
 
-### 搜索音乐
+### 搜索
 
-![Search Music](https://user-images.githubusercontent.com/13914967/42136829-e4796932-7d94-11e8-9acd-bc83d317160c.png)
+![Search Music](https://user-images.githubusercontent.com/13914967/43312543-3893de3c-91c0-11e8-9eaf-99c7f55d2c48.png)
 
-### 搜索专辑
+### 应用设置
 
-![Search Album](https://user-images.githubusercontent.com/13914967/42136834-09873f1a-7d95-11e8-8d25-d2bb145c4b15.png)
+![Settings](https://user-images.githubusercontent.com/13914967/43312886-2b208cae-91c1-11e8-8645-f9eee37bb4e1.png)
+
+### 自定义色调
+
+![Color Picker](https://user-images.githubusercontent.com/13914967/43312879-250465c0-91c1-11e8-91af-3e7a601381c4.png)
+
+### 暗色主题
+
+![Player_Dark](https://user-images.githubusercontent.com/13914967/43312592-5ea44ec2-91c0-11e8-83bd-0d1c55fee9e3.png)
+
+![Collect_Dark](https://user-images.githubusercontent.com/13914967/43312598-62f658ee-91c0-11e8-89c1-c863a39d6e84.png)
+
+![Playerlists_Dark](https://user-images.githubusercontent.com/13914967/43312602-64305a48-91c0-11e8-8f88-1e12a367d191.png)
 
 </details>
 
@@ -52,6 +64,7 @@
 - 喜欢音乐（加红心）
 - 收藏音乐到歌单
 - Linux 桌面媒体控制（ MPRIS ）集成
+- 自定义主题颜色，可选全局暗色主题
 
 ## Installation
 
@@ -88,12 +101,12 @@ electron /path/to/electron-netease-cloud-music_*.asar
 ## TODOs
 
 <details>
-<summary>Unfold TODOs</summary>
+<summary>All TODOs</summary>
 
 - [ ] 各种搜索
   - [ ] 单曲
     - [x] 显示结果
-    - [ ] 播放搜索到的歌曲
+    - [x] 播放搜索到的歌曲
     - [ ] 浏览/发布歌曲评论
   - [ ] 歌手
     - [x] 显示结果
@@ -102,7 +115,7 @@ electron /path/to/electron-netease-cloud-music_*.asar
     - [x] 显示结果
     - [ ] 专辑详情页面
   - [ ] 歌单
-    - [x] 显示结果
+    - [ ] 显示结果
     - [ ] 歌单内容页面
     - [ ] 收藏歌单
   - [ ] MV
@@ -111,6 +124,7 @@ electron /path/to/electron-netease-cloud-music_*.asar
   - [ ] 用户
     - [ ] 显示结果
     - [ ] 用户信息页面
+- [ ] 私人 FM （这个功能我几乎不用，就先鸽着吧）
 
 </details>
 
