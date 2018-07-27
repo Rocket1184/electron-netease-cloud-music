@@ -12,12 +12,9 @@ let state = window.__NCM_SETTINGS__ || {
 
 const mutations = {
     [types.UPDATE_SETTINGS](state, payload) {
-        if (state._updated === false) {
-            state._updated = true;
-        }
-        state.bitRate = payload.bitRate;
-        state.windowBorder = payload.windowBorder;
-        state.autoPlay = payload.autoPlay;
+        Reflect.ownKeys(payload).forEach(key => {
+            state[key] = payload[key];
+        });
     },
     [types.WRITE_SETTINGS](state) {
         ApiRenderer.writeSettings(state);
