@@ -3,14 +3,10 @@ import path from 'path';
 import { app } from 'electron';
 
 const pkgJSON = require('../../package.json');
+export const appName = process.env.NODE_ENV === 'development' ? 'Electron' : pkgJSON.name;
 const configName = 'settings.json';
-const configDir = path.join(app.getPath('appData'), pkgJSON.name);
+const configDir = path.join(app.getPath('appData'), appName);
 const configPath = path.join(configDir, configName);
-
-export const appName = process.env.NODE_ENV === 'development'
-    ? 'Electron'
-    : pkgJSON.name;
-
 export const appVer = pkgJSON.version;
 
 export const defaultSettings = {
