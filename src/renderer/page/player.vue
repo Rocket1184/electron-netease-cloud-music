@@ -148,7 +148,7 @@ export default {
             // query lyric elements after they are created
             this.$nextTick(() => this.createLyricElemMap());
         },
-        ['playing.index']() {
+        ['playlist.index']() {
             this.paintBkgCanvas();
         }
     },
