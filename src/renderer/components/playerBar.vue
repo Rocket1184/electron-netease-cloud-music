@@ -193,6 +193,7 @@ export default {
                         document.getElementById(`cur-list-${this.playlist.index}`).scrollIntoViewIfNeeded();
                     }, 100);
                 }
+                this.realCurrentListShown = val;
             }
         }
     },
