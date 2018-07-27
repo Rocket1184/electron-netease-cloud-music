@@ -189,6 +189,7 @@ export default {
 }
 
 .player {
+    color: black;
     height: 100%;
     position: relative;
     display: flex;
