@@ -4,28 +4,23 @@
             <mu-sub-header>基本设置</mu-sub-header>
             <mu-list-item>
                 <mu-list-item-title>试听音频码率</mu-list-item-title>
+                <mu-list-item-action>
+                    <mu-select v-model="settings.bitRate">
+                        <mu-option label="极高 (320 kbit/s)"
+                            value="h"></mu-option>
+                        <mu-option label="较高 (192 kbit/s)"
+                            value="m"></mu-option>
+                        <mu-option label="标准 (128 kbit/s)"
+                            value="l"></mu-option>
+                    </mu-select>
+                </mu-list-item-action>
             </mu-list-item>
-            <div class="margin-block">
-                <mu-radio label="极高 (320 kbit/s)"
-                    name="bitRate"
-                    value="h"
-                    v-model="settings.bitRate"></mu-radio>
-                <br>
-                <mu-radio label="较高 (192 kbit/s)"
-                    name="bitRate"
-                    value="m"
-                    v-model="settings.bitRate"></mu-radio>
-                <br>
-                <mu-radio label="标准 (128 kbit/s)"
-                    name="bitRate"
-                    value="l"
-                    v-model="settings.bitRate"></mu-radio>
-            </div>
             <mu-list-item button
                 @click="toggleByName('windowBorder')">
                 <mu-list-item-title>使用系统标题栏</mu-list-item-title>
                 <mu-list-item-action>
                     <mu-switch v-model="settings.windowBorder"
+                        color="secondary"
                         readonly></mu-switch>
                 </mu-list-item-action>
             </mu-list-item>
@@ -34,7 +29,40 @@
                 <mu-list-item-title>启动时自动开始播放</mu-list-item-title>
                 <mu-list-item-action>
                     <mu-switch v-model="settings.autoPlay"
+                        color="secondary"
                         readonly></mu-switch>
+                </mu-list-item-action>
+            </mu-list-item>
+            <mu-list-item button
+                @click="primaryPickerOpen = true">
+                <mu-list-item-title>主色调</mu-list-item-title>
+                <colorPicker :open.sync="primaryPickerOpen"
+                    @select="setByName('themePrimaryColor', $event)"></colorPicker>
+                <mu-list-item-action>
+                    <mu-avatar :size="24"
+                        :color="settings.themePrimaryColor"></mu-avatar>
+                </mu-list-item-action>
+            </mu-list-item>
+            <mu-list-item button
+                @click="secondaryPickerOpen = true">
+                <mu-list-item-title>强调色</mu-list-item-title>
+                <colorPicker :open.sync="secondaryPickerOpen"
+                    @select="setByName('themeSecondaryColor', $event)"></colorPicker>
+                <mu-list-item-action>
+                    <mu-avatar :size="24"
+                        :color="settings.themeSecondaryColor"></mu-avatar>
+                </mu-list-item-action>
+            </mu-list-item>
+            <mu-list-item>
+                <mu-list-item-title>背景色调</mu-list-item-title>
+                <mu-list-item-action>
+                    <mu-select v-model="settings.themeVariety"
+                        @change="changeTheme">
+                        <mu-option label="亮色"
+                            value="light"></mu-option>
+                        <mu-option label="暗色"
+                            value="dark"></mu-option>
+                    </mu-select>
                 </mu-list-item-action>
             </mu-list-item>
             <mu-sub-header>存储空间</mu-sub-header>
@@ -73,7 +101,11 @@
             </mu-list-item>
             <mu-list-item button
                 @click="reloadWindow">
-                <mu-list-item-title>重新载入窗口</mu-list-item-title>
+                <mu-list-item-title>重新载入页面</mu-list-item-title>
+            </mu-list-item>
+            <mu-list-item button
+                @click="recreateWindow">
+                <mu-list-item-title>重新创建窗口</mu-list-item-title>
             </mu-list-item>
             <mu-sub-header>关于</mu-sub-header>
             <mu-list-item button
@@ -93,15 +125,26 @@
 
 <script>
 import { ipcRenderer, remote, shell } from 'electron';
+import MuseUI from 'muse-ui';
 
+import colorPicker from '@/components/colorPicker.vue';
 import * as types from '@/vuex/mutation-types';
 import ApiRenderer from '@/util/apiRenderer';
 import { hunamSize } from '@/util/formatter';
+
+const versions = remote.getGlobal('process').versions;
+
+const ver = `Electron: ${versions.electron}
+Chrome: ${versions.chrome}
+Node: ${versions.node}
+V8: ${versions.v8}`;
 
 export default {
     name: 'page-settings',
     data() {
         return {
+            primaryPickerOpen: false,
+            secondaryPickerOpen: false,
             cacheSize: 0,
             musicSize: 0,
             lyricSize: 0,
@@ -126,6 +169,21 @@ export default {
             if (typeof this.settings[name] === 'boolean') {
                 this.settings[name] = !this.settings[name];
             }
+        },
+        setByName(name, val) {
+            if (this.settings[name] !== undefined) {
+                this.settings[name] = val;
+            }
+            if (name.startsWith('theme')) {
+                this.changeTheme();
+            }
+        },
+        changeTheme() {
+            const id = Date.now();
+            MuseUI.theme.add(id, {
+                primary: this.settings.themePrimaryColor,
+                secondary: this.settings.themeSecondaryColor
+            }, this.settings.themeVariety).use(id);
         },
         async clearStorage() {
             return new Promise(resolve => remote.getCurrentWebContents().session.clearStorageData({
@@ -179,7 +237,7 @@ export default {
                         this.clearCache('chrome'),
                         this.clearCache('music'),
                         this.clearCache('lyric'),
-                    ]).then(() => ipcRenderer.send('recreateWindow'));
+                    ]).then(() => this.recreateWindow());
                 }
             });
         },
@@ -189,6 +247,9 @@ export default {
         reloadWindow() {
             remote.getCurrentWindow().reload();
         },
+        recreateWindow() {
+            ipcRenderer.send('recreateWindow');
+        },
         openBrowser(url) {
             try {
                 shell.openExternal(url);
@@ -197,12 +258,8 @@ export default {
             }
         },
         showVersions() {
-            const versions = remote.getGlobal('process').versions;
             this.$alert(
-                h => h('pre', `Electron: ${versions.electron}
-Chrome: ${versions.chrome}
-Node: ${versions.node}
-V8: ${versions.v8}`),
+                h => h('pre', ver),
                 '版本号'
             );
         }
@@ -225,6 +282,9 @@ V8: ${versions.v8}`),
                 this.$nextTick(() => ipcRenderer.send('recreateWindow', location.href));
             }
         }
+    },
+    components: {
+        colorPicker
     },
     beforeCreate() {
         ApiRenderer.getCurrentSettings().then(s => this.settings = s);
