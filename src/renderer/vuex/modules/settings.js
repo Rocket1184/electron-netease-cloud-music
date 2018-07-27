@@ -1,11 +1,13 @@
 import * as types from '../mutation-types';
 import ApiRenderer from '@/util/apiRenderer';
 
-let state = {
-    _updated: false,
+let state = window.__NCM_SETTINGS__ || {
     bitRate: 'l',
     windowBorder: true,
-    autoPlay: false
+    autoPlay: false,
+    themePrimaryColor: '#7e57c2',
+    themeSecondaryColor: '#ff4081',
+    themeVariety: 'light'
 };
 
 const mutations = {
