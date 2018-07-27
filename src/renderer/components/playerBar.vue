@@ -21,7 +21,7 @@
                     ref="chkShowPlaylists"
                     uncheck-icon="bookmark_border"
                     checked-icon="bookmark"
-                    v-model="playlistsShown"></mu-checkbox>
+                    v-model="collectPopupShown"></mu-checkbox>
                 <mu-menu :open.sync="currentListShown"
                     placement="top"
                     popover-class="playerbar-current-list">
@@ -84,8 +84,8 @@ export default {
             timeTotal: 0,
             timeCurrent: 0,
             shouldFavorite: null,
-            realPlaylistsShown: false,
-            currentListShown: false
+            realCollectPopupShown: false,
+            realCurrentListShown: false
         };
     },
     methods: {
@@ -137,6 +137,9 @@ export default {
                 return bkgImg(sizeImg(this.playing.track.album.picUrl, HiDpiPx(64)));
             }
         },
+        songProgress() {
+            return 100 * this.timeCurrent / this.timeTotal || 0;
+        },
         isFavorite: {
             get() {
                 if (!this.loginValid || !this.playing.track) {
@@ -161,10 +164,10 @@ export default {
                 this.handleFavorite();
             }
         },
-        playlistsShown: {
-            get() { return this.realPlaylistsShown; },
+        collectPopupShown: {
+            get() { return this.realCollectPopupShown; },
             set(val) {
-                if (!this.loginValid && val === true && this.realPlaylistsShown === false) {
+                if (!this.loginValid && val === true && this.realCollectPopupShown === false) {
                     this.$toast.message('汝还没有登录呀      (눈‸눈)');
                     // set value of real `<input>` element to `false`.
                     // it depends on MuseUI impl
@@ -176,14 +179,21 @@ export default {
                     this.$refs.chkShowPlaylists.inputValue = false;
                     return;
                 }
-                this.realPlaylistsShown = val;
+                this.realCollectPopupShown = val;
                 if (val === true) {
                     this.toggleCollectPopup(this.playing.track.id);
                 }
             }
         },
-        songProgress() {
-            return 100 * this.timeCurrent / this.timeTotal || 0;
+        currentListShown: {
+            get() { return this.realCurrentListShown; },
+            set(val) {
+                if (val === true) {
+                    setTimeout(() => {
+                        document.getElementById(`cur-list-${this.playlist.index}`).scrollIntoViewIfNeeded();
+                    }, 100);
+                }
+            }
         }
     },
     filters: {
@@ -236,7 +246,7 @@ export default {
                     _audioEl.play();
                     break;
                 case HIDE_COLLECT_POPUP:
-                    this.playlistsShown = false;
+                    this.collectPopupShown = false;
                     break;
             }
         });
