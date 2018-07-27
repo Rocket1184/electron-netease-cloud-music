@@ -32,9 +32,18 @@ export function getCurrent() {
         writeFile(defaultSettings);
     } else {
         try {
-            settings = JSON.parse(fs.readFileSync(configPath).toString());
+            settings = {
+                ...defaultSettings,
+                ...JSON.parse(fs.readFileSync(configPath).toString())
+            };
+            Reflect.ownKeys(settings).forEach(k => {
+                if (!Reflect.has(defaultSettings, k)) {
+                    delete settings[k];
+                }
+            });
+            writeFile(settings);
         } catch (err) {
-            throw err;
+            writeFile(defaultSettings);
         }
     }
     return settings;
