@@ -103,7 +103,6 @@ export default {
         },
         appbarDynamicClassName() {
             return {
-                'not-updated': this.settings._updated === false,
                 'is-darwin': platform() === 'darwin',
                 'is-frameless': this.settings.windowBorder === false
             };
@@ -179,11 +178,6 @@ export default {
     .mu-appbar-left,
     .mu-appbar-right {
         -webkit-app-region: no-drag;
-    }
-    &.not-updated {
-        .mu-appbar > div {
-            display: none;
-        }
     }
     &.is-frameless {
         #appbar-window-control {
