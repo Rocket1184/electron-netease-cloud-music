@@ -28,7 +28,10 @@ function createMainWindow(url = mainURL) {
         webPreferences: {
             preload: join(__dirname, 'preload.js'),
             nodeIntegration: isDev,
-            blinkFeatures: 'OverlayScrollbars'
+            webgl: false,
+            blinkFeatures: 'OverlayScrollbars',
+            webviewTag: false,
+            additionalArguments: [`--initial-settings=${JSON.stringify(settings)}`]
         }
     });
 

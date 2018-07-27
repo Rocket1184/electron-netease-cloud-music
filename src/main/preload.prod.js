@@ -28,3 +28,10 @@ window.require = function (id) {
             return {};
     }
 };
+
+let settings = {};
+try {
+    settings = JSON.parse(process.argv.find(v => v.startsWith('--initial-settings=')).slice(19));
+} finally {
+    window.__NCM_SETTINGS__ = settings;
+}
