@@ -47,15 +47,6 @@ export default {
         handleListClick(index) {
             this.playTrackIndex({ index });
         }
-    },
-    watch: {
-        open(val) {
-            if (val === true) {
-                setTimeout(() => {
-                    document.getElementById(`cur-list-${this.playlist.index}`).scrollIntoViewIfNeeded();
-                }, 100);
-            }
-        }
     }
 };
 </script>
