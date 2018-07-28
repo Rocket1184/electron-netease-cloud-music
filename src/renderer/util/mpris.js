@@ -5,7 +5,9 @@ import { EventEmitter } from 'events';
 import { ipcRenderer } from 'electron';
 
 import {
-    UPDATE_PLAYING_URL
+    UPDATE_PLAYING_URL,
+    PAUSE_PLAYING_MUSIC,
+    RESUME_PLAYING_MUSIC
 } from '@/vuex/mutation-types';
 
 const MPRISEmitter = new EventEmitter();
@@ -68,27 +70,30 @@ export function bindEventListener(audioEl) {
     MPRISEmitter.on('quit', () => ipcRenderer.send('quitApp'));
     MPRISEmitter.on('raise', () => ipcRenderer.send('focusApp'));
     if (audioEl) {
-        audioEl.addEventListener('durationchange', () => {
-            // set 'Rate' to `0` before playback starts, so the progress won't increase
-            // not sure wether it wroks
-            // MPRIS.rate(0); // at least it doesn't work on KDE
-            MPRIS.pause();
-        });
+        let stalled = false;
+        audioEl.addEventListener('durationchange', () => MPRIS.pause());
         audioEl.addEventListener('loadedmetadata', () => {
             MPRIS.patchMetadata({ 'mpris:length': audioEl.duration * 1e6 });
         });
         audioEl.addEventListener('seeked', () => MPRIS.seeked(audioEl.currentTime));
         audioEl.addEventListener('playing', () => {
-            // when playback resumes, set 'Rate' back to `1`
-            MPRIS.rate(1);
-            MPRIS.play();
+            if (stalled) {
+                stalled = false;
+                MPRIS.play();
+            }
         });
-        audioEl.addEventListener('pause', () => MPRIS.pause());
-        audioEl.addEventListener('stalled', () => MPRIS.pause());
+        audioEl.addEventListener('stalled', () => {
+            MPRIS.pause();
+            stalled = true;
+        });
         MPRISEmitter.on('getPosition', (_, id) => {
             senderFn('getPosition', id, audioEl.currentTime * 1e6);
         });
         MPRISEmitter.on('seek', (_, __, pos) => audioEl.currentTime = pos);
+        MPRISEmitter.on('stop', () => {
+            audioEl.pause();
+            audioEl.currentTime = 0;
+        });
         senderFn('renderer-ready');
     }
 }
@@ -100,7 +105,11 @@ function subscribeHandler(mutation, state) {
         case UPDATE_PLAYING_URL:
             MPRIS.metadata(getTrackMeta(track));
             break;
-        default:
+        case PAUSE_PLAYING_MUSIC:
+            MPRIS.pause();
+            break;
+        case RESUME_PLAYING_MUSIC:
+            MPRIS.play();
             break;
     }
 }
