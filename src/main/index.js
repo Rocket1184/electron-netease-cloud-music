@@ -99,3 +99,12 @@ ipcMain.on('showLoginWindow', () => {
     });
     loginWindow.loadURL(loginURL);
 });
+
+ipcMain.on('focusApp', () => {
+    if (mainWindow.isMinimized()) {
+        mainWindow.restore();
+    }
+    mainWindow.focus();
+});
+
+ipcMain.on('quitApp', () => app.quit());
