@@ -204,7 +204,6 @@ export default {
                     switch (type) {
                         case 'chrome':
                             remote.getCurrentWebContents().session.clearCache(() => {
-                                this.refreshSize();
                                 this.$toast.message('浏览器缓存清除完成');
                             });
                             break;
