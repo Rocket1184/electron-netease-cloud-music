@@ -160,6 +160,11 @@ export function getMusicUrlCached(id, quality = 'l') {
     };
 }
 
+export function getMusicUrlNoCache(id, quality = 'l') {
+    musicCache.rm(id);
+    return getMusicLyricCached(id, quality);
+}
+
 export function getMusicComments(rid, limit = 20, offset = 0) {
     return client.post({
         url: `${BaseURL}/weapi/v1/resource/comments/R_SO_4_${rid}`,
