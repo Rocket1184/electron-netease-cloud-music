@@ -65,6 +65,8 @@ export function getTrackMeta(track) {
  * @param {HTMLAudioElement} audioEl
  */
 export function bindEventListener(audioEl) {
+    MPRISEmitter.on('quit', () => ipcRenderer.send('quitApp'));
+    MPRISEmitter.on('raise', () => ipcRenderer.send('focusApp'));
     if (audioEl) {
         audioEl.addEventListener('durationchange', () => {
             // set 'Rate' to `0` before playback starts, so the progress won't increase
