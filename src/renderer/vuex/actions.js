@@ -79,6 +79,13 @@ async function updateUiLyric(commit, id) {
     commit(types.SET_ACTIVE_LYRIC, lyric);
 }
 
+export async function updateUiUrlNoCache({ commit, state }) {
+    const { index, list } = state.playlist;
+    const quality = state.settings.bitRate;
+    const oUrl = await ApiRenderer.getMusicUrlNoCache(list[index].id, quality);
+    commit(types.UPDATE_PLAYING_URL, oUrl.url + '?' + Date.now());
+}
+
 export function playAudio({ commit }) {
     commit(types.RESUME_PLAYING_MUSIC);
 }
