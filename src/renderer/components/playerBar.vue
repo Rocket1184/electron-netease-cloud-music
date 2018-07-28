@@ -81,6 +81,7 @@ export default {
     data() {
         return {
             audioEl: {},
+            hasRetried: false,
             timeTotal: 0,
             timeCurrent: 0,
             shouldFavorite: null,
@@ -92,6 +93,7 @@ export default {
         ...mapActions([
             'playAudio',
             'pauseAudio',
+            'updateUiUrlNoCache',
             'playNextTrack',
             'playPreviousTrack',
             'refreshUserPlaylist',
@@ -236,6 +238,17 @@ export default {
         _audioEl.addEventListener('ended', () => {
             this.submitListened();
             this.playNextTrack();
+        });
+
+        _audioEl.addEventListener('error', () => {
+            if (!this.hasRetried) {
+                this.hasRetried = true;
+                this.updateUiUrlNoCache();
+                return;
+            }
+            this.hasRetried = false;
+            this.$toast.message('这首歌听不了了，换下一首吧   (￣△￣;) ');
+            setTimeout(() => this.playNextTrack(), 3000);
         });
 
         this.$store.subscribe(mutation => {
