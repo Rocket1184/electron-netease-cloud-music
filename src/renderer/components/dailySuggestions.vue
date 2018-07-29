@@ -73,7 +73,7 @@ export default {
     width: 900px;
     min-height: 400px;
     display: grid;
-    grid-template-columns: 2fr 7fr;
+    grid-template-columns: 190px 710px;
     .title {
         background-color: indianred;
         text-align: center;
