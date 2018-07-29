@@ -51,7 +51,7 @@
             <AlbumList :list="items"></AlbumList>
         </div>
         <div v-else-if="searchType === 'playlist'">
-            <UnderConstructionTip></UnderConstructionTip>
+            <PlaylistList :list="items"></PlaylistList>
         </div>
         <div v-else-if="searchType === 'mv'">
             <UnderConstructionTip></UnderConstructionTip>
@@ -83,6 +83,7 @@ import { stringify } from 'querystring';
 import { Track } from '@/util/models';
 import TrackList from '@/components/trackList.vue';
 import ArtistList from '@/components/artistList.vue';
+import PlaylistList from '@/components/playlistList.vue';
 import AlbumList from '@/components/albumList.vue';
 import UnderConstructionTip from '@/components/underConstructionTip.vue';
 import { searchTypes } from '@/util/searchType';
@@ -153,6 +154,10 @@ export default {
                         this.totalItems = resp.result.albumCount;
                         this.items = resp.result.albums || [];
                         break;
+                    case searchTypes.playlist:
+                        this.totalItems = resp.result.playlistCount;
+                        this.items = resp.result.playlists || [];
+                        break;
                     default:
                         break;
                 }
@@ -175,6 +180,7 @@ export default {
         TrackList,
         ArtistList,
         AlbumList,
+        PlaylistList,
         UnderConstructionTip
     }
 };
