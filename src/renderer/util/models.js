@@ -105,6 +105,7 @@ export class PlayList {
         this.coverImgId = o.coverImgId;
         this.coverImgUrl = o.coverImgUrl;
         this.createTime = o.createTime;
+        this.subscribed = o.subscribed;
         this.subscribedCount = o.subscribedCount;
         this.commentCount = o.commentCount;
         const tracks = o.tracks || o.recommend || [];

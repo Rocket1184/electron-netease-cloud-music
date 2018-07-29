@@ -65,6 +65,7 @@ declare class PlayListModel extends Object {
     coverImgId: number;
     coverImgUrl: string;
     createTime: string;
+    subscribed: boolean;
     subscribedCount: number;
     commentCount: number;
     tracks: Array<TrackModel>;
