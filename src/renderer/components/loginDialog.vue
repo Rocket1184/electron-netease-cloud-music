@@ -126,7 +126,7 @@ export default {
             this.posting = false;
             switch (resp.code) {
                 case 200:
-                    this.$emit('close');
+                    this.$emit('update:show', false);
                     this.setUserInfo(resp);
                     this.setLoginValid();
                     const cookie = await ApiRenderer.getCookie();
@@ -160,7 +160,7 @@ export default {
         async handleWebLoginComplete() {
             const valid = await this.restoreUserInfo();
             if (valid) {
-                this.$emit('close');
+                this.$emit('update:show', false);
             } else {
                 this.$toast.message('根本没有登录成功啊喂 (╯‵□′)╯︵┻━┻');
             }
