@@ -431,3 +431,17 @@ export function search(s, type, limit = 20, offset = 0) {
         }
     });
 }
+
+export function subscribePlaylist(id) {
+    return client.post({
+        url: `${BaseURL}/weapi/playlist/subscribe`,
+        data: { id }
+    });
+}
+
+export function unsubscribePlaylist(id) {
+    return client.post({
+        url: `${BaseURL}/weapi/playlist/unsubscribe`,
+        data: { id }
+    });
+}
