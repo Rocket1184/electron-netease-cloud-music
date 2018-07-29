@@ -13,10 +13,12 @@
                     <span class="create-time">创建于 {{createTime}}</span>
                 </div>
                 <div class="actions">
-                    <mu-button flat>
+                    <mu-button flat
+                        @click="handleSubscribe">
                         <mu-icon left
+                            :color="detail.subscribed ? 'amber' : ''"
                             :value="detail.subscribed ? 'star' : 'star_border'"></mu-icon>
-                        收藏 ({{formatCount(detail.subscribedCount)}})
+                        {{ detail.subscribed ? '已收藏' : '收藏' }} ({{formatCount(detail.subscribedCount)}})
                     </mu-button>
                     <mu-button flat>
                         <mu-icon left
@@ -28,8 +30,8 @@
                     <mu-list toggle-nested>
                         <mu-list-item button
                             nested
-                            :open="detailOpen"
-                            @click="detailOpen = !detailOpen">
+                            :open="descOpen"
+                            @click="descOpen = !descOpen">
                             <mu-list-item-title>歌单介绍</mu-list-item-title>
                             <mu-list-item-action>
                                 <mu-icon class="toggle-icon"
@@ -62,6 +64,8 @@
 </template>
 
 <script>
+import { mapActions } from 'vuex';
+
 import PlayAll from '@/components/playAll.vue';
 import TrackList from '@/components/trackList.vue';
 import { sizeImg, HiDpiPx } from '@/util/image';
@@ -75,7 +79,7 @@ export default {
     },
     data() {
         return {
-            detailOpen: false,
+            descOpen: false,
             scrollHeight: 200,
             currentPage: 1,
             pageSize: 50
@@ -99,12 +103,32 @@ export default {
         }
     },
     methods: {
+        ...mapActions(['subscribePlaylist', 'unsubscribePlaylist']),
         formatCount(cnt) {
             return typeof cnt === 'number' ? cnt : '...';
         },
         handlePageChange(newIndex) {
             this.$emit('detail-scroll', this.scrollHeight);
             this.currentPage = newIndex;
+        },
+        async handleSubscribe() {
+            if (this.detail.subscribed) {
+                try {
+                    await this.unsubscribePlaylist(this.detail);
+                    this.detail.subscribed = false;
+                    this.detail.subscribedCount--;
+                } catch (e) {
+                    this.$toast.message(`取消收藏失败 ●﹏● ： ${e.code}`);
+                }
+                return;
+            }
+            try {
+                await this.subscribePlaylist(this.detail);
+                this.detail.subscribed = true;
+                this.detail.subscribedCount++;
+            } catch (e) {
+                this.$toast.message(`收藏歌单失败 ●﹏● ： ${e.code}`);
+            }
         }
     },
     mounted() {
