@@ -60,18 +60,15 @@ export default {
     name: 'page-playlist',
     data() {
         return {
-            listGroups: [],
             detail: null,
             loading: false
         };
     },
     computed: {
-        ...mapGetters(['user', 'loginValid'])
-    },
-    methods: {
-        ...mapActions(['refreshUserPlaylist']),
-        updateListGroups() {
-            this.listGroups = [
+        ...mapGetters(['user', 'loginValid']),
+        listGroups() {
+            if (!this.loginValid) return [];
+            return [
                 {
                     name: '创建的歌单',
                     open: true,
@@ -83,7 +80,10 @@ export default {
                     lists: this.user.playlist.filter(e => e.creator.id != this.user.id)
                 }
             ];
-        },
+        }
+    },
+    methods: {
+        ...mapActions(['refreshUserPlaylist']),
         /**
          * @param {number} top
          * @param {ScrollBehavior} behavior
@@ -127,12 +127,9 @@ export default {
         }
     },
     mounted() {
-        if (this.loginValid) {
-            this.updateListGroups();
-        } else {
+        if (!this.loginValid) {
             this.$store.subscribe((mutation) => {
                 if (mutation.type === SET_USER_PLAYLISTS) {
-                    this.updateListGroups();
                     if (this.$route.path.startsWith('/playlist') && !this.detail) {
                         this.initDetails();
                     }
