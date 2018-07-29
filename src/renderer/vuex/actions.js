@@ -186,3 +186,21 @@ export function addTrackToPlaylist({ commit }, payload) {
         : [payload.tracks];
     commit(types.ADD_TRACK_TO_PLAYLIST, { tracks });
 }
+
+export async function subscribePlaylist({ commit }, payload) {
+    const resp = await ApiRenderer.subscribePlaylist(payload.id);
+    if (resp.code === 200) {
+        commit(types.SUBSCRIBE_PLAYLIST, payload);
+        return resp;
+    }
+    throw resp;
+}
+
+export async function unsubscribePlaylist({ commit }, payload) {
+    const resp = await ApiRenderer.unsubscribePlaylist(payload.id);
+    if (resp.code === 200) {
+        commit(types.UNSUBSCRIBE_PLAYLIST, payload);
+        return resp;
+    }
+    throw resp;
+}

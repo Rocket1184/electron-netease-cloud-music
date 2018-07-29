@@ -35,6 +35,15 @@ const mutations = {
             }
             Object.assign(target, newList);
         }
+    },
+    [types.SUBSCRIBE_PLAYLIST](state, payload) {
+        state.playlist.splice(1, 0, new PlayList(payload));
+    },
+    [types.UNSUBSCRIBE_PLAYLIST](state, payload) {
+        const index = state.playlist.findIndex(l => l.id === payload.id);
+        if (index !== -1) {
+            state.playlist.splice(index, 1);
+        }
     }
 };
 
