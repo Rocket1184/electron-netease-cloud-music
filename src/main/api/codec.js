@@ -54,11 +54,10 @@ export function encodeWeb(payload) {
  * credit: https://github.com/surmon-china/simple-netease-cloud-music/blob/7e3beab480e637284f349c06efb4f18d00f2506f/src/netease.js#L288-L298
  */
 export function encodeLinux(payload) {
-    let json = JSON.stringify(payload);
+    const json = JSON.stringify(payload);
     const cipher = crypto.createCipheriv('aes-128-ecb', 'rFgB&h#%2?^eDg:Q', '');
-    json = cipher.update(json, 'utf8', 'base64') + cipher.final('base64');
-    const hex = new Buffer(json, 'base64').toString('hex');
+    const b64 = cipher.update(json, 'utf8', 'hex') + cipher.final('hex');
     return {
-        eparams: hex.toUpperCase()
+        eparams: b64.toUpperCase()
     };
 }
