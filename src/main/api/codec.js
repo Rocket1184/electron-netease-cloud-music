@@ -38,18 +38,27 @@ function rsaEncrypt(text) {
     return rs.padStart(256, '0');
 }
 
-function encode(json) {
-    json = JSON.stringify(json);
+export function encodeWeb(payload) {
+    let json = JSON.stringify(payload);
     let secKey = createSecretKey();
     let encSecKey = rsaEncrypt(secKey);
     let encText = aesEncrypt(json, nonce);
     encText = aesEncrypt(encText, secKey);
     return {
         params: encText,
-        encSecKey: encSecKey
+        encSecKey
     };
 }
 
-export default {
-    encode
-};
+/**
+ * credit: https://github.com/surmon-china/simple-netease-cloud-music/blob/7e3beab480e637284f349c06efb4f18d00f2506f/src/netease.js#L288-L298
+ */
+export function encodeLinux(payload) {
+    let json = JSON.stringify(payload);
+    const cipher = crypto.createCipheriv('aes-128-ecb', 'rFgB&h#%2?^eDg:Q', '');
+    json = cipher.update(json, 'utf8', 'base64') + cipher.final('base64');
+    const hex = new Buffer(json, 'base64').toString('hex');
+    return {
+        eparams: hex.toUpperCase()
+    };
+}
