@@ -8,11 +8,13 @@
                     :size="128"></mu-icon>
                 <p>登录后查看创建/收藏的歌单</p>
             </div>
-            <mu-list v-else
-                toggle-nested
-                :nested-indent="false">
-                <template v-for="group in listGroups">
-                    <mu-list-item button
+            <mu-load-more v-else
+                @refresh="handleListRefresh"
+                :refreshing="listRefreshing">
+                <mu-list toggle-nested
+                    :nested-indent="false">
+                    <mu-list-item v-for="group in listGroups"
+                        button
                         nested
                         :key="group.name"
                         :open="group.open"
@@ -23,21 +25,20 @@
                                 size="24"
                                 value="keyboard_arrow_down"></mu-icon>
                         </mu-list-item-action>
-                        <template v-for="(list, index) in group.lists">
-                            <PlaylistItem :key="index"
-                                :item="list"
-                                slot="nested"
-                                @click="navigateToList(list.id)"></PlaylistItem>
-                        </template>
+                        <PlaylistItem v-for="(list, index) in group.lists"
+                            :key="index"
+                            :item="list"
+                            slot="nested"
+                            @click="navigateToList(list.id)"></PlaylistItem>
                     </mu-list-item>
-                </template>
-            </mu-list>
+                </mu-list>
+            </mu-load-more>
         </div>
         <div class="content">
             <PlaylistDetail v-if="detail"
                 :detail="detail"
                 @detail-scroll="scrollContent"></PlaylistDetail>
-            <div v-if="loading"
+            <div v-if="detailLoading"
                 class="loading">
                 <mu-circular-progress color="secondary"
                     :size="60"
@@ -61,7 +62,8 @@ export default {
     data() {
         return {
             detail: null,
-            loading: false
+            detailLoading: false,
+            listRefreshing: false
         };
     },
     computed: {
@@ -83,7 +85,12 @@ export default {
         }
     },
     methods: {
-        ...mapActions(['refreshUserPlaylist']),
+        ...mapActions(['updateUserPlaylists', 'updatePlaylistDetail']),
+        async handleListRefresh() {
+            this.listRefreshing = true;
+            await this.updateUserPlaylists();
+            this.listRefreshing = false;
+        },
         /**
          * @param {number} top
          * @param {ScrollBehavior} behavior
@@ -94,14 +101,14 @@ export default {
         async loadUserPlaylist(id) {
             // if there's any 'cached' playlist, display it first
             this.detail = this.user.playlist.find(p => p.id == id);
-            await this.refreshUserPlaylist(id);
+            await this.updatePlaylistDetail(id);
             this.detail = this.user.playlist.find(p => p.id == id);
         },
         async loadExternalPlaylist(id) {
             this.detail = null;
-            this.loading = true;
+            this.detailLoading = true;
             this.detail = new PlayList((await ApiRenderer.getListDetail(id)).playlist);
-            this.loading = false;
+            this.detailLoading = false;
         },
         loadPlaylist(id) {
             this.scrollContent(0, 'instant');
