@@ -103,7 +103,7 @@ class HttpClient {
 
     get(urlOrConfig) {
         let config;
-        if (typeof urlOrConfig == 'string')
+        if (typeof urlOrConfig === 'string')
             config = { url: urlOrConfig };
         else config = urlOrConfig;
 

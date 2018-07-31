@@ -18,7 +18,7 @@ export function shortTime(seconds) {
     return res;
 }
 
-export function hunamSize(val) {
+export function humanSize(val) {
     let i;
     const unit = ['', 'K', 'M', 'G', 'T'];
     for (i = 0; i < unit.length; i++) {

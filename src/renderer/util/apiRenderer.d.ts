@@ -12,6 +12,6 @@ declare class ApiRenderer extends ApiNameSpace.ApiFunctions {
     resetSettings(): Promise<ApiNameSpace.ApplicationSettings>;
 }
 
-declare const ApiRendererStaic: ApiRenderer;
+declare const ApiRendererStatic: ApiRenderer;
 
-export default ApiRendererStaic;
+export default ApiRendererStatic;

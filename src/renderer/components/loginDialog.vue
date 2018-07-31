@@ -57,7 +57,7 @@
                         :error-text="errMsgCaptcha"
                         label-float></mu-text-field>
                     <img :src="`https://music.163.com/captcha?id=${captchaId}`"
-                        class="captforce-alignedcha-img"
+                        class="captcha-img"
                         alt="Refresh">
                 </div>
                 <mu-button full-width

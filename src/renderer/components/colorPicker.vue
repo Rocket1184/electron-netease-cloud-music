@@ -20,7 +20,7 @@
                 @click="activeGroup = -1">
                 <mu-icon value="undo"></mu-icon>
             </mu-button>
-            <mu-button v-for="color in colorGroups[activeGroup].varities"
+            <mu-button v-for="color in colorGroups[activeGroup].varieties"
                 fab
                 :key="color"
                 :color="color"
@@ -59,7 +59,7 @@ let colorGroups = colorEntries
         const regexp = new RegExp(`^${p[0]}A?[0-9]+$`);
         return {
             primary: p[1],
-            varities: colorEntries.filter(q => regexp.test(q[0])).map(q => q[1])
+            varieties: colorEntries.filter(q => regexp.test(q[0])).map(q => q[1])
         };
     });
 

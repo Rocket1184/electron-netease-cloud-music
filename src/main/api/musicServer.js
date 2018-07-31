@@ -51,7 +51,7 @@ class MusicServer {
                     // ignore it
                 }
             }
-            if (range[1] == total) {
+            if (range[1] === total) {
                 range[1]--;
             }
             range[2] = total;
@@ -107,7 +107,7 @@ class MusicServer {
             }
             d('Got URL for music id=%d', id);
 
-            const st = await this.cache.fetch(result.url, fileName);
+            const st = await this.cache.fetch(result.url);
             st.pipe(fs.createWriteStream(filePath));
 
             const range = MusicServer.getRange(req, +st.headers['content-length']);

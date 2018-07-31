@@ -158,11 +158,7 @@ export default {
                 return false;
             },
             set(val) {
-                if (val === true) {
-                    this.shouldFavorite = true;
-                } else {
-                    this.shouldFavorite = false;
-                }
+                this.shouldFavorite = val === true;
                 this.handleFavorite();
             }
         },
@@ -222,8 +218,8 @@ export default {
 
         _audioEl.addEventListener('playing', () => {
             _updateTime();
-            // update playing process time after the time reachs a 'integer' second
-            // why use 1.1 not 1 ? maybe there is a little lag in event loop... I dont know
+            // update playing process time after the time reaches a 'integer' second
+            // why use 1.1 not 1 ? maybe there is a little lag in event loop... I don't know
             const timeOut = (1.1 - _audioEl.currentTime % 1) * 1000;
             setTimeout(() => {
                 _updateTime();

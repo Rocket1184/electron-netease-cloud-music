@@ -27,7 +27,7 @@ export default {
         listToShow() {
             return this.user.playlist.filter(i => {
                 if (this.showCollected === true) return true;
-                return i.creator.id == this.user.id;
+                return i.creator.id === this.user.id;
             });
         }
     },

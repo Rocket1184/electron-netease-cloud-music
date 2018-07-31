@@ -70,28 +70,28 @@
                 @click="clearCache('chrome')">
                 <mu-list-item-title>浏览器缓存</mu-list-item-title>
                 <mu-list-item-action>
-                    <span class="nowrap">{{cacheSize | hunamSize}}</span>
+                    <span class="nowrap">{{cacheSize | humanSize}}</span>
                 </mu-list-item-action>
             </mu-list-item>
             <mu-list-item button
                 @click="clearCache('music')">
                 <mu-list-item-title>歌曲缓存</mu-list-item-title>
                 <mu-list-item-action>
-                    <span class="nowrap">{{musicSize | hunamSize}}</span>
+                    <span class="nowrap">{{musicSize | humanSize}}</span>
                 </mu-list-item-action>
             </mu-list-item>
             <mu-list-item button
                 @click="clearCache('lyric')">
                 <mu-list-item-title>歌词缓存</mu-list-item-title>
                 <mu-list-item-action>
-                    <span class="nowrap">{{lyricSize | hunamSize}}</span>
+                    <span class="nowrap">{{lyricSize | humanSize}}</span>
                 </mu-list-item-action>
             </mu-list-item>
             <mu-list-item button
                 @click="wipeAppData">
                 <mu-list-item-title>所有应用数据</mu-list-item-title>
                 <mu-list-item-action>
-                    <span class="nowrap">{{dataSize | hunamSize}}</span>
+                    <span class="nowrap">{{dataSize | humanSize}}</span>
                 </mu-list-item-action>
             </mu-list-item>
             <mu-sub-header>高级设置</mu-sub-header>
@@ -130,7 +130,7 @@ import MuseUI from 'muse-ui';
 import colorPicker from '@/components/colorPicker.vue';
 import * as types from '@/vuex/mutation-types';
 import ApiRenderer from '@/util/apiRenderer';
-import { hunamSize } from '@/util/formatter';
+import { humanSize } from '@/util/formatter';
 
 const versions = remote.getGlobal('process').versions;
 
@@ -231,7 +231,7 @@ export default {
                     window.onbeforeunload = null;
                     Promise.all([
                         this.clearStorage(),
-                        ApiRenderer.updateCookie({}),
+                        ApiRenderer.updateCookie(''),
                         ApiRenderer.resetSettings(),
                         this.clearCache('chrome'),
                         this.clearCache('music'),
@@ -264,7 +264,7 @@ export default {
         }
     },
     filters: {
-        hunamSize
+        humanSize
     },
     watch: {
         ['settings']: {

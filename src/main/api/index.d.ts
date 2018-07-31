@@ -1,17 +1,17 @@
 import * as Models from '../../renderer/util/models';
 
-export interface BaseApiResopnse {
+export interface BaseApiResponse {
     code: number;
 }
 
-export interface LoginResponse extends BaseApiResopnse {
+export interface LoginResponse extends BaseApiResponse {
     loginType: number
     account: any
     profile: any
     bidings: Array<any>
 }
 
-export interface UserPlaylistResponse extends BaseApiResopnse {
+export interface UserPlaylistResponse extends BaseApiResponse {
     more: Boolean
     playlist: Array<Models.PlayListModel>
 }
@@ -36,7 +36,7 @@ export interface MusicRecordDataItem {
     }
 }
 
-export interface MusicRecordResponse extends BaseApiResopnse {
+export interface MusicRecordResponse extends BaseApiResponse {
     allData: Array<MusicRecordDataItem>
     weekData: Array<MusicRecordDataItem>
 }
@@ -46,16 +46,16 @@ export interface DailySuggestionsMusic extends Models.TrackModel {
     reason: string
 }
 
-export interface DailySuggestionsRespopnse extends BaseApiResopnse {
+export interface DailySuggestionsRespopnse extends BaseApiResponse {
     recommend: Array<DailySuggestionsMusic>
 }
 
-export interface ListDetailResponse extends BaseApiResopnse {
+export interface ListDetailResponse extends BaseApiResponse {
     playlist: Models.PlayListModel
     privileges: Array<any>
 }
 
-export interface MusicUrlResponse extends BaseApiResopnse {
+export interface MusicUrlResponse extends BaseApiResponse {
     data: Array<{
         br: number
         canExtend: Boolean
@@ -107,7 +107,7 @@ export interface MusicCommentItem {
     user: UserInfoInComment
 }
 
-export interface MusicCommentsResponse extends BaseApiResopnse {
+export interface MusicCommentsResponse extends BaseApiResponse {
     comments: Array<MusicCommentItem>
     hotComments: Array<MusicCommentItem>
     isMusician: Boolean
@@ -184,7 +184,7 @@ export interface RawMV {
     subed: Boolean
 }
 
-export interface SearchResponse extends BaseApiResopnse {
+export interface SearchResponse extends BaseApiResponse {
     result: {
         songs?: Array<Models.TrackModel>,
         artists?: Array<Models.RawArtistModel>,
@@ -199,7 +199,7 @@ export class ApiFunctions {
     updateCookie(cookie: string): string | any;
     getCookie(key?: string): string | any;
     login(acc: string | number, pwd: string): Promise<LoginResponse>;
-    refreshLogin(): Promise<BaseApiResopnse>;
+    refreshLogin(): Promise<BaseApiResponse>;
     getUserPlaylist(uid: number): Promise<UserPlaylistResponse>;
     getMusicRecord(uid: number): Promise<MusicRecordResponse>;
     getDailySuggestions(): Promise<DailySuggestionsRespopnse>;
@@ -209,8 +209,8 @@ export class ApiFunctions {
     getMusicComments(rid: number, limit?: number, offset?: number): Promise<MusicCommentsResponse>;
     getMusicLyric(id: number): Promise<MusicLyricResponse>;
     getMusicLyricCached(id: number): Promise<LyricObjectItem>;
-    submitWebLog(action: string, json: any): Promise<BaseApiResopnse>;
-    submitListened(id: number, time: number): Promise<BaseApiResopnse>;
+    submitWebLog(action: string, json: any): Promise<BaseApiResponse>;
+    submitListened(id: number, time: number): Promise<BaseApiResponse>;
     checkUrlStatus(url: string): Promise<number>;
     getDataSize(type: string): number | any;
     clearCache(type: string): Boolean | any;
@@ -224,6 +224,8 @@ export class ApiFunctions {
     uncollectTrack(pid: number, ...tracks: Array<number>);
     getSearchSuggest(s: string): Promise<SearchResponse>;
     search(s: string, type: number | string, limit?: number, offset?: number): Promise<SearchResponse>;
+    subscribePlaylist(id: number): Promise<BaseApiResponse>;
+    unsubscribePlaylist(id: number): Promise<BaseApiResponse>;
 }
 
 declare const ApiStatic: ApiFunctions;
