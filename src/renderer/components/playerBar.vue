@@ -237,6 +237,7 @@ export default {
         });
 
         _audioEl.addEventListener('error', () => {
+            if (!this.track.id) return;
             if (!this.hasRetried) {
                 this.hasRetried = true;
                 this.updateUiUrlNoCache();
