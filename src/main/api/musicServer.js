@@ -8,6 +8,7 @@ import { createServer } from 'http';
 
 import Cache from './cache';
 import { getMusicUrl } from '.';
+import { getMusicUrlLinux } from './index';
 
 const d = debug('MusicServer');
 
@@ -101,8 +102,11 @@ class MusicServer {
             return;
         }
         try {
-            const { data: [result] } = await getMusicUrl(id, quality);
-            if (result.code !== 200 || result === null) {
+            let result = (await getMusicUrl(id, quality)).data[0];
+            if (result.code === 404) {
+                d('request to "/weapi/song" got 404, retry "/linux/forward"');
+                result = (await getMusicUrlLinux(id, quality)).data[0];
+            } else if (result.code !== 200 || result === null) {
                 throw result.code;
             }
             d('Got URL for music id=%d', id);
