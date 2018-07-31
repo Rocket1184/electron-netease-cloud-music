@@ -26,7 +26,7 @@
 
 ### 侧栏
 
-![Sidebar](https://user-images.githubusercontent.com/13914967/43313146-ce4a345c-91c1-11e8-86b9-a85962451769.png)
+![Sidebar](https://user-images.githubusercontent.com/13914967/43451815-66b99c9a-94e8-11e8-9b9e-1054c7cee893.png)
 
 ### 首页（目前仅有每日推荐歌曲）
 
@@ -58,13 +58,17 @@
 
 - ~~高仿~~ 音乐播放界面
 - 用户登录（手机号/邮箱/用户名）
-- 每日签到（可同时签到 PC 端和移动端）
-- 播放每日歌曲推荐
+- 签到（可同时签到 PC 端和移动端）
+- 每日歌曲推荐
 - 播放收藏/创建的歌单
 - 喜欢音乐（加红心）
 - 收藏音乐到歌单
+- 搜索单曲与歌单
+- 收藏/取消收藏歌单
 - Linux 桌面媒体控制（ MPRIS ）集成
 - 自定义主题颜色，可选全局暗色主题
+
+其他~~鸽了~~计划中的功能请移步 [TODOs](##TODOs)
 
 ## Installation
 
@@ -115,9 +119,10 @@ electron /path/to/electron-netease-cloud-music_*.asar
     - [x] 显示结果
     - [ ] 专辑详情页面
   - [ ] 歌单
-    - [ ] 显示结果
-    - [ ] 歌单内容页面
-    - [ ] 收藏歌单
+    - [x] 显示结果
+    - [x] 歌单内容页面
+    - [x] 收藏歌单
+    - [ ] 浏览/发布歌单评论
   - [ ] MV
     - [ ] 显示结果
     - [ ] 播放 MV
@@ -125,6 +130,11 @@ electron /path/to/electron-netease-cloud-music_*.asar
     - [ ] 显示结果
     - [ ] 用户信息页面
 - [ ] 私人 FM （这个功能我几乎不用，就先鸽着吧）
+- [ ] 推荐歌单 （好像有点用处，但似乎也没怎么用过）
+- [ ] 各种榜单 （反正我不用，鸽了鸽了）
+- [ ] 推荐 MV （真的有人用一个音乐 App 来看 MV 吗）
+- [ ] 首页 Banner （哈？这是广告吧）
+- [ ] 朋友动态 （嗯 ... 我觉得不太行）
 
 </details>
 
@@ -144,3 +154,13 @@ yarn dist
 yarn build linux
 yarn build darwin
 ```
+
+## Acknowledgement
+
+- [darknessomi/musicbox/wiki](https://github.com/darknessomi/musicbox/wiki)
+- [metowolf/NeteaseCloudMusicApi/wiki](https://github.com/metowolf/NeteaseCloudMusicApi/wiki)
+- [Copay/cloudmusicapi](https://github.com/Copay/cloudmusicapi)
+- [Binaryify/NeteaseCloudMusicApi](https://github.com/Binaryify/NeteaseCloudMusicApi)
+- [nondanee/Glee](https://github.com/nondanee/Glee)
+- [JixunMoe/netease-cloud-music-api](https://github.com/JixunMoe/netease-cloud-music-api)
+- [surmon-china/simple-netease-cloud-music](https://github.com/surmon-china/simple-netease-cloud-music)
