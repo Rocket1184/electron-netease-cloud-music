@@ -29,7 +29,7 @@ const mutations = {
         if (target) {
             let newList = new PlayList(payload);
             for (const key in newList) {
-                if (typeof newList[key] === typeof undefined) {
+                if (newList[key] === undefined) {
                     delete newList[key];
                 }
             }
