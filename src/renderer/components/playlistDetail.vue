@@ -87,7 +87,7 @@ export default {
         };
     },
     computed: {
-        ...mapGetters(['user']),
+        ...mapGetters(['user', 'loginValid']),
         creatorAvatarSrc() {
             return sizeImg(this.detail.creator.avatarUrl, HiDpiPx(40));
         },
@@ -114,6 +114,10 @@ export default {
             this.currentPage = newIndex;
         },
         async handleSubscribe() {
+            if (!this.loginValid) {
+                this.$toast.message('汝还没有登录呀      (눈‸눈)');
+                return;
+            }
             if (this.detail.subscribed) {
                 try {
                     await this.unsubscribePlaylist(this.detail);
