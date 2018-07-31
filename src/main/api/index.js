@@ -148,6 +148,28 @@ export function getMusicUrl(idOrIds, quality = 'h') {
     });
 }
 
+export function getMusicUrlLinux(idOrIds, quality = 'h') {
+    if (!QualityMap[quality]) throw new Error(`Quality type '${quality}' is not in [h,m,l]`);
+    let ids;
+    if (Array.isArray(idOrIds)) ids = idOrIds;
+    else ids = [idOrIds];
+    return client.post({
+        url: `${BaseURL}/api/linux/forward`,
+        encrypt: 'linux',
+        headers: {
+            Cookie: 'os=pc; osver=Microsoft-Windows-10-Professional-build-10586-64bit; appver=2.0.3.131777; channel=netease; __remember_me=true'
+        },
+        data: {
+            method: 'POST',
+            url: 'http://music.163.com/api/song/enhance/player/url',
+            params: {
+                ids,
+                br: QualityMap[quality],
+            }
+        }
+    });
+}
+
 export function getMusicUrlCached(id, quality = 'l') {
     return {
         url: url.format({
@@ -161,7 +183,7 @@ export function getMusicUrlCached(id, quality = 'l') {
 }
 
 export function getMusicUrlNoCache(id, quality = 'l') {
-    musicCache.rm(id);
+    musicCache.rm(id).catch(() => { /* nothing happened */ });
     return getMusicLyricCached(id, quality);
 }
 
