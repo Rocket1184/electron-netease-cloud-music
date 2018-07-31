@@ -14,6 +14,7 @@
                 </div>
                 <div class="actions">
                     <mu-button flat
+                        :disabled="detail.creator.id === user.id"
                         @click="handleSubscribe">
                         <mu-icon left
                             :color="detail.subscribed ? 'amber' : ''"
@@ -64,7 +65,7 @@
 </template>
 
 <script>
-import { mapActions } from 'vuex';
+import { mapActions, mapGetters } from 'vuex';
 
 import PlayAll from '@/components/playAll.vue';
 import TrackList from '@/components/trackList.vue';
@@ -86,6 +87,7 @@ export default {
         };
     },
     computed: {
+        ...mapGetters(['user']),
         creatorAvatarSrc() {
             return sizeImg(this.detail.creator.avatarUrl, HiDpiPx(40));
         },
