@@ -2,7 +2,7 @@ import qs from 'querystring';
 
 import Axios from 'axios';
 import Cookie from 'cookie';
-import Codec from './codec';
+import { encodeWeb, encodeLinux } from './codec';
 
 class HttpClient {
     constructor() {
@@ -68,10 +68,6 @@ class HttpClient {
         this.updateCookie(response.headers['set-cookie']);
     }
 
-    static mkEncodeData(payload) {
-        return qs.stringify(Codec.encode(payload));
-    }
-
     post(config) {
         config.method = 'post';
         if (this.cookie.__csrf) {
@@ -81,7 +77,11 @@ class HttpClient {
             }
         }
         if (config.data) {
-            config.data = HttpClient.mkEncodeData(config.data);
+            if (config.encrypt === 'linux') {
+                config.data = qs.stringify(encodeLinux(config.data));
+            } else {
+                config.data = qs.stringify(encodeWeb(config.data));
+            }
         } else {
             config.data = '';
         }
