@@ -96,7 +96,7 @@ export default {
             'updateUiUrlNoCache',
             'playNextTrack',
             'playPreviousTrack',
-            'refreshUserPlaylist',
+            'updatePlaylistDetail',
             'toggleCollectPopup'
         ]),
         handlePlayOrPause() {
@@ -123,7 +123,7 @@ export default {
             // it would take some time for NetEase to update playlist cover
             // img, so we just wait 200 ms
             setTimeout(async () => {
-                await this.refreshUserPlaylist(list.id);
+                await this.updatePlaylistDetail(list.id);
                 this.shouldFavorite = null;
             }, 0);
         }

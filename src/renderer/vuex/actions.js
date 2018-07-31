@@ -37,25 +37,29 @@ export async function restoreUserInfo(context) {
     }
 }
 
-export function setLoginValid({ state, commit }, payload) {
+export function updateUserPlaylists({ state, commit }) {
+    return ApiRenderer.getUserPlaylist(state.user.info.id).then(({ playlist }) => {
+        commit(types.UPDATE_USER_INFO, playlist[0].creator);
+        commit(types.SET_USER_PLAYLISTS, playlist);
+        return playlist;
+    });
+}
+
+export function setLoginValid(context, payload) {
     if (payload === undefined || payload === true || payload.valid === true) {
-        commit(types.SET_LOGIN_VALID);
+        context.commit(types.SET_LOGIN_VALID);
         ApiRenderer.getCookie().then(cookie => {
             localStorage.setItem('cookie', JSON.stringify(cookie));
         });
-        ApiRenderer.getUserPlaylist(state.user.info.id).then(({ playlist }) => {
-            commit(types.UPDATE_USER_INFO, playlist[0].creator);
-            commit(types.SET_USER_PLAYLISTS, playlist);
-            if (~playlist[0].name.indexOf('喜欢的音乐')) {
-                return playlist[0].id;
+        updateUserPlaylists(context).then(playlist => {
+            if (playlist[0].name.endsWith('喜欢的音乐')) {
+                ApiRenderer.getListDetail(playlist[0].id).then(list => {
+                    context.commit(types.UPDATE_USER_PLAYLIST, list.playlist);
+                });
             }
-        }).then(likedListId => {
-            ApiRenderer.getListDetail(likedListId).then(list => {
-                commit(types.UPDATE_USER_PLAYLIST, list.playlist);
-            });
         });
     } else {
-        commit(types.SET_LOGIN_VALID, false);
+        context.commit(types.SET_LOGIN_VALID, false);
     }
 }
 
@@ -158,7 +162,7 @@ export function restorePlaylist({ commit, state }) {
     }
 }
 
-export async function refreshUserPlaylist({ commit }, payload) {
+export async function updatePlaylistDetail({ commit }, payload) {
     const listId = typeof payload === 'number' ? payload : payload.id;
     const resp = await ApiRenderer.getListDetail(listId);
     commit(types.UPDATE_USER_PLAYLIST, resp.playlist);

@@ -24,7 +24,7 @@ export default {
         ...mapGetters(['loginValid'])
     },
     methods: {
-        ...mapActions(['toggleCollectPopup', 'refreshUserPlaylist']),
+        ...mapActions(['toggleCollectPopup', 'updatePlaylistDetail']),
         handleClose() {
             this.toggleCollectPopup();
             this.$emit('close');
@@ -38,7 +38,7 @@ export default {
             if (resp.code === 200) {
                 this.$toast.message('成功添加到歌单     (๑•̀ㅂ•́)و✧');
                 // same to above
-                setTimeout(() => this.refreshUserPlaylist(list.id), 200);
+                setTimeout(() => this.updatePlaylistDetail(list.id), 200);
             } else if (resp.code === 502) {
                 this.$toast.message('歌曲已存在        ¯\\_(ツ)_/¯');
             } else {
