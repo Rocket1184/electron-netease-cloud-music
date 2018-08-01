@@ -28,6 +28,7 @@ export default {
     },
     methods: {
         ...mapActions([
+            'playAudio',
             'restoreUserInfo',
             'restoreSettings',
             'storePlaylist',
@@ -35,7 +36,7 @@ export default {
         ])
     },
     computed: {
-        ...mapState(['ui'])
+        ...mapState(['ui', 'settings'])
     },
     beforeCreate() {
         // if return value of this handler is something other than `undefined`,
@@ -45,7 +46,11 @@ export default {
         };
     },
     created() {
-        this.restoreSettings();
+        this.restoreSettings().then(() => {
+            if (this.settings.autoPlay) {
+                this.playAudio();
+            }
+        });
         this.restoreUserInfo();
         this.restorePlaylist();
     }
