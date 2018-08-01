@@ -28,7 +28,7 @@
 
 ![Sidebar](https://user-images.githubusercontent.com/13914967/43451815-66b99c9a-94e8-11e8-9b9e-1054c7cee893.png)
 
-### 首页（目前仅有每日推荐歌曲）
+### 首页（目前仅有每日歌曲推荐）
 
 ![Index](https://user-images.githubusercontent.com/13914967/43312538-37863dbe-91c0-11e8-98a5-ad1ffbb82a62.png)
 
@@ -68,7 +68,7 @@
 - Linux 桌面媒体控制（ MPRIS ）集成
 - 自定义主题颜色，可选全局暗色主题
 
-其他~~鸽了~~计划中的功能请移步 [TODOs](##TODOs)
+其他~~鸽了~~计划中的功能请移步 [TODOs](#todos)
 
 ## Installation
 
