@@ -70,22 +70,10 @@ export function bindEventListener(audioEl) {
     MPRISEmitter.on('quit', () => ipcRenderer.send('quitApp'));
     MPRISEmitter.on('raise', () => ipcRenderer.send('focusApp'));
     if (audioEl) {
-        let stalled = false;
-        audioEl.addEventListener('durationchange', () => MPRIS.pause());
         audioEl.addEventListener('loadedmetadata', () => {
             MPRIS.patchMetadata({ 'mpris:length': audioEl.duration * 1e6 });
         });
         audioEl.addEventListener('seeked', () => MPRIS.seeked(audioEl.currentTime));
-        audioEl.addEventListener('playing', () => {
-            if (stalled) {
-                stalled = false;
-                MPRIS.play();
-            }
-        });
-        audioEl.addEventListener('stalled', () => {
-            MPRIS.pause();
-            stalled = true;
-        });
         MPRISEmitter.on('getPosition', (_, id) => {
             senderFn('getPosition', id, audioEl.currentTime * 1e6);
         });
