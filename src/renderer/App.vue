@@ -58,8 +58,23 @@ export default {
 </script>
 
 <style lang="less">
+*::-webkit-scrollbar,
+*::-webkit-scrollbar-thumb {
+    color: darkgray;
+    width: 12px;
+    border: 2px solid transparent;
+    border-top: 0;
+    border-bottom: 0;
+    background-clip: padding-box;
+}
+
+*::-webkit-scrollbar-thumb {
+    box-shadow: inset 0 0 0 10px;
+}
+
 body {
-    font-family: Roboto, 'Noto Sans', 'Segoe UI', 'Noto Sans CJK SC', 'Source Han Sans CN', 'Microsoft Yahei', sans-serif;
+    font-family: Roboto, 'Noto Sans', 'Segoe UI', 'Noto Sans CJK SC', 'Source Han Sans CN', 'WenQuanYi Micro Hei',
+        'WenQuanYi Zen Hei', 'Droid Sans Fallback', 'Microsoft Yahei', sans-serif;
 }
 
 .router-view {

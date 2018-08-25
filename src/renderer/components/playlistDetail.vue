@@ -40,7 +40,7 @@
                                     value="keyboard_arrow_down"></mu-icon>
                             </mu-list-item-action>
                             <mu-list-item-content slot="nested">
-                                <pre>{{detail.description}}</pre>
+                                <div class="description">{{detail.description}}</div>
                             </mu-list-item-content>
                         </mu-list-item>
                     </mu-list>
@@ -158,7 +158,7 @@ export default {
 .playlist-detail {
     .header {
         display: flex;
-        padding: 16px 16px 0 16px;
+        padding: 16px;
         .cover {
             height: 160px;
             width: 160px;
@@ -189,14 +189,14 @@ export default {
                 .mu-list {
                     padding: 0;
                 }
-                pre {
+                .description {
                     margin: 8px;
+                    white-space: pre-wrap;
                 }
             }
         }
     }
     .tracks {
-        margin-right: 16px;
         .pagination {
             width: 100%;
             padding: 16px;
