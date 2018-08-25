@@ -7,8 +7,7 @@ import { createHash } from 'crypto';
 import { createServer } from 'http';
 
 import Cache from './cache';
-import { getMusicUrl } from '.';
-import { getMusicUrlLinux } from './index';
+import { getMusicUrl, getMusicUrlLinux } from './index';
 
 const d = debug('MusicServer');
 
@@ -71,6 +70,41 @@ class MusicServer {
     }
 
     /**
+     * try get music url
+     * @param {number} id 
+     * @param {string} quality
+     * @returns {{code:number; url: string?; md5: string}}
+     */
+    async getMusicUrl(id, quality) {
+        try {
+            const resWeb = await getMusicUrl(id, quality);
+            d('resWeb: %o', resWeb);
+            if (resWeb.code !== 200) {
+                throw resWeb;
+            }
+            if (resWeb.code === 200) {
+                const dataWeb = resWeb.data[0];
+                if (dataWeb.code !== 200) {
+                    throw dataWeb;
+                }
+                return dataWeb;
+            }
+        } catch (e) {
+            d('request to "/weapi/song" not 200, retry "/linux/forward"');
+            const resLinux = await getMusicUrlLinux(id, quality);
+            d('resLinux: %o', resLinux);
+            if (resLinux.code !== 200) {
+                throw resLinux;
+            }
+            const dataLinux = resLinux.data[0];
+            if (dataLinux.code !== 200) {
+                throw dataLinux;
+            }
+            return dataLinux;
+        }
+    }
+
+    /**
      * MusicServer HTTP request handler
      * @param {import('http').ClientRequest} req
      * @param {import('http').ServerResponse} res
@@ -102,16 +136,9 @@ class MusicServer {
             return;
         }
         try {
-            let result = (await getMusicUrl(id, quality)).data[0];
-            if (result.code === 404) {
-                d('request to "/weapi/song" got 404, retry "/linux/forward"');
-                result = (await getMusicUrlLinux(id, quality)).data[0];
-            } else if (result.code !== 200 || result === null) {
-                throw result.code;
-            }
+            const music = await this.getMusicUrl(id, quality);
             d('Got URL for music id=%d', id);
-
-            const st = await this.cache.fetch(result.url);
+            const st = await this.cache.fetch(music.url);
             st.pipe(fs.createWriteStream(filePath));
 
             const range = MusicServer.getRange(req, +st.headers['content-length']);
@@ -134,7 +161,7 @@ class MusicServer {
             });
             st.on('end', () => {
                 const md5 = checksum.digest('hex');
-                if (md5 === result.md5.toLowerCase()) {
+                if (md5 === music.md5.toLowerCase()) {
                     d('Finish downloading music id=%d, md5=%s', id, md5);
                 } else {
                     d('Download music id=%d hash mismatch, delete it ...', id);
@@ -144,7 +171,8 @@ class MusicServer {
             });
         } catch (e) {
             d('Failed to get URL for music id=%d, reason: %O', id, e);
-            res.writeHead(e === 200 ? 400 : 500);
+            res.writeHead(500);
+            res.write(e);
             res.end();
         }
     }
