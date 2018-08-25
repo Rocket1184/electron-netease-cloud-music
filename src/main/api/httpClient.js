@@ -1,4 +1,5 @@
 import qs from 'querystring';
+import { randomFillSync } from 'crypto';
 
 import Axios from 'axios';
 import Cookie from 'cookie';
@@ -6,7 +7,14 @@ import { encodeWeb, encodeLinux } from './codec';
 
 class HttpClient {
     constructor() {
-        this.cookie = {};
+        const now = Date.now();
+        const nuid = randomFillSync(Buffer.alloc(16)).toString('hex');
+        this.cookie = {
+            'JSESSIONID-WYYY': `${randomFillSync(Buffer.alloc(132)).toString('base64')}:${now}`,
+            '_iuqxldmzr_': 32,
+            '_ntes_nnid': `${nuid},${now}`,
+            '_ntes_nuid': `${nuid}`
+        };
     }
 
     get clientHeaders() {
