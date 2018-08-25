@@ -29,7 +29,6 @@ function createMainWindow(url = mainURL) {
             preload: join(__dirname, 'preload.js'),
             nodeIntegration: isDev,
             webgl: false,
-            blinkFeatures: 'OverlayScrollbars',
             webviewTag: false,
             additionalArguments: [`--initial-settings=${JSON.stringify(settings)}`]
         }
@@ -92,10 +91,7 @@ ipcMain.on('showLoginWindow', () => {
     loginWindow = new BrowserWindow({
         height: 700,
         width: 1150,
-        name: 'Login',
-        webPreferences: {
-            blinkFeatures: 'OverlayScrollbars',
-        },
+        name: 'Login'
     });
     loginWindow.loadURL(loginURL);
 });
