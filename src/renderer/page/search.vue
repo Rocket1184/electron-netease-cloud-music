@@ -168,11 +168,14 @@ export default {
             }
         }
     },
-    mounted() {
-        this.searchType = this.$route.query.type || searchTypes.song;
-        this.handleSearch();
+    beforeRouteEnter(to, from, next) {
+        // this component would be created in the new route
+        next(vm => {
+            vm.handleSearch();
+        });
     },
     beforeRouteUpdate(to, from, next) {
+        // this component is reused in the new route
         next();
         this.handleSearch();
     },

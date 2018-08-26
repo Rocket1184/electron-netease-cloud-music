@@ -16,7 +16,7 @@
             placeholder="搜索单曲、歌手、专辑、用户 ..."
             v-model="searchText"
             :filter="filterData"
-            @select="handleSearch">
+            @select="handleCompleteSelect">
         </mu-auto-complete>
     </mu-menu>
 </template>
@@ -75,6 +75,12 @@ export default {
                 keyword: this.searchText
             });
             this.$router.push(`/search?${qs}`);
+        },
+        handleCompleteSelect(value, item) {
+            // event 'select' would be triggered by selecting text in textField
+            if (typeof value === 'string' && item.name === value) {
+                this.handleSearch();
+            }
         }
     },
     mounted() {
