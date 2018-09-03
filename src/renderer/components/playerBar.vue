@@ -21,6 +21,7 @@
                     ref="chkShowPlaylists"
                     uncheck-icon="bookmark_border"
                     checked-icon="bookmark"
+                    color="secondary"
                     v-model="collectPopupShown"></mu-checkbox>
                 <mu-menu :open.sync="currentListShown"
                     placement="top"
@@ -28,6 +29,7 @@
                     <mu-checkbox title="播放列表"
                         uncheck-icon="queue_music"
                         checked-icon="queue_music"
+                        color="secondary"
                         v-model="currentListShown"></mu-checkbox>
                     <currentList slot="content"></currentList>
                 </mu-menu>

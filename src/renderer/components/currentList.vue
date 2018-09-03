@@ -17,7 +17,7 @@
                 @click="handleListClick(index)">
                 <mu-list-item-action>
                     <mu-icon v-if="track.id == playing.track.id"
-                        color="primary"
+                        color="secondary"
                         value="volume_up">
                     </mu-icon>
                     <span v-else>{{index + 1}}</span>
