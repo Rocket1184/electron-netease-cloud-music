@@ -17,6 +17,7 @@
             class="buttons-wrapper">
             <mu-button fab
                 color="transparent"
+                textColor="grey"
                 @click="activeGroup = -1">
                 <mu-icon value="undo"></mu-icon>
             </mu-button>
