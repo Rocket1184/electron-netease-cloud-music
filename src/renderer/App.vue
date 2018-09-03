@@ -58,18 +58,16 @@ export default {
 </script>
 
 <style lang="less">
-*::-webkit-scrollbar,
-*::-webkit-scrollbar-thumb {
-    color: darkgray;
-    width: 12px;
-    border: 2px solid transparent;
-    border-top: 0;
-    border-bottom: 0;
-    background-clip: padding-box;
+*::-webkit-scrollbar {
+    width: 10px;
 }
 
 *::-webkit-scrollbar-thumb {
-    box-shadow: inset 0 0 0 10px;
+    background-color: darkgrey;
+}
+
+*::-webkit-scrollbar-thumb:hover {
+    background-color: grey;
 }
 
 body {
