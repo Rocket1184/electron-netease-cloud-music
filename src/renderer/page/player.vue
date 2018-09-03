@@ -132,6 +132,8 @@ export default {
             const h = 600;
             /** @type {CanvasRenderingContext2D} */
             const ctx = this.$refs.cvs.getContext('2d');
+            ctx.fillStyle = 'rgba(255, 255, 255, 0.15)';
+            ctx.filter = 'blur(60px)';
             ctx.clearRect(0, 0, w, h);
             const handler = () => {
                 img.removeEventListener('load', handler);
@@ -153,9 +155,6 @@ export default {
         }
     },
     mounted() {
-        const ctx = this.$refs.cvs.getContext('2d');
-        ctx.fillStyle = 'rgba(0, 0, 0, 0.1)';
-        ctx.filter = 'blur(60px)';
         this.paintBkgCanvas();
         this.listenAudioUpdate();
         this.createLyricElemMap();
@@ -281,6 +280,7 @@ export default {
         .lyric {
             height: 340px;
             overflow: hidden;
+            // -webkit-mask-image: -webkit-linear-gradient(top, transparent, white 15%, white 85%, transparent);
             .scroller {
                 transition: transform 0.5s cubic-bezier(0.25, 0.46, 0.45, 0.94);
                 .line {
