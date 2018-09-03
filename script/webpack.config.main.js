@@ -21,20 +21,6 @@ let cfg = {
     module: {
         rules: [
             {
-                test: /\.js$/,
-                use: {
-                    loader: 'babel-loader',
-                    options: {
-                        babelrc: false,
-                        plugins: [
-                            'syntax-object-rest-spread',
-                            'transform-es2015-modules-commonjs'
-                        ]
-                    },
-                },
-                exclude: /node_modules/
-            },
-            {
                 test: /\.node$/,
                 use: 'native-ext-loader'
             }

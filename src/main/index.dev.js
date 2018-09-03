@@ -13,12 +13,12 @@ process.env.DEBUG_COLORS = true;
 
 // Set babel `env` and install `babel-register`
 process.env.NODE_ENV = 'development';
-require('babel-register')({
+require('@babel/register')({
     babelrc: false,
-    only: /src\/main\//,
+    only: [/src\/main\//],
     plugins: [
-        'syntax-object-rest-spread',
-        'transform-es2015-modules-commonjs'
+        '@babel/plugin-syntax-object-rest-spread',
+        '@babel/plugin-transform-modules-commonjs'
     ]
 });
 

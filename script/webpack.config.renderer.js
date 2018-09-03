@@ -26,23 +26,6 @@ let cfg = {
     module: {
         rules: [
             {
-                test: /\.js$/,
-                use: {
-                    loader: 'babel-loader',
-                    options: {
-                        babelrc: false,
-                        plugins: [
-                            'syntax-object-rest-spread'
-                        ]
-                    },
-                },
-                exclude: /node_modules/
-            },
-            {
-                test: /\.json$/,
-                use: 'json-loader'
-            },
-            {
                 test: /\.vue$/,
                 use: {
                     loader: 'vue-loader',
