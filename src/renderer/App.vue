@@ -75,6 +75,12 @@ body {
         'WenQuanYi Zen Hei', 'Droid Sans Fallback', 'Microsoft Yahei', sans-serif;
 }
 
+.mono-font {
+    font-family: 'Roboto Mono', 'Noto Sans Mono', 'Droid Sans Mono', 'Ubuntu Mono', 'Consolas', 'DejaVu Sans Mono',
+        'Lucida Console', Roboto, 'Noto Sans', 'Segoe UI', 'Noto Sans CJK SC', 'Source Han Sans CN', 'Microsoft Yahei',
+        sans-serif;
+}
+
 .router-view {
     height: calc(100vh - 128px);
     overflow: auto;

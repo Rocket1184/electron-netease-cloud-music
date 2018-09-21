@@ -230,9 +230,6 @@ export default {
             justify-content: space-between;
             align-items: center;
             .username {
-                font-family: 'Roboto Mono', 'Noto Sans Mono', 'Droid Sans Mono', 'Ubuntu Mono', 'Consolas',
-                    'DejaVu Sans Mono', 'Lucida Console', Roboto, 'Noto Sans', 'Segoe UI', 'Noto Sans CJK SC',
-                    'Source Han Sans CN', 'Microsoft Yahei', sans-serif;
                 color: white;
                 text-shadow: 0 0 4px black;
                 font-size: 20px;

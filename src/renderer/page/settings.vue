@@ -258,7 +258,8 @@ export default {
         },
         showVersions() {
             this.$alert(
-                h => h('pre', ver),
+                // class 'mono-font' was declared in file 'App.vue'
+                h => h('pre', { class: 'mono-font' }, ver),
                 '版本号'
             );
         }
