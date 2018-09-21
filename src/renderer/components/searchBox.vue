@@ -10,6 +10,7 @@
         <mu-auto-complete dense
             solo
             full-width
+            color="secondary"
             slot="content"
             icon="search"
             ref="textField"
