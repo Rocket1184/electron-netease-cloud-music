@@ -59,6 +59,7 @@
             <mu-list>
                 <mu-list-item v-for="route in validRoutes"
                     button
+                    @click="closeDrawer"
                     :key="route.name"
                     :to="route.path">
                     <mu-list-item-action>
@@ -128,6 +129,9 @@ export default {
             else
                 this.currentWindow.maximize();
         },
+        closeDrawer() {
+            this.drawerOpen = false;
+        },
         handleNameClick() {
             if (!this.loginValid) {
                 this.loginDlgShow = true;
@@ -154,9 +158,6 @@ export default {
                 this.$toast.message('是不是已经签到过了呢 ：）');
             }
         }
-    },
-    created() {
-        this.$router.afterEach(() => this.drawerOpen = false);
     },
     components: {
         loginDialog,
