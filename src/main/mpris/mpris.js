@@ -313,4 +313,51 @@ emitter.on('seeked', seconds => {
 // Interface MediaPlayer2.Player => Apply update
 IMP2Player.update();
 
+/**
+ * Unity & KDE Icon badge & progress
+ * @see https://stackoverflow.com/questions/43875343/kde-taskbar-progress
+ * @see https://wiki.ubuntu.com/Unity/LauncherAPI#Low_level_DBus_API%3a_com.canonical.Unity.LauncherEntry
+ */
+
+const oUnity = service.createObject('/com/canonical/Unity'); // it can be a random path
+const ILauncherEntry = oUnity.createInterface('com.canonical.Unity.LauncherEntry');
+
+ILauncherEntry.addSignal('Update', {
+    types: [
+        /**
+         * app_uri
+         * @type {string} 'application://electron-netease-cloud-music.desktop'
+         */
+        { type: 's', name: 'app_uri' },
+        /**
+         * properties
+         * @member {number} count x
+         * @member {boolean} 'count-visible' b
+         * @member {number} progress d
+         * @member {boolean} 'progress-visible' b
+         * @member {boolean} urgent b
+         * @member {string} quicklist s  // I dont know what that means ...
+         */
+        { type: 'a{sv}', name: 'properties' }
+    ]
+});
+
+ILauncherEntry.addMethod('Query', {
+    out: [
+        { type: 's', name: 'app_uri' },
+        { type: 'a{sv}', name: 'properties' }
+    ]
+}, (cb) => {
+    cb('application://electron-netease-cloud-music.desktop', {
+        count: 0,
+        'count-visible': false,
+        progress: 0.0,
+        'progress-visible': false,
+        urgent: false,
+        quicklist: ''
+    });
+});
+
+ILauncherEntry.update();
+
 module.exports = emitter;
