@@ -2,7 +2,7 @@ import * as ApiNameSpace from '../../main/api';
 
 declare class ApiRenderer extends ApiNameSpace.ApiFunctions {
     getCookie(key?: string): Promise<string>
-    updateCookie(cookie?: string | Array<string>): Promise<string>
+    updateCookie(cookie?: string | Array<string> | Record<string, string>): Promise<void>
     getDirSize(dirPath: string): Promise<number>;
     getDataSize(type: 'all' | 'music' | 'lyric'): Promise<number>;
     clearCache(type: 'all' | 'music' | 'lyric'): Promise<any>;

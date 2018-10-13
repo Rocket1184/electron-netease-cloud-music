@@ -2,19 +2,26 @@ import qs from 'querystring';
 import { randomFillSync } from 'crypto';
 
 import Axios from 'axios';
-import Cookie from 'cookie';
+import Cookie from 'cookiejar';
 import { encodeWeb, encodeLinux } from './codec';
 
 class HttpClient {
     constructor() {
+        this.initCookieJar();
+    }
+
+    initCookieJar() {
         const now = Date.now();
         const nuid = randomFillSync(Buffer.alloc(16)).toString('hex');
-        this.cookie = {
-            'JSESSIONID-WYYY': `${randomFillSync(Buffer.alloc(132)).toString('base64')}:${now}`,
-            '_iuqxldmzr_': 32,
-            '_ntes_nnid': `${nuid},${now}`,
-            '_ntes_nuid': `${nuid}`
-        };
+        this.cookieJar = new Cookie.CookieJar();
+        this.cookieJar.setCookies([
+            `JSESSIONID-WYYY=${randomFillSync(Buffer.alloc(132)).toString('base64')}:${now}`,
+            `_iuqxldmzr=32`,
+        ], '.music.163.com', '/');
+        this.cookieJar.setCookies([
+            `_ntes_nnid=${nuid},${now}`,
+            `_ntes_nuid=${nuid}`
+        ], '.163.com', '/');
     }
 
     get clientHeaders() {
@@ -28,60 +35,57 @@ class HttpClient {
         };
     }
 
-    setCookie(arg) {
-        switch (typeof arg) {
-            case 'string':
-                this.cookie = Cookie.parse(arg);
-                break;
-            case 'object':
-                this.cookie = arg;
+    // clear all cookies, and set cookie as given arguments
+    updateCookie(arg = {}) {
+        this.initCookieJar();
+        if (typeof arg === 'string' || Array.isArray(arg)) {
+            this.cookieJar.setCookies(arg);
+            return;
         }
+        const cookies = [];
+        for (const key in arg) {
+            if (arg.hasOwnProperty(key)) {
+                cookies.push(`${key}=${arg[key]}`);
+            }
+        }
+        this.cookieJar.setCookies(cookies);
     }
 
-    updateCookie(arg) {
-        if (Array.isArray(arg))
-            arg = arg.join('; ').replace(/HttpOnly /g, '');
-        if (typeof arg == 'string')
-            arg = Cookie.parse(arg);
-        for (let key in arg) {
-            this.cookie[key] = arg[key];
-        }
-        delete this.cookie.Expires;
-        delete this.cookie.Domain;
-        delete this.cookie.Path;
+    // set one or more cookie
+    setCookie(...arg) {
+        this.cookieJar.setCookies(...arg);
     }
 
     getCookie(key = '') {
-        if (key.length) {
-            try {
-                return this.cookie[key];
-            }
-            catch (err) {
-                throw new Error(`[HttpClient] No such cookie '${key}'`);
-            }
-        } else {
-            return this.cookie;
+        const cookies = this.cookieJar.getCookies(Cookie.CookieAccessInfo.All);
+        if (key === '') {
+            let result = {};
+            cookies.forEach(c => result[c.name] = c.value);
+            return result;
         }
+        const c = cookies.find(c => c.name === key) || {};
+        return c.value;
     }
 
     getCookieString() {
-        let result = '';
-        for (let key in this.cookie) {
-            result += `${key}=${this.cookie[key]}; `;
-        }
-        return result;
+        const cookies = this.cookieJar.getCookies(Cookie.CookieAccessInfo.All);
+        return cookies.map(c => c.toValueString()).join('; ');
     }
 
     handleResponse(response) {
-        this.updateCookie(response.headers['set-cookie']);
+        const pendingCookie = response.headers['set-cookie'];
+        if (pendingCookie) {
+            this.cookieJar.setCookies(response.headers['set-cookie']);
+        }
     }
 
     post(config) {
         config.method = 'post';
-        if (this.cookie.__csrf) {
-            config.url += `?csrf_token=${this.cookie.__csrf}`;
+        const __csrf = this.getCookie('__csrf');
+        if (__csrf) {
+            config.url += `?csrf_token=${__csrf}`;
             if (config.data) {
-                config.data.csrf_token = this.cookie.__csrf;
+                config.data.csrf_token = __csrf;
             }
         }
         if (config.data) {
