@@ -39,7 +39,7 @@
   "dependencies": {
     "axios": "^0.18.0",
     "big-integer": "^1.6.36",
-    "cookie": "^0.3.1",
+    "cookiejar": "^2.1.2",
     "dbus": "^1.0.3",
     "debug": "^4.1.0",
     "electron": "2.0.11",
