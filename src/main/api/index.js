@@ -42,7 +42,6 @@ do {
 
 export function updateCookie(cookie) {
     client.updateCookie(cookie);
-    return client.getCookie('');
 }
 
 export function getCookie(key = '') {

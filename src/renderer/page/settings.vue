@@ -231,7 +231,8 @@ export default {
                     window.onbeforeunload = null;
                     Promise.all([
                         this.clearStorage(),
-                        ApiRenderer.updateCookie(''),
+                        // clear cookies
+                        ApiRenderer.updateCookie({}),
                         ApiRenderer.resetSettings(),
                         this.clearCache('chrome'),
                         this.clearCache('music'),

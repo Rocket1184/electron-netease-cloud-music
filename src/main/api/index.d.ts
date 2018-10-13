@@ -196,8 +196,8 @@ export interface SearchResponse extends BaseApiResponse {
 }
 
 export class ApiFunctions {
-    updateCookie(cookie: string): string | any;
-    getCookie(key?: string): string | any;
+    updateCookie(cookie?: string | Array<string> | Record<string, string>): void;
+    getCookie(key?: string): string;
     login(acc: string | number, pwd: string): Promise<LoginResponse>;
     refreshLogin(): Promise<BaseApiResponse>;
     getUserPlaylist(uid: number): Promise<UserPlaylistResponse>;
