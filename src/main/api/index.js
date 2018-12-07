@@ -77,7 +77,7 @@ export function refreshLogin() {
 export async function logout() {
     const resp = await client.post({ url: `${BaseURL}/logout` });
     if (resp.code === 200) {
-        client.setCookie({});
+        client.updateCookie({});
     }
     return resp.code;
 }
