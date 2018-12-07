@@ -1,12 +1,10 @@
 'use strict';
 
-const webpack = require('webpack');
 const packageJson = require('../package.json');
 
 const { isProd, absPath } = require('./util');
 
 let cfg = {
-    mode: process.env.NODE_ENV || 'development',
     performance: { hints: false },
     context: absPath('src/main'),
     target: 'electron-main',
@@ -26,7 +24,6 @@ let cfg = {
             }
         ]
     },
-    plugins: [],
     node: {
         __dirname: false,
         __filename: false
@@ -35,13 +32,12 @@ let cfg = {
 
 if (isProd) {
     // release config
+    cfg.mode = 'production';
     cfg.devtool = 'source-map';
-    cfg.plugins.push(
-        new webpack.DefinePlugin({ 'process.env.NODE_ENV': `"production"` })
-    );
 } else {
     // dev config
-    cfg.devtool = 'cheap-module-source-map';
+    cfg.mode = 'development';
+    cfg.devtool = 'cheap-module-eval-source-map';
     cfg.externals = Object.keys(packageJson.dependencies);
     cfg.resolve = {
         modules: [

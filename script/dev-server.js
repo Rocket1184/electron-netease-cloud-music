@@ -28,11 +28,11 @@ electron.on('close', code => {
     process.exit(code);
 });
 
-// webpack config
+// renderer webpack config
 const compileCfg = require('./webpack.config.renderer');
 
-/** @type {WebpackDevServer.Configuration} */
-const devServerOpt = {
+/** @type {import('webpack-dev-server').Configuration} */
+const wdsOpt = {
     // serve '/login/html'
     contentBase: absPath('/src/renderer'),
     // `hot` must be true when using HMR
@@ -47,10 +47,7 @@ const devServerOpt = {
 
 // enable HMR.
 // see https://webpack.js.org/guides/hot-module-replacement/#via-the-node-js-api
-WebpackDevServer.addDevServerEntrypoints(compileCfg, devServerOpt);
+WebpackDevServer.addDevServerEntrypoints(compileCfg, wdsOpt);
 compileCfg.plugins.push(new webpack.HotModuleReplacementPlugin());
 
-const compiler = webpack(compileCfg);
-
-const devServer = new WebpackDevServer(compiler, devServerOpt);
-devServer.listen(config.devPort);
+new WebpackDevServer(webpack(compileCfg), wdsOpt).listen(config.devPort);
