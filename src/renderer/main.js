@@ -11,6 +11,9 @@ import routes from './routes';
 
 const settings = window.__NCM_SETTINGS__;
 
+const node = document.createElement('div');
+document.body.appendChild(node);
+
 MuseUI.theme.add('ncm', {
     primary: settings.themePrimaryColor,
     secondary: settings.themeSecondaryColor
@@ -25,4 +28,4 @@ new Vue({
     store,
     router: new Router({ routes }),
     render: h => h(App)
-}).$mount(window.app);
+}).$mount(node);
