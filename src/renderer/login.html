@@ -20,8 +20,7 @@
     <webview
         allowpopups
         src="https://music.163.com"
-        partition="login"
-        blinkfeatures="OverlayScrollbars"></webview>
+        partition="login"></webview>
 
     <script>
         const { remote, ipcRenderer } = require('electron');
@@ -32,7 +31,7 @@
             const wv = document.querySelector('webview');
             const wc = wv.getWebContents();
             try {
-                wc.debugger.attach('1.1');
+                wc.debugger.attach('1.3');
                 console.info('Debugger attached');
             } catch (err) {
                 console.error('Debugger attach failed due to', err);
@@ -45,14 +44,14 @@
                 if (method === "Network.responseReceived"  
                     && params 
                     && params.response
-                    && ~params.response.url.indexOf('/weapi/')
-                    && !~params.response.url.indexOf('/weblog')
+                    && params.response.url.includes('/weapi/')
+                    && !params.response.url.includes('/weblog')
                 ) {
                     console.log(`hit ${params.response.url}`);
                     wc.debugger.sendCommand('Network.getResponseBody', {
                         requestId: params.requestId
                     }, (err, resp) => {
-                        if(!err.code && ~params.response.url.indexOf('/login')) {
+                        if(!err.code && params.response.url.includes('/login')) {
                             const userObj = JSON.parse(resp.body);
                             if(userObj.code === 200){
                                 localStorage.setItem('user', resp.body);
