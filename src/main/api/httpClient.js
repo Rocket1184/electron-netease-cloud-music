@@ -13,9 +13,10 @@ class HttpClient {
     initCookieJar() {
         const now = Date.now();
         const nuid = randomFillSync(Buffer.alloc(16)).toString('hex');
+        const wyyy = randomFillSync(Buffer.alloc(132)).toString('base64');
         this.cookieJar = new Cookie.CookieJar();
         this.cookieJar.setCookies([
-            `JSESSIONID-WYYY=${randomFillSync(Buffer.alloc(132)).toString('base64')}:${now}`,
+            `JSESSIONID-WYYY=${wyyy}:${now}`,
             `_iuqxldmzr=32`,
         ], '.music.163.com', '/');
         this.cookieJar.setCookies([
@@ -77,6 +78,7 @@ class HttpClient {
         if (pendingCookie) {
             this.cookieJar.setCookies(response.headers['set-cookie']);
         }
+        // TODO: log respone status and/or data
     }
 
     post(config) {
