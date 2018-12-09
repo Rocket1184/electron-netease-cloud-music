@@ -2,8 +2,11 @@ import qs from 'querystring';
 import { randomFillSync } from 'crypto';
 
 import Axios from 'axios';
+import debug from 'debug';
 import Cookie from 'cookiejar';
 import { encodeWeb, encodeLinux } from './codec';
+
+const d = debug('HTTP');
 
 class HttpClient {
     constructor() {
@@ -78,7 +81,10 @@ class HttpClient {
         if (pendingCookie) {
             this.cookieJar.setCookies(response.headers['set-cookie']);
         }
-        // TODO: log respone status and/or data
+        d('%o %o %s', response.status, response.config.method.toUpperCase(), response.config.url);
+        if (response.status !== 200) {
+            d('%o', response.data);
+        }
     }
 
     post(config) {

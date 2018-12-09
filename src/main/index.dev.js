@@ -8,7 +8,7 @@
 /* eslint-disable no-console */
 
 // Set debug `env`
-process.env.DEBUG = 'MusicServer,API,MPRIS,MPRIS:IPC';
+process.env.DEBUG = 'MusicServer,API,MPRIS,MPRIS:IPC,HTTP';
 process.env.DEBUG_COLORS = true;
 
 // Set babel `env` and install `babel-register`
