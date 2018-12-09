@@ -55,7 +55,7 @@ function makeProp(name, value, type) {
         get value() { return this._value; },
         set value(val) {
             this._value = val;
-            d(`${name} set to ${typeof this._value} ${this._value}`);
+            d(`%s set to %s %o`, name, typeof this._value, this._value);
             object.propertyInterface.emitSignal(
                 'PropertiesChanged',      // signal_name
                 i.name('Player'),         // interface_name
