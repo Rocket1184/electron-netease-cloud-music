@@ -9,3 +9,7 @@ try {
 } finally {
     window.__NCM_SETTINGS__ = settings;
 }
+
+if (localStorage.getItem('debug') === '') {
+    localStorage.setItem('debug', 'API,MPRIS,MPRIS:IPC');
+}
