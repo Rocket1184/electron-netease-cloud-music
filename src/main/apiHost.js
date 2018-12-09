@@ -24,6 +24,6 @@ ipcMain.on(TAG, (event, methodName, invokeId, ...args) => {
         d('↑ %s', methodName);
     }).catch(err => {
         event.sender.send(TAG, invokeId, err);
-        d('× %s %j', methodName, err);
+        d('× %s %s', methodName, err.stack);
     });
 });
