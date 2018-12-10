@@ -365,14 +365,6 @@ export function getVersionName() {
             version += `.${rev}+`;
             // eslint-disable-next-line no-empty
         } catch (err) { }
-    } else {
-        let hash;
-        try {
-            const hashFilePath = path.join(app.getPath('exe'), '../ncm_hash');
-            hash = fs.readFileSync(hashFilePath).toString().trim();
-            version += `-${hash}`;
-            // eslint-disable-next-line no-empty
-        } catch (err) { }
     }
     return version;
 }
