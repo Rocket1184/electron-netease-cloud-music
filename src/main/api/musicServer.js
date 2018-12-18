@@ -177,18 +177,22 @@ class MusicServer {
         }
     }
 
-    listen(...args) {
-        if (this.server) {
-            if (this.server.listening) {
-                throw new Error('[MusicServer] already listening');
-            } else {
-                this.server.listen(...args);
+    listen() {
+        return new Promise((resolve, reject) => {
+            if (!this.server) {
+                this.server = createServer(this.serverHandler.bind(this));
             }
-        } else {
-            this.server = createServer(this.serverHandler.bind(this));
-            this.server.listen(...args);
-            d('listening on %o', args);
-        }
+            if (this.server.listening) {
+                reject(new Error('[MusicServer] already listening'));
+                return;
+            }
+            // `0` means bind to a random, free port assigned by the OS
+            this.server.listen(0, () => {
+                const addr = this.server.address();
+                d('listening on %o', addr);
+                resolve(addr);
+            });
+        });
     }
 }
 
