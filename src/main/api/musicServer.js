@@ -138,15 +138,15 @@ class MusicServer {
         try {
             const music = await this.getMusicUrl(id, quality);
             d('Got URL for music id=%d', id);
-            const st = await this.cache.fetch(music.url);
-            st.pipe(fs.createWriteStream(filePath));
+            const musicRes = await this.cache.fetch(music.url);
+            musicRes.body.pipe(fs.createWriteStream(filePath));
 
-            const range = MusicServer.getRange(req, +st.headers['content-length']);
+            const range = MusicServer.getRange(req, +musicRes.headers.get('content-length'));
             res.writeHead(206, MusicServer.buildHeaders(range));
 
             const checksum = createHash('md5');
             let receivedByteLength = 0;
-            st.on('data', data => {
+            musicRes.body.on('data', data => {
                 checksum.update(data);
                 const length = Buffer.byteLength(data);
                 if (receivedByteLength >= range[0]) {
@@ -159,7 +159,7 @@ class MusicServer {
                     res.write(data.slice(receivedByteLength - range[0], length));
                 }
             });
-            st.on('end', () => {
+            musicRes.body.on('end', () => {
                 const md5 = checksum.digest('hex');
                 if (md5 === music.md5.toLowerCase()) {
                     d('Finish downloading music id=%d, md5=%s', id, md5);

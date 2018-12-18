@@ -1,9 +1,8 @@
 import fs from 'fs';
-import URL from 'url';
 import path from 'path';
 import { Readable } from 'stream';
 
-import { http, https } from 'follow-redirects';
+import fetch from 'node-fetch';
 
 class Cache {
     constructor(path) {
@@ -30,50 +29,25 @@ class Cache {
 
     /**
      * fetch http(s) url as stream
-     * @param {string} url 
-     * @returns {Promise<import('http').IncomingMessage>}
+     * @param {string} url
      */
     fetch(url) {
-        const opt = URL.parse(url);
-        let request;
-        switch (opt.protocol) {
-            case 'http:':
-                request = http;
-                break;
-            case 'https:':
-                request = https;
-                break;
-            default:
-                throw new Error(`Unsupported protocol ${opt.protocol}.`);
-        }
-        return new Promise(resolve => {
-            request.get({
-                host: opt.host,
-                path: opt.path,
-                headers: this.headers
-            }, resolve);
-        });
+        return fetch(url);
     }
 
     /**
      * fetch url as file, with file name specified
      * @param {string} url url to fetch
      * @param {string} outputFileName file name to write
-     * @returns {Promise<string>} saved file full path
-     * @throws {number} HTTP Error status code
      */
-    fetchAsFile(url, outputFileName) {
-        return new Promise((resolve, reject) => {
-            fetch(url).then(res => {
-                if (res.statusCode === 200) {
-                    res.pipe(this.writeStream(outputFileName));
-                    resolve(this.fullPath(outputFileName));
-                } else {
-                    reject(res.statusCode);
-                }
-            });
-        });
-    }        
+    async fetchAsFile(url, outputFileName) {
+        const res = await fetch(url);
+        if (res.status === 200) {
+            res.body.pipe(this.writeStream(outputFileName));
+            return this.fullPath(outputFileName);
+        }
+        throw res.status;
+    }
 
     /**
      * save specified content to cache, with specified file name
