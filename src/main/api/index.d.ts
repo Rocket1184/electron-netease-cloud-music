@@ -211,7 +211,6 @@ export class ApiFunctions {
     getMusicLyricCached(id: number): Promise<LyricObjectItem>;
     submitWebLog(action: string, json: any): Promise<BaseApiResponse>;
     submitListened(id: number, time: number): Promise<BaseApiResponse>;
-    checkUrlStatus(url: string): Promise<number>;
     getDataSize(type: string): number | any;
     clearCache(type: string): Boolean | any;
     getVersionName(): string | any;

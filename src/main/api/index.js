@@ -2,10 +2,10 @@ import fs from 'fs';
 import url from 'url';
 import path from 'path';
 import crypto from 'crypto';
-import { Lrc } from 'lrc-kit';
 import cp from 'child_process';
 import { app } from 'electron';
-import { http, https } from 'follow-redirects';
+
+import { Lrc } from 'lrc-kit';
 
 import Cache from './cache';
 import Client from './httpClient';
@@ -280,28 +280,6 @@ export function submitListened(id, time) {
         download: 0,
         time: Math.round(time),
         end: 'ui',
-    });
-}
-
-export function checkUrlStatus(u = 'https://m10.music.126.net') {
-    u = String(u);
-    if (!~u.indexOf('http')) return new Promise(resolve => resolve(-1));
-    const opt = url.parse(u);
-    let request;
-    switch (opt.protocol) {
-        case 'https:':
-            request = https;
-            break;
-        case 'http:':
-            request = http;
-            break;
-        default:
-            throw new Error(`Unsupported protocol ${opt.protocol}`);
-    }
-    return new Promise(resolve => {
-        request.request(opt, resp => {
-            resolve(resp.statusCode);
-        }).end();
     });
 }
 
