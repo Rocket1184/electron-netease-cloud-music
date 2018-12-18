@@ -44,22 +44,22 @@ export default {
         }
     },
     methods: {
-        async getDailyList() {
-            const resp = await ApiRenderer.getDailySuggestions();
+        async refreshList() {
+            const resp = await ApiRenderer.getRecommendSongs();
             this.dailyList = resp.recommend.map(t => new Track(t));
         }
     },
     watch: {
         loginValid(val) {
             if (val) {
-                this.getDailyList();
+                this.refreshList();
             } else {
                 this.dailyList = [];
             }
         }
     },
     created() {
-        if (this.loginValid) this.getDailyList();
+        if (this.loginValid) this.refreshList();
     },
     components: {
         PlayAll,

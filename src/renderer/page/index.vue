@@ -1,16 +1,16 @@
 <template>
     <div class="index-wrapper">
-        <dailySuggestions></dailySuggestions>
+        <recommendSongs></recommendSongs>
     </div>
 </template>
 
 <script>
-import dailySuggestions from '@/components/dailySuggestions.vue';
+import recommendSongs from '@/components/recommendSongs.vue';
 
 export default {
     name: 'page-index',
     components: {
-        dailySuggestions
+        recommendSongs
     }
 };
 </script>
