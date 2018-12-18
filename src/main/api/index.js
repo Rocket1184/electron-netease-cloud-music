@@ -33,7 +33,7 @@ export function updateCookie(cookie) {
     client.updateCookie(cookie);
 }
 
-export function getCookie(key = '') {
+export function getCookie(key) {
     return client.getCookie(key);
 }
 
@@ -98,7 +98,7 @@ export function getDailySuggestions() {
         data: {
             offset: 0,
             total: true,
-            limit: 20,
+            limit: 30,
         }
     });
 }
@@ -145,7 +145,7 @@ export function getMusicUrlLinux(idOrIds, quality = 'h') {
         url: `${BaseURL}/api/linux/forward`,
         encrypt: 'linux',
         headers: {
-            Cookie: 'os=pc; osver=Microsoft-Windows-10-Professional-build-10586-64bit; appver=2.0.3.131777; channel=netease; __remember_me=true'
+            Cookie: 'os=pc; osver=Linux; appver=2.0.3.131777; channel=netease'
         },
         data: {
             method: 'POST',
