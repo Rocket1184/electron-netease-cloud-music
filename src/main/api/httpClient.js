@@ -1,15 +1,23 @@
 import qs from 'querystring';
 import { randomFillSync } from 'crypto';
 
-import Axios from 'axios';
 import debug from 'debug';
-import Cookie from 'cookiejar';
+import fetch from 'node-fetch';
+import { CookieJar, CookieAccessInfo } from 'cookiejar';
+
 import { encodeWeb, encodeLinux } from './codec';
 
 const d = debug('HTTP');
 
 class HttpClient {
     constructor() {
+        this.clientHeaders = {
+            Accept: '*/*',
+            'Accept-Language': 'zh',
+            'Accept-Encoding': 'gzip',
+            Referer: 'https://music.163.com/',
+            'User-Agent': 'Mozilla/5.0 (X11; Linux x86_64; rv:61.0) Gecko/20100101 Firefox/61.0'
+        };
         this.initCookieJar();
     }
 
@@ -17,7 +25,7 @@ class HttpClient {
         const now = Date.now();
         const nuid = randomFillSync(Buffer.alloc(16)).toString('hex');
         const wyyy = randomFillSync(Buffer.alloc(132)).toString('base64');
-        this.cookieJar = new Cookie.CookieJar();
+        this.cookieJar = new CookieJar();
         this.cookieJar.setCookies([
             `JSESSIONID-WYYY=${wyyy}:${now}`,
             `_iuqxldmzr=32`,
@@ -28,41 +36,23 @@ class HttpClient {
         ], '.163.com', '/');
     }
 
-    get clientHeaders() {
-        return {
-            Accept: '*/*',
-            'Accept-Language': 'zh',
-            'Accept-Encoding': 'gzip',
-            Cookie: this.getCookieString(),
-            Referer: 'https://music.163.com/',
-            'User-Agent': 'Mozilla/5.0 (X11; Linux x86_64; rv:61.0) Gecko/20100101 Firefox/61.0'
-        };
-    }
-
-    // clear all cookies, and set cookie as given arguments
+    /**
+     * clear all cookies, and set cookie as given arguments
+     * @param {string | string[] | Record<string, string>} arg 
+     */
     updateCookie(arg = {}) {
         this.initCookieJar();
         if (typeof arg === 'string' || Array.isArray(arg)) {
             this.cookieJar.setCookies(arg);
             return;
         }
-        const cookies = [];
-        for (const key in arg) {
-            if (arg.hasOwnProperty(key)) {
-                cookies.push(`${key}=${arg[key]}`);
-            }
-        }
+        const cookies = Object.entries(arg).map(([k, v]) => `${k}=${v}`);
         this.cookieJar.setCookies(cookies);
     }
 
-    // set one or more cookie
-    setCookie(...arg) {
-        this.cookieJar.setCookies(...arg);
-    }
-
-    getCookie(key = '') {
-        const cookies = this.cookieJar.getCookies(Cookie.CookieAccessInfo.All);
-        if (key === '') {
+    getCookie(key) {
+        const cookies = this.cookieJar.getCookies(CookieAccessInfo.All);
+        if (!key) {
             let result = {};
             cookies.forEach(c => result[c.name] = c.value);
             return result;
@@ -72,70 +62,91 @@ class HttpClient {
     }
 
     getCookieString() {
-        const cookies = this.cookieJar.getCookies(Cookie.CookieAccessInfo.All);
+        const cookies = this.cookieJar.getCookies(CookieAccessInfo.All);
         return cookies.map(c => c.toValueString()).join('; ');
     }
 
-    handleResponse(response) {
-        const pendingCookie = response.headers['set-cookie'];
-        if (pendingCookie) {
-            this.cookieJar.setCookies(response.headers['set-cookie']);
+    /**
+     * merge provided header key-value maps with pre-defined headers
+     * @param  {...any} headers headers to append
+     */
+    mergeHeaders(...headers) {
+        let hd = Object.assign({}, this.clientHeaders, ...headers);
+        if (hd['Cookie']) {
+            hd['Cookie'] += ('; ' + this.getCookieString());
+        } else {
+            hd['Cookie'] = this.getCookieString();
         }
-        d('%o %o %s', response.status, response.config.method.toUpperCase(), response.config.url);
-        if (response.status !== 200) {
-            d('%o', response.data);
+        return hd;
+    }
+
+    /**
+     * update cookiejar with 'set-cookie' headers, then parse JSON
+     * @param {string} url request URL
+     * @param {RequestInit} init node-fetch's `RequestInit` object
+     * @param {import('node-fetch').Response} res node-fetch's `Response` object
+     * @returns {Promise<any>}
+     */
+    handleResponse(url, init, res) {
+        const headers = res.headers.raw();
+        for (const key in headers) {
+            if (key.toLowerCase() === 'set-cookie') {
+                this.cookieJar.setCookies(headers[key]);
+                break;
+            }
         }
+        d('%o %o %s', res.status, init.method, url);
+        if (res.status !== 200) {
+            d('%o', res.data);
+        }
+        return res.json();
     }
 
     post(config) {
-        config.method = 'post';
+        let url = config.url;
+        /** @type {RequestInit} */
+        let init = {
+            method: 'POST',
+            body: config.data || {}
+        };
         const __csrf = this.getCookie('__csrf');
         if (__csrf) {
-            config.url += `?csrf_token=${__csrf}`;
-            if (config.data) {
-                config.data.csrf_token = __csrf;
-            }
+            url += `?csrf_token=${__csrf}`;
+            init.body.csrf_token = __csrf;
         }
-        if (config.data) {
-            if (config.encrypt === 'linux') {
-                config.data = qs.stringify(encodeLinux(config.data));
-            } else {
-                config.data = qs.stringify(encodeWeb(config.data));
-            }
+        if (config.encrypt === 'linux') {
+            init.body = qs.stringify(encodeLinux(init.body));
         } else {
-            config.data = '';
+            init.body = qs.stringify(encodeWeb(init.body));
         }
 
-        config.headers = Object.assign({
+        init.headers = this.mergeHeaders({
             'Content-Type': 'application/x-www-form-urlencoded',
-            'Content-Length': Buffer.byteLength(config.data)
-        }, this.clientHeaders, config.headers);
+            'Content-Length': Buffer.byteLength(init.body)
+        }, config.headers);
 
         return new Promise((resolve, reject) => {
-            Axios(config).then(response => {
-                this.handleResponse(response);
-                resolve(response.data);
-            }).catch(error => {
-                reject(error);
-            });
+            fetch(url, init)
+                .then(res => this.handleResponse(url, init, res))
+                .then(resolve)
+                .catch(reject);
         });
     }
 
-    get(urlOrConfig) {
-        let config;
-        if (typeof urlOrConfig === 'string')
-            config = { url: urlOrConfig };
-        else config = urlOrConfig;
+    get(config) {
+        let url = typeof config === 'string' ? config : config.url;
+        /** @type {RequestInit} */
+        let init = {
+            method: 'GET'
+        };
 
-        config.headers = Object.assign(this.clientHeaders, config.headers);
+        init.headers = this.mergeHeaders(config.headers);
 
         return new Promise((resolve, reject) => {
-            Axios(config).then(response => {
-                this.handleResponse(response);
-                resolve(response.data);
-            }).catch(error => {
-                reject(error);
-            });
+            fetch(url, init)
+                .then(res => this.handleResponse(url, init, res))
+                .then(resolve)
+                .catch(reject);
         });
     }
 }
