@@ -92,13 +92,13 @@ export function getMusicRecord(uid) {
     });
 }
 
-export function getDailySuggestions() {
+export function getRecommendSongs() {
     return client.post({
-        url: `${BaseURL}/weapi/v1/discovery/recommend/songs`,
+        url: `${BaseURL}/weapi/v2/discovery/recommend/songs`,
         data: {
+            limit: 20,
             offset: 0,
-            total: true,
-            limit: 30,
+            total: true
         }
     });
 }
