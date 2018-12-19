@@ -140,6 +140,7 @@ export default {
             if (this.playing.track && this.playing.track.album.picUrl) {
                 return bkgImg(sizeImg(this.playing.track.album.picUrl, HiDpiPx(64)));
             }
+            return '';
         },
         songProgress() {
             return 100 * this.timeCurrent / this.timeTotal || 0;

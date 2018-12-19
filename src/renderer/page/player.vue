@@ -78,6 +78,7 @@ export default {
             try {
                 return bkgImg(sizeImg(this.playing.track.album.picUrl, HiDpiPx(220)));
             } catch (e) { /* picUrl unavaliable */ }
+            return '';
         },
         lyricScrollerStyle() {
             if (this.lyricElemMap.length === 0 || this.currentLyricIndex === -1) {
