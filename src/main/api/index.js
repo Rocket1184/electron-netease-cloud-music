@@ -29,14 +29,27 @@ const musicServer = new MusicServer(musicCache);
 let musicServerPort = 0;
 musicServer.listen().then(addr => musicServerPort = addr.port);
 
+/**
+ * clear all cookies, and set cookie as given arguments
+ * @param {string | string[] | Record<string, string>} arg 
+ */
 export function updateCookie(cookie) {
     client.updateCookie(cookie);
 }
 
+/**
+ * @param {string?} key
+ * @returns {string | Record<string, string>}
+ */
 export function getCookie(key) {
     return client.getCookie(key);
 }
 
+/**
+ * @param {string} acc email, username or phone
+ * @param {string} pwd password
+ * @returns {Promise<Types.LoginRes>}
+ */
 export function login(acc, pwd) {
     const password = crypto.createHash('md5').update(pwd).digest('hex');
     const postBody = {
@@ -71,6 +84,10 @@ export async function logout() {
     return resp.code;
 }
 
+/**
+ * @param {number} uid
+ * @returns {Promise<Types.UserPlaylistRes>}
+ */
 export function getUserPlaylist(uid) {
     return client.post({
         url: `${BaseURL}/weapi/user/playlist`,
@@ -82,16 +99,28 @@ export function getUserPlaylist(uid) {
     });
 }
 
-export function getMusicRecord(uid) {
+/**
+ * 用户听歌记录
+ * @param {number} uid
+ * @param {0|1} type `0`: 所有时间, `1`: 最近一周
+ */
+export function getMusicRecord(uid, type = 0) {
     return client.post({
         url: `${BaseURL}/weapi/v1/play/record`,
         data: {
+            limit: 1000,
+            offset: 0,
+            total: true,
+            type,
             uid,
-            type: 0,
         }
     });
 }
 
+/**
+ * 每日歌曲推荐
+ * @returns {Promise<Types.RecommendSongsRes>}
+ */
 export function getRecommendSongs() {
     return client.post({
         url: `${BaseURL}/weapi/v2/discovery/recommend/songs`,
@@ -103,6 +132,50 @@ export function getRecommendSongs() {
     });
 }
 
+/** 
+ * 每日歌曲推荐 -> 不感兴趣
+ */
+export function dislikeMusic(id) {
+    return client.post({
+        url: `${BaseURL}/weapi/v2/discovery/recommend/dislike`,
+        data: {
+            resId: id,
+            resType: 4,
+            sceneType: 1
+        }
+    });
+}
+
+/**
+ * 推荐歌单
+ */
+export function getRecommendPlaylist() {
+    return client.post({
+        url: `${BaseURL}/weapi/discovery/recommend/resource`,
+        data: {}
+    });
+}
+
+/**
+ * 推荐歌单 -> 不感兴趣
+ * @param {number} id
+ * @param {'bysong_rt'|'hotbased'} alg `bysong_rt`: 根据收藏的单曲推荐, `hotbased`: 热门推荐
+ */
+export function dislikePlaylist(id, alg) {
+    return client.post({
+        url: `${BaseURL}/weapi/v2/discovery/recommend/dislike`,
+        data: {
+            resId: id,
+            resType: 1,
+            type: alg
+        }
+    });
+}
+
+/**
+ * @param {number} id
+ * @returns {Promise<Types.ListDetailRes>}
+ */
 export function getListDetail(id) {
     return client.post({
         url: `${BaseURL}/weapi/v3/playlist/detail`,
@@ -122,7 +195,13 @@ const QualityMap = {
     l: 128000
 };
 
-export function getMusicUrl(idOrIds, quality = 'h') {
+/**
+ * temporary music url on netease's server
+ * @param {number|number[]} idOrIds
+ * @param {Types.MusicQuality} quality
+ * @returns {Promise<Types.MusicUrlRes>}
+ */
+export function getMusicUrl(idOrIds, quality) {
     if (!QualityMap[quality]) throw new Error(`Quality type '${quality}' is not in [h,m,l]`);
     let ids;
     if (Array.isArray(idOrIds)) ids = idOrIds;
@@ -136,7 +215,13 @@ export function getMusicUrl(idOrIds, quality = 'h') {
     });
 }
 
-export function getMusicUrlLinux(idOrIds, quality = 'h') {
+/**
+ * music url with 'linux/forward' api
+ * @param {number|number[]} idOrIds
+ * @param {Types.MusicQuality} quality
+ * @returns {Promise<Types.MusicUrlRes>}
+ */
+export function getMusicUrlLinux(idOrIds, quality) {
     if (!QualityMap[quality]) throw new Error(`Quality type '${quality}' is not in [h,m,l]`);
     let ids;
     if (Array.isArray(idOrIds)) ids = idOrIds;
@@ -158,7 +243,13 @@ export function getMusicUrlLinux(idOrIds, quality = 'h') {
     });
 }
 
-export function getMusicUrlCached(id, quality = 'l') {
+/**
+ * get musicServer's cached music url
+ * @param {number} id
+ * @param {Types.MusicQuality} quality
+ * @returns {Promise<Types.MusicUrlCachedRes>}
+ */
+export function getMusicUrlCached(id, quality) {
     return {
         url: url.format({
             protocol: 'http:',
@@ -170,11 +261,23 @@ export function getMusicUrlCached(id, quality = 'l') {
     };
 }
 
-export function getMusicUrlNoCache(id, quality = 'l') {
+/**
+ * musicServer's music url, but force the cache
+ * @param {number} id
+ * @param {Types.MusicQuality} quality
+ * @returns {Promise<Types.MusicUrlCachedRes>}
+ */
+export function getMusicUrlNoCache(id, quality) {
     musicCache.rm(id).catch(() => { /* nothing happened */ });
     return getMusicLyricCached(id, quality);
 }
 
+/**
+ * @param {number} rid
+ * @param {number} limit
+ * @param {number} offset
+ * @returns {Promise<Types.MusicCommentsRes>}
+ */
 export function getMusicComments(rid, limit = 20, offset = 0) {
     return client.post({
         url: `${BaseURL}/weapi/v1/resource/comments/R_SO_4_${rid}`,
@@ -190,15 +293,17 @@ function byTimestamp(a, b) {
     return a.timestamp - b.timestamp;
 }
 
+/**
+ * @param {number} id
+ * @returns {Promise<Types.MusicLyricRes>}
+ */
 export async function getMusicLyric(id) {
     const tmp = await client.post({
         url: `${BaseURL}/weapi/song/lyric`,
         data: {
             id,
-            os: 'pc',
             lv: -1,
-            kv: -1,
-            tv: -1,
+            tv: -1
         }
     });
     let result = {};
@@ -233,6 +338,10 @@ export async function getMusicLyric(id) {
     return result;
 }
 
+/**
+ * @param {number} id
+ * @returns {Promise<Types.MusicLyricRes>}
+ */
 export async function getMusicLyricCached(id) {
     if (await lyricCache.has(id)) {
         return new Promise((resolve, reject) => {
@@ -251,6 +360,9 @@ export async function getMusicLyricCached(id) {
     }
 }
 
+/**
+ * this maybe have been removed, use `sumbitFeedback` instead
+ */
 export function submitWebLog(action, json) {
     return client.post({
         url: `${BaseURL}/weapi/log/web`,
@@ -261,6 +373,27 @@ export function submitWebLog(action, json) {
     });
 }
 
+export function sumbitFeedback(logs) {
+    return client.post({
+        url: `${BaseURL}/weapi/feedback/weblog`,
+        data: {
+            logs: JSON.stringify(logs),
+        }
+    });
+}
+
+export function submitCount() {
+    return client.post({
+        url: `${BaseURL}/weapi/pl/count`,
+        data: {}
+    });
+}
+
+/**
+ * tell netease I've finished listening a song
+ * @param {number} id
+ * @param {number} time song duration
+ */
 export function submitListened(id, time) {
     return submitWebLog('play', {
         id,
@@ -269,6 +402,13 @@ export function submitListened(id, time) {
         download: 0,
         time: Math.round(time),
         end: 'ui',
+    });
+}
+
+export function getVipInfo() {
+    return client.post({
+        url: `${BaseURL}/weapi/music-vip-membership/front/vip/info`,
+        data: {}
     });
 }
 
@@ -299,6 +439,10 @@ export function removeDir(dirPath) {
     });
 }
 
+/**
+ * get size of cached data in bytes
+ * @param {'all'|'music'|'lyric'} type cache type, default to `all`
+ */
 export function getDataSize(type = 'all') {
     const cachePath = cachePathMap[type];
     let size;
@@ -322,6 +466,9 @@ export function clearCache(type) {
     return true;
 }
 
+/**
+ * @returns {string}
+ */
 export function getVersionName() {
     let version = Settings.appVer;
     if (process.env.NODE_ENV === 'development') {
@@ -336,43 +483,69 @@ export function getVersionName() {
     return version;
 }
 
+/**
+ * @returns {Promise<Types.Settings>}
+ */
 export function getCurrentSettings() {
     return Settings.getCurrent();
 }
 
+/**
+ * write and save settings to file
+ * @param {Types.Settings} target settings to write
+ */
 export function writeSettings(target) {
-    return Settings.set(target);
+    Settings.set(target);
 }
 
 export function resetSettings() {
-    return Settings.set(Settings.defaultSettings);
+    Settings.set(Settings.defaultSettings);
 }
 
+/**
+ * 每日签到
+ * @param {0|1} type `0`:移动端, `1`:桌面/网页端
+ * @returns {Promise<Types.DailyTaskRes>}
+ */
 export function postDailyTask(type) {
     return client.post({
         url: `${BaseURL}/weapi/point/dailyTask`,
-        data: {
-            type,
-        }
+        data: { type }
     });
 }
 
+/**
+ * add or remove tracks in playlist
+ * @param {'add'|'del'} op opreation
+ * @param {number} pid playlist id
+ * @param {number[]} tracks track id
+ */
 export function manipulatePlaylistTracks(op, pid, tracks) {
     return client.post({
         url: `${BaseURL}/weapi/playlist/manipulate/tracks`,
         data: {
             op,
             pid,
-            tracks,
+            // tracks,
             trackIds: JSON.stringify(tracks),
         }
     });
 }
 
+/**
+ * add tracks to playlist
+ * @param {number} pid playlist id
+ * @param  {number[]} tracks track to add
+ */
 export function collectTrack(pid, ...tracks) {
     return manipulatePlaylistTracks('add', pid, tracks);
 }
 
+/**
+ * remove tracks from playlist
+ * @param {number} pid playlist id
+ * @param  {number[]} tracks track to remove
+ */
 export function uncollectTrack(pid, ...tracks) {
     return manipulatePlaylistTracks('del', pid, tracks);
 }
@@ -380,9 +553,7 @@ export function uncollectTrack(pid, ...tracks) {
 export function getSearchSuggest(s) {
     return client.post({
         url: `${BaseURL}/weapi/search/suggest/web`,
-        data: {
-            s,
-        }
+        data: { s }
     });
 }
 
@@ -397,6 +568,14 @@ const searchTypeMap = {
     radio: '1009'
 };
 
+/**
+ * preform search
+ * @param {string} s keyword
+ * @param {'song'|'album'|'artist'|'playlist'|'user'|'mv'|'lyric'|'radio'} type
+ * @param {number} limit
+ * @param {number} offset
+ * @returns {Promise<Types.SearchRes>}
+ */
 export function search(s, type, limit = 20, offset = 0) {
     return client.post({
         url: `${BaseURL}/weapi/cloudsearch/get/web`,
