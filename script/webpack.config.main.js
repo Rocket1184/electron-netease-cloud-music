@@ -1,8 +1,9 @@
 'use strict';
 
-const packageJson = require('../package.json');
+const webpack = require('webpack');
 
 const { isProd, absPath } = require('./util');
+const packageJson = require('../package.json');
 
 let cfg = {
     performance: { hints: false },
@@ -34,6 +35,9 @@ if (isProd) {
     // release config
     cfg.mode = 'production';
     cfg.devtool = 'source-map';
+    cfg.plugins = [
+        new webpack.DefinePlugin({ 'process.env.NODE_ENV': '"production"' })
+    ];
 } else {
     // dev config
     cfg.mode = 'development';

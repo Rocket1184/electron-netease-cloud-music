@@ -1,6 +1,6 @@
 'use strict';
 
-const packageJson = require('../package.json');
+const webpack = require('webpack');
 const { VueLoaderPlugin } = require('vue-loader');
 const HtmlWebpackPlugin = require('html-webpack-plugin');
 const CopyWebpackPlugin = require('copy-webpack-plugin');
@@ -8,6 +8,7 @@ const MiniCSSExtractPlugin = require('mini-css-extract-plugin');
 
 const config = require('./config');
 const { isProd, absPath } = require('./util');
+const packageJson = require('../package.json');
 
 let cfg = {
     performance: { hints: false },
@@ -101,6 +102,7 @@ if (isProd) {
         content: `script-src 'self'; media-src http://127.0.0.1:*; img-src 'self' https://*.music.126.net`
     }];
     cfg.plugins.push(
+        new webpack.DefinePlugin({ 'process.env.NODE_DEV': '"production"' }),
         new MiniCSSExtractPlugin(),
         new CopyWebpackPlugin([
             { from: absPath('package.json'), to: absPath('dist') },
