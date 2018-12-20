@@ -16,6 +16,21 @@ const mainURL = isDev ? `http://localhost:${devPort}` : `file://${__dirname}/ind
 let loginWindow;
 let loginURL = isDev ? `http://localhost:${devPort}/login.html` : `file://${__dirname}/login.html`;
 
+if (app.requestSingleInstanceLock()) {
+    app.on('second-instance', () => {
+        if (!mainWindow) {
+            mainWindow = createMainWindow();
+            return;
+        }
+        if (mainWindow.isMinimized()) {
+            mainWindow.restore();
+        }
+        mainWindow.focus();
+    });
+} else {
+    app.quit();
+}
+
 function createMainWindow(url = mainURL) {
     const settings = getCurrent();
 
@@ -28,8 +43,6 @@ function createMainWindow(url = mainURL) {
         webPreferences: {
             preload: join(__dirname, 'preload.js'),
             nodeIntegration: isDev,
-            webgl: false,
-            webviewTag: false,
             additionalArguments: [`--initial-settings=${JSON.stringify(settings)}`]
         }
     });
@@ -53,7 +66,9 @@ function createMainWindow(url = mainURL) {
 
 app.on('ready', () => {
     // do not display default menu bar
-    isDev ? null : Menu.setApplicationMenu(null);
+    if (!isDev) {
+        Menu.setApplicationMenu(null);
+    }
     mainWindow = createMainWindow();
     // boot up ApiHost
     require('./apiHost');
@@ -73,7 +88,7 @@ app.on('before-quit', () => {
 });
 
 app.on('activate', () => {
-    if (mainWindow === null) {
+    if (!mainWindow) {
         mainWindow = createMainWindow();
         return;
     }
