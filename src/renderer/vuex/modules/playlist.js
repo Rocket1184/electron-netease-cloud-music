@@ -1,15 +1,15 @@
 import * as types from '../mutation-types';
 import { Track } from '@/util/models';
 
-export const LOOP_TYPES = {
-    LIST_LOOP: 0,
-    SINGLE_LOOP: 1,
+export const LOOP_MODE = {
+    LIST: 0,
+    SINGLE: 1,
     RANDOM: 2
 };
 
 const state = {
     index: 0,
-    loopMode: LOOP_TYPES.LIST_LOOP,
+    loopMode: LOOP_MODE.LIST,
     list: [],
 };
 
@@ -30,19 +30,19 @@ const mutations = {
             throw new Error('Wrong mutation payload in SET_CURRENT_INDEX.');
         }
     },
-    [types.SET_LOOP_MODE_LOOP](state) {
-        state.loopMode = LOOP_TYPES.LIST_LOOP;
+    [types.SET_LOOP_MODE_LIST](state) {
+        state.loopMode = LOOP_MODE.LIST;
     },
     [types.SET_LOOP_MODE_SINGLE](state) {
-        state.loopMode = LOOP_TYPES.SINGLE_LOOP;
+        state.loopMode = LOOP_MODE.SINGLE;
     },
     [types.SET_LOOP_MODE_RANDOM](state) {
-        state.loopMode = LOOP_TYPES.RANDOM;
+        state.loopMode = LOOP_MODE.RANDOM;
     },
     [types.RESTORE_PLAYLIST](state, payload) {
         const { index, loopMode, list } = payload;
         state.index = index || 0;
-        state.loopMode = loopMode || LOOP_TYPES.LIST_LOOP;
+        state.loopMode = loopMode || LOOP_MODE.LIST;
         state.list = list.map(t => new Track(t));
     },
     [types.ADD_TRACK_TO_PLAYLIST](state, payload) {

@@ -1,5 +1,5 @@
 import * as types from './mutation-types';
-import { LOOP_TYPES } from './modules/playlist';
+import { LOOP_MODE } from './modules/playlist';
 import ApiRenderer from '@/util/apiRenderer';
 import { User } from '@/util/models';
 
@@ -37,12 +37,11 @@ export async function restoreUserInfo(context) {
     }
 }
 
-export function updateUserPlaylists({ state, commit }) {
-    return ApiRenderer.getUserPlaylist(state.user.info.id).then(({ playlist }) => {
+export async function updateUserPlaylists({ state, commit }) {
+    const { playlist } = await ApiRenderer.getUserPlaylist(state.user.info.id);
         commit(types.UPDATE_USER_INFO, playlist[0].creator);
         commit(types.SET_USER_PLAYLISTS, playlist);
         return playlist;
-    });
 }
 
 export function setLoginValid(context, payload) {
