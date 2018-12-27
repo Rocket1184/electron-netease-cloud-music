@@ -8,7 +8,7 @@ PLATFORMS=(linux darwin)
 BUCKET_NAME="$PKG_NAME"
 VERSION_HASH="${TRAVIS_COMMIT:0:7}"
 PKG_VER="$VERSION_HASH"
-QSHELL_VER="v2.3.4"
+QSHELL_VER="v2.3.6"
 QSHELL_DIR="node_modules/.cache/qshell/${QSHELL_VER}"
 QSHELL_BIN="${QSHELL_DIR}/bin/qshell_linux_x64"
 
@@ -42,8 +42,8 @@ qshell_init() {
     fi
     # Usage: qshell account [--overwrite | -w]<Your AccessKey> <Your SecretKey> <Your Account Name>
     "$QSHELL_BIN" account "$QINIU_AK" "$QINIU_SK" default
-    # Usage: qshell listbucket [--prefix <Prefix>] <Bucket> [-o <ListBucketResultFile>]
-    "$QSHELL_BIN" listbucket "$BUCKET_NAME"
+    # Usage: qshell listbucket2 [--prefix <Prefix> | --suffixes <suffixes1,suffixes2>] [--start <StartDate>] [--max-retry <RetryCount>][--end <EndDate>] <Bucket> [--readable] [ [-a] -o <ListBucketResultFile>]
+    "$QSHELL_BIN" listbucket2 --readable "$BUCKET_NAME"
 }
 
 qshell_upload() {
