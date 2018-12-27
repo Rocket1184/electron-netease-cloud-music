@@ -6,42 +6,43 @@
                 :style="coverImgStyle"></div>
         </router-link>
         <div class="info">
-            <div class="name">
-                <span class="song">{{track.name}}</span>
-                <span class="artist">{{track.artistName}}</span>
-            </div>
-            <div class="quick-actions">
-                <mu-checkbox title="喜欢"
-                    ref="chkFavorite"
-                    uncheck-icon="favorite_border"
-                    checked-icon="favorite"
-                    color="red"
-                    v-model="isFavorite"></mu-checkbox>
-                <mu-checkbox title="收藏到歌单"
-                    ref="chkShowPlaylists"
-                    uncheck-icon="bookmark_border"
-                    checked-icon="bookmark"
-                    color="secondary"
-                    v-model="collectPopupShown"></mu-checkbox>
-                <mu-menu :open.sync="currentListShown"
-                    placement="top"
-                    popover-class="playerbar-current-list">
-                    <mu-checkbox title="播放列表"
-                        uncheck-icon="queue_music"
-                        checked-icon="queue_music"
+            <div class="desc">
+                <div class="name">
+                    <span class="song">{{track.name}}</span>
+                    <span class="artist">{{track.artistName}}</span>
+                </div>
+                <div class="quick-actions">
+                    <mu-checkbox title="喜欢"
+                        ref="chkFavorite"
+                        uncheck-icon="favorite_border"
+                        checked-icon="favorite"
+                        color="red"
+                        v-model="isFavorite"></mu-checkbox>
+                    <mu-checkbox title="收藏到歌单"
+                        ref="chkShowPlaylists"
+                        uncheck-icon="bookmark_border"
+                        checked-icon="bookmark"
                         color="secondary"
-                        v-model="currentListShown"></mu-checkbox>
-                    <currentList slot="content"></currentList>
-                </mu-menu>
+                        v-model="collectPopupShown"></mu-checkbox>
+                    <mu-menu :open.sync="currentListShown"
+                        placement="top"
+                        popover-class="playerbar-current-list">
+                        <mu-checkbox title="播放列表"
+                            uncheck-icon="queue_music"
+                            checked-icon="queue_music"
+                            color="secondary"
+                            v-model="currentListShown"></mu-checkbox>
+                        <currentList slot="content"></currentList>
+                    </mu-menu>
+                </div>
             </div>
             <div class="progress">
                 <mu-slider id="playerbar-progress"
                     :display-value="false"
-                    class="slider"
                     :value="songProgress"
                     @change="handleProgressDrag"></mu-slider>
+                <span class="time">{{ timeCurrent | time }} / {{ timeTotal | time }}</span>
             </div>
-            <span class="time">{{ timeCurrent | time }} / {{ timeTotal | time }}</span>
         </div>
         <div class="control">
             <mu-button fab
@@ -294,45 +295,50 @@ export default {
     }
     .info {
         font-size: 14px;
-        padding: 10px 10px 2px;
+        padding: 4px 10px 0 10px;
         flex-grow: 1;
         overflow: hidden;
-        display: grid;
-        grid-template-columns: 1fr 100px;
-        grid-template-rows: 50% 50%;
-        .name {
-            display: flex;
-            span {
-                max-width: 310px;
-                overflow: hidden;
-                text-overflow: ellipsis;
-                white-space: nowrap;
-            }
-            .artist {
-                margin-left: 10px;
-                color: dimgrey;
-            }
-        }
-        .quick-actions {
-            width: 100px;
+        display: flex;
+        flex-direction: column;
+        justify-content: space-around;
+        .desc {
             display: flex;
             justify-content: space-between;
-        }
-        .progress {
-            .slider {
-                margin: 0;
+            .name {
+                span {
+                    max-width: 310px;
+                    overflow: hidden;
+                    text-overflow: ellipsis;
+                    white-space: nowrap;
+                }
+                .artist {
+                    margin-left: 10px;
+                    color: dimgrey;
+                }
+            }
+            .quick-actions {
+                width: calc(33px * 4); // 33px * button count
+                display: flex;
+                justify-content: space-between;
+                font-size: 0;
             }
         }
-        .time {
-            width: 100px;
-            text-align: right;
+        .progress {
+            display: flex;
+            .mu-slider {
+                margin: 0;
+            }
+            .time {
+                width: 110px;
+                text-align: right;
+            }
         }
     }
     .control {
-        width: 180px;
-        padding: 4px;
+        width: 170px;
+        padding-right: 10px;
         display: flex;
-        justify-content: space-around;
+        justify-content: space-between;
         align-items: center;
         .button {
             box-shadow: white 0 0 0;
