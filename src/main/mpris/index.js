@@ -11,11 +11,15 @@ const TAG = 'MPRIS:IPC';
 const d = debug(TAG);
 let msgId = 0;
 const cbMap = new Map();
-const getters = ['getPosition'];
+//      dbus getter      ipc          ipc      dbus callback
+// DBus ----------> Main --> Renderer --> Main ------------> DBus
+const dbusGetters = ['getPosition'];
+//      method/setter      ipc
+// DBus ------------> Main --> Renderer
 const dbusEvents = ['raise', 'quit', 'next', 'prev', 'play', 'pause', 'stop', 'seek', 'openuri'];
 
 ipcMain.on(TAG, (_, type, ...args) => {
-    if (getters.includes(type)) {
+    if (dbusGetters.includes(type)) {
         const [id, ...payload] = args;
         d('↓ %s %d', type, id);
         if (cbMap.has(id)) {
@@ -29,7 +33,7 @@ ipcMain.on(TAG, (_, type, ...args) => {
 });
 
 function bindWebContents(wc) {
-    const getterListeners = getters.map(type => cb => {
+    const getterListeners = dbusGetters.map(type => cb => {
         msgId++;
         wc.send(TAG, type, msgId);
         d('↑ %s %d', type, msgId);
@@ -40,10 +44,10 @@ function bindWebContents(wc) {
         wc.send(TAG, type, msgId, ...args);
         d('↑ %s %d', type, msgId, ...args);
     });
-    ipcMain.once(TAG, (_, type) => {
-        if (type === 'renderer-ready') {
+    ipcMain.once(TAG, (_, msg) => {
+        if (msg === 'renderer-ready') {
             d('bindWebContents');
-            getters.forEach((type, index) => {
+            dbusGetters.forEach((type, index) => {
                 MPRISEmitter.on(type, getterListeners[index]);
             });
             dbusEvents.forEach((type, index) => {
@@ -52,7 +56,7 @@ function bindWebContents(wc) {
         }
     });
     wc.on('destroyed', () => {
-        getters.forEach((type, index) => {
+        dbusGetters.forEach((type, index) => {
             MPRISEmitter.removeListener(type, getterListeners[index]);
         });
         dbusEvents.forEach((type, index) => {
