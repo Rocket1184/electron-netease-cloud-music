@@ -241,10 +241,16 @@ export default {
         this.audioEl = _audioEl;
 
         const _updateTime = () => this.timeCurrent = this.audioEl.currentTime;
-        const _unsetInterval = () => _playingIntervalId = clearInterval(_playingIntervalId);
+        const _setUpdateTimeInterval = () => {
+            if (_playingIntervalId) {
+                clearInterval(_playingIntervalId);
+            }
+            _playingIntervalId = setInterval(() => _updateTime(), 1000);
+        };
+        const _unsetUpdateTimeInterval = () => _playingIntervalId = clearInterval(_playingIntervalId);
 
         _audioEl.addEventListener('loadedmetadata', () => {
-            _unsetInterval();
+            _unsetUpdateTimeInterval();
             this.timeTotal = _audioEl.duration;
             this.timeCurrent = _audioEl.currentTime = 0;
             if (!this.ui.paused) _audioEl.play();
@@ -257,22 +263,30 @@ export default {
             // update playing process time after the time reaches a 'integer' second
             // why use 1.1 not 1 ? maybe there is a little lag in event loop... I don't know
             const timeOut = (1.1 - _audioEl.currentTime % 1) * 1000;
+            _unsetUpdateTimeInterval();
             setTimeout(() => {
                 _updateTime();
-                // only set interval when it's not set, to avoid massive events
-                if (!_playingIntervalId)
-                    _playingIntervalId = setInterval(() => _updateTime(), 1000);
+                _setUpdateTimeInterval();
             }, timeOut);
         });
 
-        _audioEl.addEventListener('pause', () => _updateTime() && _unsetInterval());
+        _audioEl.addEventListener('pause', () => {
+            _updateTime();
+            _unsetUpdateTimeInterval();
+        });
 
         _audioEl.addEventListener('ended', () => {
+            _unsetUpdateTimeInterval();
             this.submitListened();
-            this.playNextTrack();
+            if (this.playlist.loopMode === LOOP_MODE.SINGLE) {
+                _audioEl.play();
+            } else {
+                this.playNextTrack();
+            }
         });
 
         _audioEl.addEventListener('error', () => {
+            _unsetUpdateTimeInterval();
             if (!this.track.id) return;
             if (!this.hasRetried) {
                 this.hasRetried = true;
