@@ -27,6 +27,8 @@ function senderFn(type, ...args) {
     d('🔺 %s %o', type, args);
 }
 
+//          ipc                         PropertiesChanged signal
+// Renderer --> Main(emit MPRIS events) -----------------------> DBus
 const MPRIS = new Proxy({}, {
     get(_, propName) {
         if (methodMap.has(propName)) {
@@ -84,6 +86,7 @@ export function bindEventListener(audioEl) {
         });
         senderFn('renderer-ready');
     }
+    // TODO: MPRIS `LoopStatus` and `Shuffle` support; which DE support those props?
 }
 
 // Vuex mutation subscribe handler
