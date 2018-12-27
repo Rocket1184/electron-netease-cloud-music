@@ -34,6 +34,11 @@
                             v-model="currentListShown"></mu-checkbox>
                         <currentList slot="content"></currentList>
                     </mu-menu>
+                    <mu-checkbox title="循环模式"
+                        ref="chkLoopMode"
+                        :uncheck-icon="iconLoopMode"
+                        @click="handleLoopMode"
+                        color="secondary"></mu-checkbox>
                 </div>
             </div>
             <div class="progress">
@@ -77,6 +82,7 @@ import {
     PAUSE_PLAYING_MUSIC,
     RESUME_PLAYING_MUSIC
 } from '@/vuex/mutation-types';
+import { LOOP_MODE } from '@/vuex/modules/playlist';
 import { sizeImg, HiDpiPx, bkgImg } from '@/util/image';
 import { shortTime } from '@/util/formatter';
 
@@ -100,7 +106,8 @@ export default {
             'playNextTrack',
             'playPreviousTrack',
             'updatePlaylistDetail',
-            'toggleCollectPopup'
+            'toggleCollectPopup',
+            'nextLoopMode'
         ]),
         handlePlayOrPause() {
             this.ui.audioSrc && (this.audioEl.paused ? this.playAudio() : this.pauseAudio());
@@ -129,6 +136,20 @@ export default {
                 await this.updatePlaylistDetail(list.id);
                 this.shouldFavorite = null;
             }, 0);
+        },
+        handleLoopMode() {
+            this.nextLoopMode();
+            switch (this.playlist.loopMode) {
+                case LOOP_MODE.LIST:
+                    this.$toast.message('列表顺序播放');
+                    break;
+                case LOOP_MODE.SINGLE:
+                    this.$toast.message('单曲循环');
+                    break;
+                case LOOP_MODE.RANDOM:
+                    this.$toast.message('随机播放');
+                    break;
+            }
         }
     },
     computed: {
@@ -197,6 +218,17 @@ export default {
                 }
                 this.realCurrentListShown = val;
             }
+        },
+        iconLoopMode() {
+            switch (this.playlist.loopMode) {
+                case LOOP_MODE.LIST:
+                    return 'repeat';
+                case LOOP_MODE.SINGLE:
+                    return 'repeat_one';
+                case LOOP_MODE.RANDOM:
+                    return 'shuffle';
+            }
+            return 'not_interested';
         }
     },
     filters: {
