@@ -39,9 +39,9 @@ export async function restoreUserInfo(context) {
 
 export async function updateUserPlaylists({ state, commit }) {
     const { playlist } = await ApiRenderer.getUserPlaylist(state.user.info.id);
-        commit(types.UPDATE_USER_INFO, playlist[0].creator);
-        commit(types.SET_USER_PLAYLISTS, playlist);
-        return playlist;
+    commit(types.UPDATE_USER_INFO, playlist[0].creator);
+    commit(types.SET_USER_PLAYLISTS, playlist);
+    return playlist;
 }
 
 export function setLoginValid(context, payload) {
@@ -108,15 +108,31 @@ async function playThisTrack(commit, list, index, quality) {
 
 export function playNextTrack({ commit, state }) {
     const quality = state.settings.bitRate;
-    const { index, list } = state.playlist;
-    let nextIndex = (index + 1) % list.length;
+    const { index, list, loopMode } = state.playlist;
+    let nextIndex;
+    switch (loopMode) {
+        case LOOP_MODE.RANDOM:
+            nextIndex = Math.floor(Math.random() * list.length);
+            break;
+        default:
+            nextIndex = (index + 1) % list.length;
+            break;
+    }
     playThisTrack(commit, list, nextIndex, quality);
 }
 
 export function playPreviousTrack({ commit, state }) {
     const quality = state.settings.bitRate;
-    const { index, list } = state.playlist;
-    let nextIndex = (index + list.length - 1) % list.length;
+    const { index, list, loopMode } = state.playlist;
+    let nextIndex;
+    switch (loopMode) {
+        case LOOP_MODE.RANDOM:
+            nextIndex = Math.floor(Math.random() * list.length);
+            break;
+        default:
+            nextIndex = (index + list.length - 1) % list.length;
+            break;
+    }
     playThisTrack(commit, list, nextIndex, quality);
 }
 
@@ -126,9 +142,15 @@ export async function playPlaylist({ commit, state }, payload) {
     }
     const quality = state.settings.bitRate;
     const { list, loopMode } = state.playlist;
-    let firstIndex = loopMode === LOOP_TYPES.RANDOM
-        ? Math.floor(Math.random() * 100000) % list.length
-        : 0;
+    let firstIndex;
+    switch (loopMode) {
+        case LOOP_MODE.RANDOM:
+            firstIndex = Math.floor(Math.random * list.length);
+            break;
+        default:
+            firstIndex = 0;
+            break;
+    }
     playThisTrack(commit, list, firstIndex, quality);
 }
 
@@ -181,6 +203,21 @@ export function toggleCollectPopup({ commit, state }, payload = {}) {
         return;
     }
     commit(types.SHOW_COLLECT_POPUP);
+}
+
+export function nextLoopMode({ commit, state }) {
+    const { loopMode } = state.playlist;
+    switch (loopMode) {
+        case LOOP_MODE.LIST:
+            commit(types.SET_LOOP_MODE_SINGLE);
+            break;
+        case LOOP_MODE.SINGLE:
+            commit(types.SET_LOOP_MODE_RANDOM);
+            break;
+        case LOOP_MODE.RANDOM:
+            commit(types.SET_LOOP_MODE_LIST);
+            break;
+    }
 }
 
 export function addTrackToPlaylist({ commit }, payload) {
