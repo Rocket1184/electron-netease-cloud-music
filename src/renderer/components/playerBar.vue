@@ -213,7 +213,8 @@ export default {
             set(val) {
                 if (val === true) {
                     setTimeout(() => {
-                        document.getElementById(`cur-list-${this.playlist.index}`).scrollIntoViewIfNeeded();
+                        const el = document.getElementById(`cur-list-${this.playlist.index}`);
+                        if (el) el.scrollIntoViewIfNeeded();
                     }, 100);
                 }
                 this.realCurrentListShown = val;
@@ -255,6 +256,15 @@ export default {
             this.timeCurrent = _audioEl.currentTime = 0;
             if (!this.ui.paused) _audioEl.play();
         });
+
+        // keep audio progress when HMR
+        if (process.env.NODE_ENV === 'development') {
+            if (_audioEl.readyState >= HTMLMediaElement.HAVE_METADATA) {
+                this.timeTotal = _audioEl.duration;
+                this.timeCurrent = _audioEl.currentTime;
+                if (!this.ui.paused) _setUpdateTimeInterval();
+            }
+        }
 
         _audioEl.addEventListener('seeking', _updateTime);
 
