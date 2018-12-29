@@ -11,7 +11,7 @@
                     <span class="song">{{track.name}}</span>
                     <span class="artist">{{track.artistName}}</span>
                 </div>
-                <div class="quick-actions">
+                <div class="shortcut">
                     <mu-checkbox title="喜欢"
                         ref="chkFavorite"
                         uncheck-icon="favorite_border"
@@ -24,6 +24,11 @@
                         checked-icon="bookmark"
                         color="secondary"
                         v-model="collectPopupShown"></mu-checkbox>
+                    <mu-checkbox title="循环模式"
+                        ref="chkLoopMode"
+                        :uncheck-icon="iconLoopMode"
+                        @click="handleLoopMode"
+                        color="secondary"></mu-checkbox>
                     <mu-menu :open.sync="currentListShown"
                         placement="top"
                         popover-class="playerbar-current-list">
@@ -34,11 +39,6 @@
                             v-model="currentListShown"></mu-checkbox>
                         <currentList slot="content"></currentList>
                     </mu-menu>
-                    <mu-checkbox title="循环模式"
-                        ref="chkLoopMode"
-                        :uncheck-icon="iconLoopMode"
-                        @click="handleLoopMode"
-                        color="secondary"></mu-checkbox>
                 </div>
             </div>
             <div class="progress">
@@ -362,7 +362,7 @@ export default {
                     color: dimgrey;
                 }
             }
-            .quick-actions {
+            .shortcut {
                 width: calc(33px * 4); // 33px * button count
                 display: flex;
                 justify-content: space-between;
@@ -386,7 +386,7 @@ export default {
         display: flex;
         justify-content: space-between;
         align-items: center;
-        .button {
+        .mu-fab-button {
             box-shadow: white 0 0 0;
         }
     }
