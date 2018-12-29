@@ -172,7 +172,7 @@ class MusicServer {
         } catch (e) {
             d('Failed to get URL for music id=%d, reason: %O', id, e);
             res.writeHead(500);
-            res.write(e);
+            res.write(JSON.stringify(e));
             res.end();
         }
     }
