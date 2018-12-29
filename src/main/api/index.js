@@ -546,6 +546,10 @@ export function uncollectTrack(pid, ...tracks) {
     return manipulatePlaylistTracks('del', pid, tracks);
 }
 
+/**
+ * @param {string} s keyword
+ * @returns {Promise<Types.SearchSuggestRes>}
+ */
 export function getSearchSuggest(s) {
     return client.postW({
         url: `${BaseURL}/weapi/search/suggest/web`,
@@ -598,5 +602,50 @@ export function unsubscribePlaylist(id) {
     return client.postW({
         url: `${BaseURL}/weapi/playlist/unsubscribe`,
         data: { id }
+    });
+}
+
+/**
+ * @param {number} limit defalut to `25`
+ * @param {number} offset default to `0`
+ * @returns {Promise<Types.SubscribedArtistRes>}
+ */
+export function getSubscribedArtists(limit = 25, offset = 0) {
+    return client.postW({
+        url: `${BaseURL}/weapi/artist/sublist`,
+        data: {
+            limit,
+            offset
+        }
+    });
+}
+
+/**
+ * @param {number} limit defalut to `25`
+ * @param {number} offset default to `0`
+ * @returns {Promise<Types.FavoriteVideoRes>}
+ */
+export function getFavoriteVideos(limit = 25, offset = 0) {
+    return client.postW({
+        url: `${BaseURL}/weapi/cloudvideo/allvideo/sublist`,
+        data: {
+            limit,
+            offset
+        }
+    });
+}
+
+/**
+ * @param {number} limit defalut to `25`
+ * @param {number} offset default to `0`
+ * @returns {Promise<Types.SubscribedAlbumRes>}
+ */
+export function getSubscribedAlumbs(limit = 25, offset = 0) {
+    return client.postE({
+        url: `${BaseURL}/eapi/album/sublist`,
+        data: {
+            limit,
+            offset
+        }
     });
 }
