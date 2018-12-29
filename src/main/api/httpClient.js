@@ -1,3 +1,4 @@
+import { URL } from 'url';
 import qs from 'querystring';
 import { randomFillSync } from 'crypto';
 
@@ -5,7 +6,7 @@ import debug from 'debug';
 import fetch from 'node-fetch';
 import { CookieJar, CookieAccessInfo } from 'cookiejar';
 
-import { encodeWeb, encodeLinux } from './codec';
+import { encodeWeb, encodeLinux, encodeEApi, decodeEApi } from './codec';
 
 const d = debug('HTTP');
 
@@ -72,20 +73,20 @@ class HttpClient {
      */
     mergeHeaders(...headers) {
         let hd = Object.assign({}, this.clientHeaders, ...headers);
-        if (hd['Cookie']) {
-            hd['Cookie'] += ('; ' + this.getCookieString());
+        if (hd.Cookie) {
+            hd.Cookie += ('; ' + this.getCookieString());
         } else {
-            hd['Cookie'] = this.getCookieString();
+            hd.Cookie = this.getCookieString();
         }
         return hd;
     }
 
     /**
-     * update cookiejar with 'set-cookie' headers, then parse JSON
+     * update cookiejar with 'set-cookie' headers, then log status
      * @param {string} url request URL
      * @param {RequestInit} init node-fetch's `RequestInit` object
      * @param {import('node-fetch').Response} res node-fetch's `Response` object
-     * @returns {Promise<any>}
+     * @returns {import('node-fetch').Response}
      */
     handleResponse(url, init, res) {
         const headers = res.headers.raw();
@@ -99,38 +100,7 @@ class HttpClient {
         if (res.status !== 200) {
             d('%o', res.data);
         }
-        return res.json();
-    }
-
-    post(config) {
-        let url = config.url;
-        /** @type {RequestInit} */
-        let init = {
-            method: 'POST',
-            body: config.data || {}
-        };
-        const __csrf = this.getCookie('__csrf');
-        if (__csrf) {
-            url += `?csrf_token=${__csrf}`;
-            init.body.csrf_token = __csrf;
-        }
-        if (config.encrypt === 'linux') {
-            init.body = qs.stringify(encodeLinux(init.body));
-        } else {
-            init.body = qs.stringify(encodeWeb(init.body));
-        }
-
-        init.headers = this.mergeHeaders({
-            'Content-Type': 'application/x-www-form-urlencoded',
-            'Content-Length': Buffer.byteLength(init.body)
-        }, config.headers);
-
-        return new Promise((resolve, reject) => {
-            fetch(url, init)
-                .then(res => this.handleResponse(url, init, res))
-                .then(resolve)
-                .catch(reject);
-        });
+        return res;
     }
 
     get(config) {
@@ -142,12 +112,110 @@ class HttpClient {
 
         init.headers = this.mergeHeaders(config.headers);
 
-        return new Promise((resolve, reject) => {
-            fetch(url, init)
-                .then(res => this.handleResponse(url, init, res))
-                .then(resolve)
-                .catch(reject);
-        });
+        return fetch(url, init)
+            .then(res => this.handleResponse(url, init, res))
+            .then(res => res.json());
+    }
+
+    /**
+     * wrapper of node-fetch function
+     * @param {string} url
+     * @param {RequestInit} init
+     */
+    post(url, init) {
+        init.headers = this.mergeHeaders({
+            'Content-Type': 'application/x-www-form-urlencoded',
+            'Content-Length': Buffer.byteLength(init.body)
+        }, init.headers);
+
+        return fetch(url, init)
+            .then(res => this.handleResponse(url, init, res))
+            .then(res => res.json());
+    }
+
+    /**
+     * weapi request
+     */
+    postW(config) {
+        let url = config.url;
+        /** @type {RequestInit} */
+        let init = {
+            method: 'POST',
+            body: config.data || {}
+        };
+        const __csrf = this.getCookie('__csrf');
+        if (__csrf) {
+            url += `?csrf_token=${__csrf}`;
+            init.body.csrf_token = __csrf;
+        }
+        init.body = qs.stringify(encodeWeb(init.body));
+        return this.post(url, init);
+    }
+
+    /**
+     * linux/forward api request
+     */
+    postL(config) {
+        const url = config.url;
+        /** @type {RequestInit} */
+        let init = {
+            method: 'POST',
+            body: config.data || {},
+            headers: { Cookie: '' }
+        };
+        let cookie = {
+            os: 'pc',
+            osver: 'linux',
+            appver: '2.0.3.131777',
+            channel: 'netease'
+        };
+        // merge cookies
+        Object.assign(cookie, config.headers && config.headers.Cookie);
+        // put cookie string into RequestInit's header
+        init.headers.Cookie = Object.entries(cookie).map(([k, v]) => `${k}=${v}`).join('; ');
+        // encrypt request payload
+        init.body = qs.stringify(encodeLinux(init.body));
+        return this.post(url, init);
+    }
+
+    /**
+     * eapi request
+     */
+    postE(config) {
+        const url = config.url;
+        /** @type {RequestInit} */
+        let init = {
+            method: 'POST',
+            body: {
+                ...config.data,
+                e_r: 'true',
+                header: {}
+            },
+            headers: { Cookie: '' }
+        };
+        let cookie = {
+            os: 'pc',
+            osver: 'linux',
+            appver: '2.0.3.131777',
+            channel: 'netease'
+        };
+        // merge cookies
+        Object.assign(cookie, config.headers && config.headers.Cookie);
+        // put cookie k-v pair into body.header
+        init.body.header = cookie;
+        // extract url pathname for encrypt
+        const u = new URL(url);
+        // encrypt request payload
+        init.body = qs.stringify(encodeEApi(u.pathname, init.body));
+        init.headers = this.mergeHeaders({
+            'Cookie': Object.entries(cookie).map(([k, v]) => `${k}=${v}`).join('; '),
+            'Content-Type': 'application/x-www-form-urlencoded',
+            'Content-Length': Buffer.byteLength(init.body)
+        }, init.headers);
+        return fetch(url, init)
+            .then(res => this.handleResponse(url, init, res))
+            .then(res => res.buffer())
+            .then(buf => JSON.parse(decodeEApi(buf)));
     }
 }
 

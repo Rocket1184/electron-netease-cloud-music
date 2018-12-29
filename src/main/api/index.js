@@ -57,12 +57,12 @@ export function login(acc, pwd) {
         rememberLogin: true,
     };
     if (/^1\d{10}$/.test(acc)) {
-        return client.post({
+        return client.postW({
             url: `${BaseURL}/weapi/login/cellphone`,
             data: { phone: acc, ...postBody }
         });
     } else {
-        return client.post({
+        return client.postW({
             url: `${BaseURL}/weapi/login`,
             data: { username: acc, ...postBody }
         });
@@ -70,14 +70,14 @@ export function login(acc, pwd) {
 }
 
 export function refreshLogin() {
-    return client.post({
+    return client.postW({
         url: `${BaseURL}/weapi/login/token/refresh`,
         data: {}
     });
 }
 
 export async function logout() {
-    const resp = await client.post({ url: `${BaseURL}/logout` });
+    const resp = await client.postW({ url: `${BaseURL}/logout` });
     if (resp.code === 200) {
         client.updateCookie({});
     }
@@ -89,7 +89,7 @@ export async function logout() {
  * @returns {Promise<Types.UserPlaylistRes>}
  */
 export function getUserPlaylist(uid) {
-    return client.post({
+    return client.postW({
         url: `${BaseURL}/weapi/user/playlist`,
         data: {
             uid,
@@ -105,7 +105,7 @@ export function getUserPlaylist(uid) {
  * @param {0|1} type `0`: 所有时间, `1`: 最近一周
  */
 export function getMusicRecord(uid, type = 0) {
-    return client.post({
+    return client.postW({
         url: `${BaseURL}/weapi/v1/play/record`,
         data: {
             limit: 1000,
@@ -122,7 +122,7 @@ export function getMusicRecord(uid, type = 0) {
  * @returns {Promise<Types.RecommendSongsRes>}
  */
 export function getRecommendSongs() {
-    return client.post({
+    return client.postW({
         url: `${BaseURL}/weapi/v2/discovery/recommend/songs`,
         data: {
             limit: 20,
@@ -136,7 +136,7 @@ export function getRecommendSongs() {
  * 每日歌曲推荐 -> 不感兴趣
  */
 export function dislikeMusic(id) {
-    return client.post({
+    return client.postW({
         url: `${BaseURL}/weapi/v2/discovery/recommend/dislike`,
         data: {
             resId: id,
@@ -150,7 +150,7 @@ export function dislikeMusic(id) {
  * 推荐歌单
  */
 export function getRecommendPlaylist() {
-    return client.post({
+    return client.postW({
         url: `${BaseURL}/weapi/discovery/recommend/resource`,
         data: {}
     });
@@ -162,7 +162,7 @@ export function getRecommendPlaylist() {
  * @param {'bysong_rt'|'hotbased'} alg `bysong_rt`: 根据收藏的单曲推荐, `hotbased`: 热门推荐
  */
 export function dislikePlaylist(id, alg) {
-    return client.post({
+    return client.postW({
         url: `${BaseURL}/weapi/v2/discovery/recommend/dislike`,
         data: {
             resId: id,
@@ -177,7 +177,7 @@ export function dislikePlaylist(id, alg) {
  * @returns {Promise<Types.ListDetailRes>}
  */
 export function getListDetail(id) {
-    return client.post({
+    return client.postW({
         url: `${BaseURL}/weapi/v3/playlist/detail`,
         data: {
             id,
@@ -206,7 +206,7 @@ export function getMusicUrl(idOrIds, quality) {
     let ids;
     if (Array.isArray(idOrIds)) ids = idOrIds;
     else ids = [idOrIds];
-    return client.post({
+    return client.postW({
         url: `${BaseURL}/weapi/song/enhance/player/url`,
         data: {
             ids,
@@ -226,12 +226,8 @@ export function getMusicUrlLinux(idOrIds, quality) {
     let ids;
     if (Array.isArray(idOrIds)) ids = idOrIds;
     else ids = [idOrIds];
-    return client.post({
+    return client.postL({
         url: `${BaseURL}/api/linux/forward`,
-        encrypt: 'linux',
-        headers: {
-            Cookie: 'os=pc; osver=Linux; appver=2.0.3.131777; channel=netease'
-        },
         data: {
             method: 'POST',
             url: 'http://music.163.com/api/song/enhance/player/url',
@@ -269,7 +265,7 @@ export function getMusicUrlCached(id, quality) {
  */
 export function getMusicUrlNoCache(id, quality) {
     musicCache.rm(id).catch(() => { /* nothing happened */ });
-    return getMusicLyricCached(id, quality);
+    return getMusicUrlCached(id, quality);
 }
 
 /**
@@ -279,7 +275,7 @@ export function getMusicUrlNoCache(id, quality) {
  * @returns {Promise<Types.MusicCommentsRes>}
  */
 export function getMusicComments(rid, limit = 20, offset = 0) {
-    return client.post({
+    return client.postW({
         url: `${BaseURL}/weapi/v1/resource/comments/R_SO_4_${rid}`,
         data: {
             rid,
@@ -298,7 +294,7 @@ function byTimestamp(a, b) {
  * @returns {Promise<Types.MusicLyricRes>}
  */
 export async function getMusicLyric(id) {
-    const tmp = await client.post({
+    const tmp = await client.postW({
         url: `${BaseURL}/weapi/song/lyric`,
         data: {
             id,
@@ -364,7 +360,7 @@ export async function getMusicLyricCached(id) {
  * this maybe have been removed, use `sumbitFeedback` instead
  */
 export function submitWebLog(action, json) {
-    return client.post({
+    return client.postW({
         url: `${BaseURL}/weapi/log/web`,
         data: {
             action,
@@ -374,7 +370,7 @@ export function submitWebLog(action, json) {
 }
 
 export function sumbitFeedback(logs) {
-    return client.post({
+    return client.postW({
         url: `${BaseURL}/weapi/feedback/weblog`,
         data: {
             logs: JSON.stringify(logs),
@@ -383,7 +379,7 @@ export function sumbitFeedback(logs) {
 }
 
 export function submitCount() {
-    return client.post({
+    return client.postW({
         url: `${BaseURL}/weapi/pl/count`,
         data: {}
     });
@@ -406,7 +402,7 @@ export function submitListened(id, time) {
 }
 
 export function getVipInfo() {
-    return client.post({
+    return client.postW({
         url: `${BaseURL}/weapi/music-vip-membership/front/vip/info`,
         data: {}
     });
@@ -508,7 +504,7 @@ export function resetSettings() {
  * @returns {Promise<Types.DailyTaskRes>}
  */
 export function postDailyTask(type) {
-    return client.post({
+    return client.postW({
         url: `${BaseURL}/weapi/point/dailyTask`,
         data: { type }
     });
@@ -521,7 +517,7 @@ export function postDailyTask(type) {
  * @param {number[]} tracks track id
  */
 export function manipulatePlaylistTracks(op, pid, tracks) {
-    return client.post({
+    return client.postW({
         url: `${BaseURL}/weapi/playlist/manipulate/tracks`,
         data: {
             op,
@@ -551,7 +547,7 @@ export function uncollectTrack(pid, ...tracks) {
 }
 
 export function getSearchSuggest(s) {
-    return client.post({
+    return client.postW({
         url: `${BaseURL}/weapi/search/suggest/web`,
         data: { s }
     });
@@ -577,7 +573,7 @@ const searchTypeMap = {
  * @returns {Promise<Types.SearchRes>}
  */
 export function search(s, type, limit = 20, offset = 0) {
-    return client.post({
+    return client.postW({
         url: `${BaseURL}/weapi/cloudsearch/get/web`,
         data: {
             hlposttag: '</span>',
@@ -592,14 +588,14 @@ export function search(s, type, limit = 20, offset = 0) {
 }
 
 export function subscribePlaylist(id) {
-    return client.post({
+    return client.postW({
         url: `${BaseURL}/weapi/playlist/subscribe`,
         data: { id }
     });
 }
 
 export function unsubscribePlaylist(id) {
-    return client.post({
+    return client.postW({
         url: `${BaseURL}/weapi/playlist/unsubscribe`,
         data: { id }
     });
