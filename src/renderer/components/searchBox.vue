@@ -98,5 +98,6 @@ export default {
 }
 .searchbox-popover {
     width: 340px;
+    -webkit-app-region: no-drag;
 }
 </style>

@@ -225,6 +225,7 @@ export default {
         background-size: cover;
         background-image: url('~assets/img/bkg.svg');
         background-position-y: 50%;
+        -webkit-app-region: no-drag;
         .text {
             margin-top: 14px;
             display: flex;
