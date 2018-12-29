@@ -47,3 +47,51 @@ export function encodeLinux(payload) {
         eparams: b64.toUpperCase()
     };
 }
+
+/**
+ * Netease Cloud Music EAPI Encode/Decode
+ * Credit:
+ * @see https://www.freebuf.com/articles/web/164636.html
+ * @see https://github.com/nondanee/Glee/wiki/%E7%BD%91%E6%98%93%E4%BA%91eapi
+ * @see https://juejin.im/post/5ac10c51f265da23a229408d
+ * @see https://juejin.im/post/5b1b6e4b6fb9a01e87569e96
+ */
+
+const EApiKey = 'e82ckenh8dichen8';
+
+export function decodeEApi(buffer) {
+    const dc = crypto.createDecipheriv('aes-128-ecb', EApiKey, null);
+    let text;
+    if (buffer instanceof Buffer) {
+        text = dc.update(buffer, 'utf8', 'utf8') + dc.final('utf8');
+    } else if (typeof buffer === 'string') {
+        text = dc.update(buffer, 'hex', 'utf8') + dc.final('utf8');
+    }
+    return text;
+}
+
+function md5(text) {
+    return crypto.createHash('md5').update(text).digest('hex');
+}
+
+export function encodeEApi(uri, data) {
+    const prefix = uri.replace(/^\/eapi/, '/api');
+    const json = JSON.stringify(data);
+    const suffix = md5(`nobody${prefix}use${json}md5forencrypt`);
+    const text = `${prefix}-36cd479b6b5-${json}-36cd479b6b5-${suffix}`;
+    const cipher = crypto.createCipheriv('aes-128-ecb', EApiKey, null);
+    /**
+     * thanks to cipher's AutoPadding, we can just encrypt it as-is.
+     * otherwise, we must pad it manually with PKCS#7:
+     * ```js
+     * const padLength = 16 - (text.length % 16);
+     * const padText = text.padEnd(text.length + padLength, String.fromCharCode(padLength));
+     * cipher.setAutoPadding(false);
+     * const encText = cipher.update(padText, 'utf8', 'hex') + cipher.final('hex');
+     * ```
+     */
+    const encText = cipher.update(text, 'utf8', 'hex') + cipher.final('hex');
+    return {
+        params: encText.toUpperCase()
+    };
+}
