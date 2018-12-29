@@ -49,6 +49,34 @@ const Models = {
             commentCount: -1,
             tracks: [new Track()]
         };
+    },
+    get Artist() {
+        return {
+            id: -1,
+            name: '',
+            trans: '',
+            transNames: [],
+            alias: [],
+            picId: -1,
+            picUrl: '',
+            albumSize: -1,
+            mvSize: -1,
+            info: ''
+        };
+    },
+    get Video() {
+        return {
+            alg: null,
+            aliaName: '',
+            coverUrl: '',
+            creator: [],
+            durationms: -1,
+            markTypes: null,
+            playTime: -1,
+            title: -1,
+            type: -1,
+            vid: ''
+        };
     }
 };
 
@@ -110,5 +138,51 @@ export class PlayList {
         this.commentCount = o.commentCount;
         const tracks = o.tracks || o.recommend || [];
         this.tracks = tracks.map(t => new Track(t));
+    }
+}
+
+export class Artist {
+    constructor(o) {
+        if (!o) return Models.Artist;
+        this.id = o.id;
+        this.name = o.name;
+        this.trans = o.trans;
+        this.transNames = o.transNames;
+        this.alias = o.alia || o.alias;
+        this.picUrl = o.picUrl || o.img1v1Url;
+        this.picId = o.picId || o.img1v1;
+        this.albumSize = o.albumSize;
+        this.mvSize = o.mvSize;
+        this.info = o.info;
+    }
+}
+
+export class Album {
+    constructor(o) {
+        if (!o) return Models.Album;
+        this.id = o.id;
+        this.name = o.name;
+        this.artist = o.artist;
+        this.copyrightId = o.copyrightId;
+        this.picId = o.picId;
+        this.publishTime = o.publishTime;
+        this.size = o.size;
+        this.status = o.status;
+    }
+}
+
+export class Video {
+    constructor(o) {
+        if (!o) return Models.Video;
+        this.vid = o.vid;
+        this.title = o.title;
+        this.aliaName = o.aliaName;
+        this.type = o.type;
+        this.coverUrl = o.coverUrl;
+        this.creator = o.creator;
+        this.durationms = o.durationms;
+        this.markTypes = o.markTypes;
+        this.playTime = o.playTime;
+        this.alg = o.alg;
     }
 }

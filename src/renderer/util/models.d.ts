@@ -17,31 +17,6 @@ declare namespace Models {
         bindings: any[];
     }
 
-    declare class RawArtist {
-        id: number;
-        name: string;
-        img1v1Id: number;
-        img1v1Id_str: string;
-        img1v1IdUrl: string;
-        picId: number;
-        picUrl: string;
-    }
-
-    declare class RawLyrics {
-        qfy: Boolean;
-        sfy: Boolean;
-        sgc: Boolean;
-        lrc?: { version: number, lyric: string }
-        tlyric?: { ersion: number, lyric: string }
-        klyric?: { version: number, lyric: string }
-    }
-
-    declare class TrackUrls {
-        h?: string;
-        m?: string;
-        l?: string;
-    }
-
     export class Track {
         id: number;
         name: string;
@@ -51,9 +26,20 @@ declare namespace Models {
             pic: number;
             picUrl: string
         };
-        artists: RawArtist[];
-        lyrics: RawLyricsModel;
-        urls: TrackUrls;
+        artists: Artist[];
+        lyrics: {
+            qfy: Boolean;
+            sfy: Boolean;
+            sgc: Boolean;
+            lrc?: { version: number, lyric: string }
+            tlyric?: { ersion: number, lyric: string }
+            klyric?: { version: number, lyric: string }
+        }[];
+        urls: {
+            h?: string;
+            m?: string;
+            l?: string;
+        };
         commentThreadId: number;
         // getters
         picUrl: string;
@@ -74,6 +60,41 @@ declare namespace Models {
         subscribedCount: number;
         commentCount: number;
         tracks: Track[];
+    }
+
+
+    export class Artist {
+        id: number;
+        name: string;
+        trans?: string;
+        transNames?: string[];
+        /** only present in search result, equals `alias` */
+        alia?: string[];
+        alias?: string[];
+        img1v1: number;
+        img1v1Url: string;
+        picId: number;
+        picUrl?: string;
+        albumSize?: number;
+        mvSize?: number;
+        /** usually an empty string */
+        info: string;
+    }
+
+    export class Video {
+        alg?: any;
+        aliaName: string;
+        coverUrl: string;
+        creator: {
+            userId: number;
+            userName: string;
+        }[];
+        durationms: number;
+        markTypes?: any;
+        playTime: number;
+        title: number;
+        type: number;
+        vid: string;
     }
 }
 
