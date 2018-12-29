@@ -1,24 +1,21 @@
-/*
- *	Netease Cloud Music API Private Encrypt Module
- *
- *  Thanks TO:
- *  | Project              | URL                                              |
- *  | -------------------- | ------------------------------------------------ |
- *  | musicbox             | https://github.com/darknessomi/musicbox          |
- *  | NeteaseCloudMusicApi | https://github.com/metowolf/NeteaseCloudMusicApi |
- *  | cloudmusicapi        | https://github.com/Copay/cloudmusicapi           |
- *
+/**
+ * Netease Cloud Music Web(weapi)/Linux(forward) API Encrypt Module
+ * Credit:
+ * @see https://github.com/darknessomi/musicbox
+ * @see https://github.com/metowolf/NeteaseCloudMusicApi
+ * @see https://github.com/Copay/cloudmusicapi
+ * @see https://github.com/surmon-china/simple-netease-cloud-music
  */
 
 import crypto from 'crypto';
 import Bigint from 'big-integer';
 
-function aesEncrypt(text, secKey) {
+function weapiAesEncrypt(text, secKey) {
     let cipher = crypto.createCipheriv('aes-128-cbc', secKey, '0102030405060708');
     return cipher.update(text, 'utf8', 'base64') + cipher.final('base64');
 }
 
-function rsaEncrypt(text) {
+function weapiRsaEncrypt(text) {
     let textHex = Buffer.from(text.split('').reverse().join(''), 'utf8').toString('hex');
     let tb = Bigint(textHex, 16);
     let pk = Bigint('010001', 16);
@@ -30,9 +27,9 @@ function rsaEncrypt(text) {
 export function encodeWeb(payload) {
     let json = JSON.stringify(payload);
     let secKey = crypto.randomFillSync(Buffer.alloc(12)).toString('base64');
-    let encSecKey = rsaEncrypt(secKey);
-    let encText = aesEncrypt(json, '0CoJUm6Qyw8W8jud');
-    encText = aesEncrypt(encText, secKey);
+    let encSecKey = weapiRsaEncrypt(secKey);
+    let encText = weapiAesEncrypt(json, '0CoJUm6Qyw8W8jud');
+    encText = weapiAesEncrypt(encText, secKey);
     return {
         params: encText,
         encSecKey
@@ -40,11 +37,11 @@ export function encodeWeb(payload) {
 }
 
 /**
- * credit: https://github.com/surmon-china/simple-netease-cloud-music/blob/7e3beab480e637284f349c06efb4f18d00f2506f/src/netease.js#L288-L298
+ * @see https://github.com/surmon-china/simple-netease-cloud-music/blob/7e3beab480e637284f349c06efb4f18d00f2506f/src/netease.js#L288-L298
  */
 export function encodeLinux(payload) {
     const json = JSON.stringify(payload);
-    const cipher = crypto.createCipheriv('aes-128-ecb', 'rFgB&h#%2?^eDg:Q', '');
+    const cipher = crypto.createCipheriv('aes-128-ecb', 'rFgB&h#%2?^eDg:Q', null);
     const b64 = cipher.update(json, 'utf8', 'hex') + cipher.final('hex');
     return {
         eparams: b64.toUpperCase()
