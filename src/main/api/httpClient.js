@@ -82,13 +82,10 @@ class HttpClient {
     }
 
     /**
-     * update cookiejar with 'set-cookie' headers, then log status
-     * @param {string} url request URL
-     * @param {RequestInit} init node-fetch's `RequestInit` object
+     * update cookiejar with 'set-cookie' headers
      * @param {import('node-fetch').Response} res node-fetch's `Response` object
-     * @returns {import('node-fetch').Response}
      */
-    handleResponse(url, init, res) {
+    handleResponse(res) {
         const headers = res.headers.raw();
         for (const key in headers) {
             if (key.toLowerCase() === 'set-cookie') {
@@ -96,14 +93,23 @@ class HttpClient {
                 break;
             }
         }
-        d('%o %o %s', res.status, init.method, url);
-        if (res.status !== 200) {
-            d('%o', res.data);
-        }
-        return res;
     }
 
-    get(config) {
+    /**
+     * log response with url, method, status and data (only when status !== 200)
+     * @param {string} url
+     * @param {string} method 
+     * @param {number} status
+     * @param {any} data
+     */
+    logResponse(url, method, status, data) {
+        d('%o %o %s', status, method, url);
+        if (status !== 200) {
+            d('%o', data);
+        }
+    }
+
+    async get(config) {
         let url = typeof config === 'string' ? config : config.url;
         /** @type {RequestInit} */
         let init = {
@@ -112,9 +118,11 @@ class HttpClient {
 
         init.headers = this.mergeHeaders(config.headers);
 
-        return fetch(url, init)
-            .then(res => this.handleResponse(url, init, res))
-            .then(res => res.json());
+        const res = await fetch(url, init);
+        this.handleResponse(res);
+        const data = await res.json();
+        this.logResponse(url, 'GET', res.status, data);
+        return data;
     }
 
     /**
@@ -122,15 +130,17 @@ class HttpClient {
      * @param {string} url
      * @param {RequestInit} init
      */
-    post(url, init) {
+    async post(url, init) {
         init.headers = this.mergeHeaders({
             'Content-Type': 'application/x-www-form-urlencoded',
             'Content-Length': Buffer.byteLength(init.body)
         }, init.headers);
 
-        return fetch(url, init)
-            .then(res => this.handleResponse(url, init, res))
-            .then(res => res.json());
+        const res = await fetch(url, init);
+        this.handleResponse(res);
+        const data = await res.json();
+        this.logResponse(url, 'POST', res.status, data);
+        return data;
     }
 
     /**
@@ -181,7 +191,7 @@ class HttpClient {
     /**
      * eapi request
      */
-    postE(config) {
+    async postE(config) {
         const url = config.url;
         /** @type {RequestInit} */
         let init = {
@@ -212,10 +222,12 @@ class HttpClient {
             'Content-Type': 'application/x-www-form-urlencoded',
             'Content-Length': Buffer.byteLength(init.body)
         }, init.headers);
-        return fetch(url, init)
-            .then(res => this.handleResponse(url, init, res))
-            .then(res => res.buffer())
-            .then(buf => JSON.parse(decodeEApi(buf)));
+        const res = await fetch(url, init);
+        this.handleResponse(res);
+        const buf = await res.buffer();
+        const data = JSON.parse(decodeEApi(buf));
+        this.logResponse(url, 'POST', res.status, data);
+        return data;
     }
 }
 
