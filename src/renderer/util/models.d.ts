@@ -81,6 +81,17 @@ declare namespace Models {
         info: string;
     }
 
+    export class Album {
+        id: number;
+        name: string;
+        artist: Artist;
+        copyrightId: number;
+        picId: number;
+        publishTime: number;
+        size: number;
+        status: number;
+    }
+
     export class Video {
         alg?: any;
         aliaName: string;
