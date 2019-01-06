@@ -975,7 +975,7 @@ namespace Types {
             alias: string[];
             artists: {
                 albumSize: number;
-                alias: any[];
+                alias: string[];
                 briefDesc: string;
                 followed: boolean;
                 id: number;
@@ -998,6 +998,126 @@ namespace Types {
             subTime: any;
             transNames: any[];
         }[];
+    }
+
+    export interface AlbumDetail {
+        name: string;
+        id: number;
+        type: string;
+        size: number;
+        picId: number;
+        blurPicUrl: string;
+        companyId: number;
+        pic: number;
+        picUrl: string;
+        publishTime: number;
+        description: string;
+        tags: string;
+        company: string;
+        briefDesc?: any;
+        artist: Artist;
+        songs: any[];
+        alias: any[];
+        status: number;
+        copyrightId: number;
+        commentThreadId: string;
+        artists: {
+            name: string;
+            id: number;
+            picId: number;
+            img1v1Id: number;
+            briefDesc: string;
+            picUrl: string;
+            img1v1Url: string;
+            albumSize: number;
+            alias: string[];
+            trans: string;
+            musicSize: number;
+            topicPerson: number;
+            picId_str?: string;
+        }[];
+        subType: string;
+        transName?: any;
+        locked: boolean;
+    }
+
+    export interface AlbumDetailSong {
+        name: string;
+        id: number;
+        pst: number;
+        t: number;
+        ar: {
+            id: number;
+            name: string;
+            tns: any[];
+            alias: any[];
+        }[];
+        alia: any[];
+        pop: number;
+        st: number;
+        rt?: any;
+        fee: number;
+        v: number;
+        crbt?: any;
+        cf: string;
+        al: {
+            id: number;
+            name: string;
+            tns: any[];
+            pic: any;
+        };
+        dt: number;
+        h: MusicRecordQual;
+        m: MusicRecordQual;
+        l: MusicRecordQual;
+        a?: any;
+        cd: string;
+        no: number;
+        rtUrl?: any;
+        ftype: number;
+        rtUrls: any[];
+        djId: number;
+        copyright: number;
+        s_id: number;
+        rtype: number;
+        rurl?: any;
+        mst: number;
+        cp: number;
+        mv: number;
+        publishTime: any;
+    }
+
+    export interface AlbumDetailWRes extends ApiRes {
+        album: AlbumDetail;
+        songs: AlbumDetailSong[];
+    }
+
+    export interface AlbumDetailRes extends ApiRes {
+        info: {
+            resourceType: number;
+            commentCount: number;
+            likedCount: number;
+            shareCount: number;
+            threadId: string;
+        };
+        songs: AlbumDetailSong[];
+        preSellSongIds: any[];
+        album: AlbumDetail;
+    }
+
+    export interface AlbumDynamicDetailRes extends ApiRes {
+        onSale: boolean;
+        albumGameInfo?: any;
+        commentCount: number;
+        likedCount: number;
+        shareCount: number;
+        subTime: number;
+        isSub: boolean;
+        subCount: number;
+    }
+
+    export interface AlbumPrivilegeRes extends ApiRes {
+        data: Privilege[];
     }
 }
 

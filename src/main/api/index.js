@@ -2,6 +2,7 @@ import fs from 'fs';
 import url from 'url';
 import path from 'path';
 import crypto from 'crypto';
+import qs from 'querystring';
 import cp from 'child_process';
 import { app } from 'electron';
 
@@ -647,5 +648,63 @@ export function getSubscribedAlumbs(limit = 25, offset = 0) {
             limit,
             offset
         }
+    });
+}
+
+/**
+ * album detail, weapi
+ * @param {number|string} id
+ * @returns {Promise<Types.AlbumDetailWRes>}
+ */
+export function getAlbumDetailW(id) {
+    return client.postW({
+        url: `${BaseURL}/api/v1/album/${id}`,
+        data: {
+            total: true,
+            offset: 0,
+            id: id,
+            limit: 1000,
+            ext: true,
+            private_cloud: true
+        }
+    });
+}
+
+/**
+ * **DO NOT USE** album detail, eapi.
+ * @param {number|string} id
+ * @returns {Promise<Types.AlbumDetailRes>}
+ */
+export function getAlbumDetailE(id) {
+    // TODO: encode/decode cache_key
+    const query = qs.stringify({
+        cache_key: crypto.randomFillSync(Buffer.alloc(32)).toString('base64'),
+        // cache_key: 'pEAwtmHe62cm9y8FdMqgUNibF/Y+sQdcS+SLqTSGCOE='
+    });
+    return client.postE({
+        url: `${BaseURL}/eapi/album/v3/detail?${query}`,
+        data: { id: `${id}` }
+    });
+}
+
+/**
+ * @param {number|string} id
+ * @returns {Promise<Types.AlbumDynamicDetailRes>}
+ */
+export function getAlbumDynamicDetail(id) {
+    return client.postE({
+        url: `${BaseURL}/eapi/album/detail/dynamic?id=${id}`,
+        data: { id: `${id}` }
+    });
+}
+
+/**
+ * @param {number|string} id
+ * @returns {Promise<Types.AlbumPrivilegeRes>}
+ */
+export function getAlbumPrivilege(id) {
+    return client.postE({
+        url: `${BaseURL}/eapi/album/privilege?id=${id}`,
+        data: { id: `${id}` }
     });
 }
