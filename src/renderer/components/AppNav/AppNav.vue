@@ -48,7 +48,7 @@
                 </mu-avatar>
                 <div class="text">
                     <span class="username"
-                        @click="handleNameClick()">{{user.info.nickname}}</span>
+                        @click="handleNameClick()">{{username}}</span>
                     <mu-button flat
                         v-if="user.loginValid"
                         class="button-checkin"
@@ -109,6 +109,9 @@ export default {
         },
         avatarUrl() {
             return sizeImg(this.user.info.avatarUrl, HiDpiPx(80));
+        },
+        username() {
+            return this.user.loginValid ? this.user.info.nickname : '点击登录';
         },
         backgroundUrlStyle() {
             return this.user.info.bkgUrl && bkgImg(sizeImg(this.user.info.bkgUrl, HiDpiPx(300), HiDpiPx(200)));

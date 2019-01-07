@@ -2,7 +2,7 @@
     <ListDetailLayout class="fav-album"
         :loading="loading"
         tipText="登录后查看收藏的专辑"
-        :showTip="false">
+        :showTip="!user.loginValid">
         <mu-list slot="list">
             <mu-list-item v-for="al in user.albums"
                 :key="al.id"
@@ -21,7 +21,7 @@
             </mu-list-item>
         </mu-list>
         <AlbumDetail slot="detail"
-            v-if="!loading"
+            v-if="ui.fav.album"
             :album="ui.fav.album"></AlbumDetail>
     </ListDetailLayout>
 </template>
@@ -36,7 +36,7 @@ import ListDetailLayout from '@/components/ListDetailLayout.vue';
 export default {
     data() {
         return {
-            loading: true
+            loading: false
         };
     },
     computed: {

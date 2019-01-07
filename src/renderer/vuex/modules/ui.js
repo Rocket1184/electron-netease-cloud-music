@@ -45,6 +45,7 @@ const mutations = {
         state.collectTrackIds = payload.ids;
     },
     [types.SET_UI_FAV_ALBUM](state, payload) {
+        if (!payload) return state.fav.album = null;
         let al = payload.album || payload;
         al.songs = payload.songs;
         state.fav.album = new Album(al);

@@ -67,6 +67,9 @@ export function logout({ commit }) {
     Api.logout().then(code => {
         if (code == 200) {
             commit(types.SET_LOGIN_VALID, false);
+            commit(types.SET_UI_FAV_ALBUM, null);
+            commit(types.SET_UI_FAV_VIDEO, null);
+            commit(types.SET_UI_FAV_ARTIST, null);
             setUserInfo({ commit }, new User());
             ['user', 'cookie'].map(k => localStorage.removeItem(k));
         }

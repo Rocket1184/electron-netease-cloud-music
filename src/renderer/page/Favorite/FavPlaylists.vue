@@ -47,7 +47,7 @@ import PlaylistDetail from '@/components/PlaylistDetail.vue';
 export default {
     data() {
         return {
-            playlist: null,
+            playlistId: null,
             loading: false,
             listRefreshing: false
         };
@@ -68,6 +68,11 @@ export default {
                     lists: this.user.playlist.filter(e => e.creator.id != this.user.info.id)
                 }
             ];
+        },
+        playlist() {
+            if (!this.user.loginValid) return null;
+            if (!this.playlistId) return null;
+            return this.user.playlist.find(p => p.id === this.playlistId);
         }
     },
     methods: {
@@ -80,11 +85,11 @@ export default {
         async loadPlaylist(id) {
             this.loading = true;
             await this.updatePlaylistDetail(id);
-            this.playlist = this.user.playlist.find(p => p.id == id);
+            this.playlistId = id;
             this.loading = false;
         },
         handleClick(id) {
-            if (this.playlist && this.playlist.id === id) return;
+            if (this.playlistId  === id) return;
             this.loadPlaylist(id);
         }
     },
