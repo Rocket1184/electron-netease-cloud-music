@@ -1119,6 +1119,18 @@ namespace Types {
     export interface AlbumPrivilegeRes extends ApiRes {
         data: Privilege[];
     }
+
+    export interface RelatedPlaylistsRes extends ApiRes {
+        data: {
+            id: string;
+            name: string;
+            picUrl: string;
+            creator: {
+                id: string;
+                name: string;
+            }
+        }[];
+    }
 }
 
 export as namespace Types;

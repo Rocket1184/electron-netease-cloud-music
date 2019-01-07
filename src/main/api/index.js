@@ -708,3 +708,47 @@ export function getAlbumPrivilege(id) {
         data: { id: `${id}` }
     });
 }
+
+// utils for api `getRelatedPlaylists`
+const RelatedPlaylists = {
+    regexp: /<div class="cver u-cover u-cover-3">[\s\S]*?title="(.+)"\ndata-res-id="(\d+)"[\s\S]*?<img src="(.+)"[\s\S]*?<a class="nm nm f-thide s-fc3" href="(.+)" title="(.+)">/g,
+    trimSrc(u) {
+        const o = url.parse(u);
+        return url.format({
+            protocol: 'https',
+            host: o.host,
+            pathname: o.pathname
+        });
+    },
+    trimId(u) {
+        const o = url.parse(u);
+        return qs.parse(o.query).id;
+    }
+};
+
+/**
+ * get playlists related to given playlist
+ * @param {number} id
+ * @returns {Promise<Types.RelatedPlaylistsRes>}
+ */
+export async function getRelatedPlaylists(id) {
+    const html = await client.get(`${BaseURL}/playlist?id=${id}`);
+    const data = [];
+    try {
+        let match;
+        while (match = RelatedPlaylists.regexp.exec(html)) { // eslint-disable-line no-cond-assign
+            data.push({
+                name: match[1],
+                id: match[2],
+                picUrl: RelatedPlaylists.trimSrc(match[3]),
+                creator: {
+                    id: RelatedPlaylists.trimId(match[4]),
+                    name: match[5]
+                }
+            });
+        }
+        return { code: 200, data };
+    } catch (e) {
+        return { code: 500, error: e.stack };
+    }
+}
