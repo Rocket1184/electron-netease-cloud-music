@@ -4,27 +4,27 @@
             <img :src="coverSrc"
                 class="cover">
             <div class="desc">
-                <p class="name">{{detail.name}}</p>
+                <p class="name">{{playlist.name}}</p>
                 <div class="creator">
                     <mu-avatar class="avatar">
                         <img :src="creatorAvatarSrc">
                     </mu-avatar>
-                    <span class="creator-name">{{detail.creator.nickname}}</span>
+                    <span class="creator-name">{{playlist.creator.nickname}}</span>
                     <span class="create-time">创建于 {{createTime}}</span>
                 </div>
                 <div class="actions">
                     <mu-button flat
-                        :disabled="detail.creator.id === user.id"
+                        :disabled="playlist.creator.id === user.info.id"
                         @click="handleSubscribe">
                         <mu-icon left
-                            :color="detail.subscribed ? 'amber' : ''"
-                            :value="detail.subscribed ? 'star' : 'star_border'"></mu-icon>
-                        {{ detail.subscribed ? '已收藏' : '收藏' }} ({{formatCount(detail.subscribedCount)}})
+                            :color="shouldSubscribed ? 'amber' : ''"
+                            :value="shouldSubscribed ? 'star' : 'star_border'"></mu-icon>
+                        <span>{{ shouldSubscribed ? '已收藏' : '收藏' }} ({{formatCount(playlist.subscribedCount + subsCntOffset)}})</span>
                     </mu-button>
                     <mu-button flat>
                         <mu-icon left
                             value="comment"></mu-icon>
-                        评论 ({{formatCount(detail.commentCount)}})
+                        <span>评论 ({{formatCount(playlist.commentCount)}})</span>
                     </mu-button>
                 </div>
                 <div class="intro">
@@ -40,7 +40,7 @@
                                     value="keyboard_arrow_down"></mu-icon>
                             </mu-list-item-action>
                             <mu-list-item-content slot="nested">
-                                <div class="description">{{detail.description}}</div>
+                                <div class="description">{{playlist.description}}</div>
                             </mu-list-item-content>
                         </mu-list-item>
                     </mu-list>
@@ -49,12 +49,12 @@
         </div>
         <div class="tracks">
             <mu-sub-header>曲目列表</mu-sub-header>
-            <PlayAll :tracks="detail.tracks"></PlayAll>
+            <PlayAll :tracks="playlist.tracks"></PlayAll>
             <TrackList :tracks="tracksToShow"
                 :indexOffset="tracksOffset"></TrackList>
             <div class="pagination"
-                v-if="detail.tracks.length > 50">
-                <mu-pagination :total="detail.tracks.length"
+                v-if="playlist.tracks.length > 50">
+                <mu-pagination :total="playlist.tracks.length"
                     :current="currentPage"
                     :page-size="pageSize"
                     @change="handlePageChange">
@@ -65,7 +65,7 @@
 </template>
 
 <script>
-import { mapActions, mapGetters } from 'vuex';
+import { mapActions, mapState } from 'vuex';
 
 import PlayAll from '@/components/playAll.vue';
 import TrackList from '@/components/trackList.vue';
@@ -74,12 +74,14 @@ import { shortDate } from '@/util/formatter';
 
 export default {
     props: {
-        detail: {
+        playlist: {
             required: true
         }
     },
     data() {
         return {
+            shouldSubscribed: null,
+            subsCntOffset: 0,
             descOpen: false,
             scrollHeight: 200,
             currentPage: 1,
@@ -87,21 +89,21 @@ export default {
         };
     },
     computed: {
-        ...mapGetters(['user', 'loginValid']),
+        ...mapState(['user']),
         creatorAvatarSrc() {
-            return sizeImg(this.detail.creator.avatarUrl, HiDpiPx(40));
+            return sizeImg(this.playlist.creator.avatarUrl, HiDpiPx(40));
         },
         coverSrc() {
-            return sizeImg(this.detail.coverImgUrl, HiDpiPx(160));
+            return sizeImg(this.playlist.coverImgUrl, HiDpiPx(160));
         },
         createTime() {
-            return shortDate(this.detail.createTime);
+            return shortDate(this.playlist.createTime);
         },
         tracksOffset() {
             return (this.currentPage - 1) * this.pageSize;
         },
         tracksToShow() {
-            return this.detail.tracks.slice(this.tracksOffset, this.tracksOffset + this.pageSize);
+            return this.playlist.tracks.slice(this.tracksOffset, this.tracksOffset + this.pageSize);
         }
     },
     methods: {
@@ -114,38 +116,31 @@ export default {
             this.currentPage = newIndex;
         },
         async handleSubscribe() {
-            if (!this.loginValid) {
+            if (!this.user.loginValid) {
                 this.$toast.message('汝还没有登录呀      (눈‸눈)');
                 return;
             }
-            if (this.detail.subscribed) {
+            if (this.shouldSubscribed) {
                 try {
-                    await this.unsubscribePlaylist(this.detail);
-                    this.detail.subscribed = false;
-                    this.detail.subscribedCount--;
+                    await this.unsubscribePlaylist(this.playlist);
+                    this.shouldSubscribed = false;
+                    this.subsCntOffset--;
                 } catch (e) {
                     this.$toast.message(`取消收藏失败 ●﹏● ： ${e.code}`);
                 }
                 return;
             }
             try {
-                await this.subscribePlaylist(this.detail);
-                this.detail.subscribed = true;
-                this.detail.subscribedCount++;
+                await this.subscribePlaylist(this.playlist);
+                this.shouldSubscribed = true;
+                this.subsCntOffset++;
             } catch (e) {
                 this.$toast.message(`收藏歌单失败 ●﹏● ： ${e.code}`);
             }
         }
     },
-    mounted() {
-        try {
-            this.scrollHeight = document.querySelector('.playlist-detail .header').clientHeight;
-        } catch (e) { /* we will use the default height 200px now */ }
-    },
-    watch: {
-        ['detail.id']() {
-            this.currentPage = 1;
-        }
+    created() {
+        this.shouldSubscribed = this.playlist.subscribed;
     },
     components: {
         PlayAll,

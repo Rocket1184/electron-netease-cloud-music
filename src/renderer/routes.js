@@ -3,6 +3,7 @@ import Search from '@/page/search.vue';
 import Player from '@/page/player.vue';
 import Playlist from '@/page/playlist.vue';
 import Settings from '@/page/settings.vue';
+import Favorite from '@/page/favorite.vue';
 
 export default [
     {
@@ -23,9 +24,13 @@ export default [
     },
     {
         path: '/playlist',
-        title: '我的歌单',
         component: Playlist,
-        icon: 'library_music'
+    },
+    {
+        path: '/favorite',
+        title: '我的收藏',
+        component: Favorite,
+        icon: 'bookmarks'
     },
     {
         path: '/playlist/:id',
