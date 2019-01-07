@@ -63,9 +63,9 @@
                     :key="route.name"
                     :to="route.path">
                     <mu-list-item-action>
-                        <mu-icon :value="route.icon"></mu-icon>
+                        <mu-icon :value="route.icon || 'bug_report'"></mu-icon>
                     </mu-list-item-action>
-                    <mu-list-item-title>{{route.title}}</mu-list-item-title>
+                    <mu-list-item-title>{{route.title}} {{route.icon ? '' : '(debug)'}}</mu-list-item-title>
                 </mu-list-item>
             </mu-list>
         </mu-drawer>
@@ -99,7 +99,7 @@ export default {
     computed: {
         ...mapState(['settings', 'user']),
         validRoutes() {
-            return Routes.filter(r => r.icon);
+            return Routes.filter(r => r.title);
         },
         appbarDynamicClassName() {
             return {
