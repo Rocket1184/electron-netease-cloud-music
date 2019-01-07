@@ -268,3 +268,13 @@ export async function setUiSimiPlaylists({ commit }, id) {
     const resp = await Api.getRelatedPlaylists(id);
     commit(types.SET_UI_TEMP_RELATED_PLAYLISTS, resp.data);
 }
+
+export async function setUiRecommendSongs({ commit }) {
+    const resp = await Api.getRecommendSongs();
+    commit(types.SET_UI_RECOMMEND_SONGS, resp.recommend);
+}
+
+export async function setUiRecommendStatistics({ commit }) {
+    const resp = await Api.getRecommendStatistics();
+    commit(types.SET_UI_RECOMMEND_STATISTICS, resp.data);
+}

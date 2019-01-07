@@ -1,5 +1,5 @@
 import * as types from '../mutation-types';
-import { Artist, Album, Video, PlayList } from '@/util/models';
+import { Artist, Album, Video, PlayList, Track } from '@/util/models';
 
 const state = {
     audioSrc: '',
@@ -8,6 +8,8 @@ const state = {
     lyricSeq: 0,
     collectPopupShow: false,
     collectTrackIds: [],
+    recommendSongs: [],
+    recommendStatistics: {},
     fav: {
         album: null,
         artist: null,
@@ -62,6 +64,12 @@ const mutations = {
     },
     [types.SET_UI_TEMP_RELATED_PLAYLISTS](state, payload) {
         state.temp.relatedPlaylists = payload;
+    },
+    [types.SET_UI_RECOMMEND_SONGS](state, payload) {
+        state.recommendSongs = payload.map(t => new Track(t));
+    },
+    [types.SET_UI_RECOMMEND_STATISTICS](state, payload) {
+        state.recommendStatistics = payload;
     }
 };
 
