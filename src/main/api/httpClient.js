@@ -120,7 +120,12 @@ class HttpClient {
 
         const res = await fetch(url, init);
         this.handleResponse(res);
-        const data = await res.json();
+        let data;
+        if (res.headers.get('content-type').includes('application/json')) {
+            data = await res.json();
+        } else {
+            data = await res.text();
+        }
         this.logResponse(url, 'GET', res.status, data);
         return data;
     }
