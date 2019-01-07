@@ -4,6 +4,7 @@ import Player from '@/page/Player.vue';
 import Playlist from '@/page/Playlist.vue';
 import Settings from '@/page/Settings/Settings.vue';
 import Favorite from '@/page/Favorite/Favorite.vue';
+import RecommendSongs from '@/page/RecommendSongs.vue';
 
 export default [
     {
@@ -35,6 +36,11 @@ export default [
     {
         path: '/playlist/:id',
         component: Playlist,
+    },
+    {
+        path: '/recommend',
+        title: '每日歌曲推荐',
+        component: RecommendSongs
     },
     {
         path: '/settings',

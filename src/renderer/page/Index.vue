@@ -1,17 +1,12 @@
 <template>
     <div class="index-wrapper">
-        <RecommendSongs></RecommendSongs>
     </div>
 </template>
 
 <script>
-import RecommendSongs from '@/components/RecommendSongs.vue';
 
 export default {
-    name: 'page-index',
-    components: {
-        RecommendSongs
-    }
+    name: 'page-index'
 };
 </script>
 
