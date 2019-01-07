@@ -1,6 +1,6 @@
 import * as types from './mutation-types';
 import { LOOP_MODE } from './modules/playlist';
-import Api from '@/util/api';
+import Api from '@/util/api/index';
 import { User } from '@/util/models';
 
 export async function restoreSettings({ commit }) {
@@ -262,4 +262,9 @@ export async function setUiAlbumDetail({ commit }, id) {
 export async function setUiPlaylistDetail({ commit }, id) {
     const resp = await Api.getListDetail(id);
     commit(types.SET_UI_TEMP_PLAYLIST, resp.playlist);
+}
+
+export async function setUiSimiPlaylists({ commit }, id) {
+    const resp = await Api.getRelatedPlaylists(id);
+    commit(types.SET_UI_TEMP_RELATED_PLAYLISTS, resp.data);
 }

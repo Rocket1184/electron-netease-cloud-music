@@ -17,6 +17,7 @@ const state = {
         album: null,
         artist: null,
         playlist: null,
+        relatedPlaylists: null,
         video: null
     }
 };
@@ -58,6 +59,9 @@ const mutations = {
     },
     [types.SET_UI_TEMP_PLAYLIST](state, payload) {
         state.temp.playlist = new PlayList(payload);
+    },
+    [types.SET_UI_TEMP_RELATED_PLAYLISTS](state, payload) {
+        state.temp.relatedPlaylists = payload;
     }
 };
 
