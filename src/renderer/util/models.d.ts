@@ -26,6 +26,7 @@ declare namespace Models {
             pic: number;
             picUrl: string
         };
+        cd: string;
         artists: Artist[];
         lyrics: {
             qfy: Boolean;
@@ -84,12 +85,27 @@ declare namespace Models {
     export class Album {
         id: number;
         name: string;
+        alias: string[];
+        transNames: string[];
         artist: Artist;
+        artists: Artist[];
         copyrightId: number;
         picId: number;
+        picUrl: string;
         publishTime: number;
         size: number;
         status: number;
+        info: {
+            commentCount: number;
+            threadId: string;
+            liked: boolean;
+            likedCount: number;
+            resourceId: number;
+            resourceType: number;
+            shareCount: number;
+        };
+        subType: string;
+        songs: Track[];
     }
 
     export class Video {

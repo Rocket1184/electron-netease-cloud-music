@@ -64,6 +64,33 @@ const Models = {
             info: ''
         };
     },
+    get Album() {
+        return {
+            id: -1,
+            name: '',
+            alias: [],
+            transNames: [],
+            artist: Artist,
+            artists: Artist,
+            copyrightId: -1,
+            picId: -1,
+            picUrl: '',
+            publishTime: -1,
+            size: -1,
+            status: -1,
+            info: {
+                commentCount: -1,
+                threadId: '',
+                liked: false,
+                likedCount: -1,
+                resourceId: -1,
+                resourceType: -1,
+                shareCount: -1,
+            },
+            subType: '',
+            songs: [],
+        };
+    },
     get Video() {
         return {
             alg: null,
@@ -105,6 +132,7 @@ export class Track {
         this.id = o.id;
         this.name = o.name;
         this.album = o.al || o.album;
+        this.cd = o.cd;
         this.artists = o.ar || o.artists;
         this.lyrics = o.lyrics;
         this.duration = o.dt || o.duration;
@@ -162,12 +190,19 @@ export class Album {
         if (!o) return Models.Album;
         this.id = o.id;
         this.name = o.name;
-        this.artist = o.artist;
+        this.alias = o.alias;
+        this.transNames = o.transNames;
+        this.artist = o.artist || o.artists[0];
+        this.artists = o.artists;
         this.copyrightId = o.copyrightId;
         this.picId = o.picId;
+        this.picUrl = o.picUrl;
         this.publishTime = o.publishTime;
         this.size = o.size;
         this.status = o.status;
+        this.info = o.info;
+        this.subType = o.subType;
+        this.songs = (o.songs || []).map(t => new Track(t));
     }
 }
 
