@@ -16,7 +16,7 @@
                 :id="`cur-list-${index}`"
                 @click="handleListClick(index)">
                 <mu-list-item-action>
-                    <mu-icon v-if="track.id == playing.track.id"
+                    <mu-icon v-if="track.id == playlist.list[playlist.index].id"
                         color="secondary"
                         value="volume_up">
                     </mu-icon>
@@ -32,15 +32,11 @@
 </template>
 
 <script>
-import { mapActions, mapGetters, mapState } from 'vuex';
+import { mapActions, mapState } from 'vuex';
 
 export default {
-    data() {
-        return {};
-    },
     computed: {
-        ...mapState(['playlist']),
-        ...mapGetters(['playing'])
+        ...mapState(['playlist'])
     },
     methods: {
         ...mapActions(['playTrackIndex']),

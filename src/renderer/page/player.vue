@@ -53,7 +53,7 @@
 </template>
 
 <script>
-import { mapGetters, mapState } from 'vuex';
+import { mapState } from 'vuex';
 import { bkgImg, sizeImg, HiDpiPx } from '@/util/image';
 import defaultCoverImg from 'assets/img/cover_default.webp';
 
@@ -70,15 +70,12 @@ export default {
     },
     computed: {
         ...mapState(['ui', 'playlist']),
-        ...mapGetters(['playing']),
         track() {
-            return this.playing.track || ({ name: '（暂无歌曲）', album: { name: '', picUrl: '' } });
+            const { list, index } = this.playlist;
+            return list[index] || ({ name: '（暂无歌曲）', album: { name: '', picUrl: '' } });
         },
         albumImgStyle() {
-            try {
-                return bkgImg(sizeImg(this.playing.track.album.picUrl, HiDpiPx(220)));
-            } catch (e) { /* picUrl unavaliable */ }
-            return '';
+            return bkgImg(sizeImg(this.track.album.picUrl, HiDpiPx(220)));
         },
         lyricScrollerStyle() {
             if (this.lyricElemMap.length === 0 || this.currentLyricIndex === -1) {
@@ -124,9 +121,9 @@ export default {
         paintBkgCanvas() {
             if (!this.isActive) return;
             const img = new Image();
-            try {
-                img.src = sizeImg(this.playing.track.album.picUrl, HiDpiPx(64));
-            } catch (e) {
+            if (this.track.album.picUrl) {
+                img.src = sizeImg(this.track.album.picUrl, HiDpiPx(64));
+            } else {
                 img.src = defaultCoverImg;
             }
             const w = 1000;

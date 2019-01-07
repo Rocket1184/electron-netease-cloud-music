@@ -73,7 +73,7 @@
 
 <script>
 import { platform } from 'os';
-import { mapActions, mapGetters, mapState } from 'vuex';
+import { mapActions, mapState } from 'vuex';
 
 import ApiRenderer from '@/util/apiRenderer';
 import currentList from './currentList.vue';
@@ -116,15 +116,15 @@ export default {
             this.audioEl.currentTime = this.timeTotal * value / 100;
         },
         submitListened() {
-            ApiRenderer.submitListened(this.playing.track.id, this.timeTotal);
+            ApiRenderer.submitListened(this.playing.id, this.timeTotal);
         },
         async handleFavorite() {
-            if (!this.loginValid || !this.playing.track) {
+            if (!this.user.loginValid || !this.playing) {
                 this.$toast.message('真的这么喜欢我吗 o(*////▽////*)q');
                 return;
             }
-            const list = this.user.favoriteList;
-            const track = this.playing.track;
+            const list = this.user.playlist[0];
+            const track = this.playing;
             if (list.tracks.find(t => t.id === track.id)) {
                 await ApiRenderer.uncollectTrack(list.id, track.id);
             } else {
@@ -153,14 +153,17 @@ export default {
         }
     },
     computed: {
-        ...mapGetters(['playing', 'user', 'loginValid']),
-        ...mapState(['playlist', 'ui']),
+        ...mapState(['playlist', 'ui', 'user']),
+        playing() {
+            const { list, index } = this.playlist;
+            return list[index];
+        },
         track() {
-            return this.playing.track || ({ name: 'Electron Netease Cloud Music' });
+            return this.playing || ({ name: 'Electron Netease Cloud Music' });
         },
         coverImgStyle() {
-            if (this.playing.track && this.playing.track.album.picUrl) {
-                return bkgImg(sizeImg(this.playing.track.album.picUrl, HiDpiPx(64)));
+            if (this.playing && this.playing.album.picUrl) {
+                return bkgImg(sizeImg(this.playing.album.picUrl, HiDpiPx(64)));
             }
             return '';
         },
@@ -169,15 +172,15 @@ export default {
         },
         isFavorite: {
             get() {
-                if (!this.loginValid || !this.playing.track) {
+                if (!this.user.loginValid || !this.playing) {
                     return false;
                 }
                 if (this.shouldFavorite !== null) {
                     return this.shouldFavorite;
                 }
-                const { favoriteList } = this.user;
+                const favoriteList = this.user.playlist[0];
                 if (favoriteList) {
-                    const track = favoriteList.tracks.find(t => t.id === this.playing.track.id);
+                    const track = favoriteList.tracks.find(t => t.id === this.playing.id);
                     return typeof track === 'object';
                 }
                 return false;
@@ -190,21 +193,21 @@ export default {
         collectPopupShown: {
             get() { return this.realCollectPopupShown; },
             set(val) {
-                if (!this.loginValid && val === true && this.realCollectPopupShown === false) {
+                if (!this.user.loginValid && val === true && this.realCollectPopupShown === false) {
                     this.$toast.message('汝还没有登录呀      (눈‸눈)');
                     // set value of real `<input>` element to `false`.
                     // it depends on MuseUI impl
                     this.$refs.chkShowPlaylists.inputValue = false;
                     return;
                 }
-                if (!this.playing.track) {
+                if (!this.playing) {
                     this.$toast.message('究竟想收藏什么呢     (｡ŏ_ŏ)');
                     this.$refs.chkShowPlaylists.inputValue = false;
                     return;
                 }
                 this.realCollectPopupShown = val;
                 if (val === true) {
-                    this.toggleCollectPopup(this.playing.track.id);
+                    this.toggleCollectPopup(this.playing.id);
                 }
             }
         },

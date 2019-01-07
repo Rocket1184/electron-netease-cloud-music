@@ -7,7 +7,7 @@
             <p>每日歌曲推荐</p>
         </div>
         <div class="content">
-            <template v-if="loginValid">
+            <template v-if="user.loginValid">
                 <PlayAll :tracks="dailyList"></PlayAll>
                 <TrackList :tracks="dailyList"></TrackList>
             </template>
@@ -22,7 +22,7 @@
 </template>
 
 <script>
-import { mapGetters } from 'vuex';
+import { mapState } from 'vuex';
 
 import { Track } from '@/util/models';
 import PlayAll from './playAll.vue';
@@ -36,9 +36,7 @@ export default {
         };
     },
     computed: {
-        ...mapGetters([
-            'loginValid'
-        ]),
+        ...mapState(['user']),
         dayNumber() {
             return new Date().getDate();
         }
@@ -50,7 +48,7 @@ export default {
         }
     },
     watch: {
-        loginValid(val) {
+        ['user.loginValid'](val) {
             if (val) {
                 this.refreshList();
             } else {
@@ -59,7 +57,7 @@ export default {
         }
     },
     created() {
-        if (this.loginValid) this.refreshList();
+        if (this.user.loginValid) this.refreshList();
     },
     components: {
         PlayAll,

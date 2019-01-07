@@ -34,7 +34,7 @@
 </template>
 
 <script>
-import { mapActions, mapGetters } from 'vuex';
+import { mapActions, mapState } from 'vuex';
 import { shortTime } from '@/util/formatter';
 
 export default {
@@ -53,12 +53,12 @@ export default {
         shortTime
     },
     computed: {
-        ...mapGetters(['loginValid'])
+        ...mapState(['user'])
     },
     methods: {
         ...mapActions(['toggleCollectPopup', 'addTrackToPlaylist']),
         handleCollect(id) {
-            if (!this.loginValid) {
+            if (!this.user.loginValid) {
                 this.$toast.message('汝还没有登录呀      (눈‸눈)');
                 return;
             }

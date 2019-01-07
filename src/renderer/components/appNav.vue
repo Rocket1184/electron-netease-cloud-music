@@ -40,7 +40,7 @@
             <div class="header"
                 :style="backgroundUrlStyle">
                 <mu-avatar :size="80">
-                    <img v-if="loginValid"
+                    <img v-if="user.loginValid"
                         :src="avatarUrl">
                     <mu-icon v-else
                         value="music_note"
@@ -48,9 +48,9 @@
                 </mu-avatar>
                 <div class="text">
                     <span class="username"
-                        @click="handleNameClick()">{{user.name}}</span>
+                        @click="handleNameClick()">{{user.info.nickname}}</span>
                     <mu-button flat
-                        v-if="loginValid"
+                        v-if="user.loginValid"
                         class="button-checkin"
                         color="white"
                         @click="handleCheckIn()">签到</mu-button>
@@ -74,7 +74,7 @@
 </template>
 
 <script>
-import { mapActions, mapGetters, mapState } from 'vuex';
+import { mapActions, mapState } from 'vuex';
 import { remote } from 'electron';
 import { platform } from 'os';
 
@@ -97,8 +97,7 @@ export default {
         };
     },
     computed: {
-        ...mapState(['settings']),
-        ...mapGetters(['loginValid', 'user']),
+        ...mapState(['settings', 'user']),
         validRoutes() {
             return Routes.filter(r => r.icon);
         },
@@ -109,10 +108,10 @@ export default {
             };
         },
         avatarUrl() {
-            return sizeImg(this.user.avatarUrl, HiDpiPx(80));
+            return sizeImg(this.user.info.avatarUrl, HiDpiPx(80));
         },
         backgroundUrlStyle() {
-            return this.user.bkgUrl && bkgImg(sizeImg(this.user.bkgUrl, HiDpiPx(300), HiDpiPx(200)));
+            return this.user.info.bkgUrl && bkgImg(sizeImg(this.user.info.bkgUrl, HiDpiPx(300), HiDpiPx(200)));
         }
     },
     methods: {
@@ -133,7 +132,7 @@ export default {
             this.drawerOpen = false;
         },
         handleNameClick() {
-            if (!this.loginValid) {
+            if (!this.user.loginValid) {
                 this.loginDlgShow = true;
             } else {
                 this.$confirm(
