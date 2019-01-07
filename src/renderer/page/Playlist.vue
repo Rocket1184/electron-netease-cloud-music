@@ -1,17 +1,38 @@
 <template>
     <ListDetailLayout :loading="detailLoading"
-        tipText="登录后查看收藏的歌单"
+        tipText=""
         :showTip="false">
-        <mu-list slot="list">
-            <mu-list-item button
-                @click="handleBack">
-                <mu-list-item-action>
-                    <mu-icon size="24"
-                        value="arrow_back"></mu-icon>
-                </mu-list-item-action>
-                <mu-list-item-title>返回</mu-list-item-title>
-            </mu-list-item>
-        </mu-list>
+        <div slot="list"
+            class="playlist-side">
+            <mu-list>
+                <mu-list-item button
+                    @click="handleBack">
+                    <mu-list-item-action>
+                        <mu-icon size="24"
+                            value="arrow_back"></mu-icon>
+                    </mu-list-item-action>
+                    <mu-list-item-title>返回</mu-list-item-title>
+                </mu-list-item>
+            </mu-list>
+            <div class="related">
+                <mu-list>
+                    <mu-list-item>相关推荐</mu-list-item>
+                    <div v-if="relatedLoading"
+                        class="progress-wrapper">
+                        <mu-circular-progress color="secondary"
+                            :size="60"
+                            :stroke-width="5"></mu-circular-progress>
+                    </div>
+                    <AvatarListItem v-else
+                        v-for="list in ui.temp.relatedPlaylists"
+                        :key="list.id"
+                        :img="list.picUrl"
+                        :title="list.name"
+                        :subTitle="list.creator.name"
+                        @click="handleRelatedClick(list.id)"></AvatarListItem>
+                </mu-list>
+            </div>
+        </div>
         <PlaylistDetail slot="detail"
             v-if="!detailLoading"
             :playlist="ui.temp.playlist"
@@ -24,11 +45,13 @@ import { mapActions, mapState } from 'vuex';
 
 import ListDetailLayout from '@/components/ListDetailLayout.vue';
 import PlaylistDetail from '@/components/PlaylistDetail.vue';
+import AvatarListItem from '@/components/AvatarListItem.vue';
 
 export default {
     data() {
         return {
-            detailLoading: true
+            detailLoading: true,
+            relatedLoading: true
         };
     },
     computed: {
@@ -36,15 +59,19 @@ export default {
     },
     methods: {
         ...mapActions([
-            'setUiPlaylistDetail'
+            'setUiPlaylistDetail',
+            'setUiSimiPlaylists'
         ]),
         handleBack() {
             this.$router.back();
         },
-        async loadPlaylist(id) {
+        loadPlaylist(id) {
             this.detailLoading = true;
-            await this.setUiPlaylistDetail(id);
-            this.detailLoading = false;
+            this.relatedLoading = true;
+            this.setUiPlaylistDetail(id)
+                .then(() => this.detailLoading = false);
+            this.setUiSimiPlaylists(id)
+                .then(() => this.relatedLoading = false);
         },
         /**
          * @param {number} top
@@ -52,15 +79,45 @@ export default {
          */
         scrollContent(top, behavior = 'smooth') {
             document.querySelector('.ld-detail').scrollTo({ top, behavior });
+        },
+        handleRelatedClick(id) {
+            this.$router.push(`/playlist/${id}`);
         }
     },
     mounted() {
         const id = this.$route.params.id;
         this.loadPlaylist(id);
     },
+    beforeRouteUpdate(to, from, next) {
+        // this component is reused in the new route
+        next();
+        const id = this.$route.params.id;
+        this.loadPlaylist(id);
+    },
     components: {
         ListDetailLayout,
-        PlaylistDetail
+        PlaylistDetail,
+        AvatarListItem
     }
 };
 </script>
+
+<style lang="less">
+.playlist-side {
+    display: flex;
+    flex-direction: column;
+    height: 100%;
+    justify-content: space-between;
+    .related {
+        .mu-list {
+            height: 344px;
+        }
+        .progress-wrapper {
+            height: calc(~'100% - 48px');
+            display: flex;
+            justify-content: center;
+            align-items: center;
+        }
+    }
+}
+</style>
