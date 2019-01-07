@@ -752,3 +752,24 @@ export async function getRelatedPlaylists(id) {
         return { code: 500, error: e.stack };
     }
 }
+
+const RecommendStatistics = {
+    regexp: /你播放了[\s\S]*?(\d+)<\/strong>首音乐[\s\S]*?你喜欢了[\s\S]*?(\d+)<\/strong>首音乐[\s\S]*?你收藏了[\s\S]*?(\d+)<\/strong>位歌手/
+};
+
+export async function getRecommendStatistics() {
+    const html = await client.get(`${BaseURL}/discover/recommend/taste`);
+    try {
+        const match = RecommendStatistics.regexp.exec(html);
+        return {
+            code: 200,
+            data: {
+                playCnt: +match[1],
+                likeCnt: +match[2],
+                followCnt: +match[3]
+            }
+        };
+    } catch (e) {
+        return { code: 500, error: e.stack };
+    }
+}

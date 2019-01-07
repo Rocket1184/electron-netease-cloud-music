@@ -442,7 +442,7 @@ namespace Types {
 
     export interface RecommendSongsRes extends ApiRes {
         data: {
-            dailySongs: Recommend[];
+            dailySongs: RecommendSong[];
             /** empty at present */
             orderSongs: any[];
         }
