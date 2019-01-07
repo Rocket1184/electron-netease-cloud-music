@@ -57,6 +57,7 @@ export function setLoginValid(context, payload) {
                 });
             }
         });
+        updateUserAlbums(context);
     } else {
         context.commit(types.SET_LOGIN_VALID, false);
     }
@@ -243,4 +244,19 @@ export async function unsubscribePlaylist({ commit }, payload) {
         return resp;
     }
     throw resp;
+}
+
+export async function updateUserAlbums({ commit }) {
+    const resp = await ApiRenderer.getSubscribedAlumbs(1000);
+    commit(types.SET_USER_ALBUMS, resp.data);
+}
+
+export async function setUiAlbumDetail({ commit }, id) {
+    const resp = await ApiRenderer.getAlbumDetailW(id);
+    commit(types.SET_UI_FAV_ALBUM, resp);
+}
+
+export async function setUiPlaylistDetail({ commit }, id) {
+    const resp = await ApiRenderer.getListDetail(id);
+    commit(types.SET_UI_TEMP_PLAYLIST, resp.playlist);
 }
