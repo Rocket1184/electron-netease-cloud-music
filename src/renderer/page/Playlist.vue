@@ -5,14 +5,7 @@
         <div slot="list"
             class="playlist-side">
             <mu-list>
-                <mu-list-item button
-                    @click="handleBack">
-                    <mu-list-item-action>
-                        <mu-icon size="24"
-                            value="arrow_back"></mu-icon>
-                    </mu-list-item-action>
-                    <mu-list-item-title>返回</mu-list-item-title>
-                </mu-list-item>
+                <ListItemBack></ListItemBack>
             </mu-list>
             <div class="related">
                 <mu-list>
@@ -46,6 +39,7 @@ import { mapActions, mapState } from 'vuex';
 import ListDetailLayout from '@/components/ListDetailLayout.vue';
 import PlaylistDetail from '@/components/PlaylistDetail.vue';
 import AvatarListItem from '@/components/AvatarListItem.vue';
+import ListItemBack from '@/components/ListItemBack.vue';
 
 export default {
     data() {
@@ -62,9 +56,6 @@ export default {
             'setUiPlaylistDetail',
             'setUiSimiPlaylists'
         ]),
-        handleBack() {
-            this.$router.back();
-        },
         loadPlaylist(id) {
             this.detailLoading = true;
             this.relatedLoading = true;
@@ -97,7 +88,8 @@ export default {
     components: {
         ListDetailLayout,
         PlaylistDetail,
-        AvatarListItem
+        AvatarListItem,
+        ListItemBack
     }
 };
 </script>
