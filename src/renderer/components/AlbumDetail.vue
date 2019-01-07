@@ -40,7 +40,7 @@
             </div>
         </div>
         <div class="tracks">
-            <PlayAll :tracks="album.songs"></PlayAll>
+            <PlayTracks :tracks="album.songs"></PlayTracks>
             <div v-for="(tracks, name) in tracksToShow"
                 :key="name">
                 <mu-sub-header>Disk {{name}}</mu-sub-header>
@@ -51,8 +51,8 @@
 </template>
 
 <script>
-import PlayAll from '@/components/playAll.vue';
-import TrackList from '@/components/trackList.vue';
+import PlayTracks from '@/components/PlayTracks.vue';
+import TrackList from '@/components/TrackList.vue';
 import { sizeImg, HiDpiPx } from '@/util/image';
 import { shortDate } from '@/util/formatter';
 
@@ -99,7 +99,7 @@ export default {
         }
     },
     components: {
-        PlayAll,
+        PlayTracks,
         TrackList
     }
 };

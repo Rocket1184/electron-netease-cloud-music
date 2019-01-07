@@ -79,13 +79,13 @@ import { remote } from 'electron';
 import { platform } from 'os';
 
 import { bkgImg, sizeImg, HiDpiPx } from "@/util/image";
-import ApiRenderer from '@/util/apiRenderer';
-import loginDialog from './loginDialog.vue';
-import searchBox from './searchBox.vue';
+import Api from '@/util/api';
+import loginDialog from './LoginDialog.vue';
+import searchBox from './SearchBox.vue';
 import Routes from '@/routes';
 
 function checkIn(...args) {
-    return ApiRenderer.postDailyTask(...args);
+    return Api.postDailyTask(...args);
 }
 
 export default {

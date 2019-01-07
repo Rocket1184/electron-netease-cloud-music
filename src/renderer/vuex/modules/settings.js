@@ -1,5 +1,5 @@
 import * as types from '../mutation-types';
-import ApiRenderer from '@/util/apiRenderer';
+import Api from '@/util/api';
 
 let state = window.__NCM_SETTINGS__ || {
     bitRate: 'l',
@@ -17,7 +17,7 @@ const mutations = {
         });
     },
     [types.WRITE_SETTINGS](state) {
-        ApiRenderer.writeSettings(state);
+        Api.writeSettings(state);
     }
 };
 

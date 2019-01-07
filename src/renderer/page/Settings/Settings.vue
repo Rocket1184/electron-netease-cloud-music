@@ -36,8 +36,8 @@
             <mu-list-item button
                 @click="primaryPickerOpen = true">
                 <mu-list-item-title>主色调</mu-list-item-title>
-                <colorPicker :open.sync="primaryPickerOpen"
-                    @select="setByName('themePrimaryColor', $event)"></colorPicker>
+                <ColorPicker :open.sync="primaryPickerOpen"
+                    @select="setByName('themePrimaryColor', $event)"></ColorPicker>
                 <mu-list-item-action>
                     <mu-avatar :size="24"
                         :color="settings.themePrimaryColor"></mu-avatar>
@@ -46,8 +46,8 @@
             <mu-list-item button
                 @click="secondaryPickerOpen = true">
                 <mu-list-item-title>强调色</mu-list-item-title>
-                <colorPicker :open.sync="secondaryPickerOpen"
-                    @select="setByName('themeSecondaryColor', $event)"></colorPicker>
+                <ColorPicker :open.sync="secondaryPickerOpen"
+                    @select="setByName('themeSecondaryColor', $event)"></ColorPicker>
                 <mu-list-item-action>
                     <mu-avatar :size="24"
                         :color="settings.themeSecondaryColor"></mu-avatar>
@@ -127,9 +127,9 @@
 import { ipcRenderer, remote, shell } from 'electron';
 import MuseUI from 'muse-ui';
 
-import colorPicker from '@/components/colorPicker.vue';
+import ColorPicker from './ColorPicker.vue';
 import * as types from '@/vuex/mutation-types';
-import ApiRenderer from '@/util/apiRenderer';
+import Api from '@/util/api';
 import { humanSize } from '@/util/formatter';
 
 const versions = remote.getGlobal('process').versions;
@@ -156,9 +156,9 @@ export default {
     methods: {
         refreshSize() {
             remote.getCurrentWebContents().session.getCacheSize(s => this.cacheSize = s);
-            ApiRenderer.getDataSize().then(s => this.dataSize = s);
-            ApiRenderer.getDataSize('music').then(s => this.musicSize = s);
-            ApiRenderer.getDataSize('lyric').then(s => this.lyricSize = s);
+            Api.getDataSize().then(s => this.dataSize = s);
+            Api.getDataSize('music').then(s => this.musicSize = s);
+            Api.getDataSize('lyric').then(s => this.lyricSize = s);
         },
         saveSettings() {
             this.$store.commit(types.UPDATE_SETTINGS, this.settings);
@@ -208,11 +208,11 @@ export default {
                             });
                             break;
                         case 'music':
-                            ApiRenderer.clearCache('music')
+                            Api.clearCache('music')
                                 .then(() => this.$toast.message('歌曲缓存清除完成'));
                             break;
                         case 'lyric':
-                            ApiRenderer.clearCache('lyric')
+                            Api.clearCache('lyric')
                                 .then(() => this.$toast.message('歌词缓存清除完成'));
                             break;
                         default:
@@ -232,8 +232,8 @@ export default {
                     Promise.all([
                         this.clearStorage(),
                         // clear cookies
-                        ApiRenderer.updateCookie({}),
-                        ApiRenderer.resetSettings(),
+                        Api.updateCookie({}),
+                        Api.resetSettings(),
                         this.clearCache('chrome'),
                         this.clearCache('music'),
                         this.clearCache('lyric'),
@@ -285,11 +285,11 @@ export default {
         }
     },
     components: {
-        colorPicker
+        ColorPicker
     },
     beforeCreate() {
-        ApiRenderer.getCurrentSettings().then(s => this.settings = s);
-        ApiRenderer.getVersionName().then(v => this.versionName = v);
+        Api.getCurrentSettings().then(s => this.settings = s);
+        Api.getVersionName().then(v => this.versionName = v);
     },
     activated() {
         this.refreshSize();

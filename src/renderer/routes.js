@@ -1,9 +1,9 @@
-import Index from '@/page/index.vue';
-import Search from '@/page/search.vue';
-import Player from '@/page/player.vue';
-import Playlist from '@/page/playlist.vue';
-import Settings from '@/page/settings.vue';
-import Favorite from '@/page/favorite.vue';
+import Index from '@/page/Index.vue';
+import Search from '@/page/Search/Search.vue';
+import Player from '@/page/Player.vue';
+import Playlist from '@/page/Playlist.vue';
+import Settings from '@/page/Settings/Settings.vue';
+import Favorite from '@/page/Favorite/Favorite.vue';
 
 export default [
     {

@@ -23,7 +23,7 @@
 import { mapActions, mapState } from 'vuex';
 
 import ListDetailLayout from '@/components/ListDetailLayout.vue';
-import PlaylistDetail from '@/components/playlistDetail.vue';
+import PlaylistDetail from '@/components/PlaylistDetail.vue';
 
 export default {
     data() {

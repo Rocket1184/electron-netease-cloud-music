@@ -8,7 +8,7 @@
         </div>
         <div class="content">
             <template v-if="user.loginValid">
-                <PlayAll :tracks="dailyList"></PlayAll>
+                <PlayTracks :tracks="dailyList"></PlayTracks>
                 <TrackList :tracks="dailyList"></TrackList>
             </template>
             <div v-else
@@ -25,9 +25,9 @@
 import { mapState } from 'vuex';
 
 import { Track } from '@/util/models';
-import PlayAll from './playAll.vue';
-import TrackList from './trackList.vue';
-import ApiRenderer from '@/util/apiRenderer';
+import PlayTracks from './PlayTracks.vue';
+import TrackList from './TrackList.vue';
+import Api from '@/util/api';
 
 export default {
     data() {
@@ -43,7 +43,7 @@ export default {
     },
     methods: {
         async refreshList() {
-            const resp = await ApiRenderer.getRecommendSongs();
+            const resp = await Api.getRecommendSongs();
             this.dailyList = resp.recommend.map(t => new Track(t));
         }
     },
@@ -60,7 +60,7 @@ export default {
         if (this.user.loginValid) this.refreshList();
     },
     components: {
-        PlayAll,
+        PlayTracks,
         TrackList
     }
 };

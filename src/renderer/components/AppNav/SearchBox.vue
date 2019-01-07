@@ -24,7 +24,7 @@
 
 <script>
 import { stringify } from 'querystring';
-import ApiRenderer from '@/util/apiRenderer';
+import Api from '@/util/api';
 
 export default {
     data() {
@@ -40,7 +40,7 @@ export default {
             if (query <= 0) {
                 return [];
             }
-            const resp = await ApiRenderer.getSearchSuggest(query);
+            const resp = await Api.getSearchSuggest(query);
             if (resp.code !== 200) {
                 return [];
             }

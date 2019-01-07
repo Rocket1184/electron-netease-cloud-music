@@ -81,13 +81,13 @@
 import { stringify } from 'querystring';
 
 import { Track } from '@/util/models';
-import TrackList from '@/components/trackList.vue';
-import ArtistList from '@/components/artistList.vue';
-import PlaylistList from '@/components/playlistList.vue';
-import AlbumList from '@/components/albumList.vue';
-import UnderConstructionTip from '@/components/underConstructionTip.vue';
+import TrackList from '@/components/TrackList.vue';
+import ArtistList from './ArtistList.vue';
+import PlaylistList from './PlaylistList.vue';
+import AlbumList from './AlbumList.vue';
+import UnderConstructionTip from './UnderConstructionTip.vue';
 import { searchTypes } from '@/util/searchType';
-import ApiRenderer from '@/util/apiRenderer';
+import Api from '@/util/api';
 
 export default {
     name: 'page-search',
@@ -136,7 +136,7 @@ export default {
             if (!this.haveSearched) this.haveSearched = true;
             this.currentPage = Number(page);
             this.isPosting = true;
-            const resp = await ApiRenderer.search(keyword, type, this.pageSize, this.searchOffset);
+            const resp = await Api.search(keyword, type, this.pageSize, this.searchOffset);
             this.isPosting = false;
             if (resp.code === 200) {
                 this.searchError = false;

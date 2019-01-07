@@ -1,10 +1,10 @@
 import * as types from './mutation-types';
 import { LOOP_MODE } from './modules/playlist';
-import ApiRenderer from '@/util/apiRenderer';
+import Api from '@/util/api';
 import { User } from '@/util/models';
 
 export async function restoreSettings({ commit }) {
-    const st = await ApiRenderer.getCurrentSettings();
+    const st = await Api.getCurrentSettings();
     commit(types.UPDATE_SETTINGS, st);
 }
 
@@ -25,20 +25,20 @@ export async function restoreUserInfo(context) {
         const userObj = JSON.parse(user);
         const cookieObj = JSON.parse(cookie);
         context.commit(types.SET_USER_INFO, userObj);
-        ApiRenderer.updateCookie(cookieObj);
-        const resp = await ApiRenderer.refreshLogin();
+        Api.updateCookie(cookieObj);
+        const resp = await Api.refreshLogin();
         if (resp.code === 200) {
             setLoginValid(context);
             return true;
         } else {
-            ApiRenderer.updateCookie({});
+            Api.updateCookie({});
             return false;
         }
     }
 }
 
 export async function updateUserPlaylists({ state, commit }) {
-    const { playlist } = await ApiRenderer.getUserPlaylist(state.user.info.id);
+    const { playlist } = await Api.getUserPlaylist(state.user.info.id);
     commit(types.UPDATE_USER_INFO, playlist[0].creator);
     commit(types.SET_USER_PLAYLISTS, playlist);
     return playlist;
@@ -47,12 +47,12 @@ export async function updateUserPlaylists({ state, commit }) {
 export function setLoginValid(context, payload) {
     if (payload === undefined || payload === true || payload.valid === true) {
         context.commit(types.SET_LOGIN_VALID);
-        ApiRenderer.getCookie().then(cookie => {
+        Api.getCookie().then(cookie => {
             localStorage.setItem('cookie', JSON.stringify(cookie));
         });
         updateUserPlaylists(context).then(playlist => {
             if (playlist[0].name.endsWith('喜欢的音乐')) {
-                ApiRenderer.getListDetail(playlist[0].id).then(list => {
+                Api.getListDetail(playlist[0].id).then(list => {
                     context.commit(types.UPDATE_USER_PLAYLIST, list.playlist);
                 });
             }
@@ -64,7 +64,7 @@ export function setLoginValid(context, payload) {
 }
 
 export function logout({ commit }) {
-    ApiRenderer.logout().then(code => {
+    Api.logout().then(code => {
         if (code == 200) {
             commit(types.SET_LOGIN_VALID, false);
             setUserInfo({ commit }, new User());
@@ -74,19 +74,19 @@ export function logout({ commit }) {
 }
 
 async function updateUiUrl(commit, trackId, quality) {
-    const oUrl = await ApiRenderer.getMusicUrlCached(trackId, quality);
+    const oUrl = await Api.getMusicUrlCached(trackId, quality);
     commit(types.UPDATE_PLAYING_URL, oUrl.url);
 }
 
 async function updateUiLyric(commit, id) {
-    const lyric = await ApiRenderer.getMusicLyricCached(id);
+    const lyric = await Api.getMusicLyricCached(id);
     commit(types.SET_ACTIVE_LYRIC, lyric);
 }
 
 export async function updateUiUrlNoCache({ commit, state }) {
     const { index, list } = state.playlist;
     const quality = state.settings.bitRate;
-    const oUrl = await ApiRenderer.getMusicUrlNoCache(list[index].id, quality);
+    const oUrl = await Api.getMusicUrlNoCache(list[index].id, quality);
     commit(types.UPDATE_PLAYING_URL, oUrl.url + '?' + Date.now());
 }
 
@@ -186,7 +186,7 @@ export function restorePlaylist({ commit, state }) {
 
 export async function updatePlaylistDetail({ commit }, payload) {
     const listId = typeof payload === 'number' ? payload : payload.id;
-    const resp = await ApiRenderer.getListDetail(listId);
+    const resp = await Api.getListDetail(listId);
     commit(types.UPDATE_USER_PLAYLIST, resp.playlist);
 }
 
@@ -229,7 +229,7 @@ export function addTrackToPlaylist({ commit }, payload) {
 }
 
 export async function subscribePlaylist({ commit }, payload) {
-    const resp = await ApiRenderer.subscribePlaylist(payload.id);
+    const resp = await Api.subscribePlaylist(payload.id);
     if (resp.code === 200) {
         commit(types.SUBSCRIBE_PLAYLIST, payload);
         return resp;
@@ -238,7 +238,7 @@ export async function subscribePlaylist({ commit }, payload) {
 }
 
 export async function unsubscribePlaylist({ commit }, payload) {
-    const resp = await ApiRenderer.unsubscribePlaylist(payload.id);
+    const resp = await Api.unsubscribePlaylist(payload.id);
     if (resp.code === 200) {
         commit(types.UNSUBSCRIBE_PLAYLIST, payload);
         return resp;
@@ -247,16 +247,16 @@ export async function unsubscribePlaylist({ commit }, payload) {
 }
 
 export async function updateUserAlbums({ commit }) {
-    const resp = await ApiRenderer.getSubscribedAlumbs(1000);
+    const resp = await Api.getSubscribedAlumbs(1000);
     commit(types.SET_USER_ALBUMS, resp.data);
 }
 
 export async function setUiAlbumDetail({ commit }, id) {
-    const resp = await ApiRenderer.getAlbumDetailW(id);
+    const resp = await Api.getAlbumDetailW(id);
     commit(types.SET_UI_FAV_ALBUM, resp);
 }
 
 export async function setUiPlaylistDetail({ commit }, id) {
-    const resp = await ApiRenderer.getListDetail(id);
+    const resp = await Api.getListDetail(id);
     commit(types.SET_UI_TEMP_PLAYLIST, resp.playlist);
 }

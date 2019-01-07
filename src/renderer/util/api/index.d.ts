@@ -1,4 +1,4 @@
-import * as ApiFunc from '../../main/api/index';
+import * as ApiFunc from '../../../main/api';
 
  // TypeScript is MAGIC!
 type Promisfy<T> = T extends ((...args: any[]) => any)
@@ -9,6 +9,6 @@ type Promisfy<T> = T extends ((...args: any[]) => any)
 
 type AllPromisfy<T> = { [P in keyof T]: Promisfy<T[P]> }
 
-declare var ApiRenderer: AllPromisfy<typeof ApiFunc>;
+declare var Api: AllPromisfy<typeof ApiFunc>;
 
-export default ApiRenderer;
+export default Api;

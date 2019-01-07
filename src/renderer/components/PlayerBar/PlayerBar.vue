@@ -37,7 +37,7 @@
                             checked-icon="queue_music"
                             color="secondary"
                             v-model="currentListShown"></mu-checkbox>
-                        <currentList slot="content"></currentList>
+                        <CurrentPlaylist slot="content"></CurrentPlaylist>
                     </mu-menu>
                 </div>
             </div>
@@ -75,8 +75,8 @@
 import { platform } from 'os';
 import { mapActions, mapState } from 'vuex';
 
-import ApiRenderer from '@/util/apiRenderer';
-import currentList from './currentList.vue';
+import Api from '@/util/api';
+import CurrentPlaylist from './CurrentPlaylist.vue';
 import {
     HIDE_COLLECT_POPUP,
     PAUSE_PLAYING_MUSIC,
@@ -116,7 +116,7 @@ export default {
             this.audioEl.currentTime = this.timeTotal * value / 100;
         },
         submitListened() {
-            ApiRenderer.submitListened(this.playing.id, this.timeTotal);
+            Api.submitListened(this.playing.id, this.timeTotal);
         },
         async handleFavorite() {
             if (!this.user.loginValid || !this.playing) {
@@ -126,9 +126,9 @@ export default {
             const list = this.user.playlist[0];
             const track = this.playing;
             if (list.tracks.find(t => t.id === track.id)) {
-                await ApiRenderer.uncollectTrack(list.id, track.id);
+                await Api.uncollectTrack(list.id, track.id);
             } else {
-                await ApiRenderer.collectTrack(list.id, track.id);
+                await Api.collectTrack(list.id, track.id);
             }
             // it would take some time for NetEase to update playlist cover
             // img, so we just wait 200 ms
@@ -330,7 +330,7 @@ export default {
         }
     },
     components: {
-        currentList
+        CurrentPlaylist
     }
 };
 </script>

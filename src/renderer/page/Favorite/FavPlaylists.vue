@@ -42,7 +42,7 @@ import { mapActions, mapState } from 'vuex';
 import { SET_USER_PLAYLISTS } from '@/vuex/mutation-types';
 import ListDetailLayout from '@/components/ListDetailLayout.vue';
 import AvatarListItem from '@/components/AvatarListItem.vue';
-import PlaylistDetail from '@/components/playlistDetail.vue';
+import PlaylistDetail from '@/components/PlaylistDetail.vue';
 
 export default {
     data() {

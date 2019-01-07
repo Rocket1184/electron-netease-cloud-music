@@ -73,7 +73,7 @@
 import { mapActions } from 'vuex';
 import { ipcRenderer } from 'electron';
 
-import ApiRenderer from '@/util/apiRenderer';
+import Api from '@/util/api';
 
 function initData() {
     return {
@@ -122,14 +122,14 @@ export default {
             }
             this.posting = true;
             // TODO: Login with captcha
-            let resp = await ApiRenderer.login(this.inputUsr, this.inputPwd);
+            let resp = await Api.login(this.inputUsr, this.inputPwd);
             this.posting = false;
             switch (resp.code) {
                 case 200:
                     this.$emit('update:show', false);
                     this.setUserInfo(resp);
                     this.setLoginValid();
-                    const cookie = await ApiRenderer.getCookie();
+                    const cookie = await Api.getCookie();
                     this.storeUserInfo({ user: resp, cookie });
                     break;
                 case 415:

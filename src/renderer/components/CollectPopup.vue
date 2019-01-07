@@ -22,8 +22,8 @@
 <script>
 import { mapActions, mapState } from 'vuex';
 
-import AvatarListItem from './AvatarListItem.vue';
-import ApiRenderer from '@/util/apiRenderer';
+import AvatarListItem from '@/components/AvatarListItem.vue';
+import Api from '@/util/api';
 
 export default {
     computed: {
@@ -43,7 +43,7 @@ export default {
                 this.$toast.message('讲道理不应该这样的呀  (✘﹏✘ა)');
                 return;
             }
-            const resp = await ApiRenderer.collectTrack(list.id, ...this.ui.collectTrackIds);
+            const resp = await Api.collectTrack(list.id, ...this.ui.collectTrackIds);
             if (resp.code === 200) {
                 this.$toast.message('成功添加到歌单     (๑•̀ㅂ•́)و✧');
                 // same to above

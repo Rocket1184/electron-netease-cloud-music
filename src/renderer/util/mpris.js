@@ -1,5 +1,3 @@
-'use strict';
-
 import debug from 'debug';
 import { EventEmitter } from 'events';
 import { ipcRenderer } from 'electron';

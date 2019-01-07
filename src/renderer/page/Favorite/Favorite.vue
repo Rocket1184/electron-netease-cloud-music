@@ -18,8 +18,8 @@
 </template>
 
 <script>
-import FavAlbums from '@/components/FavAlbums.vue';
-import FavPlaylists from '@/components/FavPlaylists.vue';
+import FavAlbums from './FavAlbums.vue';
+import FavPlaylists from './FavPlaylists.vue';
 
 export default {
     name: 'page-favorite',

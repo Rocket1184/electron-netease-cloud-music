@@ -16,9 +16,9 @@
 <script>
 import { mapActions, mapState } from 'vuex';
 
-import AppNav from '@/components/appNav.vue';
-import PlayerBar from '@/components/playerBar.vue';
-import CollectPopup from '@/components/collectPopup.vue';
+import AppNav from '@/components/AppNav/AppNav.vue';
+import PlayerBar from '@/components/PlayerBar/PlayerBar.vue';
+import CollectPopup from '@/components/CollectPopup.vue';
 
 export default {
     components: {

@@ -49,7 +49,7 @@
         </div>
         <div class="tracks">
             <mu-sub-header>曲目列表</mu-sub-header>
-            <PlayAll :tracks="playlist.tracks"></PlayAll>
+            <PlayTracks :tracks="playlist.tracks"></PlayTracks>
             <TrackList :tracks="tracksToShow"
                 :indexOffset="tracksOffset"></TrackList>
             <div class="pagination"
@@ -67,8 +67,8 @@
 <script>
 import { mapActions, mapState } from 'vuex';
 
-import PlayAll from '@/components/playAll.vue';
-import TrackList from '@/components/trackList.vue';
+import PlayTracks from './PlayTracks.vue';
+import TrackList from './TrackList.vue';
 import { sizeImg, HiDpiPx } from '@/util/image';
 import { shortDate } from '@/util/formatter';
 
@@ -143,7 +143,7 @@ export default {
         this.shouldSubscribed = this.playlist.subscribed;
     },
     components: {
-        PlayAll,
+        PlayTracks,
         TrackList
     }
 };
