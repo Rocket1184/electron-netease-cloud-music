@@ -1,8 +1,8 @@
 <template>
     <div class="search">
-        <div v-elevation="4">
-            <mu-tabs full-width
-                inverse
+        <div class="search-tab"
+            v-elevation="4">
+            <mu-tabs inverse
                 :value="searchType"
                 @change="handleTabChange">
                 <mu-tab value="song">单曲</mu-tab>
@@ -13,66 +13,60 @@
                 <mu-tab value="user">用户</mu-tab>
             </mu-tabs>
         </div>
-        <div v-if="!haveSearched"
-            class="search-tip">
-            <mu-icon value="search"
-                color="grey"
-                :size="128"></mu-icon>
-            <p>右上角搜索框内输入，回车搜索！</p>
-        </div>
-        <div v-else-if="isPosting"
-            class="search-tip">
-            <mu-circular-progress color="secondary"
-                :size="60"
-                :stroke-width="5"></mu-circular-progress>
-        </div>
-        <div v-else-if="!haveValidResults"
-            class="search-tip">
-            <mu-icon value="inbox"
-                color="grey"
-                :size="128"></mu-icon>
-            <p>哎呀～什么都没找到 ...</p>
-        </div>
-        <div v-else-if="searchError"
-            class="search-tip">
-            <mu-icon value="error_outline"
-                color="grey"
-                :size="128"></mu-icon>
-            <p>哎呀～出错了 ... 错误代码 {{this.searchErrorCode}}</p>
-        </div>
-        <div v-else-if="searchType === 'song'">
-            <TrackList :tracks="items"
+        <div class="search-content">
+            <UnderConstructionTip v-if="searchType === 'mv'"></UnderConstructionTip>
+            <UnderConstructionTip v-else-if="searchType === 'user'"></UnderConstructionTip>
+            <div v-else-if="!haveSearched"
+                class="search-tip">
+                <mu-icon value="search"
+                    color="grey"
+                    :size="128"></mu-icon>
+                <p>右上角搜索框内输入，回车搜索！</p>
+            </div>
+            <div v-else-if="isPosting"
+                class="search-tip">
+                <mu-circular-progress color="secondary"
+                    :size="60"
+                    :stroke-width="5"></mu-circular-progress>
+            </div>
+            <div v-else-if="!haveValidResults"
+                class="search-tip">
+                <mu-icon value="inbox"
+                    color="grey"
+                    :size="128"></mu-icon>
+                <p>哎呀～什么都没找到 ...</p>
+            </div>
+            <div v-else-if="searchError"
+                class="search-tip">
+                <mu-icon value="error_outline"
+                    color="grey"
+                    :size="128"></mu-icon>
+                <p>哎呀～出错了 ... 错误代码 {{this.searchErrorCode}}</p>
+            </div>
+            <TrackList v-else-if="searchType === 'song'"
+                :tracks="items"
                 :indexOffset="searchOffset"></TrackList>
-        </div>
-        <div v-else-if="searchType === 'artist'">
-            <ArtistList :list="items"></ArtistList>
-        </div>
-        <div v-else-if="searchType === 'album'">
-            <AlbumList :list="items"></AlbumList>
-        </div>
-        <div v-else-if="searchType === 'playlist'">
-            <PlaylistList :list="items"></PlaylistList>
-        </div>
-        <div v-else-if="searchType === 'mv'">
-            <UnderConstructionTip></UnderConstructionTip>
-        </div>
-        <div v-else-if="searchType === 'user'">
-            <UnderConstructionTip></UnderConstructionTip>
-        </div>
-        <div v-else
-            class="search-tip">
-            <mu-icon value="bug_report"
-                color="grey"
-                :size="128"></mu-icon>
-            <p>你是怎么来到这儿的？来报个 bug 吧少年！</p>
-        </div>
-        <div class="pagination"
-            v-if="totalItems > 20">
-            <mu-pagination :total="totalItems"
-                :current="currentPage"
-                :page-size="pageSize"
-                @change="handlePageChange">
-            </mu-pagination>
+            <ArtistList v-else-if="searchType === 'artist'"
+                :list="items"></ArtistList>
+            <AlbumList v-else-if="searchType === 'album'"
+                :list="items"></AlbumList>
+            <PlaylistList v-else-if="searchType === 'playlist'"
+                :list="items"></PlaylistList>
+            <div v-else
+                class="search-tip">
+                <mu-icon value="bug_report"
+                    color="grey"
+                    :size="128"></mu-icon>
+                <p>你是怎么来到这儿的？这不应该啊 ...</p>
+            </div>
+            <div class="pagination"
+                v-if="totalItems > 20">
+                <mu-pagination :total="totalItems"
+                    :current="currentPage"
+                    :page-size="pageSize"
+                    @change="handlePageChange">
+                </mu-pagination>
+            </div>
         </div>
     </div>
 </template>
@@ -191,6 +185,13 @@ export default {
 
 <style lang="less">
 .search {
+    height: 100%;
+    display: flex;
+    flex-direction: column;
+    .search-content {
+        height: calc(~'100% - 48px');
+        overflow: auto;
+    }
     .search-tip {
         width: 100%;
         text-align: center;
