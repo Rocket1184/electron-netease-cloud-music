@@ -52,7 +52,7 @@ const mutations = {
         state.albums = payload.map(al => new Album(al));
     },
     [types.SUBSCRIBE_ALBUM](state, payload) {
-        state.playlist.splice(1, 0, new Album(payload));
+        state.albums.splice(1, 0, new Album(payload));
     },
     [types.UNSUBSCRIBE_ALBUM](state, { id }) {
         const index = state.albums.findIndex(a => a.id === id);

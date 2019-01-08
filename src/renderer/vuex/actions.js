@@ -287,3 +287,21 @@ export async function setUiRelatedAlbums({ commit }, id) {
     const resp = await Api.getRelatedAlbums(id);
     commit(types.SET_UI_TEMP_RELATED_ALBUMS, resp.data);
 }
+
+export async function subscribeAlbum({ commit }, payload) {
+    const resp = await Api.subscribeAlbum(payload.id);
+    if (resp.code === 200 && typeof resp.time === 'number') {
+        commit(types.SUBSCRIBE_ALBUM, payload);
+        return;
+    }
+    throw resp;
+}
+
+export async function unsubscribeAlbum({ commit }, payload) {
+    const resp = await Api.unsubscribeAlbum(payload.id);
+    if (resp.code === 200 && typeof resp.time === 'number') {
+        commit(types.UNSUBSCRIBE_ALBUM, payload);
+        return;
+    }
+    throw resp;
+}
