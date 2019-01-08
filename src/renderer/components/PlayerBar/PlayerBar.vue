@@ -8,8 +8,8 @@
         <div class="info">
             <div class="desc">
                 <div class="name">
-                    <span class="song">{{track.name}}</span>
-                    <span class="artist">{{track.artistName}}</span>
+                    <span class="song">{{playing.name}}</span>
+                    <span class="artist">{{playing.artistName}}</span>
                 </div>
                 <div class="shortcut">
                     <mu-checkbox title="喜欢"
@@ -124,11 +124,10 @@ export default {
                 return;
             }
             const list = this.user.playlist[0];
-            const track = this.playing;
-            if (list.tracks.find(t => t.id === track.id)) {
-                await Api.uncollectTrack(list.id, track.id);
+            if (list.tracks.find(t => t.id === this.playing.id)) {
+                await Api.uncollectTrack(list.id, this.playing.id);
             } else {
-                await Api.collectTrack(list.id, track.id);
+                await Api.collectTrack(list.id, this.playing.id);
             }
             // it would take some time for NetEase to update playlist cover
             // img, so we just wait 200 ms
@@ -154,12 +153,10 @@ export default {
     },
     computed: {
         ...mapState(['playlist', 'ui', 'user']),
+        /** @returns {Models.Track} */
         playing() {
             const { list, index } = this.playlist;
-            return list[index];
-        },
-        track() {
-            return this.playing || ({ name: 'Electron Netease Cloud Music' });
+            return list[index] || ({ name: 'Electron Netease Cloud Music' });
         },
         coverImgStyle() {
             if (this.playing && this.playing.album.picUrl) {
@@ -178,10 +175,10 @@ export default {
                 if (this.shouldFavorite !== null) {
                     return this.shouldFavorite;
                 }
+                /** @type {Models.PlayList} */
                 const favoriteList = this.user.playlist[0];
                 if (favoriteList) {
-                    const track = favoriteList.tracks.find(t => t.id === this.playing.id);
-                    return typeof track === 'object';
+                    return favoriteList.tracks.filter(t => t.id === this.playing.id).length !== 0;
                 }
                 return false;
             },
@@ -300,7 +297,7 @@ export default {
 
         _audioEl.addEventListener('error', () => {
             _unsetUpdateTimeInterval();
-            if (!this.track.id) return;
+            if (!this.playing.id) return;
             if (!this.hasRetried) {
                 this.hasRetried = true;
                 this.updateUiUrlNoCache();
@@ -364,14 +361,15 @@ export default {
             display: flex;
             justify-content: space-between;
             .name {
+                overflow: hidden;
+                text-overflow: ellipsis;
+                width: calc(100% - 33px * 4);
                 span {
                     max-width: 310px;
-                    overflow: hidden;
-                    text-overflow: ellipsis;
                     white-space: nowrap;
                 }
                 .artist {
-                    margin-left: 10px;
+                    margin-left: 0.5em;
                     color: dimgrey;
                 }
             }
@@ -394,7 +392,7 @@ export default {
         }
     }
     .control {
-        width: 170px;
+        min-width: 170px;
         padding-right: 10px;
         display: flex;
         justify-content: space-between;
