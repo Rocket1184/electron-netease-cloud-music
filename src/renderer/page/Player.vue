@@ -43,8 +43,21 @@
                             <span>{{line.content}}</span>
                         </p>
                     </template>
+                    <template v-else-if="ui.lyric.txtLyric">
+                        <pre>{{ui.lyric.txtLyric}}</pre>
+                    </template>
                     <template v-else>
                         <p>暂无歌词</p>
+                    </template>
+                    <template v-if="ui.lyric.lyricUser">
+                        <p><br></p>
+                        <p>
+                            <span>歌词贡献者：{{ui.lyric.lyricUser.nickname}}</span>
+                            <template v-if="ui.lyric.transUser">
+                                <br>
+                                <span>翻译贡献者：{{ui.lyric.transUser.nickname}}</span>
+                            </template>
+                        </p>
                     </template>
                 </div>
             </div>
@@ -78,7 +91,12 @@ export default {
             return bkgImg(sizeImg(this.track.album.picUrl, HiDpiPx(220)));
         },
         lyricScrollerStyle() {
+            if (typeof this.ui.lyric.txtLyric === 'string') {
+                // non-scrollable lyric
+                return 'height: 100%; overflow: auto;';
+            }
             if (this.lyricElemMap.length === 0 || this.currentLyricIndex === -1) {
+                // initial state
                 return 'transform: translateY(164px)';
             }
             const currentLyricElem = this.lyricElemMap[this.currentLyricIndex];
