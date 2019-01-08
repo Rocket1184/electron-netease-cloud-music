@@ -1132,6 +1132,15 @@ namespace Types {
             }
         }[];
     }
+
+    export interface RelatedAlbumsRes extends ApiRes {
+        data: {
+            id: string;
+            name: string;
+            picUrl: string;
+            publishDate: string;
+        }
+    }
 }
 
 export as namespace Types;

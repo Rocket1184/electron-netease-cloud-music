@@ -780,3 +780,31 @@ export async function getRecommendStatistics() {
         return { code: 500, error: e.stack };
     }
 }
+
+const RelatedAlbums = {
+    regexp: /<div class="cver u-cover u-cover-3">\n<a href="(.+)" title="(.+)">\n<img src="(.+)">[\s\S]*?<p class="s-fc3">([\d-]+)<\/p>/g
+};
+
+/**
+ * get album related to given album
+ * @param {number} id
+ * @returns {Promise<Types.RelatedAlbumsRes>}
+ */
+export async function getRelatedAlbums(id) {
+    const html = await client.get(`${BaseURL}/album?id=${id}`);
+    const data = [];
+    try {
+        let match;
+        while (match = RelatedAlbums.regexp.exec(html)) { // eslint-disable-line no-cond-assign
+            data.push({
+                id: RelatedPlaylists.trimId(match[1]),
+                name: match[2],
+                picUrl: RelatedPlaylists.trimSrc(match[3]),
+                publishDate: match[4]
+            });
+        }
+        return { code: 200, data };
+    } catch (e) {
+        return { code: 500, error: e.stack };
+    }
+}
