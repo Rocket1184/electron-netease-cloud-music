@@ -1141,6 +1141,26 @@ namespace Types {
             publishDate: string;
         }
     }
+
+    export interface SubscribeAlbumRes extends ApiRes {
+        /** 
+         * error message
+         * - `200` 该专辑已在用户收藏列表中
+         */
+        message?: string;
+        /** success timestamp */
+        time?: number;
+    }
+
+    export interface UnsubscribeAlbumRes extends ApiRes {
+        /** 
+         * error message
+         * - `404` 用户未未收藏此专辑
+         */
+        message?: string;
+        /** success timestamp */
+        time?: number;
+    }
 }
 
 export as namespace Types;

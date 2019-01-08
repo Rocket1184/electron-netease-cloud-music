@@ -808,3 +808,25 @@ export async function getRelatedAlbums(id) {
         return { code: 500, error: e.stack };
     }
 }
+
+/**
+ * @param {string} id
+ * @returns {Promise<Types.SubscribeAlbumRes>}
+ */
+export async function subscribeAlbum(id) {
+    return client.postE({
+        url: `${BaseURL}/eapi/album/sub`,
+        data: { id: `${id}` }
+    });
+}
+
+/**
+ * @param {string} id
+ * @returns {Promise<Types.UnsubscribeAlbumRes>}
+ */
+export async function unsubscribeAlbum(id) {
+    return client.postE({
+        url: `${BaseURL}/eapi/album/unsub`,
+        data: { id: `${id}` }
+    });
+}
