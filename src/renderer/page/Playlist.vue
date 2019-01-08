@@ -101,11 +101,8 @@ export default {
     height: 100%;
     justify-content: space-between;
     .related {
-        .mu-list {
-            height: 344px;
-        }
         .progress-wrapper {
-            height: calc(~'100% - 48px');
+            height: 280px;
             display: flex;
             justify-content: center;
             align-items: center;
