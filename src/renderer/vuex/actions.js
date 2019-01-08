@@ -57,7 +57,6 @@ export function setLoginValid(context, payload) {
                 });
             }
         });
-        updateUserAlbums(context);
     } else {
         context.commit(types.SET_LOGIN_VALID, false);
     }
