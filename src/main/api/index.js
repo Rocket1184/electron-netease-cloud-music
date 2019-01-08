@@ -286,9 +286,11 @@ export function getMusicComments(rid, limit = 20, offset = 0) {
     });
 }
 
-function byTimestamp(a, b) {
-    return a.timestamp - b.timestamp;
-}
+const MusicLyric = {
+    byTimestamp(a, b) {
+        return a.timestamp - b.timestamp;
+    }
+};
 
 /**
  * @param {number} id
@@ -304,15 +306,20 @@ export async function getMusicLyric(id) {
         }
     });
     let result = {};
-    if (tmp.lrc && tmp.lrc.version) {
-        result.lrc = Lrc.parse(tmp.lrc.lyric);
-        result.lrc.lyrics.sort(byTimestamp);
+    if (tmp.lrc && tmp.lrc.lyric) {
+        const lrc = Lrc.parse(tmp.lrc.lyric);
+        if (lrc.lyrics.length > 0) {
+            lrc.lyrics.sort(MusicLyric.byTimestamp);
+            result.lrc = lrc;
+        } else {
+            result.txtLyric = tmp.lrc.lyric;
+        }
         result.lyricUser = tmp.lyricUser;
     }
-    if (tmp.tlyric && tmp.tlyric.version) {
+    if (tmp.tlyric && tmp.tlyric.lyric) {
         result.transUser = tmp.transUser;
         let tlrc = Lrc.parse(tmp.tlyric.lyric);
-        tlrc.lyrics.sort(byTimestamp);
+        tlrc.lyrics.sort(MusicLyric.byTimestamp);
         let mlrc = {
             info: result.lrc.info,
             transInfo: tlrc.info,

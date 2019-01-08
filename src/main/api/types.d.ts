@@ -659,6 +659,7 @@ namespace Types {
         lyricUser?: LyricAuthor;
         mlrc?: LyricObjectItem;
         transUser: LyricAuthor;
+        txtLyric?: string;
     }
 
     export interface DailyTaskRes extends ApiRes {
