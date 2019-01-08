@@ -11,8 +11,9 @@
             </mu-tabs>
         </div>
         <div class="fav-content">
-            <FavPlaylists v-show="tab === 'playlist'"></FavPlaylists>
-            <FavAlbums v-show="tab === 'album'"></FavAlbums>
+            <keep-alive>
+                <component :is="favCompo"></component>
+            </keep-alive>
         </div>
     </div>
 </template>
@@ -20,6 +21,11 @@
 <script>
 import FavAlbums from './FavAlbums.vue';
 import FavPlaylists from './FavPlaylists.vue';
+
+const FavCompos = {
+    playlist: FavPlaylists,
+    album: FavAlbums
+};
 
 export default {
     name: 'page-favorite',
@@ -31,6 +37,11 @@ export default {
     methods: {
         handleTabChange(val) {
             this.tab = val;
+        }
+    },
+    computed: {
+        favCompo() {
+            return FavCompos[this.tab];
         }
     },
     components: {
