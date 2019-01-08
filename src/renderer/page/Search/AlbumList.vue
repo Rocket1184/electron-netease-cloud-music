@@ -2,7 +2,8 @@
     <div class="album-list">
         <mu-card v-for="al in list"
             :key="al.id"
-            class="item">
+            class="item"
+            @click="navigateToAlbum(al.id)">
             <mu-card-header :title="al.artist.name"
                 :subTitle="al.publishTime | shortDate">
                 <mu-avatar slot="avatar">
@@ -30,6 +31,11 @@ export default {
             type: Array
         }
     },
+    methods: {
+        navigateToAlbum(id) {
+            this.$router.push({ name: 'album', params: { id } });
+        }
+    },
     filters: {
         shortDate,
         artistAvatarUrl(al) {
@@ -49,6 +55,7 @@ export default {
     flex-wrap: wrap;
     justify-content: center;
     .item {
+        cursor: pointer;
         width: 200px;
         margin: 20px;
         .pic {
