@@ -81,6 +81,7 @@ export default {
             this.listRefreshing = true;
             await this.updateUserPlaylists();
             this.listRefreshing = false;
+            this.loadPlaylist(this.playlistId);
         },
         async loadPlaylist(id) {
             this.loading = true;
