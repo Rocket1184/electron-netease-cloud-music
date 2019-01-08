@@ -32,7 +32,8 @@
         </mu-load-more>
         <PlaylistDetail slot="detail"
             v-if="playlist"
-            :playlist="playlist"></PlaylistDetail>
+            :playlist="playlist"
+            @detail-scroll="scrollContent"></PlaylistDetail>
     </ListDetailLayout>
 </template>
 
@@ -90,9 +91,16 @@ export default {
             this.loading = false;
         },
         handleClick(id) {
-            if (this.playlistId  === id) return;
+            if (this.playlistId === id) return;
             this.loadPlaylist(id);
-        }
+        },
+        /**
+         * @param {number} top
+         * @param {ScrollBehavior} behavior
+         */
+        scrollContent(top, behavior = 'smooth') {
+            document.querySelector('.ld-detail').scrollTo({ top, behavior });
+        },
     },
     mounted() {
         if (!this.user.loginValid) {
