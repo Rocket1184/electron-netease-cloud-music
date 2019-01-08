@@ -72,7 +72,7 @@ export default {
             document.querySelector('.ld-detail').scrollTo({ top, behavior });
         },
         handleRelatedClick(id) {
-            this.$router.push(`/playlist/${id}`);
+            this.$router.push({ name: 'playlist', params: { id } });
         }
     },
     mounted() {

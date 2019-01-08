@@ -72,8 +72,6 @@
 </template>
 
 <script>
-import { stringify } from 'querystring';
-
 import { Track } from '@/util/models';
 import TrackList from '@/components/TrackList.vue';
 import ArtistList from './ArtistList.vue';
@@ -117,12 +115,14 @@ export default {
             this.updateQueryString();
         },
         updateQueryString() {
-            const qs = stringify({
-                keyword: this.$route.query.keyword,
-                type: this.searchType,
-                page: this.currentPage
+            this.$router.push({
+                name: 'search',
+                query: {
+                    keyword: this.$route.query.keyword,
+                    type: this.searchType,
+                    page: this.currentPage
+                }
             });
-            this.$router.push(`/search?${qs}`);
         },
         async handleSearch() {
             const { keyword, type = this.searchType, page = this.defaultPage } = this.$route.query;

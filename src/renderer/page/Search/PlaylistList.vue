@@ -30,7 +30,7 @@ export default {
     },
     methods: {
         navigateToList(id) {
-            this.$router.push(`/playlist/${id}`);
+            this.$router.push({ name: 'playlist', params: { id } });
         }
     },
     filters: {

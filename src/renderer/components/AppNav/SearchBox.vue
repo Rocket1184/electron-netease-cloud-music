@@ -23,7 +23,6 @@
 </template>
 
 <script>
-import { stringify } from 'querystring';
 import Api from '@/util/api';
 
 export default {
@@ -72,10 +71,12 @@ export default {
             return tmp;
         },
         handleSearch() {
-            const qs = stringify({
-                keyword: this.searchText
+            this.$router.push({
+                name: 'search',
+                query: {
+                    keyword: this.searchText
+                }
             });
-            this.$router.push(`/search?${qs}`);
         },
         handleCompleteSelect(value, item) {
             // event 'select' would be triggered by selecting text in textField
