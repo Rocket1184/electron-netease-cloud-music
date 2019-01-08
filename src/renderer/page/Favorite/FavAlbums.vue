@@ -41,8 +41,8 @@ export default {
             await this.setUiFavAlbum(id);
             this.loading = false;
         },
-        async handleClick(id) {
-            if (this.ui.fav.albumDetail && this.ui.fav.albumDetail.id === id) return;
+        handleClick(id) {
+            if (this.ui.fav.album && this.ui.fav.album.id === id) return;
             this.loadAlbum(id);
         }
     },
