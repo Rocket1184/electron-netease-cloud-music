@@ -53,15 +53,15 @@ export default {
     },
     methods: {
         ...mapActions([
-            'setUiPlaylistDetail',
-            'setUiSimiPlaylists'
+            'setUiTempPlaylist',
+            'setUiRelatedPlaylists'
         ]),
         loadPlaylist(id) {
             this.detailLoading = true;
             this.relatedLoading = true;
-            this.setUiPlaylistDetail(id)
+            this.setUiTempPlaylist(id)
                 .then(() => this.detailLoading = false);
-            this.setUiSimiPlaylists(id)
+            this.setUiRelatedPlaylists(id)
                 .then(() => this.relatedLoading = false);
         },
         /**

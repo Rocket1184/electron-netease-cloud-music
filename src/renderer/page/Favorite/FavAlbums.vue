@@ -43,10 +43,10 @@ export default {
         ...mapState(['ui', 'user']),
     },
     methods: {
-        ...mapActions(['setUiAlbumDetail']),
+        ...mapActions(['setUiFavAlbum']),
         async loadAlbum(id) {
             this.loading = true;
-            await this.setUiAlbumDetail(id);
+            await this.setUiFavAlbum(id);
             this.loading = false;
         },
         async handleClick(id) {

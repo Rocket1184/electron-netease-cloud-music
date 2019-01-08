@@ -254,17 +254,17 @@ export async function updateUserAlbums({ commit }) {
     commit(types.SET_USER_ALBUMS, resp.data);
 }
 
-export async function setUiAlbumDetail({ commit }, id) {
+export async function setUiFavAlbum({ commit }, id) {
     const resp = await Api.getAlbumDetailW(id);
     commit(types.SET_UI_FAV_ALBUM, resp);
 }
 
-export async function setUiPlaylistDetail({ commit }, id) {
+export async function setUiTempPlaylist({ commit }, id) {
     const resp = await Api.getListDetail(id);
     commit(types.SET_UI_TEMP_PLAYLIST, resp.playlist);
 }
 
-export async function setUiSimiPlaylists({ commit }, id) {
+export async function setUiRelatedPlaylists({ commit }, id) {
     const resp = await Api.getRelatedPlaylists(id);
     commit(types.SET_UI_TEMP_RELATED_PLAYLISTS, resp.data);
 }
