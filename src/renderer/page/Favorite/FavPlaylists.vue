@@ -106,15 +106,13 @@ export default {
         if (!this.user.loginValid) {
             this.$store.subscribe((mutation) => {
                 if (mutation.type === SET_USER_PLAYLISTS) {
-                    if (this.$route.path.startsWith('/favorite')) {
+                    if (this.$route.name === 'favorite') {
                         this.loadPlaylist(this.user.playlist[0].id);
                     }
                 }
             });
         } else {
-            setTimeout(() => {
-                this.loadPlaylist(this.user.playlist[0].id);
-            }, 200);
+            this.loadPlaylist(this.user.playlist[0].id);
         }
     },
     components: {
