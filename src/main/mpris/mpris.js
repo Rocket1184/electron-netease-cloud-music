@@ -27,7 +27,11 @@ const i = {
 };
 
 // initialize dbus service
-const service = DBus.registerService('session', i.name('ElectronNCM'));
+let serviceName = 'ElectronNCM';
+if (process.env.NODE_ENV === 'development') {
+    serviceName += '.debug';
+}
+const service = DBus.registerService('session', i.name(serviceName));
 const object = service.createObject(i.path());
 // update PropertiesChanged signal signature
 object.propertyInterface.addSignal('PropertiesChanged', {
@@ -92,7 +96,7 @@ const IMP2 = object.createInterface(i.name());
 IMP2.addProperty('CanQuit', makeReadonly('b', true));
 IMP2.addProperty('CanRaise', makeReadonly('b', true));
 IMP2.addProperty('HasTrackList', makeReadonly('b', false));
-IMP2.addProperty('Identity', makeReadonly('s', 'Electron Netease Cloud Music'));
+IMP2.addProperty('Identity', makeReadonly('s', serviceName));
 IMP2.addProperty('DesktopEntry', makeReadonly('s', 'electron-netease-cloud-music'));
 IMP2.addProperty('SupportedUriSchemes', makeReadonly('as', ['http', 'https']));
 IMP2.addProperty('SupportedMimeTypes', makeReadonly('as', ['audio/mpeg']));
