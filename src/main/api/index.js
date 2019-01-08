@@ -683,15 +683,19 @@ export function getAlbumDetailW(id) {
  * @returns {Promise<Types.AlbumDetailRes>}
  */
 export function getAlbumDetailE(id) {
-    // TODO: encode/decode cache_key
-    const query = qs.stringify({
-        cache_key: crypto.randomFillSync(Buffer.alloc(32)).toString('base64'),
-        // cache_key: 'pEAwtmHe62cm9y8FdMqgUNibF/Y+sQdcS+SLqTSGCOE='
-    });
     return client.postE({
-        url: `${BaseURL}/eapi/album/v3/detail?${query}`,
-        data: { id: `${id}` }
+        url: `${BaseURL}/eapi/album/v3/detail`,
+        data: {
+            id: `${id}`,
+            // TODO: find out what is this `cache_key`
+            cache_key: crypto.randomFillSync(Buffer.alloc(32)).toString('base64')
+        }
     });
+    /**
+     * it seems that `cache_key` is only related to album id
+     * 35864444 BA06KMtT+Jm5DZSrXsuZ0jGEx2migzblBUw9lQhLRk8=
+     * 71853061 A8n1QcV7AJngH5IqI6PCRh6+VMaxh6RGw+7gM294MTA=
+     */
 }
 
 /**
