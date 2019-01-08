@@ -87,6 +87,7 @@ const Models = {
                 resourceType: -1,
                 shareCount: -1,
             },
+            description: '',
             subType: '',
             songs: [],
         };
@@ -201,6 +202,7 @@ export class Album {
         this.size = o.size;
         this.status = o.status;
         this.info = o.info;
+        this.description = o.description;
         this.subType = o.subType;
         this.songs = (o.songs || []).map(t => new Track(t));
     }

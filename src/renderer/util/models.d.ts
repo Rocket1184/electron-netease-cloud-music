@@ -104,6 +104,7 @@ declare namespace Models {
             resourceType: number;
             shareCount: number;
         };
+        description: string;
         subType: string;
         songs: Track[];
     }
