@@ -35,7 +35,10 @@ export default {
         ...mapState(['ui', 'user']),
     },
     methods: {
-        ...mapActions(['setUiFavAlbum']),
+        ...mapActions([
+            'updateUserAlbums',
+            'setUiFavAlbum'
+        ]),
         async loadAlbum(id) {
             this.loading = true;
             await this.setUiFavAlbum(id);
@@ -46,7 +49,8 @@ export default {
             this.loadAlbum(id);
         }
     },
-    mounted() {
+    async mounted() {
+        await this.updateUserAlbums();
         const al = this.user.albums[0];
         if (al && al.id) {
             this.loadAlbum(al.id);
