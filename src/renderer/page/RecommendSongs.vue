@@ -53,6 +53,7 @@ import PlayTracks from '@/components/PlayTracks.vue';
 import TrackList from '@/components/TrackList.vue';
 
 export default {
+    name: 'page-recommendsongs',
     data() {
         return {
             loading: false
@@ -67,10 +68,13 @@ export default {
             'setUiRecommendStatistics'
         ])
     },
-    created() {
+    mounted() {
         this.loading = true;
         this.setUiRecommendSongs()
             .then(() => this.loading = false);
+        this.setUiRecommendStatistics();
+    },
+    activated() {
         this.setUiRecommendStatistics();
     },
     components: {
