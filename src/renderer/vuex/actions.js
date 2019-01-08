@@ -278,3 +278,13 @@ export async function setUiRecommendStatistics({ commit }) {
     const resp = await Api.getRecommendStatistics();
     commit(types.SET_UI_RECOMMEND_STATISTICS, resp.data);
 }
+
+export async function setUiTempAlbum({ commit }, id) {
+    const resp = await Api.getAlbumDetailW(id);
+    commit(types.SET_UI_TEMP_ALBUM, resp);
+}
+
+export async function setUiRelatedAlbums({ commit }, id) {
+    const resp = await Api.getRelatedAlbums(id);
+    commit(types.SET_UI_TEMP_RELATED_ALBUMS, resp.data);
+}

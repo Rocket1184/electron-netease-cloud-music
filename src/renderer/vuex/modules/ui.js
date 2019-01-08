@@ -17,6 +17,7 @@ const state = {
     },
     temp: {
         album: null,
+        relatedAlbums: null,
         artist: null,
         playlist: null,
         relatedPlaylists: null,
@@ -64,6 +65,14 @@ const mutations = {
     },
     [types.SET_UI_TEMP_RELATED_PLAYLISTS](state, payload) {
         state.temp.relatedPlaylists = payload;
+    },
+    [types.SET_UI_TEMP_ALBUM](state, payload) {
+        let al = payload.album || payload;
+        al.songs = payload.songs;
+        state.temp.album = new Album(al);
+    },
+    [types.SET_UI_TEMP_RELATED_ALBUMS](state, payload) {
+        state.temp.relatedAlbums = payload;
     },
     [types.SET_UI_RECOMMEND_SONGS](state, payload) {
         state.recommendSongs = payload.map(t => new Track(t));
