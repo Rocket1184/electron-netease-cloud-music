@@ -13,10 +13,17 @@
                     <span class="create-time">{{createTime}}</span>
                 </div>
                 <div class="actions">
+                    <mu-button flat
+                        @click="handleSubscribe">
+                        <mu-icon left
+                            :color="dynamicDetail.isSub ? 'amber' : ''"
+                            :value="dynamicDetail.isSub ? 'star' : 'star_border'"></mu-icon>
+                        <span>{{ dynamicDetail.isSub ? '已收藏' : '收藏' }} ({{ dynamicDetail.subCount | formatCount}})</span>
+                    </mu-button>
                     <mu-button flat>
                         <mu-icon left
                             value="comment"></mu-icon>
-                        <span>评论 ({{album.info.commentCount | formatCount}})</span>
+                        <span>评论 ({{dynamicDetail.commentCount | formatCount}})</span>
                     </mu-button>
                 </div>
                 <div class="intro">
@@ -51,6 +58,9 @@
 </template>
 
 <script>
+import { mapActions, mapState } from 'vuex';
+
+import Api from '@/util/api';
 import PlayTracks from '@/components/PlayTracks.vue';
 import TrackList from '@/components/TrackList.vue';
 import { sizeImg, HiDpiPx } from '@/util/image';
@@ -64,10 +74,12 @@ export default {
     },
     data() {
         return {
-            descOpen: false
+            descOpen: false,
+            dynamicDetail: {}
         };
     },
     computed: {
+        ...mapState(['user']),
         creatorAvatarSrc() {
             return sizeImg(this.album.artist.picUrl, HiDpiPx(40));
         },
@@ -92,6 +104,39 @@ export default {
             }
             return cd;
         }
+    },
+    methods: {
+        ...mapActions([
+            'subscribeAlbum',
+            'unsubscribeAlbum'
+        ]),
+        async updateDynamicDetail() {
+            const res = await Api.getAlbumDynamicDetail(this.album.id);
+            this.dynamicDetail = res;
+        },
+        async handleSubscribe() {
+            if (!this.user.loginValid) {
+                this.$toast.message('汝还没有登录呀      (눈‸눈)');
+                return;
+            }
+            if (this.dynamicDetail.isSub) {
+                try {
+                    await this.unsubscribeAlbum(this.album);
+                } catch (e) {
+                    this.$toast.message(`取消收藏失败 ●﹏● ： ${e.code}`);
+                }
+            } else {
+                try {
+                    await this.subscribeAlbum(this.album);
+                } catch (e) {
+                    this.$toast.message(`收藏专辑失败 ●﹏● ： ${e.code}`);
+                }
+            }
+            this.updateDynamicDetail();
+        }
+    },
+    mounted() {
+        this.updateDynamicDetail();
     },
     filters: {
         formatCount(cnt) {
