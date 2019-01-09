@@ -4,7 +4,8 @@
             <div class="list">
                 <div class="track-row"
                     v-for="(track, index) in tracks"
-                    :key="index">
+                    :key="index"
+                    @dblclick="handlePlay(index)">
                     <div class="track-col index">{{index + 1 + indexOffset}}</div>
                     <div class="track-col name">{{track.name}}</div>
                     <div class="track-col artist">{{track.artistName}}</div>
@@ -53,10 +54,15 @@ export default {
         shortTime
     },
     computed: {
-        ...mapState(['user'])
+        ...mapState(['ui', 'user', 'playlist'])
     },
     methods: {
-        ...mapActions(['toggleCollectPopup', 'addTrackToPlaylist']),
+        ...mapActions([
+            'playPerviousTrack',
+            'playTrackIndex',
+            'toggleCollectPopup',
+            'insertTrackIntoPlaylist'
+        ]),
         handleCollect(id) {
             if (!this.user.loginValid) {
                 this.$toast.message('汝还没有登录呀      (눈‸눈)');
@@ -66,9 +72,26 @@ export default {
         },
         handleAdd(index) {
             try {
-                this.addTrackToPlaylist({ tracks: [this.tracks[index]] });
+                this.insertTrackIntoPlaylist({
+                    tracks: [this.tracks[index]],
+                    index: this.playlist.list.length
+                });
                 this.$toast.message('已添加到播放列表  _(:з」∠)_');
             } catch (e) { /* 为什么会这样呢 */ }
+        },
+        handlePlay(index) {
+            const track = this.tracks[index];
+            const i = this.playlist.list.findIndex(t => t.id === track.id);
+            if (i > -1) {
+                this.playTrackIndex({ index: i });
+                return;
+            }
+            this.insertTrackIntoPlaylist({
+                tracks: [this.tracks[index]],
+                index: this.playlist.index
+            });
+            const newIndex = this.playlist.list.findIndex(t => t.id === track.id);
+            this.playTrackIndex({ index: newIndex });
         }
     }
 };
