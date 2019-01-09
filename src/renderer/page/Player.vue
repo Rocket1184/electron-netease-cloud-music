@@ -13,12 +13,16 @@
             <div class="needle"></div>
         </div>
         <div class="info">
-            <span class="name">{{track.name}}</span>
+            <span class="name">{{playing.name}}</span>
             <p class="producer">
-                <span>歌手：</span>
-                <span class="artists">{{track.artistName}}</span>
-                <span>专辑：</span>
-                <span class="album">{{track.album.name}}</span>
+                <template v-if="playing.artistName">
+                    <span>歌手：</span>
+                    <span class="artists">{{playing.artistName}}</span>
+                </template>
+                <template v-if="playing.album">
+                    <span>专辑：</span>
+                    <span class="album">{{playing.album.name}}</span>
+                </template>
             </p>
             <div class="lyric">
                 <div class="scroller"
@@ -83,12 +87,15 @@ export default {
     },
     computed: {
         ...mapState(['ui', 'playlist']),
-        track() {
+        playing() {
             const { list, index } = this.playlist;
-            return list[index] || ({ name: '（暂无歌曲）', album: { name: '', picUrl: '' } });
+            return list[index] || ({ name: '（暂无歌曲）' });
         },
         albumImgStyle() {
-            return bkgImg(sizeImg(this.track.album.picUrl, HiDpiPx(220)));
+            if (this.playing.album && this.playing.album.picUrl) {
+                return bkgImg(sizeImg(this.playing.album.picUrl, HiDpiPx(220)));
+            }
+            return '';
         },
         lyricScrollerStyle() {
             if (typeof this.ui.lyric.txtLyric === 'string') {
@@ -139,8 +146,8 @@ export default {
         paintBkgCanvas() {
             if (!this.isActive) return;
             const img = new Image();
-            if (this.track.album.picUrl) {
-                img.src = sizeImg(this.track.album.picUrl, HiDpiPx(64));
+            if (this.playing.album && this.playing.album.picUrl) {
+                img.src = sizeImg(this.playing.album.picUrl, HiDpiPx(64));
             } else {
                 img.src = defaultCoverImg;
             }

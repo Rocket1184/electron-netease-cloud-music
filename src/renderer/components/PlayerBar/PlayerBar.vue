@@ -159,7 +159,7 @@ export default {
             return list[index] || ({ name: 'Electron Netease Cloud Music' });
         },
         coverImgStyle() {
-            if (this.playing && this.playing.album.picUrl) {
+            if (this.playing.album && this.playing.album.picUrl) {
                 return bkgImg(sizeImg(this.playing.album.picUrl, HiDpiPx(64)));
             }
             return '';
