@@ -6,6 +6,7 @@ import Album from '@/page/Album.vue';
 import Settings from '@/page/Settings/Settings.vue';
 import Favorite from '@/page/Favorite/Favorite.vue';
 import RecommendSongs from '@/page/RecommendSongs.vue';
+import CenteredTip from '@/components/CenteredTip.vue';
 
 export default [
     {
@@ -47,7 +48,6 @@ export default [
     {
         name: 'recommend',
         path: '/recommend',
-        title: '每日歌曲推荐',
         component: RecommendSongs
     },
     {
@@ -56,5 +56,9 @@ export default [
         title: '应用设置',
         component: Settings,
         icon: 'settings'
+    },
+    {
+        path: '*',
+        component: CenteredTip
     }
 ];
