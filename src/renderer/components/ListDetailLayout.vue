@@ -41,8 +41,9 @@ export default {
             default: 'nature_people'
         },
         tipText: {
-            required: true,
-            type: String
+            required: false,
+            type: String,
+            default: ''
         }
     }
 };
