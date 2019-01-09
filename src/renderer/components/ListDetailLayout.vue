@@ -12,12 +12,7 @@
                 name="list"></slot>
         </div>
         <div class="ld-detail">
-            <div v-if="loading"
-                class="ld-loading">
-                <mu-circular-progress color="secondary"
-                    :size="60"
-                    :stroke-width="5"></mu-circular-progress>
-            </div>
+            <CenteredLoading v-if="loading"></CenteredLoading>
             <slot v-else
                 name="detail"></slot>
         </div>
@@ -25,6 +20,8 @@
 </template>
 
 <script>
+import CenteredLoading from '@/components/CenteredLoading.vue';
+
 export default {
     props: {
         loading: {
@@ -45,6 +42,9 @@ export default {
             type: String,
             default: ''
         }
+    },
+    components: {
+        CenteredLoading
     }
 };
 </script>
@@ -75,12 +75,6 @@ export default {
         flex: 3;
         height: 100%;
         overflow: auto;
-        .ld-loading {
-            display: flex;
-            height: 100%;
-            justify-content: center;
-            align-items: center;
-        }
     }
 }
 </style>
