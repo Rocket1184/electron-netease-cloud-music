@@ -13,36 +13,20 @@
                 <mu-tab value="user">用户</mu-tab>
             </mu-tabs>
         </div>
-        <div class="search-content">
-            <UnderConstructionTip v-if="searchType === 'mv'"></UnderConstructionTip>
-            <UnderConstructionTip v-else-if="searchType === 'user'"></UnderConstructionTip>
-            <div v-else-if="!haveSearched"
-                class="search-tip">
-                <mu-icon value="search"
-                    color="grey"
-                    :size="128"></mu-icon>
-                <p>右上角搜索框内输入，回车搜索！</p>
-            </div>
-            <div v-else-if="isPosting"
-                class="search-tip">
-                <mu-circular-progress color="secondary"
-                    :size="60"
-                    :stroke-width="5"></mu-circular-progress>
-            </div>
-            <div v-else-if="!haveValidResults"
-                class="search-tip">
-                <mu-icon value="inbox"
-                    color="grey"
-                    :size="128"></mu-icon>
-                <p>哎呀～什么都没找到 ...</p>
-            </div>
-            <div v-else-if="searchError"
-                class="search-tip">
-                <mu-icon value="error_outline"
-                    color="grey"
-                    :size="128"></mu-icon>
-                <p>哎呀～出错了 ... 错误代码 {{this.searchErrorCode}}</p>
-            </div>
+        <div class="search-content"
+            ref="searchContent">
+            <CenteredTip v-if="searchType === 'mv'"></CenteredTip>
+            <CenteredTip v-else-if="searchType === 'user'"></CenteredTip>
+            <CenteredTip v-else-if="!haveSearched"
+                icon="search"
+                tip="右上角搜索框内输入，回车搜索！"></CenteredTip>
+            <CenteredLoading v-else-if="isPosting"></CenteredLoading>
+            <CenteredTip v-else-if="!haveValidResults"
+                icon="inbox"
+                tip="哎呀～什么都没找到 ..."></CenteredTip>
+            <CenteredTip v-else-if="searchError"
+                icon="error_outline"
+                :tip="`出错了 ... 错误代码 ${this.searchErrorCode}`"></CenteredTip>
             <TrackList v-else-if="searchType === 'song'"
                 :tracks="items"
                 :indexOffset="searchOffset"></TrackList>
@@ -52,13 +36,9 @@
                 :list="items"></AlbumList>
             <PlaylistList v-else-if="searchType === 'playlist'"
                 :list="items"></PlaylistList>
-            <div v-else
-                class="search-tip">
-                <mu-icon value="bug_report"
-                    color="grey"
-                    :size="128"></mu-icon>
-                <p>你是怎么来到这儿的？这不应该啊 ...</p>
-            </div>
+            <CenteredTip v-else
+                icon="bug_report"
+                tip="为什么会这样呢 ..."></CenteredTip>
             <div class="pagination"
                 v-if="totalItems > 20">
                 <mu-pagination :total="totalItems"
@@ -72,14 +52,16 @@
 </template>
 
 <script>
+import Api from '@/util/api';
 import { Track } from '@/util/models';
+import { searchTypes } from '@/util/searchType';
+
 import TrackList from '@/components/TrackList.vue';
+import CenteredTip from '@/components/CenteredTip.vue';
+import CenteredLoading from '@/components/CenteredLoading.vue';
+import AlbumList from './AlbumList.vue';
 import ArtistList from './ArtistList.vue';
 import PlaylistList from './PlaylistList.vue';
-import AlbumList from './AlbumList.vue';
-import UnderConstructionTip from './UnderConstructionTip.vue';
-import { searchTypes } from '@/util/searchType';
-import Api from '@/util/api';
 
 export default {
     name: 'page-search',
@@ -111,6 +93,7 @@ export default {
             this.updateQueryString();
         },
         handlePageChange(newIndex) {
+            this.$refs.searchContent.scrollTo({ top: 0 });
             this.currentPage = newIndex;
             this.updateQueryString();
         },
@@ -175,10 +158,11 @@ export default {
     },
     components: {
         TrackList,
-        ArtistList,
+        CenteredTip,
+        CenteredLoading,
         AlbumList,
-        PlaylistList,
-        UnderConstructionTip
+        ArtistList,
+        PlaylistList
     }
 };
 </script>
@@ -191,14 +175,6 @@ export default {
     .search-content {
         height: calc(~'100% - 48px');
         overflow: auto;
-    }
-    .search-tip {
-        width: 100%;
-        text-align: center;
-        margin-top: 100px;
-        p {
-            color: grey;
-        }
     }
     .pagination {
         width: 100%;
