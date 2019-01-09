@@ -17,7 +17,7 @@
 </template>
 
 <script>
-import { bkgImg, sizeImg } from '@/util/image';
+import { bkgImg, sizeImg, HiDpiPx } from '@/util/image';
 
 export default {
     props: {
@@ -41,7 +41,7 @@ export default {
     },
     methods: {
         bkgImgStyle(img) {
-            return bkgImg(sizeImg(img, 180));
+            return bkgImg(sizeImg(img, HiDpiPx(180)));
         }
     }
 };
