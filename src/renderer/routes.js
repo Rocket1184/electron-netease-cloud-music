@@ -1,4 +1,4 @@
-import Index from '@/page/Index.vue';
+import Index from '@/page/Index/Index.vue';
 import Search from '@/page/Search/Search.vue';
 import Player from '@/page/Player.vue';
 import Playlist from '@/page/Playlist.vue';

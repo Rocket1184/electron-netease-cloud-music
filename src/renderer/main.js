@@ -14,6 +14,10 @@ const settings = window.__NCM_SETTINGS__;
 const node = document.createElement('div');
 document.body.appendChild(node);
 
+MuseUI.theme.addCreateTheme((theme) => {
+    return `.action-item:hover .mu-icon{color:${theme.background.default};}`;
+});
+
 MuseUI.theme.add('ncm', {
     primary: settings.themePrimaryColor,
     secondary: settings.themeSecondaryColor
