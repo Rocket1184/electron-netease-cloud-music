@@ -223,11 +223,12 @@ export function nextLoopMode({ commit, state }) {
     }
 }
 
-export function addTrackToPlaylist({ commit }, payload) {
+export function insertTrackIntoPlaylist({ commit, state }, payload) {
     const tracks = Array.isArray(payload.tracks)
         ? payload.tracks
         : [payload.tracks];
-    commit(types.ADD_TRACK_TO_PLAYLIST, { tracks });
+    const index = payload.index || state.playlist.index;
+    commit(types.INSERT_TRACK_INTO_PLAYLIST, { tracks, index });
 }
 
 export async function subscribePlaylist({ commit }, payload) {

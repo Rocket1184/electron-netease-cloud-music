@@ -45,9 +45,13 @@ const mutations = {
         state.loopMode = loopMode || LOOP_MODE.LIST;
         state.list = list.map(t => new Track(t));
     },
-    [types.ADD_TRACK_TO_PLAYLIST](state, payload) {
-        const { tracks } = payload;
-        state.list.splice(state.index + 1, 0, ...tracks);
+    [types.INSERT_TRACK_INTO_PLAYLIST](state, payload) {
+        const { tracks, index } = payload;
+        state.list.splice(index, 0, ...tracks);
+        if (index <= state.index) {
+            // keep current track unchanged
+            state.index += tracks.length;
+        }
     }
 };
 
