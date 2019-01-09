@@ -449,6 +449,55 @@ namespace Types {
         recommend: RecommendSong[];
     }
 
+    export interface RecommendPlaylistCreator {
+        accountStatus: number;
+        authStatus: number;
+        authority: number;
+        avatarImgId: any;
+        avatarImgIdStr: string;
+        avatarUrl: string;
+        backgroundImgId: any;
+        backgroundImgIdStr: string;
+        backgroundUrl: string;
+        birthday: any;
+        city: number;
+        defaultAvatar: boolean;
+        description: string;
+        detailDescription: string;
+        djStatus: number;
+        expertTags: string[];
+        followed: boolean;
+        gender: number;
+        mutual: boolean;
+        nickname: string;
+        province: number;
+        remarkName?: any;
+        signature: string;
+        userId: number;
+        userType: number;
+        vipType: number;
+    }
+
+    export interface RecommendPlaylist {
+        alg: string;
+        copywriter: string;
+        createTime: any;
+        creator: RecommendPlaylistCreator
+        id: number;
+        name: string;
+        picUrl: string;
+        playcount: number;
+        trackCount: number;
+        type: number;
+        userId: number;
+    }
+
+    export interface RecommendPlaylistRes {
+        featureFirst: boolean;
+        haveRcmdSongs: boolean;
+        recommend: RecommendPlaylist[];
+    }
+
     interface Privilege {
         id: number;
         fee: number;
@@ -1160,6 +1209,74 @@ namespace Types {
         message?: string;
         /** success timestamp */
         time?: number;
+    }
+
+    export interface RecommendPlaylistCreator {
+        accountStatus: number;
+        authStatus: number;
+        authority: number;
+        avatarImgId: any;
+        avatarImgIdStr: string;
+        avatarUrl: string;
+        backgroundImgId: any;
+        backgroundImgIdStr: string;
+        backgroundUrl: string;
+        birthday: any;
+        city: number;
+        defaultAvatar: boolean;
+        description: string;
+        detailDescription: string;
+        djStatus: number;
+        expertTags: string[];
+        followed: boolean;
+        gender: number;
+        mutual: boolean;
+        nickname: string;
+        province: number;
+        remarkName?: any;
+        signature: string;
+        userId: number;
+        userType: number;
+        vipType: number;
+    }
+
+    export interface RecommendPlaylist {
+        alg: string;
+        copywriter: string;
+        createTime: any;
+        creator: RecommendPlaylistCreator
+        id: number;
+        name: string;
+        picUrl: string;
+        playcount: number;
+        trackCount: number;
+        type: number;
+        userId: number;
+    }
+
+    export interface RecommendMVResult {
+        alg: string;
+        artistId: number;
+        artistName: string;
+        artists: {
+            id: number;
+            name: string;
+        }[];
+        canDislike: boolean;
+        copywriter: string;
+        duration: number;
+        id: number;
+        name: string;
+        picUrl: string;
+        playCount: number;
+        subed: boolean;
+        type: number;
+    }
+
+    export interface RecommendMVRes extends ApiRes {
+        category: number;
+        code: number;
+        result: RecommendMVResult[];
     }
 }
 

@@ -149,10 +149,11 @@ export function dislikeMusic(id) {
 
 /**
  * 推荐歌单
+ * @returns {Types.RecommendPlaylistRes}
  */
 export function getRecommendPlaylist() {
     return client.postW({
-        url: `${BaseURL}/weapi/discovery/recommend/resource`,
+        url: `${BaseURL}/weapi/v1/discovery/recommend/resource`,
         data: {}
     });
 }
@@ -832,5 +833,16 @@ export async function unsubscribeAlbum(id) {
     return client.postE({
         url: `${BaseURL}/eapi/album/unsub`,
         data: { id: `${id}` }
+    });
+}
+
+/**
+ * 推荐 MV
+ * @returns {Types.RecommendMVRes}
+ */
+export async function getRecommendMVs() {
+    return client.postW({
+        url: `${BaseURL}/weapi/personalized/mv`,
+        data: {}
     });
 }
