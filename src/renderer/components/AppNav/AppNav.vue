@@ -31,7 +31,7 @@
                 @click="drawerOpen = true">
                 <mu-icon value="menu"></mu-icon>
             </mu-button>
-            <searchBox slot="right"></searchBox>
+            <SearchBox slot="right"></SearchBox>
         </mu-appbar>
         <mu-drawer :width="300"
             :docked="false"
@@ -69,20 +69,20 @@
                 </mu-list-item>
             </mu-list>
         </mu-drawer>
-        <loginDialog :show.sync="loginDlgShow"></loginDialog>
+        <LoginDialog :show.sync="loginDlgShow"></LoginDialog>
     </div>
 </template>
 
 <script>
-import { mapActions, mapState } from 'vuex';
-import { remote } from 'electron';
 import { platform } from 'os';
+import { remote } from 'electron';
+import { mapActions, mapState } from 'vuex';
 
-import { bkgImg, sizeImg, HiDpiPx } from "@/util/image";
 import Api from '@/util/api';
-import loginDialog from './LoginDialog.vue';
-import searchBox from './SearchBox.vue';
 import Routes from '@/routes';
+import SearchBox from './SearchBox.vue';
+import LoginDialog from './LoginDialog.vue';
+import { bkgImg, sizeImg, HiDpiPx } from "@/util/image";
 
 function checkIn(...args) {
     return Api.postDailyTask(...args);
@@ -97,7 +97,7 @@ export default {
         };
     },
     computed: {
-        ...mapState(['settings', 'user']),
+        ...mapState(['settings', 'user', 'ui']),
         validRoutes() {
             return Routes.filter(r => r.title);
         },
@@ -111,7 +111,9 @@ export default {
             return sizeImg(this.user.info.avatarUrl, HiDpiPx(80));
         },
         username() {
-            return this.user.loginValid ? this.user.info.nickname : '点击登录';
+            if (this.ui.loginPending) return '登录中 ...';
+            if (this.user.loginValid) return this.user.info.nickname;
+            return '点击登录';
         },
         backgroundUrlStyle() {
             return this.user.info.bkgUrl && bkgImg(sizeImg(this.user.info.bkgUrl, HiDpiPx(300), HiDpiPx(200)));
@@ -162,8 +164,8 @@ export default {
         }
     },
     components: {
-        loginDialog,
-        searchBox
+        LoginDialog,
+        SearchBox
     }
 };
 </script>

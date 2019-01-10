@@ -63,17 +63,15 @@
                 <mu-button full-width
                     color="primary"
                     @click="handleLogin()"
-                    :disabled="posting">登录</mu-button>
+                    :disabled="ui.loginPending">登录</mu-button>
             </div>
         </div>
     </mu-dialog>
 </template>
 
 <script>
-import { mapActions } from 'vuex';
 import { ipcRenderer } from 'electron';
-
-import Api from '@/util/api';
+import { mapActions, mapState } from 'vuex';
 
 function initData() {
     return {
@@ -86,8 +84,7 @@ function initData() {
         needCaptcha: false,
         captchaId: null,
         inputCaptcha: '',
-        errMsgCaptcha: '',
-        posting: false
+        errMsgCaptcha: ''
     };
 }
 
@@ -99,11 +96,12 @@ export default {
         }
     },
     data: initData,
+    computed: {
+        ...mapState(['ui'])
+    },
     methods: {
         ...mapActions([
-            'setUserInfo',
-            'storeUserInfo',
-            'setLoginValid',
+            'login',
             'restoreUserInfo'
         ]),
         handleTabChange(val) {
@@ -120,17 +118,11 @@ export default {
                 this.$refs.inputPwd.$el.querySelector('input').focus();
                 return this.errMsgPwd = '密码不能为空';
             }
-            this.posting = true;
             // TODO: Login with captcha
-            let resp = await Api.login(this.inputUsr, this.inputPwd);
-            this.posting = false;
+            let resp = await this.login({ acc: this.inputUsr, pwd: this.inputPwd });
             switch (resp.code) {
                 case 200:
                     this.$emit('update:show', false);
-                    this.setUserInfo(resp);
-                    this.setLoginValid();
-                    const cookie = await Api.getCookie();
-                    this.storeUserInfo({ user: resp, cookie });
                     break;
                 case 415:
                     this.errMsgCaptcha = '登录过于频繁，请输入验证码';

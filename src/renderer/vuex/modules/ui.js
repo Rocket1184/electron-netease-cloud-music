@@ -6,6 +6,7 @@ const state = {
     paused: true,
     lyric: {},
     lyricSeq: 0,
+    loginPending: false,
     collectPopupShow: false,
     collectTrackIds: [],
     recommendSongs: [],
@@ -38,6 +39,13 @@ const mutations = {
     [types.SET_ACTIVE_LYRIC](state, payload) {
         state.lyric = payload;
         state.lyricSeq = state.lyricSeq + 1;
+    },
+    [types.SET_LOGIN_PENDING](state, payload) {
+        if (payload === true) {
+            state.loginPending = true;
+        } else {
+            state.loginPending = false;
+        }
     },
     [types.SHOW_COLLECT_POPUP](state) {
         state.collectPopupShow = true;

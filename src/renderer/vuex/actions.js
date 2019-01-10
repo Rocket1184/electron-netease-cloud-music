@@ -12,9 +12,9 @@ export function setUserInfo({ commit }, payload) {
     commit(types.SET_USER_INFO, payload);
 }
 
-export function storeUserInfo(context, payload) {
-    const { user, cookie } = payload;
-    localStorage.setItem('user', JSON.stringify(user));
+export async function storeUserInfo({ state }) {
+    localStorage.setItem('user', JSON.stringify(state.user.info));
+    const cookie = await Api.getCookie();
     localStorage.setItem('cookie', JSON.stringify(cookie));
 }
 
@@ -25,8 +25,10 @@ export async function restoreUserInfo(context) {
         const userObj = JSON.parse(user);
         const cookieObj = JSON.parse(cookie);
         context.commit(types.SET_USER_INFO, userObj);
+        context.commit(types.SET_LOGIN_PENDING, true);
         Api.updateCookie(cookieObj);
         const resp = await Api.refreshLogin();
+        context.commit(types.SET_LOGIN_PENDING, false);
         if (resp.code === 200) {
             setLoginValid(context);
             return true;
@@ -45,8 +47,8 @@ export async function updateUserPlaylists({ state, commit }) {
 }
 
 export function setLoginValid(context, payload) {
-    if (payload === undefined || payload === true || payload.valid === true) {
-        context.commit(types.SET_LOGIN_VALID);
+    if (payload === undefined || payload === true) {
+        context.commit(types.SET_LOGIN_VALID, true);
         Api.getCookie().then(cookie => {
             localStorage.setItem('cookie', JSON.stringify(cookie));
         });
@@ -60,6 +62,18 @@ export function setLoginValid(context, payload) {
     } else {
         context.commit(types.SET_LOGIN_VALID, false);
     }
+}
+
+export async function login({ commit, dispatch }, payload) {
+    commit(types.SET_LOGIN_PENDING, true);
+    const resp = await Api.login(payload.acc, payload.pwd);
+    if (resp.code === 200) {
+        dispatch('setUserInfo', resp);
+        dispatch('setLoginValid', true);
+        dispatch('storeUserInfo');
+    }
+    commit(types.SET_LOGIN_PENDING, false);
+    return resp;
 }
 
 export function logout({ commit }) {

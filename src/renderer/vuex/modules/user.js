@@ -12,7 +12,7 @@ const state = {
 
 const mutations = {
     [types.SET_LOGIN_VALID](state, payload) {
-        if (payload === undefined || payload === true || payload.valid === true) {
+        if (payload === true) {
             state.loginValid = true;
         } else {
             state.loginValid = false;
