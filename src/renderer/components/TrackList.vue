@@ -25,18 +25,17 @@
                 </div>
             </div>
         </template>
-        <div v-else
-            class="loading-wrapper">
-            <mu-circular-progress color="secondary"
-                :size="60"
-                :stroke-width="5"></mu-circular-progress>
-        </div>
+        <CenteredTip v-else
+            icon="inbox"
+            tip="没有歌曲  (ÒωÓױ)"></CenteredTip>
     </div>
 </template>
 
 <script>
 import { mapActions, mapState } from 'vuex';
+
 import { shortTime } from '@/util/formatter';
+import CenteredTip from './CenteredTip.vue';
 
 export default {
     props: {
@@ -54,11 +53,10 @@ export default {
         shortTime
     },
     computed: {
-        ...mapState(['ui', 'user', 'playlist'])
+        ...mapState(['user', 'playlist'])
     },
     methods: {
         ...mapActions([
-            'playPerviousTrack',
             'playTrackIndex',
             'toggleCollectPopup',
             'insertTrackIntoPlaylist'
@@ -105,6 +103,9 @@ export default {
             const newIndex = this.findTrackInPlaylist(index);
             this.playTrackIndex({ index: newIndex });
         }
+    },
+    components: {
+        CenteredTip
     }
 };
 </script>
@@ -147,12 +148,8 @@ export default {
             }
         }
     }
-    .loading-wrapper {
-        height: 400px;
-        display: flex;
-        flex-direction: column;
-        justify-content: center;
-        align-items: center;
+    .centered-tip {
+        height: 220px;
     }
 }
 </style>
