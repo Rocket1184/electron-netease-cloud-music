@@ -70,19 +70,31 @@ export default {
             }
             this.toggleCollectPopup(id);
         },
+        /**
+         * find track specified by given index in current playlist 
+         * @param {number} index track index in `this.tracks`
+         * @returns {number}
+         */
+        findTrackInPlaylist(index) {
+            const track = this.tracks[index];
+            return this.playlist.list.findIndex(t => t.id === track.id);
+        },
         handleAdd(index) {
-            try {
-                this.insertTrackIntoPlaylist({
-                    tracks: [this.tracks[index]],
-                    index: this.playlist.list.length
-                });
-                this.$toast.message('已添加到播放列表  _(:з」∠)_');
-            } catch (e) { /* 为什么会这样呢 */ }
+            if (this.findTrackInPlaylist(index) > -1) {
+                // track exists in playlist
+                this.$toast.message('已经在播放列表中了  ( >﹏<。)～');
+                return;
+            }
+            this.insertTrackIntoPlaylist({
+                tracks: [this.tracks[index]],
+                index: this.playlist.list.length
+            });
+            this.$toast.message('已添加到播放列表  _(:з」∠)_');
         },
         handlePlay(index) {
-            const track = this.tracks[index];
-            const i = this.playlist.list.findIndex(t => t.id === track.id);
+            const i = this.findTrackInPlaylist(index);
             if (i > -1) {
+                // track exists in playlist
                 this.playTrackIndex({ index: i });
                 return;
             }
@@ -90,7 +102,7 @@ export default {
                 tracks: [this.tracks[index]],
                 index: this.playlist.index
             });
-            const newIndex = this.playlist.list.findIndex(t => t.id === track.id);
+            const newIndex = this.findTrackInPlaylist(index);
             this.playTrackIndex({ index: newIndex });
         }
     }
