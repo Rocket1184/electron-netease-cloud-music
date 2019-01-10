@@ -156,9 +156,9 @@ export default {
     methods: {
         refreshSize() {
             remote.getCurrentWebContents().session.getCacheSize(s => this.cacheSize = s);
-            Api.getDataSize().then(s => this.dataSize = s);
-            Api.getDataSize('music').then(s => this.musicSize = s);
-            Api.getDataSize('lyric').then(s => this.lyricSize = s);
+            Api.getDataSize('all').then(s => this.dataSize = s.size);
+            Api.getDataSize('music').then(s => this.musicSize = s.size);
+            Api.getDataSize('lyric').then(s => this.lyricSize = s.size);
         },
         saveSettings() {
             this.$store.commit(types.UPDATE_SETTINGS, this.settings);
