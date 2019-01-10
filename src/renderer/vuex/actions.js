@@ -18,19 +18,19 @@ export async function storeUserInfo({ state }) {
     localStorage.setItem('cookie', JSON.stringify(cookie));
 }
 
-export async function restoreUserInfo(context) {
+export async function restoreUserInfo({ commit, dispatch }) {
     const user = localStorage.getItem('user');
     const cookie = localStorage.getItem('cookie');
     if (user && cookie) {
         const userObj = JSON.parse(user);
         const cookieObj = JSON.parse(cookie);
-        context.commit(types.SET_USER_INFO, userObj);
-        context.commit(types.SET_LOGIN_PENDING, true);
+        commit(types.SET_USER_INFO, userObj);
+        commit(types.SET_LOGIN_PENDING, true);
         Api.updateCookie(cookieObj);
         const resp = await Api.refreshLogin();
-        context.commit(types.SET_LOGIN_PENDING, false);
+        commit(types.SET_LOGIN_PENDING, false);
         if (resp.code === 200) {
-            setLoginValid(context);
+            dispatch('setLoginValid');
             return true;
         } else {
             Api.updateCookie({});
@@ -46,21 +46,21 @@ export async function updateUserPlaylists({ state, commit }) {
     return playlist;
 }
 
-export function setLoginValid(context, payload) {
+export function setLoginValid({ commit, dispatch }, payload) {
     if (payload === undefined || payload === true) {
-        context.commit(types.SET_LOGIN_VALID, true);
+        commit(types.SET_LOGIN_VALID, true);
         Api.getCookie().then(cookie => {
             localStorage.setItem('cookie', JSON.stringify(cookie));
         });
-        updateUserPlaylists(context).then(playlist => {
+        dispatch('updateUserPlaylists').then(playlist => {
             if (playlist[0].name.endsWith('喜欢的音乐')) {
                 Api.getListDetail(playlist[0].id).then(list => {
-                    context.commit(types.UPDATE_USER_PLAYLIST, list.playlist);
+                    commit(types.UPDATE_USER_PLAYLIST, list.playlist);
                 });
             }
         });
     } else {
-        context.commit(types.SET_LOGIN_VALID, false);
+        commit(types.SET_LOGIN_VALID, false);
     }
 }
 
@@ -76,34 +76,40 @@ export async function login({ commit, dispatch }, payload) {
     return resp;
 }
 
-export function logout({ commit }) {
-    Api.logout().then(code => {
-        if (code == 200) {
-            commit(types.SET_LOGIN_VALID, false);
-            commit(types.SET_UI_FAV_ALBUM, null);
-            commit(types.SET_UI_FAV_VIDEO, null);
-            commit(types.SET_UI_FAV_ARTIST, null);
-            setUserInfo({ commit }, new User());
-            ['user', 'cookie'].map(k => localStorage.removeItem(k));
-        }
-    });
+export async function logout({ commit }) {
+    const resp = await Api.logout();
+    if (resp.code == 200) {
+        commit(types.SET_LOGIN_VALID, false);
+        commit(types.SET_UI_FAV_ALBUM, null);
+        commit(types.SET_UI_FAV_VIDEO, null);
+        commit(types.SET_UI_FAV_ARTIST, null);
+        setUserInfo({ commit }, new User());
+        ['user', 'cookie'].map(k => localStorage.removeItem(k));
+    }
 }
 
-async function updateUiUrl(commit, trackId, quality) {
-    const oUrl = await Api.getMusicUrlCached(trackId, quality);
-    commit(types.UPDATE_PLAYING_URL, oUrl.url);
+export async function updateUiAudioSrc({ commit, state }) {
+    const quality = state.settings.bitRate;
+    const track = state.playlist.list[state.playlist.index];
+    if (track && track.id) {
+        const resp = await Api.getMusicUrlCached(track.id, quality);
+        commit(types.UPDATE_PLAYING_URL, resp.url);
+    }
 }
 
-async function updateUiLyric(commit, id) {
-    const lyric = await Api.getMusicLyricCached(id);
-    commit(types.SET_ACTIVE_LYRIC, lyric);
+export async function updateUiLyric({ commit, state }) {
+    const track = state.playlist.list[state.playlist.index];
+    if (track && track.id) {
+        const lyric = await Api.getMusicLyricCached(track.id);
+        commit(types.SET_ACTIVE_LYRIC, lyric);
+    }
 }
 
-export async function updateUiUrlNoCache({ commit, state }) {
+export async function updateUiAudioSrcNoCache({ commit, state }) {
     const { index, list } = state.playlist;
     const quality = state.settings.bitRate;
-    const oUrl = await Api.getMusicUrlNoCache(list[index].id, quality);
-    commit(types.UPDATE_PLAYING_URL, oUrl.url + '?' + Date.now());
+    const resp = await Api.getMusicUrlNoCache(list[index].id, quality);
+    commit(types.UPDATE_PLAYING_URL, resp.url);
 }
 
 export function playAudio({ commit }) {
@@ -114,17 +120,15 @@ export function pauseAudio({ commit }) {
     commit(types.PAUSE_PLAYING_MUSIC);
 }
 
-async function playThisTrack(commit, list, index, quality) {
+export async function playTrackIndex({ commit, dispatch }, index) {
     commit(types.SET_CURRENT_INDEX, index);
     commit(types.SET_ACTIVE_LYRIC, {});
-    const track = list[index];
-    updateUiLyric(commit, track.id);
-    await updateUiUrl(commit, track.id, quality);
+    dispatch('updateUiLyric');
+    await dispatch('updateUiAudioSrc');
     commit(types.RESUME_PLAYING_MUSIC);
 }
 
-export function playNextTrack({ commit, state }) {
-    const quality = state.settings.bitRate;
+export function playNextTrack({ dispatch, state }) {
     const { index, list, loopMode } = state.playlist;
     let nextIndex;
     switch (loopMode) {
@@ -135,11 +139,10 @@ export function playNextTrack({ commit, state }) {
             nextIndex = (index + 1) % list.length;
             break;
     }
-    playThisTrack(commit, list, nextIndex, quality);
+    dispatch('playTrackIndex', nextIndex);
 }
 
-export function playPreviousTrack({ commit, state }) {
-    const quality = state.settings.bitRate;
+export function playPreviousTrack({ dispatch, state }) {
     const { index, list, loopMode } = state.playlist;
     let nextIndex;
     switch (loopMode) {
@@ -150,14 +153,13 @@ export function playPreviousTrack({ commit, state }) {
             nextIndex = (index + list.length - 1) % list.length;
             break;
     }
-    playThisTrack(commit, list, nextIndex, quality);
+    dispatch('playTrackIndex', nextIndex);
 }
 
-export async function playPlaylist({ commit, state }, payload) {
+export async function playPlaylist({ commit, dispatch, state }, payload) {
     if (payload) {
-        commit(types.SET_PLAY_LIST, { list: payload.list });
+        commit(types.SET_PLAY_LIST, payload);
     }
-    const quality = state.settings.bitRate;
     const { list, loopMode } = state.playlist;
     let firstIndex;
     switch (loopMode) {
@@ -168,13 +170,7 @@ export async function playPlaylist({ commit, state }, payload) {
             firstIndex = 0;
             break;
     }
-    playThisTrack(commit, list, firstIndex, quality);
-}
-
-export function playTrackIndex({ commit, state }, payload) {
-    const quality = state.settings.bitRate;
-    const { list } = state.playlist;
-    playThisTrack(commit, list, payload.index, quality);
+    dispatch('playTrackIndex', firstIndex);
 }
 
 export function storePlaylist({ commit, state }) {
@@ -184,15 +180,14 @@ export function storePlaylist({ commit, state }) {
     localStorage.setItem('playlist', JSON.stringify(state.playlist));
 }
 
-export function restorePlaylist({ commit, state }) {
+export function restorePlaylist({ commit, dispatch }) {
     try {
         const stored = localStorage.getItem('playlist');
         if (stored) {
             const playlist = JSON.parse(stored);
             commit(types.RESTORE_PLAYLIST, playlist);
-            const track = playlist.list[playlist.index];
-            updateUiUrl(commit, track.id, state.settings.bitRate);
-            updateUiLyric(commit, track.id);
+            dispatch('updateUiAudioSrc');
+            dispatch('updateUiLyric');
         }
     } catch (e) {
         // eslint-disable-next-line no-console

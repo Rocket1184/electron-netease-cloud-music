@@ -93,7 +93,7 @@ export default {
             const i = this.findTrackInPlaylist(index);
             if (i > -1) {
                 // track exists in playlist
-                this.playTrackIndex({ index: i });
+                this.playTrackIndex(i);
                 return;
             }
             this.insertTrackIntoPlaylist({
@@ -101,7 +101,7 @@ export default {
                 index: this.playlist.index
             });
             const newIndex = this.findTrackInPlaylist(index);
-            this.playTrackIndex({ index: newIndex });
+            this.playTrackIndex(newIndex);
         }
     },
     components: {

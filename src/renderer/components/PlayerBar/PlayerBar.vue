@@ -102,7 +102,7 @@ export default {
         ...mapActions([
             'playAudio',
             'pauseAudio',
-            'updateUiUrlNoCache',
+            'updateUiAudioSrcNoCache',
             'playNextTrack',
             'playPreviousTrack',
             'updatePlaylistDetail',
@@ -300,7 +300,7 @@ export default {
             if (!this.playing.id) return;
             if (!this.hasRetried) {
                 this.hasRetried = true;
-                this.updateUiUrlNoCache();
+                this.updateUiAudioSrcNoCache();
                 return;
             }
             this.hasRetried = false;

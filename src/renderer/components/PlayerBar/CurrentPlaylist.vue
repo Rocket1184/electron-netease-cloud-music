@@ -41,7 +41,7 @@ export default {
     methods: {
         ...mapActions(['playTrackIndex']),
         handleListClick(index) {
-            this.playTrackIndex({ index });
+            this.playTrackIndex(index);
         }
     }
 };

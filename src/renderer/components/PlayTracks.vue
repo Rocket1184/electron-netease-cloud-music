@@ -24,7 +24,7 @@ export default {
             'playPlaylist'
         ]),
         handlePlayAll() {
-            this.playPlaylist({ list: this.tracks });
+            this.playPlaylist(this.tracks);
         }
     }
 };
