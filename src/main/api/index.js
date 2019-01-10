@@ -13,6 +13,7 @@ import Client from './httpClient';
 import * as Settings from '../settings';
 import MusicServer from './musicServer';
 
+const fsPromises = fs.promises;
 const BaseURL = 'https://music.163.com';
 
 const client = new Client();
@@ -349,15 +350,9 @@ export async function getMusicLyric(id) {
  */
 export async function getMusicLyricCached(id) {
     if (await lyricCache.has(id)) {
-        return new Promise((resolve, reject) => {
-            fs.readFile(lyricCache.fullPath(id), (err, data) => {
-                if (!err) {
-                    resolve(JSON.parse(data.toString()));
-                } else {
-                    reject(err);
-                }
-            });
-        });
+        const pathname = lyricCache.fullPath(id);
+        const data = await fsPromises.readFile(pathname, { encoding: 'utf8' });
+        return data;
     } else {
         const lyric = await getMusicLyric(id);
         lyricCache.save(id, lyric);
@@ -417,58 +412,73 @@ export function getVipInfo() {
     });
 }
 
-export function getDirSize(dirPath) {
-    let totalSize = 0;
-    const files = fs.readdirSync(dirPath);
-    files.forEach(file => {
-        const stat = fs.statSync(path.join(dirPath, file));
-        if (stat.isFile()) {
-            totalSize += stat.size;
-        } else if (stat.isDirectory) {
-            totalSize += getDirSize(path.join(dirPath, file));
-        }
+export function getDiskUsage(pathname) {
+    return new Promise((resolve, reject) => {
+        fsPromises.lstat(pathname).then(stat => {
+            if (stat.isSymbolicLink() || stat.isFile()) {
+                resolve(stat.size);
+            } else if (stat.isDirectory()) {
+                fsPromises.readdir(pathname).then(files => {
+                    const p = files.map(file => getDiskUsage(path.join(pathname, file)));
+                    Promise.all(p).then(sizes => {
+                        const tot = sizes.reduce((a, b) => a + b, 0);
+                        resolve(tot);
+                    }).catch(reject);
+                });
+            }
+        }).catch(reject);
     });
-    return totalSize;
 }
 
-export function removeDir(dirPath) {
-    const files = fs.readdirSync(dirPath);
-    files.forEach(file => {
-        const fullPath = path.join(dirPath, file);
-        const stat = fs.statSync(fullPath);
-        if (stat.isFile()) {
-            fs.unlinkSync(fullPath);
-        } else if (stat.isDirectory) {
-            removeDir(fullPath);
-        }
+export function removeRecursive(pathname) {
+    return new Promise((resolve, reject) => {
+        fsPromises.lstat(pathname).then(stat => {
+            if (stat.isSymbolicLink() || stat.isFile()) {
+                fsPromises.unlink(pathname).then(resolve).catch(reject);
+            } else if (stat.isDirectory()) {
+                fsPromises.readdir(pathname).then(files => {
+                    const p = files.map(file => removeRecursive(path.join(pathname, file)));
+                    Promise.all(p).then(resolve).catch(reject);
+                });
+            }
+        }).catch(reject);
     });
 }
 
 /**
  * get size of cached data in bytes
- * @param {'all'|'music'|'lyric'} type cache type, default to `all`
+ * @param {'all'|'music'|'lyric'} type cache type
+ * @returns {Promise<{ok: boolean; size: number; msg?: string}>}
  */
-export function getDataSize(type = 'all') {
+export async function getDataSize(type) {
     const cachePath = cachePathMap[type];
-    let size;
     try {
-        size = getDirSize(cachePath);
-    } catch (err) {
-        size = 0;
-    }
-    return size;
-}
-
-export function clearCache(type) {
-    try {
-        removeDir(cachePathMap[type]);
-    } catch (err) {
+        const size = await getDiskUsage(cachePath);
+        return { ok: true, size };
+    } catch (e) {
+        console.error(e); // eslint-disable-line no-console
         return {
-            errno: -1,
-            err
+            ok: false,
+            size: 0,
+            msg: e.stack
         };
     }
-    return true;
+}
+
+/**
+ * @param {'all'|'music'|'lyric'} type cache type
+ * @returns {Promise<{ok: boolean; msg?: string}>}
+ */
+export async function clearCache(type) {
+    try {
+        await removeRecursive(cachePathMap[type]);
+    } catch (e) {
+        return {
+            ok: false,
+            msg: e.stack
+        };
+    }
+    return { ok: true };
 }
 
 /**
