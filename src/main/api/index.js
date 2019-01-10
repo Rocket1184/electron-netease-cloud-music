@@ -412,6 +412,11 @@ export function getVipInfo() {
     });
 }
 
+/**
+ * get disk usage of file or directory
+ * @param {string} pathname
+ * @returns {Promise<number>}
+ */
 export function getDiskUsage(pathname) {
     return new Promise((resolve, reject) => {
         fsPromises.lstat(pathname).then(stat => {
@@ -481,19 +486,30 @@ export async function clearCache(type) {
     return { ok: true };
 }
 
+function execAsync(...args) {
+    return new Promise((resolve, reject) => {
+        cp.exec(...args, (err, stdout, stderr) => {
+            if (err) {
+                reject({ stderr, stack: err.stack });
+                return;
+            }
+            resolve(stdout.trim());
+        });
+    });
+}
+
 /**
- * @returns {string}
+ * @returns {Promise<string>}
  */
-export function getVersionName() {
+export async function getVersionName() {
     let version = Settings.appVer;
     if (process.env.NODE_ENV === 'development') {
-        version += '-hot';
-        let rev = '';
         try {
-            rev = cp.execSync('git rev-parse --short HEAD').toString().trim();
-            version += `.${rev}+`;
-            // eslint-disable-next-line no-empty
-        } catch (err) { }
+            const hash = await execAsync('git rev-parse --short HEAD');
+            return `${version}-git.${hash}.dev`;
+        } catch (e) {
+            return `${version}.dev`;
+        }
     }
     return version;
 }
