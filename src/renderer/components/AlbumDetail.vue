@@ -4,13 +4,15 @@
             <img :src="coverSrc"
                 class="cover">
             <div class="desc">
-                <p class="name">{{album.name}}</p>
-                <div class="creator">
-                    <mu-avatar class="avatar">
-                        <img :src="creatorAvatarSrc">
-                    </mu-avatar>
-                    <span class="creator-name">{{album.artist.name}}</span>
-                    <span class="create-time">{{createTime}}</span>
+                <div class="info">
+                    <div class="name">{{album.name}}</div>
+                    <div class="creator">
+                        <mu-avatar class="avatar">
+                            <img :src="creatorAvatarSrc">
+                        </mu-avatar>
+                        <span class="creator-name">{{album.artist.name}}</span>
+                        <span class="create-time">发布于 {{createTime}}</span>
+                    </div>
                 </div>
                 <div class="actions">
                     <mu-button flat
@@ -18,16 +20,17 @@
                         <mu-icon left
                             :color="dynamicDetail.isSub ? 'amber' : ''"
                             :value="dynamicDetail.isSub ? 'star' : 'star_border'"></mu-icon>
-                        <span>{{ dynamicDetail.isSub ? '已收藏' : '收藏' }} ({{ dynamicDetail.subCount | formatCount}})</span>
+                        <span>{{btnSubscribeText}}</span>
                     </mu-button>
                     <mu-button flat>
                         <mu-icon left
                             value="comment"></mu-icon>
-                        <span>评论 ({{dynamicDetail.commentCount | formatCount}})</span>
+                        <span>{{btnCommentText}}</span>
                     </mu-button>
                 </div>
                 <div class="intro">
-                    <mu-list toggle-nested>
+                    <mu-list dense
+                        toggle-nested>
                         <mu-list-item button
                             nested
                             :open="descOpen"
@@ -35,11 +38,10 @@
                             <mu-list-item-title>专辑介绍</mu-list-item-title>
                             <mu-list-item-action>
                                 <mu-icon class="toggle-icon"
-                                    size="24"
                                     value="keyboard_arrow_down"></mu-icon>
                             </mu-list-item-action>
                             <mu-list-item-content slot="nested">
-                                <div class="description">{{albumDesc}}</div>
+                                <pre class="description">{{albumDesc}}</pre>
                             </mu-list-item-content>
                         </mu-list-item>
                     </mu-list>
@@ -61,10 +63,10 @@
 import { mapActions, mapState } from 'vuex';
 
 import Api from '@/util/api';
-import PlayTracks from '@/components/PlayTracks.vue';
-import TrackList from '@/components/TrackList.vue';
-import { sizeImg, HiDpiPx } from '@/util/image';
+import TrackList from './TrackList.vue';
+import PlayTracks from './PlayTracks.vue';
 import { shortDate } from '@/util/formatter';
+import { sizeImg, HiDpiPx } from '@/util/image';
 
 export default {
     props: {
@@ -88,6 +90,15 @@ export default {
         },
         createTime() {
             return shortDate(this.album.publishTime);
+        },
+        btnSubscribeText() {
+            const t = this.dynamicDetail.isSub ? '已收藏' : '收藏';
+            const n = this.dynamicDetail.subCount || '...';
+            return `${t} (${n})`;
+        },
+        btnCommentText() {
+            const n = this.dynamicDetail.commentCount || '...';
+            return `评论 (${n})`;
         },
         albumDesc() {
             return `类型：${this.album.subType}\n\n${this.album.description || '暂无介绍'}`;
@@ -135,13 +146,8 @@ export default {
             this.updateDynamicDetail();
         }
     },
-    mounted() {
+    created() {
         this.updateDynamicDetail();
-    },
-    filters: {
-        formatCount(cnt) {
-            return typeof cnt === 'number' ? cnt : '...';
-        }
     },
     components: {
         PlayTracks,
@@ -163,19 +169,22 @@ export default {
         }
         .desc {
             flex-grow: 1;
-            .name {
-                font-size: 20px;
-                margin: 0 0 8px 12px;
-            }
-            .creator {
-                margin: 8px 12px;
-                display: flex;
-                align-items: center;
-                .creator-name {
-                    margin: 0 10px;
+            .info {
+                padding-left: 16px;
+                .name {
+                    font-size: 20px;
+                    line-height: 30px;
                 }
-                .create-time {
-                    color: grey;
+                .creator {
+                    margin: 9px 0;
+                    display: flex;
+                    align-items: center;
+                    .creator-name {
+                        margin: 0 1em;
+                    }
+                    .create-time {
+                        color: grey;
+                    }
                 }
             }
             .actions {
@@ -187,15 +196,8 @@ export default {
                 }
                 .description {
                     margin: 8px;
-                    white-space: pre-wrap;
                 }
             }
-        }
-    }
-    .tracks {
-        .pagination {
-            width: 100%;
-            padding: 16px;
         }
     }
 }

@@ -1,16 +1,18 @@
 <template>
-    <div class="playlist-detail">
+    <div class="album-detail playlist-detail">
         <div class="header">
             <img :src="coverSrc"
                 class="cover">
             <div class="desc">
-                <p class="name">{{playlist.name}}</p>
-                <div class="creator">
-                    <mu-avatar class="avatar">
-                        <img :src="creatorAvatarSrc">
-                    </mu-avatar>
-                    <span class="creator-name">{{playlist.creator.nickname}}</span>
-                    <span class="create-time">创建于 {{createTime}}</span>
+                <div class="info">
+                    <div class="name">{{playlist.name}}</div>
+                    <div class="creator">
+                        <mu-avatar class="avatar">
+                            <img :src="creatorAvatarSrc">
+                        </mu-avatar>
+                        <span class="creator-name">{{playlist.creator.nickname}}</span>
+                        <span class="create-time">创建于 {{createTime}}</span>
+                    </div>
                 </div>
                 <div class="actions">
                     <mu-button flat
@@ -19,16 +21,17 @@
                         <mu-icon left
                             :color="shouldSubscribed ? 'amber' : ''"
                             :value="shouldSubscribed ? 'star' : 'star_border'"></mu-icon>
-                        <span>{{ shouldSubscribed ? '已收藏' : '收藏' }} ({{formatCount(playlist.subscribedCount + subsCntOffset)}})</span>
+                        <span>{{btnSubscribeText}}</span>
                     </mu-button>
                     <mu-button flat>
                         <mu-icon left
                             value="comment"></mu-icon>
-                        <span>评论 ({{formatCount(playlist.commentCount)}})</span>
+                        <span>{{btnCommentText}}</span>
                     </mu-button>
                 </div>
                 <div class="intro">
-                    <mu-list toggle-nested>
+                    <mu-list dense
+                        toggle-nested>
                         <mu-list-item button
                             nested
                             :open="descOpen"
@@ -40,7 +43,7 @@
                                     value="keyboard_arrow_down"></mu-icon>
                             </mu-list-item-action>
                             <mu-list-item-content slot="nested">
-                                <div class="description">{{playlist.description}}</div>
+                                <pre class="description">{{playlist.description}}</pre>
                             </mu-list-item-content>
                         </mu-list-item>
                     </mu-list>
@@ -67,10 +70,10 @@
 <script>
 import { mapActions, mapState } from 'vuex';
 
-import PlayTracks from './PlayTracks.vue';
 import TrackList from './TrackList.vue';
-import { sizeImg, HiDpiPx } from '@/util/image';
+import PlayTracks from './PlayTracks.vue';
 import { shortDate } from '@/util/formatter';
+import { sizeImg, HiDpiPx } from '@/util/image';
 
 export default {
     props: {
@@ -99,6 +102,15 @@ export default {
         createTime() {
             return shortDate(this.playlist.createTime);
         },
+        btnSubscribeText() {
+            const t = this.shouldSubscribed ? '已收藏' : '收藏';
+            const n = this.playlist.subscribedCount + this.subsCntOffset;
+            return `${t} (${n})`;
+        },
+        btnCommentText() {
+            const n = this.playlist.commentCount;
+            return `评论 (${n})`;
+        },
         tracksOffset() {
             return (this.currentPage - 1) * this.pageSize;
         },
@@ -107,10 +119,10 @@ export default {
         }
     },
     methods: {
-        ...mapActions(['subscribePlaylist', 'unsubscribePlaylist']),
-        formatCount(cnt) {
-            return typeof cnt === 'number' ? cnt : '...';
-        },
+        ...mapActions([
+            'subscribePlaylist',
+            'unsubscribePlaylist'
+        ]),
         handlePageChange(newIndex) {
             this.$emit('detail-scroll', this.scrollHeight);
             this.currentPage = newIndex;
@@ -150,47 +162,8 @@ export default {
 </script>
 
 <style lang="less">
+// most style comes from `AlbumDetail`
 .playlist-detail {
-    .header {
-        display: flex;
-        padding: 16px;
-        .cover {
-            height: 160px;
-            width: 160px;
-            min-width: 160px;
-            margin-right: 10px;
-        }
-        .desc {
-            flex-grow: 1;
-            .name {
-                font-size: 20px;
-                margin: 0 0 8px 12px;
-            }
-            .creator {
-                margin: 8px 12px;
-                display: flex;
-                align-items: center;
-                .creator-name {
-                    margin: 0 10px;
-                }
-                .create-time {
-                    color: grey;
-                }
-            }
-            .actions {
-                display: flex;
-            }
-            .intro {
-                .mu-list {
-                    padding: 0;
-                }
-                .description {
-                    margin: 8px;
-                    white-space: pre-wrap;
-                }
-            }
-        }
-    }
     .tracks {
         .pagination {
             width: 100%;
