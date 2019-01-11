@@ -10,9 +10,7 @@
                 <span class="name-cnt">{{subTitle}}</span>
             </div>
         </div>
-        <div class="it-desc">
-            <span>{{desc}}</span>
-        </div>
+        <div class="it-desc">{{desc}}</div>
     </router-link>
 </template>
 
@@ -41,7 +39,7 @@ export default {
     },
     methods: {
         bkgImgStyle(img) {
-            return bkgImg(sizeImg(img, HiDpiPx(180)));
+            return bkgImg(sizeImg(img, HiDpiPx(160)));
         }
     }
 };
@@ -49,14 +47,16 @@ export default {
 
 <style lang="less">
 .s-item {
-    min-width: 180px;
+    min-width: 160px;
+    width: 160px;
+    height: 210px;
     margin-left: 12px;
     cursor: pointer;
     &:last-child {
         padding-right: 12px;
     }
     .it-cover {
-        height: 180px;
+        height: 160px;
         background-size: cover;
         display: flex;
         flex-direction: column-reverse;
@@ -74,6 +74,13 @@ export default {
         .mu-icon {
             color: #e5e2e5;
         }
+    }
+    .it-desc {
+        overflow: hidden;
+        text-overflow: ellipsis;
+        display: -webkit-box;
+        -webkit-line-clamp: 2;
+        -webkit-box-orient: vertical;
     }
 }
 </style>
