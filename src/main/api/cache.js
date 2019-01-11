@@ -9,7 +9,7 @@ class Cache {
         if (typeof path === 'string') {
             if (!fs.existsSync(path)) {
                 fs.mkdirSync(path);
-            } else if (!fs.statSync(path).isDirectory) {
+            } else if (!fs.statSync(path).isDirectory()) {
                 throw new Error(`[Cache] '${path} was token by unknown file. Please remove it manually.'`);
             }
             this.path = path;
@@ -79,7 +79,7 @@ class Cache {
      */
     has(fileName) {
         return new Promise(resolve => {
-            fs.exists(this.fullPath(fileName), resolve);
+            fs.access(this.fullPath(fileName), err => resolve(!err));
         });
     }
 
