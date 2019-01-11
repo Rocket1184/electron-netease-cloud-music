@@ -351,8 +351,8 @@ export async function getMusicLyric(id) {
 export async function getMusicLyricCached(id) {
     if (await lyricCache.has(id)) {
         const pathname = lyricCache.fullPath(id);
-        const data = await fsPromises.readFile(pathname, { encoding: 'utf8' });
-        return data;
+        const text = await fsPromises.readFile(pathname, 'utf8');
+        return JSON.parse(text);
     } else {
         const lyric = await getMusicLyric(id);
         lyricCache.save(id, lyric);
