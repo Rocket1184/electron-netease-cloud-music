@@ -54,13 +54,14 @@ export default {
             mv: []
         };
     },
-    methods: {
-        gugugu() {
-            this.$toast.message('咕咕咕');
-        }
-    },
     mounted() {
-        Api.getRecommendPlaylist().then(res => this.playlist = res.recommend);
+        Api.getRecommendPlaylist().then(res => {
+            if (res.code === 200) {
+                this.playlist = res.recommend;
+            } else {
+                Api.getPersonalizedPlaylists().then(res => this.playlist = res.result);
+            }
+        });
         Api.getRecommendMVs().then(res => this.mv = res.result);
     },
     components: {
@@ -72,6 +73,7 @@ export default {
 
 <style lang="less">
 .index-wrapper {
+    user-select: none;
     min-height: 110%;
     max-width: 800px;
     margin: auto;
@@ -91,7 +93,6 @@ export default {
         }
         .h-scroller {
             width: 100%;
-            height: 235px;
             display: flex;
             flex-wrap: nowrap;
             overflow: auto;
