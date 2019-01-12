@@ -492,7 +492,7 @@ namespace Types {
         userId: number;
     }
 
-    export interface RecommendPlaylistRes {
+    export interface RecommendPlaylistRes extends ApiRes {
         featureFirst: boolean;
         haveRcmdSongs: boolean;
         recommend: RecommendPlaylist[];
@@ -1277,6 +1277,26 @@ namespace Types {
         category: number;
         code: number;
         result: RecommendMVResult[];
+    }
+
+    export interface PersonalizedPlaylist {
+        alg: string;
+        canDislike: boolean;
+        copywriter: string;
+        highQuality: boolean;
+        id: number;
+        name: string;
+        picUrl: string;
+        playCount: number;
+        trackCount: number;
+        type: number;
+    }
+
+    export interface PersonalizedPlaylistRes extends ApiRes {
+        category: number;
+        code: number;
+        hasTaste: boolean;
+        result: PersonalizedPlaylist[];
     }
 }
 

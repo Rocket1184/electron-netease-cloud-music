@@ -149,7 +149,7 @@ export function dislikeMusic(id) {
 }
 
 /**
- * 推荐歌单
+ * 推荐歌单，登录后可用
  * @returns {Types.RecommendPlaylistRes}
  */
 export function getRecommendPlaylist() {
@@ -238,6 +238,26 @@ export function getMusicUrlLinux(idOrIds, quality) {
                 ids,
                 br: QualityMap[quality],
             }
+        }
+    });
+}
+
+/**
+ * music url, eapi
+ * @param {number|number[]} idOrIds
+ * @param {Types.MusicQuality} quality
+ * @returns {Promise<Types.MusicUrlRes>}
+ */
+export function getMusicUrlE(idOrIds, quality) {
+    if (!QualityMap[quality]) throw new Error(`Quality type '${quality}' is not in [h,m,l]`);
+    let ids;
+    if (Array.isArray(idOrIds)) ids = idOrIds;
+    else ids = [idOrIds];
+    return client.postE({
+        url: `${BaseURL}/eapi/song/enhance/player/url`,
+        data: {
+            ids,
+            br: QualityMap[quality],
         }
     });
 }
@@ -870,5 +890,23 @@ export async function getRecommendMVs() {
     return client.postW({
         url: `${BaseURL}/weapi/personalized/mv`,
         data: {}
+    });
+}
+
+/**
+ * 推荐歌单，包含前两个固定的编辑推荐，不登录也能用
+ * @param {number} limit
+ * @param {number} offset
+ * @returns {Types.PersonalizedPlaylistRes}
+ */
+export async function getPersonalizedPlaylists(limit = 10, offset = 0) {
+    return client.postW({
+        url: `${BaseURL}/weapi/personalized/playlist`,
+        data: {
+            limit,
+            offset,
+            total: true,
+            n: 1000
+        }
     });
 }
