@@ -1,17 +1,16 @@
 import fs from 'fs';
 import url from 'url';
-import debug from 'debug';
 import qs from 'querystring';
-import { promisify } from 'util';
 import { createHash } from 'crypto';
 import { createServer } from 'http';
 
+import debug from 'debug';
+
 import Cache from './cache';
-import { getMusicUrl, getMusicUrlLinux } from './index';
+import { getMusicUrlE } from './index';
 
 const d = debug('MusicServer');
-
-const statAsync = promisify(fs.stat);
+const fsPromises = fs.promises;
 
 class MusicServer {
     constructor(cacheOrPath) {
@@ -73,35 +72,12 @@ class MusicServer {
      * try get music url
      * @param {number} id 
      * @param {string} quality
-     * @returns {{code:number; url: string?; md5: string}}
      */
     async getMusicUrl(id, quality) {
-        try {
-            const resWeb = await getMusicUrl(id, quality);
-            d('resWeb: %o', resWeb);
-            if (resWeb.code !== 200) {
-                throw resWeb;
-            }
-            if (resWeb.code === 200) {
-                const dataWeb = resWeb.data[0];
-                if (dataWeb.code !== 200) {
-                    throw dataWeb;
-                }
-                return dataWeb;
-            }
-        } catch (e) {
-            d('request to "/weapi/song" not 200, retry "/linux/forward"');
-            const resLinux = await getMusicUrlLinux(id, quality);
-            d('resLinux: %o', resLinux);
-            if (resLinux.code !== 200) {
-                throw resLinux;
-            }
-            const dataLinux = resLinux.data[0];
-            if (dataLinux.code !== 200) {
-                throw dataLinux;
-            }
-            return dataLinux;
-        }
+        const res = await getMusicUrlE(id, quality);
+        d('res: %o', res);
+        if (res.code !== 200 || res.data[0].code !== 200) throw res;
+        return res.data[0];
     }
 
     /**
@@ -127,7 +103,7 @@ class MusicServer {
         // check cache first
         if (await this.cache.has(fileName)) {
             d('Hit cache for music id=%d', id);
-            const stat = await statAsync(filePath);
+            const stat = await fsPromises.stat(filePath);
             const range = MusicServer.getRange(req, stat.size);
             // TODO: <range-end> may larger than <file-size>, cause file is still being downloaded
             const file = fs.createReadStream(filePath, { start: range[0], end: range[1] });
