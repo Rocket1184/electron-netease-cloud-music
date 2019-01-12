@@ -2,8 +2,7 @@
     <div class="favorite">
         <div v-elevation="4">
             <mu-tabs inverse
-                :value="tab"
-                @change="handleTabChange">
+                :value.sync="tab">
                 <mu-tab value="playlist">歌单</mu-tab>
                 <mu-tab value="album">专辑</mu-tab>
                 <mu-tab value="artist">歌手</mu-tab>
@@ -33,11 +32,6 @@ export default {
         return {
             tab: 'playlist'
         };
-    },
-    methods: {
-        handleTabChange(val) {
-            this.tab = val;
-        }
     },
     computed: {
         favCompo() {
