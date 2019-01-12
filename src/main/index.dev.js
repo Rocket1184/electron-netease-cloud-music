@@ -15,6 +15,7 @@ process.env.DEBUG_COLORS = true;
 process.env.NODE_ENV = 'development';
 require('@babel/register')({
     babelrc: false,
+    sourceMaps: 'inline',
     only: [/src\/main\//],
     plugins: [
         '@babel/plugin-syntax-object-rest-spread',

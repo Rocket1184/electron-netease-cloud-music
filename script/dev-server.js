@@ -18,7 +18,7 @@ process.on('SIGINT', () => {
     process.exit(0);
 });
 
-const electron = exec(`electron ${absPath('/src/main/index.dev.js')}`);
+const electron = exec(`electron ${absPath('/src/main/index.dev.js')} --inspect=5858 --remote-debugging-port=5959`);
 
 electron.stdout.pipe(process.stdout);
 electron.stderr.pipe(process.stderr);

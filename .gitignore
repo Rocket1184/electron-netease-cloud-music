@@ -39,12 +39,18 @@ jspm_packages
 # IDE/OS files
 .DS_Store
 .idea/
-.vscode/
+.vscode/*
 thumbs.db
 
 # Build dist
 build/*
 dist/*
 
+# npm lock file
+package-lock.json
+
 # Keep Folders
 !.gitkeep
+
+# Debug config
+!.vscode/launch.json
