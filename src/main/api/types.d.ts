@@ -1298,6 +1298,194 @@ namespace Types {
         hasTaste: boolean;
         result: PersonalizedPlaylist[];
     }
+
+    export interface ArtistDetailEArtist {
+        name: string;
+        id: number;
+        picId: number;
+        img1v1Id: number;
+        briefDesc: string;
+        picUrl: string;
+        img1v1Url: string;
+        albumSize: number;
+        alias: string[];
+        trans: string;
+        musicSize: number;
+        topicPerson: number;
+        mvSize: number;
+    }
+
+    export interface ArtistDetailEHotSong {
+        name: string;
+        id: number;
+        pst: number;
+        t: number;
+        ar: {
+            id: number;
+            name: string;
+            tns: any[];
+            alias: any[];
+        }[];
+        alia: string[];
+        pop: number;
+        st: number;
+        rt: string;
+        fee: number;
+        v: number;
+        crbt?: any;
+        cf: string;
+        al: {
+            id: number;
+            name: string;
+            tns: any[];
+            pic: any;
+            pic_str: string;
+        };
+        dt: number;
+        h: TrackQual;
+        m: TrackQual;
+        l: TrackQual;
+        a?: any;
+        cd: string;
+        no: number;
+        rtUrl?: any;
+        ftype: number;
+        rtUrls: any[];
+        djId: number;
+        copyright: number;
+        s_id: number;
+        rtype: number;
+        rurl?: any;
+        mst: number;
+        cp: number;
+        mv: number;
+        publishTime: number;
+    }
+
+    export interface ArtistDetailERes extends ApiRes {
+        artist: ArtistDetailEArtist;
+        more: boolean;
+        hotSongs: ArtistDetailEHotSong[];
+    }
+
+    export interface ArtistDetailWArtist {
+        albumSize: number;
+        alias: string[];
+        briefDesc: string;
+        followed: boolean;
+        id: number;
+        img1v1Id: number;
+        img1v1Id_str: string;
+        img1v1Url: string;
+        musicSize: number;
+        mvSize?: number;
+        name: string;
+        picId: number;
+        picId_str?: string;
+        picUrl: string;
+        publishTime?: number;
+        topicPerson: number;
+        trans: string;
+    }
+
+    export interface ArtistDetailWAlbum {
+        alias: string[];
+        artist: ArtistDetailWArtist;
+        artists: ArtistDetailWArtist[];
+        blurPicUrl: string;
+        briefDesc: string;
+        commentThreadId: string;
+        company: string;
+        companyId: number;
+        copyrightId: number;
+        description: string;
+        id: number;
+        name: string;
+        onSale: boolean;
+        paid: boolean;
+        pic: any;
+        picId: any;
+        picId_str: string;
+        picUrl: string;
+        publishTime: any;
+        size: number;
+        /** empty */
+        songs: any[];
+        status: number;
+        subType: string;
+        tags: string;
+        type: string;
+    }
+
+    export interface ArtistDetailWMusic {
+        bitrate: number;
+        dfsId: any;
+        extension: string;
+        id: any;
+        name: string;
+        playTime: number;
+        size: number;
+        sr: number;
+        volumeDelta: number;
+        dfsId_str: string;
+    }
+
+    export interface ArtistDetailWArtistHotSong {
+        album: ArtistDetailWAlbum;
+        alias: string[];
+        artists: ArtistDetailWArtist[];
+        audition?: any;
+        bMusic: ArtistDetailWMusic;
+        copyFrom: string;
+        copyrightId: number;
+        crbt?: any;
+        dayPlays: number;
+        disc: string;
+        duration: number;
+        fee: number;
+        ftype: number;
+        hMusic: ArtistDetailWMusic;
+        hearTime: number;
+        id: number;
+        lMusic: ArtistDetailWMusic;
+        mMusic: ArtistDetailWMusic;
+        mp3Url: string;
+        mvid: number;
+        name: string;
+        no: number;
+        playedNum: number;
+        popularity: number;
+        ringtone: string;
+        rtUrl?: any;
+        rtUrls?: any;
+        rtype: number;
+        rurl?: any;
+        score: number;
+        starred: boolean;
+        starredNum: number;
+        status: number;
+    }
+
+    export interface AritstDetailWRes extends ApiRes {
+        artist: ArtistDetailWArtist;
+        hotSongs: ArtistDetailWArtistHotSong[];
+        more: boolean;
+    }
+
+    export interface ArtistDynamicDetailRes extends ApiRes {
+        followed: boolean;
+        concert: {
+            simpleConcert?: any;
+            onlineCount: number;
+            view: boolean;
+        };
+        code: number;
+        videoNum: {
+            cat: number;
+            num: number;
+        }[];
+        rcmdResource?: any;
+    }
 }
 
 export as namespace Types;

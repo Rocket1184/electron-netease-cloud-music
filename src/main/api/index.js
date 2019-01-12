@@ -864,7 +864,7 @@ export async function getRelatedAlbums(id) {
  * @param {string} id
  * @returns {Promise<Types.SubscribeAlbumRes>}
  */
-export async function subscribeAlbum(id) {
+export function subscribeAlbum(id) {
     return client.postE({
         url: `${BaseURL}/eapi/album/sub`,
         data: { id: `${id}` }
@@ -875,7 +875,7 @@ export async function subscribeAlbum(id) {
  * @param {string} id
  * @returns {Promise<Types.UnsubscribeAlbumRes>}
  */
-export async function unsubscribeAlbum(id) {
+export function unsubscribeAlbum(id) {
     return client.postE({
         url: `${BaseURL}/eapi/album/unsub`,
         data: { id: `${id}` }
@@ -884,9 +884,9 @@ export async function unsubscribeAlbum(id) {
 
 /**
  * 推荐 MV
- * @returns {Types.RecommendMVRes}
+ * @returns {Promise<Types.RecommendMVRes>}
  */
-export async function getRecommendMVs() {
+export function getRecommendMVs() {
     return client.postW({
         url: `${BaseURL}/weapi/personalized/mv`,
         data: {}
@@ -897,9 +897,9 @@ export async function getRecommendMVs() {
  * 推荐歌单，包含前两个固定的编辑推荐，不登录也能用
  * @param {number} limit
  * @param {number} offset
- * @returns {Types.PersonalizedPlaylistRes}
+ * @returns {Promise<Types.PersonalizedPlaylistRes>}
  */
-export async function getPersonalizedPlaylists(limit = 10, offset = 0) {
+export function getPersonalizedPlaylists(limit = 10, offset = 0) {
     return client.postW({
         url: `${BaseURL}/weapi/personalized/playlist`,
         data: {
@@ -907,6 +907,68 @@ export async function getPersonalizedPlaylists(limit = 10, offset = 0) {
             offset,
             total: true,
             n: 1000
+        }
+    });
+}
+
+/**
+ * **DO NOT USE** artist detail, eapi.
+ * @param {number|string} id
+ * @returns {Promise<Types.ArtistDetailERes>}
+ */
+export function getArtistDetailE(id) {
+    return client.postE({
+        url: `${BaseURL}/eapi/artist/v3/detail`,
+        data: { id: `${id}`, top: '50' },
+        cache_key: ''
+    });
+}
+
+/**
+ * @param {number|string} id
+ * @returns {Promise<Types.AritstDetailWRes>}
+ */
+export function getArtistDetailW(id) {
+    return client.postW({
+        url: `${BaseURL}/weapi/artist/${id}`
+    });
+}
+
+/**
+ * @param {number|string} id
+ * @returns {Promise<Types.ArtistDynamicDetailRes>}
+ */
+export function getArtistDynamicDetail(id) {
+    return client.postE({
+        url: `${BaseURL}/eapi/artist/detail/dynamic`,
+        data: { id: `${id}` }
+    });
+}
+
+/**
+ * @param {number|string} artistId
+ * @returns {Promise<{Types.ApiRes}>}
+ */
+export function followArtist(artistId) {
+    return client.postW({
+        url: `${BaseURL}/weapi/artist/sub`,
+        data: {
+            artistId,
+            artistIds: `[${artistId}]`
+        }
+    });
+}
+
+/**
+ * @param {number|string} artistId
+ * @returns {Promise<Types.ApiRes>}
+ */
+export function unfollowArtist(artistId) {
+    return client.postW({
+        url: `${BaseURL}/weapi/artist/unsub`,
+        data: {
+            artistId,
+            artistIds: `[${artistId}]`
         }
     });
 }
