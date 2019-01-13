@@ -1,15 +1,10 @@
 import * as types from './mutation-types';
 import { LOOP_MODE } from './modules/playlist';
 import Api from '@/util/api/index';
-import { User } from '@/util/models';
 
 export async function restoreSettings({ commit }) {
     const st = await Api.getCurrentSettings();
     commit(types.UPDATE_SETTINGS, st);
-}
-
-export function setUserInfo({ commit }, payload) {
-    commit(types.SET_USER_INFO, payload);
 }
 
 export async function storeUserInfo({ state }) {
@@ -68,7 +63,7 @@ export async function login({ commit, dispatch }, payload) {
     commit(types.SET_LOGIN_PENDING, true);
     const resp = await Api.login(payload.acc, payload.pwd);
     if (resp.code === 200) {
-        dispatch('setUserInfo', resp);
+        commit(types.SET_USER_INFO, resp);
         dispatch('setLoginValid', true);
         dispatch('storeUserInfo');
     }
@@ -78,12 +73,12 @@ export async function login({ commit, dispatch }, payload) {
 
 export async function logout({ commit }) {
     const resp = await Api.logout();
-    if (resp.code == 200) {
+    if (resp == 200) {
         commit(types.SET_LOGIN_VALID, false);
         commit(types.SET_UI_FAV_ALBUM, null);
         commit(types.SET_UI_FAV_VIDEO, null);
         commit(types.SET_UI_FAV_ARTIST, null);
-        setUserInfo({ commit }, new User());
+        commit(types.SET_USER_INFO, null);
         ['user', 'cookie'].map(k => localStorage.removeItem(k));
     }
 }

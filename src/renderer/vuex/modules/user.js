@@ -4,7 +4,7 @@ import { User, PlayList, Artist, Album, Video } from '@/util/models';
 const state = {
     loginValid: false,
     playlist: [],
-    info: new User(),
+    info: {},
     artists: [],
     videos: [],
     albums: []
@@ -19,6 +19,7 @@ const mutations = {
         }
     },
     [types.SET_USER_INFO](state, payload) {
+        if (!payload) return state.info = {};
         state.info = new User(payload);
     },
     [types.UPDATE_USER_INFO](state, payload) {
