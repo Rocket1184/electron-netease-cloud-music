@@ -13,7 +13,13 @@ const state = {
     recommendStatistics: {},
     fav: {
         album: null,
-        artist: null,
+        artist: {
+            detail: null,
+            hotSongs: [],
+            albums: [],
+            mvs: [],
+            intro: null
+        },
         video: null
     },
     temp: {
@@ -63,12 +69,35 @@ const mutations = {
         state.fav.album = new Album(al);
     },
     [types.SET_UI_FAV_ARTIST](state, payload) {
-        state.fav.artist = new Artist(payload);
+        if (!payload) return state.fav.artist = {
+            detail: null,
+            hotSongs: [],
+            albums: [],
+            mvs: [],
+            intro: null
+        };
+        if (payload.artist) {
+            state.fav.artist = { detail: new Artist(payload.artist) };
+        }
+        if (payload.hotSongs) {
+            state.fav.artist.hotSongs = payload.hotSongs.map(s => new Track(s));
+        }
+        if (payload.albums) {
+            state.fav.artist.albums = payload.albums.map(al => new Album(al));
+        }
+        if (payload.mvs) {
+            state.fav.artist.mvs = payload.mvs.map(v => new Video(v));
+        }
+        if (payload.intro) {
+            state.fav.artist.intro = payload.intro;
+        }
     },
     [types.SET_UI_FAV_VIDEO](state, payload) {
+        if (!payload) return state.fav.video = null;
         state.fav.video = new Video(payload);
     },
     [types.SET_UI_TEMP_PLAYLIST](state, payload) {
+        if (!payload) return state.fav.playlist = null;
         state.temp.playlist = new PlayList(payload);
     },
     [types.SET_UI_TEMP_RELATED_PLAYLISTS](state, payload) {

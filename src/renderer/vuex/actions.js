@@ -310,3 +310,39 @@ export async function unsubscribeAlbum({ commit }, payload) {
     }
     throw resp;
 }
+
+export async function updateUserArtists({ commit }) {
+    const resp = await Api.getSubscribedArtists(1000);
+    if (resp.code === 200) {
+        commit(types.SET_USER_ARTISTS, resp.data);
+    }
+}
+
+export async function setUiFavArtist({ commit }, id) {
+    const resp = await Api.getArtistDetailW(id);
+    commit(types.SET_UI_FAV_ARTIST, resp);
+    Api.getArtistAlbums(id).then(resp =>
+        commit(types.SET_UI_FAV_ARTIST, { albums: resp.hotAlbums }));
+    Api.getArtistMVs(id).then(resp =>
+        commit(types.SET_UI_FAV_ARTIST, { mvs: resp.mvs }));
+    Api.getArtistIntro(id).then(resp =>
+        commit(types.SET_UI_FAV_ARTIST, { intro: resp }));
+}
+
+export async function followArtist({ commit }, payload) {
+    const resp = await Api.followArtist(payload.id);
+    if (resp.code === 200) {
+        commit(types.SUBSCRIBE_ARTIST, payload);
+        return;
+    }
+    throw resp;
+}
+
+export async function unfollowArtist({ commit }, payload) {
+    const resp = await Api.unfollowArtist(payload.id);
+    if (resp.code === 200) {
+        commit(types.UNSUBSCRIBE_ARTIST, payload);
+        return;
+    }
+    throw resp;
+}
