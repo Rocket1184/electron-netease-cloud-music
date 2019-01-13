@@ -83,11 +83,11 @@ export async function logout({ commit }) {
     }
 }
 
-export async function updateUiAudioSrc({ commit, state }) {
+export async function updateUiAudioSrc({ commit, state }, { ignoreCache = false } = {}) {
     const quality = state.settings.bitRate;
     const track = state.playlist.list[state.playlist.index];
     if (track && track.id) {
-        const resp = await Api.getMusicUrlCached(track.id, quality);
+        const resp = await Api.getMusicUrlLocal(track.id, quality, ignoreCache);
         commit(types.UPDATE_PLAYING_URL, resp.url);
     }
 }
@@ -98,13 +98,6 @@ export async function updateUiLyric({ commit, state }) {
         const lyric = await Api.getMusicLyricCached(track.id);
         commit(types.SET_ACTIVE_LYRIC, lyric);
     }
-}
-
-export async function updateUiAudioSrcNoCache({ commit, state }) {
-    const { index, list } = state.playlist;
-    const quality = state.settings.bitRate;
-    const resp = await Api.getMusicUrlNoCache(list[index].id, quality);
-    commit(types.UPDATE_PLAYING_URL, resp.url);
 }
 
 export function playAudio({ commit }) {
