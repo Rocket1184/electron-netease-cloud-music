@@ -263,32 +263,27 @@ export function getMusicUrlE(idOrIds, quality) {
 }
 
 /**
- * get musicServer's cached music url
+ * get musicServer's music url
  * @param {number} id
  * @param {Types.MusicQuality} quality
- * @returns {Promise<Types.MusicUrlCachedRes>}
+ * @param {boolean} cache
+ * @returns {Types.MusicUrlLocalRes}
  */
-export function getMusicUrlCached(id, quality) {
+export async function getMusicUrlLocal(id, quality, ignoreCache = false) {
+    if (ignoreCache) {
+        try {
+            await musicCache.rm(id);
+        } catch (e) { /* nothing happened */ }
+    }
     return {
         url: url.format({
             protocol: 'http:',
-            hostname: '127.0.0.1',
+            hostname: 'localhost',
             port: musicServerPort,
             pathname: '/music',
             query: { id, quality }
         })
     };
-}
-
-/**
- * musicServer's music url, but force the cache
- * @param {number} id
- * @param {Types.MusicQuality} quality
- * @returns {Promise<Types.MusicUrlCachedRes>}
- */
-export function getMusicUrlNoCache(id, quality) {
-    musicCache.rm(id).catch(() => { /* nothing happened */ });
-    return getMusicUrlCached(id, quality);
 }
 
 /**

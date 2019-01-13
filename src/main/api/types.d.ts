@@ -637,9 +637,8 @@ namespace Types {
         }[];
     }
 
-    export interface MusicUrlCachedRes {
+    export interface MusicUrlLocalRes {
         url?: string;
-        errno?: number;
     }
 
     export interface UserInfoInComment {
