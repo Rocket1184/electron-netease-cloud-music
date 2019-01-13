@@ -620,13 +620,14 @@ const searchTypeMap = {
     user: '1002',
     mv: '1004',
     lyric: '1006',
-    radio: '1009'
+    radio: '1009',
+    video: '1014'
 };
 
 /**
  * preform search
  * @param {string} s keyword
- * @param {'song'|'album'|'artist'|'playlist'|'user'|'mv'|'lyric'|'radio'} type
+ * @param {'song'|'album'|'artist'|'playlist'|'user'|'mv'|'lyric'|'radio'|'video'} type
  * @param {number} limit
  * @param {number} offset
  * @returns {Promise<Types.SearchRes>}

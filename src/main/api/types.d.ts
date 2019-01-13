@@ -953,6 +953,26 @@ namespace Types {
         tns: string[];
     }
 
+    export interface SearchMV {
+        alias: string[];
+        artistId: number;
+        artistName: string;
+        artists: {
+            alias: string[];
+            id: number;
+            name: string;
+            transNames: string[];
+        }[];
+        briefDesc: string;
+        cover: string;
+        desc?: any;
+        duration: number;
+        id: number;
+        mark: number;
+        name: string;
+        playCount: number;
+    }
+
     export interface SearchRes extends ApiRes {
         result: {
             albumCount?: number;
@@ -965,7 +985,8 @@ namespace Types {
             playlists?: SearchPlaylist[];
             songCount?: number;
             songs?: SearchSong[];
-            order: ('songs' | 'artists' | 'playlists' | 'albums' | 'mvs')[]
+            mvCount?: number;
+            mvs?: SearchMV[];
         }
     }
 
