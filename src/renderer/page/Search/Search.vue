@@ -9,14 +9,13 @@
                 <mu-tab value="artist">歌手</mu-tab>
                 <mu-tab value="album">专辑</mu-tab>
                 <mu-tab value="playlist">歌单</mu-tab>
-                <mu-tab value="mv">MV</mu-tab>
+                <mu-tab value="video">视频</mu-tab>
                 <mu-tab value="user">用户</mu-tab>
             </mu-tabs>
         </div>
         <div class="search-content"
             ref="searchContent">
-            <CenteredTip v-if="searchType === 'mv'"></CenteredTip>
-            <CenteredTip v-else-if="searchType === 'user'"></CenteredTip>
+            <CenteredTip v-if="searchType === 'user'"></CenteredTip>
             <CenteredTip v-else-if="!haveSearched"
                 icon="search"
                 tip="右上角搜索框内输入，回车搜索！"></CenteredTip>
@@ -33,9 +32,13 @@
             <ArtistList v-else-if="searchType === 'artist'"
                 :list="items"></ArtistList>
             <AlbumList v-else-if="searchType === 'album'"
+                showArtist
                 :list="items"></AlbumList>
             <PlaylistList v-else-if="searchType === 'playlist'"
                 :list="items"></PlaylistList>
+            <VideoList v-else-if="searchType === 'video'"
+                showBadge
+                :videos="items"></VideoList>
             <CenteredTip v-else
                 icon="bug_report"
                 tip="为什么会这样呢 ..."></CenteredTip>
@@ -53,15 +56,15 @@
 
 <script>
 import Api from '@/util/api';
-import { Track } from '@/util/models';
-import { searchTypes } from '@/util/searchType';
+import { Track, Video } from '@/util/models';
 
 import TrackList from '@/components/TrackList.vue';
 import CenteredTip from '@/components/CenteredTip.vue';
 import CenteredLoading from '@/components/CenteredLoading.vue';
-import AlbumList from './AlbumList.vue';
-import ArtistList from './ArtistList.vue';
-import PlaylistList from './PlaylistList.vue';
+import VideoList from '@/components/VideoList.vue';
+import AlbumList from '@/components/AlbumList.vue';
+import ArtistList from '@/components/ArtistList.vue';
+import PlaylistList from '@/components/PlaylistList.vue';
 
 export default {
     name: 'page-search',
@@ -119,21 +122,25 @@ export default {
                 this.searchError = false;
                 this.searchErrorCode = -1;
                 switch (this.searchType) {
-                    case searchTypes.song:
+                    case 'song':
                         this.totalItems = resp.result.songCount;
                         this.items = resp.result.songs.map(i => new Track(i)) || [];
                         break;
-                    case searchTypes.artist:
+                    case 'artist':
                         this.totalItems = resp.result.artistCount;
                         this.items = resp.result.artists || [];
                         break;
-                    case searchTypes.album:
+                    case 'album':
                         this.totalItems = resp.result.albumCount;
                         this.items = resp.result.albums || [];
                         break;
-                    case searchTypes.playlist:
+                    case 'playlist':
                         this.totalItems = resp.result.playlistCount;
                         this.items = resp.result.playlists || [];
+                        break;
+                    case 'video':
+                        this.totalItems = resp.result.videoCount;
+                        this.items = resp.result.videos.map(v => new Video(v)) || [];
                         break;
                     default:
                         break;
@@ -160,6 +167,7 @@ export default {
         TrackList,
         CenteredTip,
         CenteredLoading,
+        VideoList,
         AlbumList,
         ArtistList,
         PlaylistList

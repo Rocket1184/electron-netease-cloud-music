@@ -4,7 +4,8 @@
             :key="al.id"
             class="item"
             @click="navigateToAlbum(al.id)">
-            <mu-card-header :title="al.artist.name"
+            <mu-card-header v-if="showArtist"
+                :title="al.artist.name"
                 :subTitle="al.publishTime | shortDate">
                 <mu-avatar slot="avatar">
                     <img :src="al | artistAvatarUrl">
@@ -29,6 +30,11 @@ export default {
     props: {
         list: {
             type: Array
+        },
+        showArtist: {
+            type: Boolean,
+            required: false,
+            default: false
         }
     },
     methods: {
