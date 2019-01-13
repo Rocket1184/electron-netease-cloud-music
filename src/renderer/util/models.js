@@ -1,116 +1,5 @@
-const Models = {
-    get User() {
-        return {
-            id: -1,
-            nickname: '',
-            avatarUrl: '',
-            bkgUrl: '',
-            gender: -1,
-            description: '',
-            detailDescription: '',
-            signature: '',
-            province: -1,
-            city: -1,
-            // blew are raw data from netease login api
-            account: {},
-            profile: {},
-            bindings: []
-        };
-    },
-    get Track() {
-        return {
-            id: -1,
-            name: '',
-            album: {
-                id: -1,
-                name: '',
-                pic: -1,
-                picUrl: ''
-            },
-            artists: [],
-            lyrics: {},
-            duration: -1,
-            commentThreadId: -1
-        };
-    },
-    get PlayList() {
-        return {
-            id: -1,
-            name: '',
-            creator: new User(),
-            description: '',
-            commentThreadId: -1,
-            playCount: -1,
-            trackCount: 0,
-            coverImgId: -1,
-            coverImgUrl: '',
-            createTime: -1,
-            subscribedCount: -1,
-            commentCount: -1,
-            tracks: [new Track()]
-        };
-    },
-    get Artist() {
-        return {
-            id: -1,
-            name: '',
-            trans: '',
-            transNames: [],
-            alias: [],
-            picId: -1,
-            picUrl: '',
-            albumSize: -1,
-            mvSize: -1,
-            info: ''
-        };
-    },
-    get Album() {
-        return {
-            id: -1,
-            name: '',
-            alias: [],
-            transNames: [],
-            artist: Artist,
-            artists: Artist,
-            copyrightId: -1,
-            picId: -1,
-            picUrl: '',
-            publishTime: -1,
-            size: -1,
-            status: -1,
-            info: {
-                commentCount: -1,
-                threadId: '',
-                liked: false,
-                likedCount: -1,
-                resourceId: -1,
-                resourceType: -1,
-                shareCount: -1,
-            },
-            description: '',
-            subType: '',
-            songs: [],
-        };
-    },
-    get Video() {
-        return {
-            alg: null,
-            aliaName: '',
-            coverUrl: '',
-            creator: [],
-            durationms: -1,
-            markTypes: null,
-            playTime: -1,
-            title: -1,
-            type: -1,
-            vid: ''
-        };
-    }
-};
-
 export class User {
     constructor(o) {
-        if (!o) return Models.User;
         this.account = o.account || {};
         this.bindings = o.bindings || [];
         this.profile = o.profile || o || {};
@@ -129,7 +18,6 @@ export class User {
 
 export class Track {
     constructor(o) {
-        if (!o) return Models.Track;
         this.id = o.id;
         this.name = o.name;
         this.album = o.al || o.album;
@@ -151,7 +39,6 @@ export class Track {
 
 export class PlayList {
     constructor(o) {
-        if (!o) return Models.PlayList;
         this.id = o.id;
         this.name = o.name;
         this.creator = new User(o.creator);
@@ -172,7 +59,6 @@ export class PlayList {
 
 export class Artist {
     constructor(o) {
-        if (!o) return Models.Artist;
         this.id = o.id;
         this.name = o.name;
         this.trans = o.trans;
@@ -188,7 +74,6 @@ export class Artist {
 
 export class Album {
     constructor(o) {
-        if (!o) return Models.Album;
         this.id = o.id;
         this.name = o.name;
         this.alias = o.alias;
@@ -210,16 +95,20 @@ export class Album {
 
 export class Video {
     constructor(o) {
-        if (!o) return Models.Video;
-        this.vid = o.vid;
-        this.title = o.title;
-        this.aliaName = o.aliaName;
+        this.id = o.id || o.vid;
+        this.name = o.name || o.title;
+        this.alias = o.alias || [o.aliaName];
+        /** type `0` MV, `1` UGC */
         this.type = o.type;
-        this.coverUrl = o.coverUrl;
+        this.picUrl = o.cover || o.imgurl || o.coverUrl;
         this.creator = o.creator;
-        this.durationms = o.durationms;
-        this.markTypes = o.markTypes;
-        this.playTime = o.playTime;
+        if (o.type === 0 && o.creator) {
+            this.artists = o.creator;
+        } else if (o.artists) {
+            this.artists = o.artists;
+        }
+        this.duration = o.duration || o.durationms;
+        this.playCount = o.playCount || o.playTime;
         this.alg = o.alg;
     }
 }

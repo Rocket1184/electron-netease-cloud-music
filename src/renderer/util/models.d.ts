@@ -111,18 +111,24 @@ declare namespace Models {
 
     export class Video {
         alg?: any;
-        aliaName: string;
-        coverUrl: string;
-        creator: {
+        alias: string[];
+        picUrl: string;
+        creator?: {
             userId: number;
             userName: string;
         }[];
-        durationms: number;
-        markTypes?: any;
-        playTime: number;
-        title: number;
+        artists?: {
+            alias: string[];
+            id: number;
+            name: string;
+            transNames: string[];
+        }[];
+        duration: number;
+        playCount: number;
+        name: number;
+        /** type `0` MV, `1` UGC */
         type: number;
-        vid: string;
+        id: string;
     }
 }
 
