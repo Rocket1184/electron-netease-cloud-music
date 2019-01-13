@@ -50,10 +50,12 @@ export default {
         }
     },
     async mounted() {
-        await this.updateUserAlbums();
-        const al = this.user.albums[0];
-        if (al && al.id) {
-            this.loadAlbum(al.id);
+        if (this.user.loginValid) {
+            await this.updateUserAlbums();
+            const al = this.user.albums[0];
+            if (al && al.id) {
+                this.loadAlbum(al.id);
+            }
         }
     },
     components: {
