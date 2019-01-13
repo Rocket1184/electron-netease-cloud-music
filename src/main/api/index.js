@@ -973,3 +973,49 @@ export function unfollowArtist(artistId) {
         }
     });
 }
+
+/**
+ * @param {number} id
+ * @param {number} offset
+ * @param {number} limit
+ * @returns {Promise<Types.ArtistAlbumsRes>}
+ */
+export function getArtistAlbums(id, offset = 0, limit = 30) {
+    return client.postW({
+        url: `${BaseURL}/weapi/artist/albums/${id}`,
+        data: {
+            offset,
+            limit,
+            total: true
+        }
+    });
+}
+
+/**
+ * @param {number} artistId
+ * @param {number} offset
+ * @param {number} limit
+ * @returns {Promise<Types.ArtistMVsRes>}
+ */
+export function getArtistMVs(artistId, offset = 0, limit = 30) {
+    return client.postW({
+        url: `${BaseURL}/weapi/artist/mvs`,
+        data: {
+            artistId,
+            offset,
+            limit,
+            total: true
+        }
+    });
+}
+
+/**
+ * @param {number} id
+ * @returns {Promise<Types.ArtistIntroRes>}
+ */
+export function getArtistIntro(id) {
+    return client.postW({
+        url: `${BaseURL}/weapi/artist/introduction`,
+        data: { id }
+    });
+}

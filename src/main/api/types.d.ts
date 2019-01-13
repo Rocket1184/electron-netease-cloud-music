@@ -1507,6 +1507,62 @@ namespace Types {
         }[];
         rcmdResource?: any;
     }
+
+    export interface ArtistAlbumsAlbum extends ArtistDetailWAlbum {
+        isSub: boolean;
+    }
+
+    export interface ArtistAlbumsRes extends ApiRes {
+        artist: ArtistDetailWArtist;
+        hotAlbums: ArtistAlbumsAlbum[];
+        more: boolean;
+    }
+
+    export interface ArtistMVsArtist {
+        albumSize: number;
+        alias: any[];
+        briefDesc: string;
+        id: number;
+        img1v1Id: any;
+        img1v1Id_str: string;
+        img1v1Url: string;
+        musicSize: number;
+        name: string;
+        picId: number;
+        picUrl: string;
+        topicPerson: number;
+        trans: string;
+    }
+
+    export interface ArtistMVsMV {
+        artist: ArtistMVsArtist;
+        artistName: string;
+        duration: number;
+        id: number;
+        imgurl: string;
+        imgurl16v9: string;
+        name: string;
+        playCount: number;
+        publishTime: string;
+        status: number;
+        subed: boolean;
+    }
+
+    export interface ArtistMVsRes extends ApiRes {
+        hasMore: boolean;
+        mvs: ArtistMVsMV[];
+        time: number;
+    }
+
+    export interface ArtistIntroRes extends ApiRes {
+        briefDesc: string;
+        count: number;
+        introduction: {
+            ti: string;
+            txt: string;
+        }[];
+        topicData?: any;
+    }
 }
 
 export as namespace Types;
