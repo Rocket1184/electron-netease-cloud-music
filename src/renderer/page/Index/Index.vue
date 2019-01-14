@@ -16,7 +16,7 @@
                     :to="{ name: 'playlist', params: { id: p.id } }"
                     :img="p.picUrl"
                     subIcon="headset"
-                    :subTitle="p.playcount"
+                    :subTitle="p.playcount || p.playCount"
                     :desc="p.name"></ScrollerItem>
             </div>
         </mu-card>
