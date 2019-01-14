@@ -30,25 +30,15 @@
             <mu-tab value="mvs">相关 MV</mu-tab>
             <mu-tab value="intro">艺人介绍</mu-tab>
         </mu-tabs>
-        <template v-if="tab === 'hotSongs'">
+        <div v-show="tab === 'hotSongs'">
             <PlayTracks :tracks="artist.hotSongs"></PlayTracks>
             <TrackList :tracks="artist.hotSongs"></TrackList>
-        </template>
-        <template v-else-if="tab === 'albums'">
-            <AlbumList :list="artist.albums"></AlbumList>
-        </template>
-        <template v-else-if="tab === 'mvs'">
-            <VideoList :videos="artist.mvs"></VideoList>
-        </template>
-        <section v-else-if="tab === 'intro'"
-            class="intro">
-            <p class="para">{{artist.intro.briefDesc}}</p>
-            <template v-for="i in artist.intro.introduction">
-                <mu-sub-header :key="i.ti+'ti'">{{i.ti}}</mu-sub-header>
-                <p class="para"
-                    :key="i.ti+'tx'">{{i.txt}}</p>
-            </template>
-        </section>
+        </div>
+        <keep-alive>
+            <component :is="detailCompo"
+                :artist="artist.detail"
+                @scroll="handleScroll"></component>
+        </keep-alive>
     </div>
 </template>
 
@@ -57,10 +47,18 @@ import { mapActions, mapState } from 'vuex';
 
 import Api from '@/util/api';
 import { bkgImg, sizeImg } from '@/util/image';
-import VideoList from '@/components/VideoList.vue';
-import AlbumList from '@/components/AlbumList.vue';
 import TrackList from '@/components/TrackList.vue';
 import PlayTracks from '@/components/PlayTracks.vue';
+import AllAlbums from './AllAlbums.vue';
+import RelatedMVs from './RelatedMVs.vue';
+import Introduction from './Introduction.vue';
+
+const DetailCompoMap = {
+    hotSongs: 'div',
+    albums: AllAlbums,
+    mvs: RelatedMVs,
+    intro: Introduction
+};
 
 export default {
     props: {
@@ -78,6 +76,9 @@ export default {
         ...mapState(['user']),
         bkgImgStyle() {
             return bkgImg(sizeImg(this.artist.detail.picUrl, 640, 300));
+        },
+        detailCompo() {
+            return DetailCompoMap[this.tab];
         }
     },
     methods: {
@@ -108,16 +109,23 @@ export default {
                 }
             }
             this.updateDynamicDetail();
+        },
+        handleScroll() {
+            const el = document.querySelector('.ld-detail');
+            if (el) {
+                el.scrollTo({ top: 300, behavior: 'smooth' });
+            }
         }
     },
     async created() {
         this.updateDynamicDetail();
     },
     components: {
-        VideoList,
-        AlbumList,
         TrackList,
-        PlayTracks
+        PlayTracks,
+        AllAlbums,
+        RelatedMVs,
+        Introduction
     }
 };
 </script>
@@ -156,6 +164,9 @@ export default {
     .mu-tabs {
         background-color: transparent;
     }
+    .centered-loading {
+        height: 160px;
+    }
     .intro {
         padding: 16px 50px;
         .para {
@@ -164,6 +175,9 @@ export default {
             margin: 0 0.5em;
             line-height: 22px;
         }
+    }
+    .pagination {
+        margin: 20px;
     }
 }
 </style>

@@ -21,7 +21,7 @@
 <script>
 import { mapActions, mapState } from 'vuex';
 
-import ArtistDetail from '@/components/ArtistDetail.vue';
+import ArtistDetail from '@/components/ArtistDetail/ArtistDetail.vue';
 import AvatarListItem from '@/components/AvatarListItem.vue';
 import ListDetailLayout from '@/components/ListDetailLayout.vue';
 
