@@ -93,11 +93,17 @@ export default {
         },
         btnSubscribeText() {
             const t = this.dynamicDetail.isSub ? '已收藏' : '收藏';
-            const n = this.dynamicDetail.subCount || '...';
+            let n = '...';
+            if (typeof this.dynamicDetail.subCount === 'number') {
+                n = this.dynamicDetail.subCount;
+            }
             return `${t} (${n})`;
         },
         btnCommentText() {
-            const n = this.dynamicDetail.commentCount || '...';
+            let n = '...';
+            if (typeof this.dynamicDetail.commentCount === 'number') {
+                n = this.dynamicDetail.commentCount;
+            }
             return `评论 (${n})`;
         },
         albumDesc() {
