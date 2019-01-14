@@ -32,8 +32,8 @@
     "native-ext-loader": "^2.3.0",
     "style-loader": "^0.23.1",
     "vue-loader": "^15.5.1",
-    "vue-template-compiler": "^2.5.21",
-    "webpack": "^4.28.3",
+    "vue-template-compiler": "^2.5.22",
+    "webpack": "^4.28.4",
     "webpack-dev-server": "^3.1.14"
   },
   "dependencies": {
@@ -47,7 +47,7 @@
     "muse-ui-message": "^0.2.1",
     "muse-ui-toast": "^0.3.0",
     "node-fetch": "^2.3.0",
-    "vue": "^2.5.21",
+    "vue": "^2.5.22",
     "vue-router": "^3.0.2",
     "vuex": "^3.0.1"
   }
