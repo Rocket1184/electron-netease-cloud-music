@@ -311,15 +311,17 @@ export async function updateUserArtists({ commit }) {
     }
 }
 
-export async function setUiFavArtist({ commit }, id) {
+export async function setUiArtist({ commit }, { type, id }) {
     const resp = await Api.getArtistDetailW(id);
-    commit(types.SET_UI_FAV_ARTIST, resp);
-    Api.getArtistAlbums(id).then(resp =>
-        commit(types.SET_UI_FAV_ARTIST, { albums: resp.hotAlbums }));
-    Api.getArtistMVs(id).then(resp =>
-        commit(types.SET_UI_FAV_ARTIST, { mvs: resp.mvs }));
-    Api.getArtistIntro(id).then(resp =>
-        commit(types.SET_UI_FAV_ARTIST, { intro: resp }));
+    commit(type, resp);
+}
+
+export function setUiFavArtist({ dispatch }, id) {
+    return dispatch('setUiArtist', { type: types.SET_UI_FAV_ARTIST, id });
+}
+
+export function setUiTempArtist({ dispatch }, id) {
+    return dispatch('setUiArtist', { type: types.SET_UI_TEMP_ARTIST, id });
 }
 
 export async function followArtist({ commit }, payload) {

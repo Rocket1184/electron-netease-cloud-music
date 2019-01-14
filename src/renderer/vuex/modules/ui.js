@@ -15,22 +15,35 @@ const state = {
         album: null,
         artist: {
             detail: null,
-            hotSongs: [],
-            albums: [],
-            mvs: [],
-            intro: null
+            hotSongs: []
         },
         video: null
     },
     temp: {
         album: null,
         relatedAlbums: null,
-        artist: null,
+        artist: {
+            detail: null,
+            hotSongs: []
+        },
         playlist: null,
         relatedPlaylists: null,
         video: null
     }
 };
+
+function setStateArtist(section, payload) {
+    if (!payload) return section.artist = {
+        detail: null,
+        hotSongs: []
+    };
+    if (payload.artist) {
+        section.artist = { detail: new Artist(payload.artist) };
+    }
+    if (payload.hotSongs) {
+        section.artist.hotSongs = payload.hotSongs.map(s => new Track(s));
+    }
+}
 
 const mutations = {
     [types.PAUSE_PLAYING_MUSIC](state) {
@@ -69,28 +82,7 @@ const mutations = {
         state.fav.album = new Album(al);
     },
     [types.SET_UI_FAV_ARTIST](state, payload) {
-        if (!payload) return state.fav.artist = {
-            detail: null,
-            hotSongs: [],
-            albums: [],
-            mvs: [],
-            intro: null
-        };
-        if (payload.artist) {
-            state.fav.artist = { detail: new Artist(payload.artist) };
-        }
-        if (payload.hotSongs) {
-            state.fav.artist.hotSongs = payload.hotSongs.map(s => new Track(s));
-        }
-        if (payload.albums) {
-            state.fav.artist.albums = payload.albums.map(al => new Album(al));
-        }
-        if (payload.mvs) {
-            state.fav.artist.mvs = payload.mvs.map(v => new Video(v));
-        }
-        if (payload.intro) {
-            state.fav.artist.intro = payload.intro;
-        }
+        setStateArtist(state.fav, payload);
     },
     [types.SET_UI_FAV_VIDEO](state, payload) {
         if (!payload) return state.fav.video = null;
@@ -110,6 +102,9 @@ const mutations = {
     },
     [types.SET_UI_TEMP_RELATED_ALBUMS](state, payload) {
         state.temp.relatedAlbums = payload;
+    },
+    [types.SET_UI_TEMP_ARTIST](state, payload) {
+        setStateArtist(state.temp, payload);
     },
     [types.SET_UI_RECOMMEND_SONGS](state, payload) {
         state.recommendSongs = payload.map(t => new Track(t));
