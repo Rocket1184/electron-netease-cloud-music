@@ -3,14 +3,18 @@
         <div class="header">
             <img :src="coverSrc"
                 class="cover">
-            <div class="desc">
+            <div class="side">
                 <div class="info">
                     <div class="name">{{album.name}}</div>
-                    <div class="creator">
-                        <mu-avatar class="avatar">
-                            <img :src="creatorAvatarSrc">
-                        </mu-avatar>
-                        <span class="creator-name">{{album.artist.name}}</span>
+                    <div class="creation-info">
+                        <router-link tag="div"
+                            class="creator"
+                            :to="{ name: 'artist', params: { id: album.artist.id } }">
+                            <mu-avatar class="avatar">
+                                <img :src="creatorAvatarSrc">
+                            </mu-avatar>
+                            <span class="creator-name">{{album.artist.name}}</span>
+                        </router-link>
                         <span class="create-time">发布于 {{createTime}}</span>
                     </div>
                 </div>
@@ -33,8 +37,8 @@
                         toggle-nested>
                         <mu-list-item button
                             nested
-                            :open="descOpen"
-                            @click="descOpen = !descOpen">
+                            :open="introOpen"
+                            @click="introOpen = !introOpen">
                             <mu-list-item-title>专辑介绍</mu-list-item-title>
                             <mu-list-item-action>
                                 <mu-icon class="toggle-icon"
@@ -76,7 +80,7 @@ export default {
     },
     data() {
         return {
-            descOpen: false,
+            introOpen: false,
             dynamicDetail: {}
         };
     },
@@ -173,7 +177,7 @@ export default {
             min-width: 160px;
             margin-right: 10px;
         }
-        .desc {
+        .side {
             flex-grow: 1;
             .info {
                 padding-left: 16px;
@@ -181,12 +185,18 @@ export default {
                     font-size: 20px;
                     line-height: 30px;
                 }
-                .creator {
-                    margin: 9px 0;
+                .creation-info {
                     display: flex;
                     align-items: center;
-                    .creator-name {
-                        margin: 0 1em;
+                    .creator {
+                        user-select: none;
+                        cursor: pointer;
+                        margin: 9px 0;
+                        display: flex;
+                        align-items: center;
+                        .creator-name {
+                            margin: 0 1em;
+                        }
                     }
                     .create-time {
                         color: grey;

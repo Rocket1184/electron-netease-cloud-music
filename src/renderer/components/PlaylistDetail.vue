@@ -3,14 +3,16 @@
         <div class="header">
             <img :src="coverSrc"
                 class="cover">
-            <div class="desc">
+            <div class="side">
                 <div class="info">
                     <div class="name">{{playlist.name}}</div>
-                    <div class="creator">
-                        <mu-avatar class="avatar">
-                            <img :src="creatorAvatarSrc">
-                        </mu-avatar>
-                        <span class="creator-name">{{playlist.creator.nickname}}</span>
+                    <div class="creation-info">
+                        <div class="creator">
+                            <mu-avatar class="avatar">
+                                <img :src="creatorAvatarSrc">
+                            </mu-avatar>
+                            <span class="creator-name">{{playlist.creator.nickname}}</span>
+                        </div>
                         <span class="create-time">创建于 {{createTime}}</span>
                     </div>
                 </div>
