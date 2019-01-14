@@ -2,7 +2,8 @@
     <div class="artist-list">
         <mu-card v-for="ar in list"
             :key="ar.id"
-            class="item">
+            class="item"
+            @click="navigateToArtsit(ar.id)">
             <mu-card-media :title="ar | artistTitle"
                 :style="ar | artistImgStyle"></mu-card-media>
         </mu-card>
@@ -19,6 +20,11 @@ export default {
     props: {
         list: {
             type: Array
+        }
+    },
+    methods:{
+        navigateToArtsit(id) {
+            this.$router.push({ name: 'artist', params: { id } });
         }
     },
     filters: {
@@ -41,6 +47,7 @@ export default {
     flex-wrap: wrap;
     justify-content: center;
     .item {
+        cursor: pointer;
         margin: 20px;
         display: inline-block;
         .mu-card-media {
