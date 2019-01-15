@@ -45,7 +45,7 @@
                                     value="keyboard_arrow_down"></mu-icon>
                             </mu-list-item-action>
                             <mu-list-item-content slot="nested">
-                                <pre class="description">{{albumDesc}}</pre>
+                                <p class="description">{{albumDesc}}</p>
                             </mu-list-item-content>
                         </mu-list-item>
                     </mu-list>
@@ -111,7 +111,8 @@ export default {
             return `评论 (${n})`;
         },
         albumDesc() {
-            return `类型：${this.album.subType}\n\n${this.album.description || '暂无介绍'}`;
+            const d = this.album.description || '暂无专辑介绍';
+            return `类型：${this.album.subType}\n\n${d}`;
         },
         tracksToShow() {
             if (!this.album || !this.album.songs) return {};
@@ -212,6 +213,7 @@ export default {
                 }
                 .description {
                     margin: 8px;
+                    white-space: pre-wrap;
                 }
             }
         }

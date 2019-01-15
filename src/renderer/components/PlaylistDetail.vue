@@ -45,7 +45,7 @@
                                     value="keyboard_arrow_down"></mu-icon>
                             </mu-list-item-action>
                             <mu-list-item-content slot="nested">
-                                <pre class="description">{{playlist.description}}</pre>
+                                <p class="description">{{playlistDesc}}</p>
                             </mu-list-item-content>
                         </mu-list-item>
                     </mu-list>
@@ -112,6 +112,11 @@ export default {
         btnCommentText() {
             const n = this.playlist.commentCount;
             return `评论 (${n})`;
+        },
+        playlistDesc() {
+            const t = this.playlist.tags.join('，') || '无';
+            const d = this.playlist.description || '暂无歌单介绍';
+            return `标签：${t}\n\n${d}`;
         },
         tracksOffset() {
             return (this.currentPage - 1) * this.pageSize;
