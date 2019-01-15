@@ -43,7 +43,7 @@
                     <img v-if="user.loginValid"
                         :src="avatarUrl">
                     <mu-icon v-else
-                        value="music_note"
+                        value="person"
                         :size="40"></mu-icon>
                 </mu-avatar>
                 <div class="text">
@@ -65,7 +65,7 @@
                     <mu-list-item-action>
                         <mu-icon :value="route.icon || 'bug_report'"></mu-icon>
                     </mu-list-item-action>
-                    <mu-list-item-title>{{route.title}} {{route.icon ? '' : '(debug)'}}</mu-list-item-title>
+                    <mu-list-item-title>{{route.title}}{{route.icon ? '' : ' (debug)'}}</mu-list-item-title>
                 </mu-list-item>
             </mu-list>
         </mu-drawer>
