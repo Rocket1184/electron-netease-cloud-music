@@ -1,12 +1,8 @@
 <template>
     <div class="current-list">
-        <div v-if="playlist.list.length === 0"
-            class="tip">
-            <mu-icon value="equalizer"
-                color="grey"
-                :size="128"></mu-icon>
-            <p>列表里什么都没有，快去找几首歌吧 φ(≧ω≦*)♪</p>
-        </div>
+        <CenteredTip v-if="playlist.list.length === 0"
+            tip="列表里什么都没有，快去找几首歌吧 φ(≧ω≦*)♪"
+            icon="music_note"></CenteredTip>
         <mu-list v-else
             dense
             class="list">
@@ -16,7 +12,7 @@
                 :id="`cur-list-${index}`"
                 @click="handleListClick(index)">
                 <mu-list-item-action>
-                    <mu-icon v-if="track.id == playlist.list[playlist.index].id"
+                    <mu-icon v-if="track.id == playingId"
                         color="secondary"
                         value="volume_up"
                         :size="18">
@@ -35,15 +31,24 @@
 <script>
 import { mapActions, mapState } from 'vuex';
 
+import CenteredTip from '@/components/CenteredTip.vue';
+
 export default {
     computed: {
-        ...mapState(['playlist'])
+        ...mapState(['playlist']),
+        playingId() {
+            const { list, index } = this.playlist;
+            return list[index].id;
+        }
     },
     methods: {
         ...mapActions(['playTrackIndex']),
         handleListClick(index) {
             this.playTrackIndex(index);
         }
+    },
+    components: {
+        CenteredTip
     }
 };
 </script>
@@ -51,15 +56,6 @@ export default {
 <style lang="less">
 .current-list {
     height: inherit;
-    .tip {
-        width: 100%;
-        height: 100%;
-        color: grey;
-        display: flex;
-        flex-direction: column;
-        align-items: center;
-        justify-content: center;
-    }
     .list {
         padding: 0;
         .mu-item-action {
