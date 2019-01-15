@@ -3,7 +3,7 @@
         <mu-icon :value="icon"
             color="grey"
             :size="128"></mu-icon>
-        <p>{{tip}}</p>
+        <p class="tip-text mu-item-after-text">{{tip}}</p>
     </div>
 </template>
 
@@ -32,6 +32,8 @@ export default {
     flex-direction: column;
     justify-content: center;
     align-items: center;
-    color: grey;
+    .tip-text {
+        font-size: 14px;
+    }
 }
 </style>

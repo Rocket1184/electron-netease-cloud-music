@@ -9,7 +9,7 @@
             <div class="desc">
                 <div class="name">
                     <span class="song">{{playing.name}}</span>
-                    <span class="artist">{{playing.artistName}}</span>
+                    <span class="artist mu-item-after-text">{{playing.artistName}}</span>
                 </div>
                 <div class="shortcut">
                     <mu-checkbox title="喜欢"
@@ -370,7 +370,7 @@ export default {
                 }
                 .artist {
                     margin-left: 0.5em;
-                    color: dimgrey;
+                    font-size: inherit;
                 }
             }
             .shortcut {

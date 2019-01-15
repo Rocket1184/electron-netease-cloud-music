@@ -13,7 +13,7 @@
                             </mu-avatar>
                             <span class="creator-name">{{playlist.creator.nickname}}</span>
                         </div>
-                        <span class="create-time">创建于 {{createTime}}</span>
+                        <span class="create-time  mu-item-after-text">创建于 {{createTime}}</span>
                     </div>
                 </div>
                 <div class="actions">

@@ -139,11 +139,8 @@ export default {
                 flex: 0 0 64px;
             }
             .buttons {
-                i {
-                    color: grey;
-                }
-                .mu-button.hover:before {
-                    border-radius: 50%;
+                .mu-icon {
+                    opacity: 0.6;
                 }
             }
         }

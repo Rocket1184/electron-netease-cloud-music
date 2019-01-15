@@ -15,7 +15,7 @@
                             </mu-avatar>
                             <span class="creator-name">{{album.artist.name}}</span>
                         </router-link>
-                        <span class="create-time">发布于 {{createTime}}</span>
+                        <span class="create-time mu-item-after-text">发布于 {{createTime}}</span>
                     </div>
                 </div>
                 <div class="actions">
@@ -199,7 +199,7 @@ export default {
                         }
                     }
                     .create-time {
-                        color: grey;
+                        font-size: inherit;
                     }
                 }
             }

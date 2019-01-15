@@ -18,13 +18,14 @@
                 <mu-list-item-action>
                     <mu-icon v-if="track.id == playlist.list[playlist.index].id"
                         color="secondary"
-                        value="volume_up">
+                        value="volume_up"
+                        :size="18">
                     </mu-icon>
                     <span v-else>{{index + 1}}</span>
                 </mu-list-item-action>
-                <mu-list-item-title class="track-name">
+                <mu-list-item-title>
                     {{track.name}}
-                    <span class="track-artist">{{track.artistName}}</span>
+                    <span class="track-artist mu-item-after-text"> - {{track.artistName}}</span>
                 </mu-list-item-title>
             </mu-list-item>
         </mu-list>
@@ -65,15 +66,8 @@ export default {
             width: 36px;
             min-width: 0;
         }
-        i {
-            font-size: 18px;
-        }
         .track-artist {
-            color: grey;
-            font-size: 0.8em;
-            &::before {
-                content: ' - ';
-            }
+            font-size: 11px;
         }
     }
 }
