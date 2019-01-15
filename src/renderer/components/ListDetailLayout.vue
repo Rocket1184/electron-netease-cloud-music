@@ -8,11 +8,12 @@
                     :size="128"></mu-icon>
                 <p>{{tipText}}</p>
             </div>
+            <CenteredLoading v-else-if="listLoading"></CenteredLoading>
             <slot v-else
                 name="list"></slot>
         </div>
         <div class="ld-detail">
-            <CenteredLoading v-if="loading"></CenteredLoading>
+            <CenteredLoading v-if="detailLoading"></CenteredLoading>
             <slot v-else
                 name="detail"></slot>
         </div>
@@ -24,13 +25,20 @@ import CenteredLoading from '@/components/CenteredLoading.vue';
 
 export default {
     props: {
-        loading: {
-            required: true,
-            type: Boolean
+        listLoading: {
+            required: false,
+            type: Boolean,
+            default: false
+        },
+        detailLoading: {
+            required: false,
+            type: Boolean,
+            default: false
         },
         showTip: {
-            required: true,
-            type: Boolean
+            required: false,
+            type: Boolean,
+            default: false
         },
         tipIcon: {
             required: false,

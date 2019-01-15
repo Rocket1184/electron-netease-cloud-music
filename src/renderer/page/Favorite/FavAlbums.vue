@@ -1,6 +1,7 @@
 <template>
     <ListDetailLayout class="fav-album"
-        :loading="loading"
+        :listLoading="listLoading"
+        :detailLoading="detailLoading"
         tipText="登录后查看收藏的专辑"
         :showTip="!user.loginValid">
         <mu-list slot="list">
@@ -28,7 +29,8 @@ import ListDetailLayout from '@/components/ListDetailLayout.vue';
 export default {
     data() {
         return {
-            loading: false
+            listLoading: false,
+            detailLoading: false
         };
     },
     computed: {
@@ -40,9 +42,9 @@ export default {
             'setUiFavAlbum'
         ]),
         async loadAlbum(id) {
-            this.loading = true;
+            this.detailLoading = true;
             await this.setUiFavAlbum(id);
-            this.loading = false;
+            this.detailLoading = false;
         },
         handleClick(id) {
             if (this.ui.fav.album && this.ui.fav.album.id === id) return;
@@ -51,7 +53,9 @@ export default {
     },
     async mounted() {
         if (this.user.loginValid) {
+            this.listLoading = true;
             await this.updateUserAlbums();
+            this.listLoading = false;
             const al = this.user.albums[0];
             if (al && al.id) {
                 this.loadAlbum(al.id);

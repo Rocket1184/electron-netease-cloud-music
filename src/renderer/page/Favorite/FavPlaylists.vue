@@ -1,6 +1,7 @@
 <template>
     <ListDetailLayout class="fav-playlist"
-        :loading="loading"
+        :listLoading="user.playlist.length <= 0"
+        :detailLoading="detailLoading"
         tipText="登录后查看收藏的歌单"
         :showTip="!user.loginValid">
         <mu-load-more slot="list"
@@ -49,7 +50,7 @@ export default {
     data() {
         return {
             playlistId: null,
-            loading: false,
+            detailLoading: false,
             listRefreshing: false
         };
     },
@@ -85,10 +86,10 @@ export default {
             this.loadPlaylist(this.playlistId);
         },
         async loadPlaylist(id) {
-            this.loading = true;
+            this.detailLoading = true;
             await this.updatePlaylistDetail(id);
             this.playlistId = id;
-            this.loading = false;
+            this.detailLoading = false;
         },
         handleClick(id) {
             if (this.playlistId === id) return;

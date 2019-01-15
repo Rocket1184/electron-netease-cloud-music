@@ -1,7 +1,5 @@
 <template>
-    <ListDetailLayout :loading="loading"
-        tipText=""
-        :showTip="false">
+    <ListDetailLayout :detailLoading="detailLoading">
         <div slot="list"
             class="playlist-side">
             <mu-list>
@@ -43,7 +41,7 @@ import ListDetailLayout from '@/components/ListDetailLayout.vue';
 export default {
     data() {
         return {
-            loading: false,
+            detailLoading: false,
             relatedLoading: false
         };
     },
@@ -56,10 +54,10 @@ export default {
             'setUiRelatedAlbums'
         ]),
         loadAlbum(id) {
-            this.loading = true;
+            this.detailLoading = true;
             this.relatedLoading = true;
             this.setUiTempAlbum(id)
-                .then(() => this.loading = false);
+                .then(() => this.detailLoading = false);
             this.setUiRelatedAlbums(id)
                 .then(() => this.relatedLoading = false);
         },

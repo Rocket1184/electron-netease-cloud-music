@@ -1,7 +1,5 @@
 <template>
-    <ListDetailLayout :loading="detailLoading"
-        tipText=""
-        :showTip="false">
+    <ListDetailLayout :detailLoading="detailLoading">
         <div slot="list">
             <mu-list>
                 <ListItemBack></ListItemBack>
