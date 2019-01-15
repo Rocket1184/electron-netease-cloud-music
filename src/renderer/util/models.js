@@ -43,6 +43,7 @@ export class PlayList {
         this.name = o.name;
         this.creator = new User(o.creator);
         this.description = o.description || '';
+        this.tags = o.tags || [];
         this.commentThreadId = o.commentThreadId;
         this.playCount = o.playCount;
         this.trackCount = o.trackCount;

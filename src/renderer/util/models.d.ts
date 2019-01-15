@@ -52,6 +52,7 @@ declare namespace Models {
         name: string;
         creator: User;
         description: string;
+        tags: string[];
         commentThreadId: number;
         playCount: number;
         coverImgId: number;
