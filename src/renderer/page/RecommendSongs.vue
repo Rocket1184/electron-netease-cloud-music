@@ -1,6 +1,5 @@
 <template>
-    <ListDetailLayout :loading="loading"
-        :showTip="false">
+    <ListDetailLayout :detailLoading="loading">
         <mu-list slot="list">
             <ListItemBack></ListItemBack>
             <template v-if="user.loginValid">

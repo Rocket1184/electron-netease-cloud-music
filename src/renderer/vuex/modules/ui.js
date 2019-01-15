@@ -10,7 +10,11 @@ const state = {
     collectPopupShow: false,
     collectTrackIds: [],
     recommendSongs: [],
-    recommendStatistics: {},
+    recommendStatistics: {
+        playCnt: '...',
+        likeCnt: '...',
+        followCnt: '...'
+    },
     fav: {
         album: null,
         artist: {
