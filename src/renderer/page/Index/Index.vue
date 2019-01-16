@@ -25,7 +25,7 @@
             <div class="h-scroller">
                 <ScrollerItem v-for="v in mv"
                     :key="v.id"
-                    :to="{ path: '/mv', params: { id: v.id } }"
+                    :to="{ name: 'video', params: { id: v.id } }"
                     :img="v.picUrl"
                     subIcon="videocam"
                     :subTitle="v.playCount"
