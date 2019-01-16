@@ -11,7 +11,7 @@
         </div>
         <div class="video">
             <video :src="mvSrc"
-                :poster="mv.picUrl"
+                :poster="mvPoster"
                 preload="none"
                 controls></video>
         </div>
@@ -43,6 +43,7 @@
 import { mapActions, mapState } from 'vuex';
 
 import Api from '@/util/api';
+import { sizeImg, HiDpiPx } from '@/util/image';
 
 export default {
     props: {
@@ -65,8 +66,12 @@ export default {
     },
     computed: {
         ...mapState(['user']),
+        mvPoster() {
+            return sizeImg(this.mv.picUrl, HiDpiPx(720), HiDpiPx(405));
+        },
         mvSrc() {
-            return Object.entries(this.mv.brs).sort((a, b) => b[0] - a[0])[0][1];
+            const src = Object.entries(this.mv.brs).sort((a, b) => b[0] - a[0])[0][1];
+            return src.replace(/^http:/, 'https:');
         },
         btnLikeText() {
             const t = this.threadInfo.liked ? '已赞' : '赞';
