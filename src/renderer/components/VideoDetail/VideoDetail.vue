@@ -83,7 +83,7 @@ export default {
             video {
                 height: 405px;
                 width: 720px;
-                object-fit: cover;
+                object-fit: contain;
             }
         }
     }
