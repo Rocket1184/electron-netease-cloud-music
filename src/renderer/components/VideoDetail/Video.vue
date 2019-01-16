@@ -103,6 +103,10 @@ export default {
                 .then(res => this.threadInfo = res);
         },
         async handleLike() {
+            if (!this.user.loginValid) {
+                this.$toast.message('汝还没有登录呀      (눈‸눈)');
+                return;
+            }
             try {
                 if (this.threadInfo.liked) {
                     await this.unlikeResource(this.video.commentThreadId);
@@ -119,6 +123,10 @@ export default {
             }
         },
         async handleSubscribe() {
+            if (!this.user.loginValid) {
+                this.$toast.message('汝还没有登录呀      (눈‸눈)');
+                return;
+            }
             try {
                 if (this.statistic.subscribed) {
                     await this.unsubscribeVideo(this.video);
