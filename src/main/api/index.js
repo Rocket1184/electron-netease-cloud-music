@@ -1014,3 +1014,160 @@ export function getArtistIntro(id) {
         data: { id }
     });
 }
+
+/**
+ * @param {number} id
+ * @returns {Promise<Types.MVDetailRes>}
+ */
+export function getMVDetail(id) {
+    return client.postW({
+        url: `${BaseURL}/weapi/mv/detail`,
+        data: { id }
+    });
+}
+
+/**
+ * @param {string} id
+ * @returns {Promise<Types.SubscribeMVRes>}
+ */
+export function subscribeMV(mvId) {
+    return client.postW({
+        url: `${BaseURL}/weapi/mv/sub`,
+        data: {
+            mvId,
+            mvIds: `[${mvId}]`
+        }
+    });
+}
+
+/**
+ * @param {string} id
+ * @returns {Promise<Types.UnsubscribeMVRes>}
+ */
+export function unsubscribeMV(mvId) {
+    return client.postW({
+        url: `${BaseURL}/weapi/mv/unsub`,
+        data: {
+            mvId,
+            mvIds: `[${mvId}]`
+        }
+    });
+}
+
+/**
+ * @param {number} id
+ * @returns {Promise<Types.VideoDetailRes>}
+ */
+export function getVideoDetail(id) {
+    return client.postW({
+        url: `${BaseURL}/weapi/cloudvideo/v1/video/detail`,
+        data: { id }
+    });
+}
+
+/**
+ * @param {string} id
+ * @returns {Promise<Types.SubscribeVideoRes>}
+ */
+export function subscribeVideo(id) {
+    return client.postW({
+        url: `${BaseURL}/weapi/cloudvideo/video/sub`,
+        data: { id }
+    });
+}
+
+/**
+ * @param {string} id
+ * @returns {Promise<Types.UnsubscribeVideoRes>}
+ */
+export function unsubscribeVideo(id) {
+    return client.postW({
+        url: `${BaseURL}/weapi/cloudvideo/video/unsub`,
+        data: { id }
+    });
+}
+
+/**
+ * @param {string} id
+ * @returns {Promise<Types.VideoStatisticRes>}
+ */
+export function getVideoStatistic(id) {
+    return client.postW({
+        url: `${BaseURL}/weapi/cloudvideo/v1/video/statistic`,
+        data: { id }
+    });
+}
+
+/**
+ * @param {number} id
+ * @param {number} resolution
+ * @returns {Promise<Types.VideoURLRes>}
+ */
+export function getVideoURL(id, resolution = 1080) {
+    return client.postW({
+        url: `${BaseURL}/weapi/cloudvideo/playurl`,
+        data: {
+            ids: `["${id}"]`,
+            resolution
+        }
+    });
+}
+
+/**
+ * 评论/赞/分享总数以及是否赞过
+ * @param {string} threadid
+ * @returns {Promise<Types.CommentThreadInfoERes>}
+ */
+export function getCommentThreadInfoE(threadid) {
+    return client.postE({
+        url: `${BaseURL}/eapi/comment/commentthread/info`,
+        data: {
+            threadid,
+            composeliked: 'true'
+        }
+    });
+}
+
+/**
+ * @param {string} threadId
+ * @returns {Promise<Types.ApiRes>}
+ */
+export function likeResourceE(threadId) {
+    return client.postE({
+        url: `${BaseURL}/eapi/resource/like`,
+        data: { threadId }
+    });
+}
+
+/**
+ * @param {string} threadId
+ * @returns {Promise<Types.ApiRes>}
+ */
+export function unlikeResourceE(threadId) {
+    return client.postE({
+        url: `${BaseURL}/eapi/resource/unlike`,
+        data: { threadId }
+    });
+}
+
+/**
+ * @param {string} threadId
+ * @returns {Promise<Types.ApiRes>}
+ */
+export function likeResource(threadId) {
+    return client.postW({
+        url: `${BaseURL}/weapi/resource/like`,
+        data: { threadId }
+    });
+}
+
+/**
+ * @param {string} threadId
+ * @returns {Promise<Types.ApiRes>}
+ */
+export function unlikeResource(threadId) {
+    return client.postW({
+        url: `${BaseURL}/weapi/resource/unlike`,
+        data: { threadId }
+    });
+}

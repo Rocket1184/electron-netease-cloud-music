@@ -1562,6 +1562,145 @@ namespace Types {
         }[];
         topicData?: any;
     }
+
+    export interface MVDetailData {
+        artistId: number;
+        artistName: string;
+        artists: {
+            id: number;
+            name: string;
+        }[];
+        briefDesc: string;
+        brs: {
+            240: string;
+            480: string;
+            720: string;
+            1080: string;
+            [key: number]: string;
+        };
+        commentCount: number;
+        commentThreadId: string;
+        cover: string;
+        coverId: number;
+        desc: string;
+        duration: number;
+        id: number;
+        isReward: boolean;
+        likeCount: number;
+        nType: number;
+        name: string;
+        playCount: number;
+        publishTime: string;
+        shareCount: number;
+        subCount: number;
+    }
+
+    export interface MVDetailRes extends ApiRes {
+        bufferPic: string;
+        bufferPicFS: string;
+        data: MVDetailData;
+        loadingPic: string;
+        loadingPicFS: string;
+        subed: boolean;
+    }
+
+    export interface SubscribeMVRes extends ApiRes {
+        data?: any;
+        message: string;
+    }
+
+    export interface UnsubscribeMVRes extends ApiRes {
+        data?: any;
+        message: string;
+    }
+
+    export interface VideoDetailCreator {
+        accountStatus: number;
+        authStatus: number;
+        avatarUrl: string;
+        expertTags?: any;
+        experts?: any;
+        followed: boolean;
+        nickname: string;
+        userId: number;
+        userType: number;
+    }
+
+    export interface VideoDetailData {
+        advertisement: boolean;
+        authType: number;
+        avatarUrl: string;
+        commentCount: number;
+        coverUrl: string;
+        creator: VideoDetailCreator;
+        description?: any;
+        durationms: number;
+        hasRelatedGameAd: boolean;
+        height: number;
+        markTypes: number[];
+        playTime: number;
+        praisedCount: number;
+        publishTime: number;
+        resolutions: {
+            resolution: number;
+            size: number;
+        }[];
+        shareCount: number;
+        subscribeCount: number;
+        threadId: string;
+        title: string;
+        vid: string;
+        videoGroup: {
+            alg: string;
+            id: number;
+            name: string;
+        }[];
+        width: number;
+    }
+
+    export interface VideoDetailRes extends ApiRes {
+        data: VideoDetailData;
+        message: string;
+    }
+
+    export interface SubscribeVideoRes extends ApiRes {
+        data?: any;
+        message: string;
+    }
+
+    export interface UnsubscribeVideoRes extends ApiRes {
+        data?: any;
+        message: string;
+    }
+
+    export interface CommentThreadInfoERes extends ApiRes {
+        commentCount: number;
+        liked: boolean;
+        likedCount: number;
+        shareCount: number;
+    }
+
+    export interface VideoStatisticRes extends ApiRes {
+        data: {
+            playTime: number;
+            praisedCount: number;
+            subscribeCount: number;
+            subscribed: boolean;
+        };
+        message: string;
+    }
+
+    export interface VideoURLRes extends ApiRes {
+        urls: {
+            id: string;
+            needPay: boolean;
+            payInfo?: any;
+            r: number;
+            size: number;
+            url: string;
+            validityTime: number;
+        }[];
+    }
 }
 
 export as namespace Types;
