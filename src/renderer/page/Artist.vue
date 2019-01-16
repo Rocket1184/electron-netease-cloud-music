@@ -32,7 +32,7 @@ export default {
         ...mapActions([
             'setUiTempArtist'
         ]),
-        async loadArtsit(id) {
+        async loadArtist(id) {
             this.detailLoading = true;
             await this.setUiTempArtist(id);
             this.detailLoading = false;
@@ -40,13 +40,13 @@ export default {
     },
     mounted() {
         const id = this.$route.params.id;
-        this.loadArtsit(id);
+        this.loadArtist(id);
     },
     beforeRouteUpdate(to, from, next) {
         // this component is reused in the new route
         next();
         const id = this.$route.params.id;
-        this.loadArtsit(id);
+        this.loadArtist(id);
     },
     components: {
         ArtistDetail,
