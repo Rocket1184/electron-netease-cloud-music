@@ -47,7 +47,7 @@ export default {
             this.detailLoading = false;
         },
         handleClick(id) {
-            if (this.ui.fav.artist && this.ui.fav.artist.id === id) return;
+            if (this.ui.fav.artist.detail && this.ui.fav.artist.detail.id === id) return;
             this.loadArtist(id);
         }
     },
