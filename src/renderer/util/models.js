@@ -94,7 +94,21 @@ export class Album {
     }
 }
 
+class VideoArtist {
+    constructor(o) {
+        this.id = o.id || o.userId;
+        this.name = o.name || o.userName || o.nickname;
+    }
+}
+
 export class Video {
+    static formatCreator(creators) {
+        if (Array.isArray(creators)) {
+            return creators.map(c => new VideoArtist(c));
+        }
+        return [new VideoArtist(creators)];
+    }
+
     constructor(o) {
         this.id = o.id || o.vid;
         this.name = o.name || o.title;
@@ -102,14 +116,17 @@ export class Video {
         /** type `0` MV, `1` UGC */
         this.type = o.type;
         this.picUrl = o.cover || o.imgurl || o.coverUrl;
-        this.creator = o.creator;
-        if (o.type === 0 && o.creator) {
-            this.artists = o.creator;
-        } else if (o.artists) {
-            this.artists = o.artists;
-        }
+        this.creator = Video.formatCreator(o.creator || o.artist || o.artists);
+        this.brs = o.brs;
         this.duration = o.duration || o.durationms;
+        this.desc = o.desc;
         this.playCount = o.playCount || o.playTime;
+        this.likeCount = o.likeCount || o.praisedCount;
+        this.publishTime = new Date(o.publishTime);
+        this.subed = o.subed;
+        this.subCount = o.subCount || o.subscribeCount;
+        this.commentCount = o.commentCount;
+        this.commentThreadId = o.commentThreadId || o.threadId;
         this.alg = o.alg;
     }
 }

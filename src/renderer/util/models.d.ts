@@ -64,7 +64,6 @@ declare namespace Models {
         tracks: Track[];
     }
 
-
     export class Artist {
         id: number;
         name: string;
@@ -111,25 +110,29 @@ declare namespace Models {
     }
 
     export class Video {
-        alg?: any;
+        id: string;
+        name: number;
         alias: string[];
+        /** type `0` MV, `1` UGC */
+        type: number;
         picUrl: string;
         creator?: {
             userId: number;
             userName: string;
         }[];
-        artists?: {
-            alias: string[];
-            id: number;
-            name: string;
-            transNames: string[];
-        }[];
+        /** MV only */
+        brs?: { [key: number]: string; }
         duration: number;
+        desc?: string;
         playCount: number;
-        name: number;
-        /** type `0` MV, `1` UGC */
-        type: number;
-        id: string;
+        likeCount: number;
+        publishTime: Date;
+        /** MV only */
+        subed?: boolean;
+        subCount: number;
+        commentCount: number;
+        commentThreadId: string;
+        alg?: any;
     }
 }
 
