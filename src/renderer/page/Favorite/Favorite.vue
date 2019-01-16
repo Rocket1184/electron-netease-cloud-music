@@ -19,11 +19,13 @@
 
 <script>
 import FavAlbums from './FavAlbums.vue';
+import FavVideos from './FavVideos.vue';
 import FavArtists from './FavArtists.vue';
 import FavPlaylists from './FavPlaylists.vue';
 
 const FavCompos = {
     album: FavAlbums,
+    video: FavVideos,
     artist: FavArtists,
     playlist: FavPlaylists,
 };
@@ -42,6 +44,7 @@ export default {
     },
     components: {
         FavAlbums,
+        FavVideos,
         FavArtists,
         FavPlaylists
     }
