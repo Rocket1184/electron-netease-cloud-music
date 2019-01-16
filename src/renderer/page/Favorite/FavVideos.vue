@@ -48,7 +48,7 @@ export default {
             this.detailLoading = false;
         },
         handleClick(id, type) {
-            if (this.ui.fav.video && this.ui.fav.video.id === id) return;
+            if (this.ui.fav.video && this.ui.fav.video.id == id) return;
             this.loadVideo(id, type);
         }
     },
