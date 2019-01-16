@@ -311,17 +311,17 @@ export async function updateUserArtists({ commit }) {
     }
 }
 
-export async function setUiArtist({ commit }, { type, id }) {
+export async function setUiArtist({ commit }, { mutation, id }) {
     const resp = await Api.getArtistDetailW(id);
-    commit(type, resp);
+    commit(mutation, resp);
 }
 
 export function setUiFavArtist({ dispatch }, id) {
-    return dispatch('setUiArtist', { type: types.SET_UI_FAV_ARTIST, id });
+    return dispatch('setUiArtist', { mutation: types.SET_UI_FAV_ARTIST, id });
 }
 
 export function setUiTempArtist({ dispatch }, id) {
-    return dispatch('setUiArtist', { type: types.SET_UI_TEMP_ARTIST, id });
+    return dispatch('setUiArtist', { mutation: types.SET_UI_TEMP_ARTIST, id });
 }
 
 export async function followArtist({ commit }, payload) {
@@ -339,5 +339,67 @@ export async function unfollowArtist({ commit }, payload) {
         commit(types.UNSUBSCRIBE_ARTIST, payload);
         return;
     }
+    throw resp;
+}
+
+export async function updateUserVideos({ commit }) {
+    const resp = await Api.getFavoriteVideos(1000);
+    commit(types.SET_USER_VIDEOS, resp.data);
+}
+
+export async function setUiVideo({ commit }, { id, type, mutation }) {
+    let resp;
+    if (type === 0) {
+        resp = await Api.getMVDetail(id);
+        resp.data.type = type;
+        resp.data.subed = resp.subed;
+        commit(mutation, resp.data);
+    } else if (type === 1) {
+        resp = await Api.getVideoDetail(id);
+        resp.data.type = type;
+        commit(mutation, resp.data);
+    }
+    return resp;
+}
+
+export function setUiFavVideo({ dispatch }, { id, type }) {
+    return dispatch('setUiVideo', { id, type, mutation: types.SET_UI_FAV_VIDEO });
+}
+
+export function setUiTempVideo({ dispatch }, { id, type }) {
+    return dispatch('setUiVideo', { id, type, mutation: types.SET_UI_TEMP_VIDEO });
+}
+
+export async function subscribeVideo({ commit }, payload) {
+    const { id, type } = payload;
+    const func = type === 0 ? Api.subscribeMV : Api.subscribeVideo;
+    const resp = await func(id);
+    if (resp.code === 200) {
+        commit(types.SUBSCRIBE_VIDEO, payload);
+        return;
+    }
+    throw resp;
+}
+
+export async function unsubscribeVideo({ commit }, payload) {
+    const { id, type } = payload;
+    const func = type === 0 ? Api.unsubscribeMV : Api.unsubscribeVideo;
+    const resp = await func(id);
+    if (resp.code === 200) {
+        commit(types.UNSUBSCRIBE_VIDEO, payload);
+        return;
+    }
+    throw resp;
+}
+
+export async function likeResource(_, id) {
+    const resp = await Api.likeResource(id);
+    if (resp.code === 200) return resp;
+    throw resp;
+}
+
+export async function unlikeResource(_, id) {
+    const resp = await Api.unlikeResource(id);
+    if (resp.code === 200) return resp;
     throw resp;
 }

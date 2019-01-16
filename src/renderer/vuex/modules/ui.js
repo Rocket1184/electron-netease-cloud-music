@@ -110,6 +110,9 @@ const mutations = {
     [types.SET_UI_TEMP_ARTIST](state, payload) {
         setStateArtist(state.temp, payload);
     },
+    [types.SET_UI_TEMP_VIDEO](state, payload) {
+        state.temp.video = new Video(payload);
+    },
     [types.SET_UI_RECOMMEND_SONGS](state, payload) {
         state.recommendSongs = payload.map(t => new Track(t));
     },

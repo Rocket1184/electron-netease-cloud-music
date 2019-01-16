@@ -77,10 +77,11 @@ const mutations = {
         state.videos = payload.map(al => new Video(al));
     },
     [types.SUBSCRIBE_VIDEO](state, payload) {
-        state.videos.splice(1, 0, new Video(payload));
+        const v = payload instanceof Video ? payload : new Video(payload);
+        state.videos.splice(0, 0, v);
     },
-    [types.UNSUBSCRIBE_VIDEO](state, { vid }) {
-        const index = state.videos.findIndex(a => a.vid === vid);
+    [types.UNSUBSCRIBE_VIDEO](state, { id }) {
+        const index = state.videos.findIndex(v => v.id === id);
         if (index !== -1) {
             state.videos.splice(index, 1);
         }
