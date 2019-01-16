@@ -2,7 +2,7 @@
     <div class="v-list">
         <router-link v-for="v in videos"
             :key="v.id"
-            :to="{ path:'/v', params:{ id: v.id } }"
+            :to="{ name:'video', params:{ id: v.id } }"
             tag="div"
             class="v-item">
             <div class="v-cover"
@@ -18,7 +18,8 @@
             </div>
             <span class="name">
                 <span v-if="showBadge && v.type === 0">
-                    <mu-badge content="MV" color="primary"></mu-badge>
+                    <mu-badge content="MV"
+                        color="primary"></mu-badge>
                 </span>
                 <span>{{v.name}}</span>
             </span>
