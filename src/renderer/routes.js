@@ -4,6 +4,7 @@ import Player from '@/page/Player.vue';
 import Playlist from '@/page/Playlist.vue';
 import Album from '@/page/Album.vue';
 import Artist from '@/page/Artist.vue';
+import Video from '@/page/Video.vue';
 import Settings from '@/page/Settings/Settings.vue';
 import Favorite from '@/page/Favorite/Favorite.vue';
 import RecommendSongs from '@/page/RecommendSongs.vue';
@@ -50,6 +51,11 @@ export default [
         name: 'artist',
         path: '/artist/:id',
         component: Artist
+    },
+    {
+        name: 'video',
+        path: '/video/:id',
+        component: Video
     },
     {
         name: 'recommend',
