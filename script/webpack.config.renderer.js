@@ -99,7 +99,7 @@ if (isProd) {
     // ref: https://github.com/jantimon/html-webpack-plugin/blob/v3.2.0/index.js#L479
     cfg.plugins.find(p => p instanceof HtmlWebpackPlugin).options.meta = [{
         'http-equiv': 'Content-Security-Policy',
-        content: `script-src 'self'; media-src http://localhost:*; img-src 'self' https://*.music.126.net`
+        content: `script-src 'self'; media-src http://localhost:* https://*.vod.126.net; img-src 'self' https://*.music.126.net`
     }];
     cfg.plugins.push(
         new webpack.DefinePlugin({ 'process.env.NODE_DEV': '"production"' }),
