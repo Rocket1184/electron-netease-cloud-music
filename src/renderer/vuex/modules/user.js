@@ -20,14 +20,12 @@ const mutations = {
         }
     },
     [types.SET_USER_INFO](state, payload) {
-        if (!payload) return state.info = {};
         state.info = new User(payload);
     },
     [types.UPDATE_USER_INFO](state, payload) {
         Object.assign(state.info, new User(payload));
     },
     [types.SET_USER_SIGN_STATUS](state, payload) {
-        if (payload === null) payload = {};
         state.signStatus = payload;
     },
     [types.SET_USER_PLAYLISTS](state, payload) {
