@@ -3,6 +3,7 @@ import { User, PlayList, Artist, Album, Video } from '@/util/models';
 
 const state = {
     loginValid: false,
+    signStatus: {},
     playlist: [],
     info: {},
     artists: [],
@@ -24,6 +25,10 @@ const mutations = {
     },
     [types.UPDATE_USER_INFO](state, payload) {
         Object.assign(state.info, new User(payload));
+    },
+    [types.SET_USER_SIGN_STATUS](state, payload) {
+        if (payload === null) payload = {};
+        state.signStatus = payload;
     },
     [types.SET_USER_PLAYLISTS](state, payload) {
         state.playlist = payload.map(l => new PlayList(l));

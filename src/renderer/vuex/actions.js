@@ -34,26 +34,38 @@ export async function restoreUserInfo({ commit, dispatch }) {
     }
 }
 
-export async function updateUserPlaylists({ state, commit }) {
+export async function updateUserSignStatus({ commit }) {
+    const resp = await Api.getDailyTask();
+    if (resp.code === 200) {
+        commit(types.SET_USER_SIGN_STATUS, resp);
+    }
+}
+
+export async function signDailyTask(_, { type }) {
+    let resp;
+    switch (type) {
+        case 0: resp = await Api.postDailyTaskE(0); break;
+        case 1: resp = await Api.postDailyTask(1); break;
+    }
+    return resp;
+}
+
+export async function updateUserPlaylists({ state, commit, dispatch }) {
     const { playlist } = await Api.getUserPlaylist(state.user.info.id);
     commit(types.UPDATE_USER_INFO, playlist[0].creator);
     commit(types.SET_USER_PLAYLISTS, playlist);
+    if (playlist[0].name.endsWith('喜欢的音乐')) {
+        dispatch('updatePlaylistDetail', playlist[0].id);
+    }
     return playlist;
 }
 
 export function setLoginValid({ commit, dispatch }, payload) {
     if (payload === undefined || payload === true) {
         commit(types.SET_LOGIN_VALID, true);
-        Api.getCookie().then(cookie => {
-            localStorage.setItem('cookie', JSON.stringify(cookie));
-        });
-        dispatch('updateUserPlaylists').then(playlist => {
-            if (playlist[0].name.endsWith('喜欢的音乐')) {
-                Api.getListDetail(playlist[0].id).then(list => {
-                    commit(types.UPDATE_USER_PLAYLIST, list.playlist);
-                });
-            }
-        });
+        dispatch('storeUserInfo');
+        dispatch('updateUserSignStatus');
+        dispatch('updateUserPlaylists');
     } else {
         commit(types.SET_LOGIN_VALID, false);
     }
