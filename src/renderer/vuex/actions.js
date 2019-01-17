@@ -63,7 +63,6 @@ export async function updateUserPlaylists({ state, commit, dispatch }) {
 export function setLoginValid({ commit, dispatch }, payload) {
     if (payload === undefined || payload === true) {
         commit(types.SET_LOGIN_VALID, true);
-        dispatch('storeUserInfo');
         dispatch('updateUserSignStatus');
         dispatch('updateUserPlaylists');
     } else {
@@ -86,11 +85,13 @@ export async function login({ commit, dispatch }, payload) {
 export async function logout({ commit }) {
     const resp = await Api.logout();
     if (resp == 200) {
+        commit(types.SET_USER_INFO, {});
+        commit(types.SET_USER_PLAYLISTS, []);
         commit(types.SET_LOGIN_VALID, false);
         commit(types.SET_UI_FAV_ALBUM, null);
         commit(types.SET_UI_FAV_VIDEO, null);
         commit(types.SET_UI_FAV_ARTIST, null);
-        commit(types.SET_USER_INFO, null);
+        commit(types.SET_USER_SIGN_STATUS, {});
         ['user', 'cookie'].map(k => localStorage.removeItem(k));
     }
 }
