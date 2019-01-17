@@ -51,9 +51,15 @@
                         @click="handleNameClick()">{{username}}</span>
                     <mu-button flat
                         v-if="user.loginValid"
-                        class="button-checkin"
+                        class="btn-sign"
                         color="white"
-                        @click="handleCheckIn()">签到</mu-button>
+                        :disabled="btnSignDisabled"
+                        @click="handleSign()">
+                        <mu-icon left
+                            :value="btnSignIcon"
+                            :size="16"></mu-icon>
+                        <span>{{btnSignText}}</span>
+                    </mu-button>
                 </div>
             </div>
             <mu-list>
@@ -78,15 +84,17 @@ import { platform } from 'os';
 import { remote } from 'electron';
 import { mapActions, mapState } from 'vuex';
 
-import Api from '@/util/api';
 import Routes from '@/routes';
 import SearchBox from './SearchBox.vue';
 import LoginDialog from './LoginDialog.vue';
 import { bkgImg, sizeImg, HiDpiPx } from "@/util/image";
 
-function checkIn(...args) {
-    return Api.postDailyTask(...args);
-}
+const SignIconMap = {
+    0: 'looks_5',
+    2: 'looks_3',
+    3: 'looks_two',
+    5: 'check_circle'
+};
 
 export default {
     data() {
@@ -117,10 +125,30 @@ export default {
         },
         backgroundUrlStyle() {
             return this.user.info.bkgUrl && bkgImg(sizeImg(this.user.info.bkgUrl, HiDpiPx(300), HiDpiPx(200)));
+        },
+        signLevel() {
+            let res = 0;
+            if (this.user.signStatus.pcSign) res += 2;
+            if (this.user.signStatus.mobileSign) res += 3;
+            return res;
+        },
+        btnSignDisabled() {
+            return this.signLevel === 5;
+        },
+        btnSignText() {
+            if (this.signLevel === 5) return '已签到';
+            return '未签到';
+        },
+        btnSignIcon() {
+            return SignIconMap[this.signLevel];
         }
     },
     methods: {
-        ...mapActions(['logout']),
+        ...mapActions([
+            'logout',
+            'signDailyTask',
+            'updateUserSignStatus'
+        ]),
         handleClose() {
             this.currentWindow.close();
         },
@@ -150,14 +178,23 @@ export default {
                 });
             }
         },
-        async handleCheckIn() {
-            // write them as array literal, then async functions would be
-            // executed serially ( like `async.waterfall` )
-            const points = [await checkIn(0), await checkIn(1)]
-                .map(r => r.code === 200 ? r.point : 0)
-                .reduce((a, b) => a + b);
-            if (points) {
+        async handleSign() {
+            let points = 0;
+            if (!this.user.signStatus.mobileSign) {
+                const resp = await this.signDailyTask({ type: 0 });
+                if (resp.code === 200) {
+                    points += resp.point;
+                }
+            }
+            if (!this.user.signStatus.pcSign) {
+                const resp = await this.signDailyTask({ type: 1 });
+                if (resp.code === 200) {
+                    points += resp.point;
+                }
+            }
+            if (points > 0) {
                 this.$toast.message(`签到成功，获得 ${points} 点积分`);
+                this.updateUserSignStatus();
             } else {
                 this.$toast.message('是不是已经签到过了呢 ：）');
             }
@@ -245,6 +282,9 @@ export default {
                 white-space: nowrap;
                 overflow: hidden;
                 text-overflow: ellipsis;
+            }
+            .btn-sign.disabled {
+                color: rgba(255, 255, 255, 0.7);
             }
         }
     }
