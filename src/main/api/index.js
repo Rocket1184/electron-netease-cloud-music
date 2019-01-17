@@ -561,6 +561,29 @@ export function postDailyTask(type) {
 }
 
 /**
+ * eapi 签到
+ * @param {0|1} type `0`:移动端, `1`:桌面/网页端
+ * @param {number} adid
+ * @returns {Promise<Types.DailyTaskRes>}
+ */
+export function postDailyTaskE(type, adid = 0) {
+    return client.postE({
+        url: `${BaseURL}/eapi/point/dailyTask`,
+        data: { type, adid }
+    });
+}
+
+/**
+ * 获取签到状态
+ * @returns {Promise<Types.GetDailyTaskRes>}
+ */
+export function getDailyTask() {
+    return client.postW({
+        url: `${BaseURL}/weapi/point/getDailyTask`
+    });
+}
+
+/**
  * add or remove tracks in playlist
  * @param {'add'|'del'} op opreation
  * @param {number} pid playlist id

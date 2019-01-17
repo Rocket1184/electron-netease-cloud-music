@@ -715,6 +715,13 @@ namespace Types {
         msg?: string;
     }
 
+    export interface GetDailyTaskRes extends ApiRes {
+        mobileSign: boolean;
+        pcSign: boolean;
+        share: boolean;
+        shareSina: boolean;
+    }
+
     export interface SearchSuggestArtist {
         id: number;
         name: string;
