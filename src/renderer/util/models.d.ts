@@ -26,8 +26,10 @@ declare namespace Models {
             pic: number;
             picUrl: string
         };
+        picUrl: string;
         cd: string;
         artists: Artist[];
+        artistName: string;
         lyrics: {
             qfy: Boolean;
             sfy: Boolean;
@@ -42,9 +44,10 @@ declare namespace Models {
             l?: string;
         };
         commentThreadId: number;
-        // getters
-        picUrl: string;
-        artistName: string;
+        source: {
+            name: string;
+            id: string;
+        }
     }
 
     export class PlayList {

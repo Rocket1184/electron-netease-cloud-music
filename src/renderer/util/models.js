@@ -3,7 +3,7 @@ export class User {
         this.account = o.account || {};
         this.bindings = o.bindings || [];
         this.profile = o.profile || o || {};
-        this.id = o.id || o.userId || o.account.id;
+        this.id = o.id || o.userId || this.account.id;
         this.nickname = this.profile.nickname || o.nickname;
         this.avatarUrl = this.profile.avatarUrl || o.avatarUrl;
         this.bkgUrl = this.profile.backgroundUrl || o.backgroundUrl;
@@ -17,23 +17,17 @@ export class User {
 }
 
 export class Track {
-    constructor(o) {
+    constructor(o, source) {
         this.id = o.id;
         this.name = o.name;
         this.album = o.al || o.album;
+        this.picUrl = this.album.picUrl;
         this.cd = o.cd;
         this.artists = o.ar || o.artists;
-        this.lyrics = o.lyrics;
+        this.artistName = this.artists.map(a => a.name).join(' / ');
         this.duration = o.dt || o.duration;
         this.commentThreadId = o.commentThreadId;
-    }
-
-    get picUrl() {
-        return this.album.picUrl;
-    }
-
-    get artistName() {
-        return this.artists.map(a => a.name).join(' / ');
+        this.source = o.source || source;
     }
 }
 
