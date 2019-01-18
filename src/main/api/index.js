@@ -388,6 +388,10 @@ export function submitWebLog(action, json) {
     });
 }
 
+/**
+ * @param {any} logs
+ * @returns {Promise<Types.ApiRes>}
+ */
 export function sumbitFeedback(logs) {
     return client.postW({
         url: `${BaseURL}/weapi/feedback/weblog`,
@@ -407,17 +411,23 @@ export function submitCount() {
 /**
  * tell netease I've finished listening a song
  * @param {number} id
- * @param {number} time song duration
+ * @param {number} time song duration, in seconds
+ * @param {{name: string; id: string}} source
  */
-export function submitListened(id, time) {
-    return submitWebLog('play', {
-        id,
+export function submitListened(id, time, source) {
+    let json = {
         type: 'song',
         wifi: 0,
         download: 0,
-        time: Math.round(time),
-        end: 'ui',
-    });
+        id,
+        time: Math.floor(time),
+        end: 'ui'
+    };
+    if (source.id && source.name) {
+        json.source = source.name;
+        json.sourceId = `${source.id}`;
+    }
+    return sumbitFeedback([{ action: 'play', json }]);
 }
 
 export function getVipInfo() {
