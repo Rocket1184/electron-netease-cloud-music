@@ -28,7 +28,7 @@ export async function restoreUserInfo({ commit, dispatch }) {
             dispatch('setLoginValid');
             return true;
         } else {
-            Api.updateCookie({});
+            Api.updateCookie();
             return false;
         }
     }

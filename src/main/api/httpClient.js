@@ -41,7 +41,7 @@ class HttpClient {
      * clear all cookies, and set cookie as given arguments
      * @param {string | string[] | Record<string, string>} arg 
      */
-    updateCookie(arg = {}) {
+    updateCookie(arg = '') {
         this.initCookieJar();
         if (typeof arg === 'string' || Array.isArray(arg)) {
             this.cookieJar.setCookies(arg);

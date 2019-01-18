@@ -81,7 +81,7 @@ export function refreshLogin() {
 export async function logout() {
     const resp = await client.postW({ url: `${BaseURL}/logout` });
     if (resp.code === 200) {
-        client.updateCookie({});
+        client.updateCookie();
     }
     return resp.code;
 }
