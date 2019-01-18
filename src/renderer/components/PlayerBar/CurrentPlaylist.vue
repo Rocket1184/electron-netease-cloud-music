@@ -8,6 +8,7 @@
             class="list">
             <mu-list-item v-for="(track, index) in playlist.list"
                 button
+                :ripple="false"
                 :key="track.id"
                 :id="`cur-list-${index}`"
                 @click="handleListClick(index)">
@@ -23,6 +24,14 @@
                     {{track.name}}
                     <span class="track-artist mu-item-after-text"> - {{track.artistName}}</span>
                 </mu-list-item-title>
+                <mu-tooltip v-if="track.source"
+                    placement="left"
+                    :content="track | sourceTipText">
+                    <mu-list-item-action>
+                        <mu-icon value="link"
+                            @click="handleSourceClick($event, track.source)"></mu-icon>
+                    </mu-list-item-action>
+                </mu-tooltip>
             </mu-list-item>
         </mu-list>
     </div>
@@ -32,6 +41,20 @@
 import { mapActions, mapState } from 'vuex';
 
 import CenteredTip from '@/components/CenteredTip.vue';
+
+const SourceName = {
+    list: '歌单',
+    album: '专辑',
+    artist: '歌手',
+    search: '搜索'
+};
+
+const RouteName = {
+    list: 'playlist',
+    album: 'album',
+    artist: 'artist',
+    search: 'search'
+};
 
 export default {
     computed: {
@@ -45,6 +68,27 @@ export default {
         ...mapActions(['playTrackIndex']),
         handleListClick(index) {
             this.playTrackIndex(index);
+        },
+        handleSourceClick(ev, source) {
+            ev.stopPropagation();
+            const name = RouteName[source.name];
+            switch (source.name) {
+                case 'list':
+                case 'album':
+                case 'artist':
+                    this.$router.push({ name, params: { id: source.id } });
+                    break;
+                case 'search':
+                    this.$router.push({ name, query: { keyword: source.id, type: 'song' } });
+                    break;
+                default:
+                    break;
+            }
+        }
+    },
+    filters:{
+        sourceTipText(track) {
+            return `来自${SourceName[track.source.name]}`;
         }
     },
     components: {
