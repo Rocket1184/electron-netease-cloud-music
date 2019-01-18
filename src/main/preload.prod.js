@@ -1,14 +1,13 @@
 'use strict';
 
 const { remote, ipcRenderer, shell } = require('electron');
-const { stringify } = require('querystring');
 const { EventEmitter } = require('events');
 const platform = require('os').platform();
+const versions = process.versions;
 
 window.require = function (id) {
     switch (id) {
         case 'electron':
-            const versions = process.versions;
             return {
                 remote: {
                     getGlobal: name => name === 'process' ? { versions } : null,
@@ -20,8 +19,6 @@ window.require = function (id) {
             };
         case 'os':
             return { platform: () => platform };
-        case 'querystring':
-            return { stringify };
         case 'events':
             return { EventEmitter };
         default:
@@ -29,9 +26,10 @@ window.require = function (id) {
     }
 };
 
+const arg = '--initial-settings=';
 let settings = {};
 try {
-    settings = JSON.parse(process.argv.find(v => v.startsWith('--initial-settings=')).slice(19));
+    settings = JSON.parse(process.argv.find(v => v.startsWith(arg)).slice(arg.length));
 } finally {
     window.__NCM_SETTINGS__ = settings;
 }
