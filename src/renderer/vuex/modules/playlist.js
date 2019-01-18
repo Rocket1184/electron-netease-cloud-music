@@ -15,7 +15,7 @@ const state = {
 
 const mutations = {
     [types.SET_PLAY_LIST](state, payload) {
-        state.list = payload.map(t => (t instanceof Track) ? t : new Track(t));
+        state.list = payload;
     },
     [types.CLEAR_PLAY_LIST](state) {
         state.list = [];

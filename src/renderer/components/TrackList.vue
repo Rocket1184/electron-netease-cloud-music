@@ -43,6 +43,9 @@ export default {
             type: Array,
             required: true
         },
+        source: {
+            required: false
+        },
         indexOffset: {
             type: Number,
             default: 0,
@@ -85,6 +88,7 @@ export default {
             }
             this.insertTrackIntoPlaylist({
                 tracks: [this.tracks[index]],
+                source: this.source,
                 index: this.playlist.list.length
             });
             this.$toast.message('已添加到播放列表  _(:з」∠)_');
@@ -98,6 +102,7 @@ export default {
             }
             this.insertTrackIntoPlaylist({
                 tracks: [this.tracks[index]],
+                source: this.source,
                 index: this.playlist.index
             });
             const newIndex = this.findTrackInPlaylist(index);

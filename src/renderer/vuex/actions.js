@@ -168,9 +168,10 @@ export function playPreviousTrack({ dispatch, state }) {
     dispatch('playTrackIndex', nextIndex);
 }
 
-export async function playPlaylist({ commit, dispatch, state }, payload) {
-    if (payload) {
-        commit(types.SET_PLAY_LIST, payload);
+export async function playPlaylist({ commit, dispatch, state }, { tracks, source }) {
+    if (source) {
+        const list = tracks.map(t => Object.assign({}, t, { source }));
+        commit(types.SET_PLAY_LIST, list);
     }
     const { list, loopMode } = state.playlist;
     let firstIndex;
@@ -245,9 +246,12 @@ export function nextLoopMode({ commit, state }) {
 }
 
 export function insertTrackIntoPlaylist({ commit, state }, payload) {
-    const tracks = Array.isArray(payload.tracks)
+    let tracks = Array.isArray(payload.tracks)
         ? payload.tracks
         : [payload.tracks];
+    if (payload.source) {
+        tracks = tracks.map(t => Object.assign({}, t, { source: payload.source }));
+    }
     const index = payload.index || state.playlist.index;
     commit(types.INSERT_TRACK_INTO_PLAYLIST, { tracks, index });
 }

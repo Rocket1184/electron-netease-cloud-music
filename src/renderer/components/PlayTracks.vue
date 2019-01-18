@@ -17,6 +17,9 @@ export default {
         tracks: {
             type: Array,
             required: true
+        },
+        source: {
+            required: false
         }
     },
     methods: {
@@ -24,7 +27,7 @@ export default {
             'playPlaylist'
         ]),
         handlePlayAll() {
-            this.playPlaylist(this.tracks);
+            this.playPlaylist({ tracks: this.tracks, source: this.source });
         }
     }
 };
