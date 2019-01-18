@@ -116,7 +116,9 @@ export default {
             this.audioEl.currentTime = this.timeTotal * value / 100;
         },
         submitListened() {
-            Api.submitListened(this.playing.id, this.timeTotal);
+            if (this.user.loginValid) {
+                Api.submitListened(this.playing.id, this.timeTotal, this.playing.source);
+            }
         },
         async handleFavorite() {
             if (!this.user.loginValid || !this.playing) {
