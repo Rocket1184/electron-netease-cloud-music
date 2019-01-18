@@ -53,11 +53,13 @@
             </div>
         </div>
         <div class="tracks">
-            <PlayTracks :tracks="album.songs"></PlayTracks>
+            <PlayTracks :source="trackSource"
+                :tracks="album.songs"></PlayTracks>
             <div v-for="(tracks, name) in tracksToShow"
                 :key="name">
                 <mu-sub-header>Disk {{name}}</mu-sub-header>
-                <TrackList :tracks="tracks"></TrackList>
+                <TrackList :source="trackSource"
+                    :tracks="tracks"></TrackList>
             </div>
         </div>
     </div>
@@ -113,6 +115,12 @@ export default {
         albumDesc() {
             const d = this.album.description || '暂无专辑介绍';
             return `类型：${this.album.subType}\n\n${d}`;
+        },
+        trackSource() {
+            return {
+                name: 'album',
+                id: this.album.id
+            };
         },
         tracksToShow() {
             if (!this.album || !this.album.songs) return {};

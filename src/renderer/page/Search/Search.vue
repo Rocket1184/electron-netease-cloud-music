@@ -28,6 +28,7 @@
                 :tip="`出错了 ... 错误代码 ${this.searchErrorCode}`"></CenteredTip>
             <TrackList v-else-if="searchType === 'song'"
                 :tracks="items"
+                :source="{ name: 'search', id: $route.query.keyword }"
                 :indexOffset="searchOffset"></TrackList>
             <ArtistList v-else-if="searchType === 'artist'"
                 :list="items"></ArtistList>
@@ -114,6 +115,7 @@ export default {
             const { keyword, type = this.searchType, page = this.defaultPage } = this.$route.query;
             if (!keyword) return;
             if (!this.haveSearched) this.haveSearched = true;
+            this.searchType = type;
             this.currentPage = Number(page);
             this.isPosting = true;
             const resp = await Api.search(keyword, type, this.pageSize, this.searchOffset);

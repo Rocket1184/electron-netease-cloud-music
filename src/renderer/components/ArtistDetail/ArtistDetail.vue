@@ -31,8 +31,10 @@
             <mu-tab value="intro">艺人介绍</mu-tab>
         </mu-tabs>
         <div v-show="tab === 'hotSongs'">
-            <PlayTracks :tracks="artist.hotSongs"></PlayTracks>
-            <TrackList :tracks="artist.hotSongs"></TrackList>
+            <PlayTracks :source="trackSource"
+                :tracks="artist.hotSongs"></PlayTracks>
+            <TrackList :source="trackSource"
+                :tracks="artist.hotSongs"></TrackList>
         </div>
         <keep-alive>
             <component :is="detailCompo"
@@ -77,6 +79,12 @@ export default {
         bkgImgStyle() {
             return bkgImg(sizeImg(this.artist.detail.picUrl, 640, 300));
         },
+        trackSource() {
+            return {
+                name: 'artist',
+                id: this.artist.detail.id
+            };
+        }, 
         detailCompo() {
             return DetailCompoMap[this.tab];
         }

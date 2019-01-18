@@ -54,8 +54,10 @@
         </div>
         <div class="tracks">
             <mu-sub-header>曲目列表</mu-sub-header>
-            <PlayTracks :tracks="playlist.tracks"></PlayTracks>
-            <TrackList :tracks="tracksToShow"
+            <PlayTracks :source="trackSource"
+                :tracks="playlist.tracks"></PlayTracks>
+            <TrackList :source="trackSource"
+                :tracks="tracksToShow"
                 :indexOffset="tracksOffset"></TrackList>
             <div class="pagination"
                 v-if="playlist.tracks.length > 50">
@@ -117,6 +119,12 @@ export default {
             const t = this.playlist.tags.join('，') || '无';
             const d = this.playlist.description || '暂无歌单介绍';
             return `标签：${t}\n\n${d}`;
+        },
+        trackSource() {
+            return {
+                name: 'list',
+                id: this.playlist.id
+            };
         },
         tracksOffset() {
             return (this.currentPage - 1) * this.pageSize;
