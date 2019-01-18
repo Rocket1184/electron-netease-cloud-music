@@ -1,5 +1,4 @@
 import * as types from '../mutation-types';
-import Api from '@/util/api';
 
 let state = window.__NCM_SETTINGS__ || {
     bitRate: 'l',
@@ -15,9 +14,6 @@ const mutations = {
         Reflect.ownKeys(payload).forEach(key => {
             state[key] = payload[key];
         });
-    },
-    [types.WRITE_SETTINGS](state) {
-        Api.writeSettings(state);
     }
 };
 

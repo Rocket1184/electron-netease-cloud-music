@@ -7,6 +7,17 @@ export async function restoreSettings({ commit }) {
     commit(types.UPDATE_SETTINGS, st);
 }
 
+export async function updateSettings({ commit, state }, payload) {
+    commit(types.UPDATE_SETTINGS, payload);
+    await Api.writeSettings(state.settings);
+}
+
+export async function resetSettings({ commit }) {
+    await Api.resetSettings();
+    const st = await Api.getCurrentSettings();
+    commit(types.UPDATE_SETTINGS, st);
+}
+
 export async function storeUserInfo({ state }) {
     localStorage.setItem('user', JSON.stringify(state.user.info));
     const cookie = await Api.getCookie();
@@ -92,7 +103,7 @@ export async function logout({ commit }) {
         commit(types.SET_UI_FAV_VIDEO, null);
         commit(types.SET_UI_FAV_ARTIST, null);
         commit(types.SET_USER_SIGN_STATUS, {});
-        ['user', 'cookie'].map(k => localStorage.removeItem(k));
+        ['user', 'cookie'].forEach(k => localStorage.removeItem(k));
     }
 }
 

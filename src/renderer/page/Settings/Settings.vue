@@ -5,7 +5,8 @@
             <mu-list-item>
                 <mu-list-item-title>试听音频码率</mu-list-item-title>
                 <mu-list-item-action>
-                    <mu-select v-model="settings.bitRate">
+                    <mu-select :value="settings.bitRate"
+                        @change="setByName('bitRate', $event)">
                         <mu-option label="极高 (320 kbit/s)"
                             value="h"></mu-option>
                         <mu-option label="较高 (192 kbit/s)"
@@ -16,10 +17,10 @@
                 </mu-list-item-action>
             </mu-list-item>
             <mu-list-item button
-                @click="toggleByName('windowBorder')">
+                @click="toggleWindowBorder()">
                 <mu-list-item-title>使用系统标题栏</mu-list-item-title>
                 <mu-list-item-action>
-                    <mu-switch v-model="settings.windowBorder"
+                    <mu-switch :inputValue="settings.windowBorder"
                         color="secondary"
                         readonly></mu-switch>
                 </mu-list-item-action>
@@ -28,7 +29,7 @@
                 @click="toggleByName('autoPlay')">
                 <mu-list-item-title>启动时自动开始播放</mu-list-item-title>
                 <mu-list-item-action>
-                    <mu-switch v-model="settings.autoPlay"
+                    <mu-switch :inputValue="settings.autoPlay"
                         color="secondary"
                         readonly></mu-switch>
                 </mu-list-item-action>
@@ -37,7 +38,7 @@
                 @click="primaryPickerOpen = true">
                 <mu-list-item-title>主色调</mu-list-item-title>
                 <ColorPicker :open.sync="primaryPickerOpen"
-                    @select="setByName('themePrimaryColor', $event)"></ColorPicker>
+                    @select="setTheme('themePrimaryColor', $event)"></ColorPicker>
                 <mu-list-item-action>
                     <mu-avatar :size="24"
                         :color="settings.themePrimaryColor"></mu-avatar>
@@ -47,7 +48,7 @@
                 @click="secondaryPickerOpen = true">
                 <mu-list-item-title>强调色</mu-list-item-title>
                 <ColorPicker :open.sync="secondaryPickerOpen"
-                    @select="setByName('themeSecondaryColor', $event)"></ColorPicker>
+                    @select="setTheme('themeSecondaryColor', $event)"></ColorPicker>
                 <mu-list-item-action>
                     <mu-avatar :size="24"
                         :color="settings.themeSecondaryColor"></mu-avatar>
@@ -56,8 +57,8 @@
             <mu-list-item>
                 <mu-list-item-title>背景色调</mu-list-item-title>
                 <mu-list-item-action>
-                    <mu-select v-model="settings.themeVariety"
-                        @change="changeTheme">
+                    <mu-select :value="settings.themeVariety"
+                        @change="setTheme('themeVariety', $event)">
                         <mu-option label="亮色"
                             value="light"></mu-option>
                         <mu-option label="暗色"
@@ -67,28 +68,28 @@
             </mu-list-item>
             <mu-sub-header>存储空间</mu-sub-header>
             <mu-list-item button
-                @click="clearCache('chrome')">
+                @click="promptClearCache('chrome')">
                 <mu-list-item-title>浏览器缓存</mu-list-item-title>
                 <mu-list-item-action>
                     <span class="nowrap">{{cacheSize | humanSize}}</span>
                 </mu-list-item-action>
             </mu-list-item>
             <mu-list-item button
-                @click="clearCache('music')">
+                @click="promptClearCache('music')">
                 <mu-list-item-title>歌曲缓存</mu-list-item-title>
                 <mu-list-item-action>
                     <span class="nowrap">{{musicSize | humanSize}}</span>
                 </mu-list-item-action>
             </mu-list-item>
             <mu-list-item button
-                @click="clearCache('lyric')">
+                @click="promptClearCache('lyric')">
                 <mu-list-item-title>歌词缓存</mu-list-item-title>
                 <mu-list-item-action>
                     <span class="nowrap">{{lyricSize | humanSize}}</span>
                 </mu-list-item-action>
             </mu-list-item>
             <mu-list-item button
-                @click="wipeAppData">
+                @click="promptWipeAppData()">
                 <mu-list-item-title>所有应用数据</mu-list-item-title>
                 <mu-list-item-action>
                     <span class="nowrap">{{dataSize | humanSize}}</span>
@@ -125,12 +126,27 @@
 
 <script>
 import { ipcRenderer, remote, shell } from 'electron';
+import { mapState, mapActions } from 'vuex';
 import MuseUI from 'muse-ui';
 
-import ColorPicker from './ColorPicker.vue';
-import * as types from '@/vuex/mutation-types';
 import Api from '@/util/api';
+import ColorPicker from './ColorPicker.vue';
 import { humanSize } from '@/util/formatter';
+
+const browserWindow = remote.getCurrentWindow();
+const webContents = remote.getCurrentWebContents();
+
+const CacheName = {
+    chrome: '浏览器',
+    music: '歌曲',
+    lyric: '歌词'
+};
+
+const CacheClearFunc = {
+    chrome: resolve => webContents.session.clearCache(() => resolve(true)),
+    music: resolve => Api.clearCache('music').then(() => resolve(true)),
+    lyric: resolve => Api.clearCache('lyric').then(() => resolve(true)),
+};
 
 const versions = remote.getGlobal('process').versions;
 
@@ -149,36 +165,36 @@ export default {
             musicSize: 0,
             lyricSize: 0,
             dataSize: 0,
-            versionName: '',
-            settings: {}
+            versionName: ''
         };
     },
+    computed: {
+        ...mapState(['settings'])
+    },
     methods: {
+        ...mapActions([
+            'updateSettings',
+            'resetSettings'
+        ]),
         refreshSize() {
-            remote.getCurrentWebContents().session.getCacheSize(s => this.cacheSize = s);
+            webContents.session.getCacheSize(s => this.cacheSize = s);
             Api.getDataSize('all').then(s => this.dataSize = s.size);
             Api.getDataSize('music').then(s => this.musicSize = s.size);
             Api.getDataSize('lyric').then(s => this.lyricSize = s.size);
         },
-        saveSettings() {
-            this.$store.commit(types.UPDATE_SETTINGS, this.settings);
-            this.$store.commit(types.WRITE_SETTINGS);
-            this.$toast.message('设置已保存');
-        },
         toggleByName(name) {
-            if (typeof this.settings[name] === 'boolean') {
-                this.settings[name] = !this.settings[name];
-            }
+            const val = !this.settings[name];
+            return this.updateSettings({ [name]: val });
+        },
+        async toggleWindowBorder() {
+            await this.toggleByName('windowBorder');
+            this.$nextTick(() => this.recreateWindow());
         },
         setByName(name, val) {
-            if (this.settings[name] !== undefined) {
-                this.settings[name] = val;
-            }
-            if (name.startsWith('theme')) {
-                this.changeTheme();
-            }
+            return this.updateSettings({ [name]: val });
         },
-        changeTheme() {
+        async setTheme(name, val) {
+            await this.setByName(name, val);
             const id = Date.now();
             MuseUI.theme.add(id, {
                 primary: this.settings.themePrimaryColor,
@@ -186,43 +202,36 @@ export default {
             }, this.settings.themeVariety).use(id);
         },
         async clearStorage() {
-            return new Promise(resolve => remote.getCurrentWebContents().session.clearStorageData({
-                storages: ['appcache', 'cookies', 'localstorage']
-            }, resolve));
+            return new Promise(resolve => webContents.session.clearStorageData(resolve));
         },
         clearCache(type) {
-            const cacheName = {
-                chrome: '浏览器',
-                music: '歌曲',
-                lyric: '歌词'
-            }[type];
+            return new Promise((resolve, reject) => {
+                const func = CacheClearFunc[type];
+                if (func) {
+                    func(resolve);
+                } else {
+                    reject();
+                }
+            });
+        },
+        promptClearCache(type) {
+            const cacheName = CacheName[type];
             this.$confirm(
                 `${cacheName}缓存将被清除，确定吗？`,
                 '清除缓存',
-            ).then(({ result }) => {
-                if (result) {
-                    switch (type) {
-                        case 'chrome':
-                            remote.getCurrentWebContents().session.clearCache(() => {
-                                this.$toast.message('浏览器缓存清除完成');
-                            });
-                            break;
-                        case 'music':
-                            Api.clearCache('music')
-                                .then(() => this.$toast.message('歌曲缓存清除完成'));
-                            break;
-                        case 'lyric':
-                            Api.clearCache('lyric')
-                                .then(() => this.$toast.message('歌词缓存清除完成'));
-                            break;
-                        default:
-                            this.$toast.message('搞啥呢？？？');
-                    }
+            ).then(msgReturn => {
+                if (msgReturn.result === true) {
+                    return this.clearCache(type);
+                }
+                return Promise.reject();
+            }).then(result => {
+                if (result === true) {
+                    this.$toast.message(`${cacheName}缓存清除完成`);
                     this.refreshSize();
                 }
             });
         },
-        wipeAppData() {
+        promptWipeAppData() {
             this.$confirm(
                 '所有应用数据都将被清除，包括缓存以及账号登录状态，之后窗口将重新加载。确定吗？',
                 '清除所有应用数据'
@@ -230,22 +239,21 @@ export default {
                 if (result) {
                     window.onbeforeunload = null;
                     Promise.all([
+                        Api.updateCookie(),
                         this.clearStorage(),
-                        // clear cookies
-                        Api.updateCookie({}),
-                        Api.resetSettings(),
-                        this.clearCache('chrome'),
+                        this.resetSettings(),
                         this.clearCache('music'),
                         this.clearCache('lyric'),
+                        this.clearCache('chrome'),
                     ]).then(() => this.recreateWindow());
                 }
             });
         },
         launchDevTools() {
-            remote.getCurrentWindow().openDevTools();
+            browserWindow.openDevTools();
         },
         reloadWindow() {
-            remote.getCurrentWindow().reload();
+            browserWindow.reload();
         },
         recreateWindow() {
             ipcRenderer.send('recreateWindow');
@@ -268,31 +276,14 @@ export default {
     filters: {
         humanSize
     },
-    watch: {
-        ['settings']: {
-            deep: true,
-            handler(val, oldVal) {
-                if (Object.keys(oldVal).length !== 0) {
-                    this.saveSettings();
-                }
-            }
-        },
-        ['settings.windowBorder'](val, oldVal) {
-            if (oldVal !== undefined) {
-                this.$store.commit(types.WRITE_SETTINGS);
-                this.$nextTick(() => ipcRenderer.send('recreateWindow', location.href));
-            }
-        }
-    },
-    components: {
-        ColorPicker
-    },
     beforeCreate() {
-        Api.getCurrentSettings().then(s => this.settings = s);
         Api.getVersionName().then(v => this.versionName = v);
     },
     activated() {
         this.refreshSize();
+    },
+    components: {
+        ColorPicker
     }
 };
 </script>
