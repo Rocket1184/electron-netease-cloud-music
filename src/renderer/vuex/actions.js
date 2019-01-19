@@ -172,6 +172,8 @@ export async function playPlaylist({ commit, dispatch, state }, { tracks, source
     if (source) {
         const list = tracks.map(t => Object.assign({}, t, { source }));
         commit(types.SET_PLAY_LIST, list);
+    } else {
+        commit(types.SET_PLAY_LIST, tracks);
     }
     const { list, loopMode } = state.playlist;
     let firstIndex;
