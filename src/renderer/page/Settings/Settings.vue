@@ -292,11 +292,13 @@ export default {
 .settings {
     max-width: 600px;
     margin: 0 auto 100px;
-    .margin-block {
-        margin: 4px 16px;
-    }
     .nowrap {
         white-space: nowrap;
+    }
+    .mu-item-action {
+        .mu-input {
+            margin: 0;
+        }
     }
 }
 </style>
