@@ -12,28 +12,31 @@
                     <span class="artist mu-item-after-text">{{playing.artistName}}</span>
                 </div>
                 <div class="shortcut">
-                    <mu-checkbox title="喜欢"
-                        ref="chkFavorite"
-                        uncheck-icon="favorite_border"
-                        checked-icon="favorite"
-                        color="red"
-                        v-model="isFavorite"></mu-checkbox>
-                    <mu-checkbox title="收藏到歌单"
-                        ref="chkShowPlaylists"
-                        uncheck-icon="bookmark_border"
-                        checked-icon="bookmark"
-                        color="secondary"
-                        v-model="collectPopupShown"></mu-checkbox>
-                    <mu-checkbox title="循环模式"
-                        ref="chkLoopMode"
-                        :uncheck-icon="iconLoopMode"
-                        @click="handleLoopMode"
-                        color="secondary"></mu-checkbox>
+                    <div title="喜欢">
+                        <mu-checkbox ref="chkFavorite"
+                            uncheck-icon="favorite_border"
+                            checked-icon="favorite"
+                            color="red"
+                            v-model="isFavorite"></mu-checkbox>
+                    </div>
+                    <div title="收藏到歌单">
+                        <mu-checkbox ref="chkShowPlaylists"
+                            uncheck-icon="bookmark_border"
+                            checked-icon="bookmark"
+                            color="secondary"
+                            v-model="collectPopupShown"></mu-checkbox>
+                    </div>
+                    <div title="循环模式">
+                        <mu-checkbox ref="chkLoopMode"
+                            :uncheck-icon="iconLoopMode"
+                            @click="handleLoopMode"
+                            color="secondary"></mu-checkbox>
+                    </div>
                     <mu-menu :open.sync="currentListShown"
                         placement="top"
-                        popover-class="playerbar-current-list">
-                        <mu-checkbox title="播放列表"
-                            uncheck-icon="queue_music"
+                        popover-class="playerbar-current-list"
+                        title="播放列表">
+                        <mu-checkbox uncheck-icon="queue_music"
                             checked-icon="queue_music"
                             color="secondary"
                             v-model="currentListShown"></mu-checkbox>
