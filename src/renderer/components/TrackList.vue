@@ -2,7 +2,7 @@
     <div class="tracklist">
         <template v-if="tracks.length !== 0">
             <div class="list">
-                <div class="track-row"
+                <ncm-mu-dbclick-ripple class="track-row"
                     v-for="(track, index) in tracks"
                     :key="index"
                     @dblclick="handlePlay(index)">
@@ -22,7 +22,7 @@
                             <mu-icon value="playlist_add"></mu-icon>
                         </mu-button>
                     </div>
-                </div>
+                </ncm-mu-dbclick-ripple>
             </div>
         </template>
         <CenteredTip v-else
