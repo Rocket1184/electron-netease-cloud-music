@@ -1,6 +1,7 @@
-import * as types from './mutation-types';
-import { LOOP_MODE } from './modules/playlist';
 import Api from '@/util/api/index';
+import * as types from './mutation-types';
+import { Track, Video } from '@/util/models';
+import { LOOP_MODE } from './modules/playlist';
 
 export async function restoreSettings({ commit }) {
     const st = await Api.getCurrentSettings();
@@ -105,6 +106,44 @@ export async function logout({ commit }) {
         commit(types.SET_USER_SIGN_STATUS, {});
         ['user', 'cookie'].forEach(k => localStorage.removeItem(k));
     }
+}
+
+export async function search({ commit }, { keyword, type, limit = 20, offset = 0 }) {
+    commit(types.SET_SEARCH_PENDING, true);
+    commit(types.SET_SEARCH_PARAM, { keyword, type, offset });
+    const resp = await Api.search(keyword, type, limit, offset);
+    if (resp.code === 200) {
+        let result = {
+            total: 0,
+            items: null
+        };
+        switch (type) {
+            case 'song':
+                result.total = resp.result.songCount;
+                result.items = resp.result.songs.map(i => new Track(i)) || [];
+                break;
+            case 'artist':
+                result.total = resp.result.artistCount;
+                result.items = resp.result.artists || [];
+                break;
+            case 'album':
+                result.total = resp.result.albumCount;
+                result.items = resp.result.albums || [];
+                break;
+            case 'playlist':
+                result.total = resp.result.playlistCount;
+                result.items = resp.result.playlists || [];
+                break;
+            case 'video':
+                result.total = resp.result.videoCount;
+                result.items = resp.result.videos.map(v => new Video(v)) || [];
+                break;
+        }
+        commit(types.SET_SEARCH_RESULT, result);
+    } else {
+        commit(types.SET_SEARCH_ERROR, resp);
+    }
+    commit(types.SET_SEARCH_PENDING, false);
 }
 
 export async function updateUiAudioSrc({ commit, state }, { ignoreCache = false } = {}) {

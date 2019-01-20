@@ -6,6 +6,17 @@ const state = {
     paused: true,
     lyric: {},
     lyricSeq: 0,
+    search: {
+        pending: false,
+        keyword: '',
+        type: '',
+        offset: 0,
+        result: {
+            total: 0,
+            items: null
+        },
+        error: null
+    },
     loginPending: false,
     collectPopupShow: false,
     collectTrackIds: [],
@@ -69,6 +80,22 @@ const mutations = {
         } else {
             state.loginPending = false;
         }
+    },
+    [types.SET_SEARCH_PARAM](state, { keyword, type, offset }) {
+        state.search.keyword = keyword;
+        state.search.type = type;
+        state.search.offset = offset;
+    },
+    [types.SET_SEARCH_PENDING](state, payload) {
+        state.search.pending = payload;
+    },
+    [types.SET_SEARCH_RESULT](state, payload) {
+        state.search.error = null;
+        state.search.result = payload;
+    },
+    [types.SET_SEARCH_ERROR](state, payload) {
+        state.search.error = payload;
+        state.search.result = { total: 0, items: null };
     },
     [types.SHOW_COLLECT_POPUP](state) {
         state.collectPopupShow = true;
