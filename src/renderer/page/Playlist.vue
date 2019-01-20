@@ -55,6 +55,11 @@ export default {
             'setUiRelatedPlaylists'
         ]),
         loadPlaylist(id) {
+            if (this.ui.temp.playlist && id == this.ui.temp.playlist.id) {
+                this.detailLoading = false;
+                this.relatedLoading = false;
+                return;
+            }
             this.detailLoading = true;
             this.relatedLoading = true;
             this.setUiTempPlaylist(id)

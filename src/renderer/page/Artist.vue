@@ -6,7 +6,7 @@
             </mu-list>
         </div>
         <ArtistDetail slot="detail"
-            v-if="ui.temp.artist.detail"
+            v-if="!detailLoading"
             :artist="ui.temp.artist"></ArtistDetail>
     </ListDetailLayout>
 </template>
@@ -21,8 +21,7 @@ import ListDetailLayout from '@/components/ListDetailLayout.vue';
 export default {
     data() {
         return {
-            detailLoading: false,
-            relatedLoading: false
+            detailLoading: true
         };
     },
     computed: {
@@ -33,6 +32,10 @@ export default {
             'setUiTempArtist'
         ]),
         async loadArtist(id) {
+            if (this.ui.temp.artist.detail && id == this.ui.temp.artist.detail.id) {
+                this.detailLoading = false;
+                return;
+            }
             this.detailLoading = true;
             await this.setUiTempArtist(id);
             this.detailLoading = false;

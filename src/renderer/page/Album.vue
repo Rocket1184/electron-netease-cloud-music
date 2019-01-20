@@ -25,7 +25,7 @@
             </div>
         </div>
         <AlbumDetail slot="detail"
-            v-if="ui.temp.album"
+            v-if="!detailLoading"
             :album="ui.temp.album"></AlbumDetail>
     </ListDetailLayout>
 </template>
@@ -41,8 +41,8 @@ import ListDetailLayout from '@/components/ListDetailLayout.vue';
 export default {
     data() {
         return {
-            detailLoading: false,
-            relatedLoading: false
+            detailLoading: true,
+            relatedLoading: true
         };
     },
     computed: {
@@ -54,6 +54,11 @@ export default {
             'setUiRelatedAlbums'
         ]),
         loadAlbum(id) {
+            if (this.ui.temp.album && id == this.ui.temp.album.id) {
+                this.detailLoading = false;
+                this.relatedLoading = false;
+                return;
+            }
             this.detailLoading = true;
             this.relatedLoading = true;
             this.setUiTempAlbum(id)

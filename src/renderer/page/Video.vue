@@ -6,7 +6,7 @@
             </mu-list>
         </div>
         <VideoDetail slot="detail"
-            v-if="ui.temp.video"
+            v-if="!detailLoading"
             :video="ui.temp.video"></VideoDetail>
     </ListDetailLayout>
 </template>
@@ -32,6 +32,10 @@ export default {
             'setUiTempVideo'
         ]),
         async loadVideo(id) {
+            if (this.ui.temp.video && id == this.ui.temp.video.id) {
+                this.detailLoading = false;
+                return;
+            }
             this.detailLoading = true;
             await this.setUiTempVideo({ id, type: Number(id.length >= 30) });
             this.detailLoading = false;
