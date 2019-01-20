@@ -14,10 +14,13 @@
         </div>
         <div class="info">
             <span class="name">{{playing.name}}</span>
-            <p class="producer">
+            <p class="source">
                 <template v-if="playing.artists">
                     <span>歌手：</span>
-                    <template v-for="ar in playing.artists">
+                    <template v-for="(ar, index) in playing.artists">
+                        <span v-if="index !== 0"
+                            :key="index"
+                            class="sep">/</span>
                         <router-link v-if="ar.id !== 0"
                             class="artist link"
                             :to="{ name: 'artist', params: { id: ar.id } }"
@@ -27,6 +30,7 @@
                             :key="ar.id">{{ar.name}}</span>
                     </template>
                 </template>
+                <span class="sep"></span>
                 <template v-if="playing.album">
                     <span>专辑：</span>
                     <router-link :to="{ name: 'album', params: { id: playing.album.id } }"
@@ -297,19 +301,19 @@ export default {
             font-size: 28px;
             margin-top: 18px;
         }
-        .producer {
+        .source {
             user-select: none;
-        }
-        .artist {
-            margin-right: 0.5em;
-        }
-        .artist,
-        .album {
-            .ellipsis-text;
-            color: unset;
-        }
-        .link:hover {
-            text-decoration: underline;
+            .sep {
+                margin: 0 6px;
+            }
+            .artist,
+            .album {
+                .ellipsis-text;
+                color: unset;
+            }
+            .link:hover {
+                text-decoration: underline;
+            }
         }
         .lyric {
             height: 340px;
