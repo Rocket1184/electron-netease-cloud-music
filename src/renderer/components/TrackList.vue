@@ -6,7 +6,14 @@
                     v-for="(track, index) in tracks"
                     :key="index"
                     @dblclick="handlePlay(index)">
-                    <div class="track-col index">{{index + 1 + indexOffset}}</div>
+                    <div class="track-col index">
+                        <div class="index-num">{{index + 1 + indexOffset}}</div>
+                        <div class="index-btn"
+                            title="播放"
+                            @click="handlePlay(index)">
+                            <mu-icon value="play_circle_outline"></mu-icon>
+                        </div>
+                    </div>
                     <div class="track-col name">{{track.name}}</div>
                     <div class="track-col artist">{{track.artistName}}</div>
                     <div class="track-col duration">{{track.duration / 1000 | shortTime}}</div>
@@ -118,8 +125,10 @@ export default {
 <style lang="less">
 .tracklist {
     width: 100%;
+    user-select: none;
     .list {
         .track-row {
+            position: relative;
             display: flex;
             flex-direction: row;
             justify-content: space-between;
@@ -131,6 +140,32 @@ export default {
                 flex: 1 0 0;
                 max-width: 48px;
                 text-align: center;
+                position: relative;
+                .index-num,
+                .index-btn {
+                    position: absolute;
+                    top: 0;
+                    left: 0;
+                    width: 100%;
+                    height: 100%;
+                    transition-property: opacity;
+                    transition-duration: 0.3s;
+                }
+                .index-btn {
+                    opacity: 0;
+                    cursor: pointer;
+                    .mu-icon {
+                        line-height: 48px;
+                    }
+                }
+                &:hover {
+                    .index-btn {
+                        opacity: 0.6;
+                    }
+                    .index-num {
+                        opacity: 0;
+                    }
+                }
             }
             .name,
             .artist {
