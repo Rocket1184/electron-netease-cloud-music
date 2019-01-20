@@ -40,7 +40,8 @@
                             checked-icon="queue_music"
                             color="secondary"
                             v-model="currentListShown"></mu-checkbox>
-                        <CurrentPlaylist slot="content"></CurrentPlaylist>
+                        <CurrentPlaylist slot="content"
+                            @navigate="currentListShown = false"></CurrentPlaylist>
                     </mu-menu>
                 </div>
             </div>

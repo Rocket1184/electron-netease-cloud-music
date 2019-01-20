@@ -84,9 +84,10 @@ export default {
                 default:
                     break;
             }
+            this.$emit('navigate');
         }
     },
-    filters:{
+    filters: {
         sourceTipText(track) {
             return `来自${SourceName[track.source.name]}`;
         }
