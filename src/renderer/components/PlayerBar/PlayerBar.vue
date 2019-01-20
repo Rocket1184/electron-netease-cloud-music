@@ -1,10 +1,14 @@
 <template>
     <div class="player-bar-wrapper">
-        <router-link to='/player'
-            class="cover">
+        <div class="cover"
+            @click="handleCoverClick">
             <div class="img"
-                :style="coverImgStyle"></div>
-        </router-link>
+                :style="coverImgStyle">
+            </div>
+            <mu-icon :value="coverIcon"
+                :size="48"
+                color="white"></mu-icon>
+        </div>
         <div class="info">
             <div class="desc">
                 <div class="name">
@@ -113,6 +117,13 @@ export default {
             'toggleCollectPopup',
             'nextLoopMode'
         ]),
+        handleCoverClick() {
+            if (this.$route.name === 'player') {
+                this.$router.back();
+                return;
+            }
+            this.$router.push({ name: 'player' });
+        },
         handlePlayOrPause() {
             this.ui.audioSrc && (this.audioEl.paused ? this.playAudio() : this.pauseAudio());
         },
@@ -169,6 +180,10 @@ export default {
                 return bkgImg(sizeImg(this.playing.album.picUrl, HiDpiPx(64)));
             }
             return '';
+        },
+        coverIcon() {
+            if (this.$route.name === 'player') return 'fullscreen_exit';
+            return 'fullscreen';
         },
         songProgress() {
             return 100 * this.timeCurrent / this.timeTotal || 0;
@@ -348,11 +363,35 @@ export default {
     height: 64px;
     position: relative;
     .cover {
+        cursor: pointer;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        background-color: black;
         .img {
             background-image: url('~assets/img/cover_default.webp');
             background-size: cover;
             width: 64px;
             height: 64px;
+            transition: 0.3s opacity;
+        }
+        .mu-icon {
+            opacity: 0;
+            transition: 0.3s opacity;
+            position: absolute;
+        }
+        &:hover {
+            .img {
+                opacity: 0.65;
+            }
+            .mu-icon {
+                opacity: 1;
+            }
+        }
+        &:active {
+            .img {
+                opacity: 0.3;
+            }
         }
     }
     .info {
