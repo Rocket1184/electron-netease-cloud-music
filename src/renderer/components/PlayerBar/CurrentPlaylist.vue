@@ -24,14 +24,11 @@
                     {{track.name}}
                     <span class="track-artist mu-item-after-text"> - {{track.artistName}}</span>
                 </mu-list-item-title>
-                <mu-tooltip v-if="track.source"
-                    placement="left"
-                    :content="track | sourceTipText">
-                    <mu-list-item-action>
-                        <mu-icon value="link"
-                            @click="handleSourceClick($event, track.source)"></mu-icon>
-                    </mu-list-item-action>
-                </mu-tooltip>
+                <mu-list-item-action v-if="track.source"
+                    :title="sourceTipText(track)">
+                    <mu-icon value="link"
+                        @click="handleSourceClick($event, track.source)"></mu-icon>
+                </mu-list-item-action>
             </mu-list-item>
         </mu-list>
     </div>
@@ -69,6 +66,9 @@ export default {
         handleListClick(index) {
             this.playTrackIndex(index);
         },
+        sourceTipText(track) {
+            return `来自${SourceName[track.source.name]}`;
+        },
         handleSourceClick(ev, source) {
             ev.stopPropagation();
             const name = RouteName[source.name];
@@ -85,11 +85,6 @@ export default {
                     break;
             }
             this.$emit('navigate');
-        }
-    },
-    filters: {
-        sourceTipText(track) {
-            return `来自${SourceName[track.source.name]}`;
         }
     },
     components: {
