@@ -8,6 +8,7 @@ import Message from 'muse-ui-message';
 import App from './App.vue';
 import store from './vuex/store';
 import routes from './routes';
+import DblclickRipple from './util/dblclick-ripple';
 
 const settings = window.__NCM_SETTINGS__;
 
@@ -27,6 +28,7 @@ Vue.use(Router);
 Vue.use(MuseUI);
 Vue.use(Toast);
 Vue.use(Message);
+Vue.use(DblclickRipple);
 
 new Vue({
     store,
