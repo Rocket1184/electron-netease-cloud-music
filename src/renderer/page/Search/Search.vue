@@ -1,51 +1,48 @@
 <template>
     <div class="search">
-        <div class="search-tab"
-            v-elevation="4">
-            <mu-tabs inverse
-                :value="searchType"
-                @change="handleTabChange">
-                <mu-tab value="song">单曲</mu-tab>
-                <mu-tab value="artist">歌手</mu-tab>
-                <mu-tab value="album">专辑</mu-tab>
-                <mu-tab value="playlist">歌单</mu-tab>
-                <mu-tab value="video">视频</mu-tab>
-                <mu-tab value="user">用户</mu-tab>
-            </mu-tabs>
-        </div>
-        <div class="search-content"
-            ref="searchContent">
+        <mu-tabs inverse
+            v-elevation="4"
+            :value="searchType"
+            @change="handleTabChange">
+            <mu-tab value="song">单曲</mu-tab>
+            <mu-tab value="artist">歌手</mu-tab>
+            <mu-tab value="album">专辑</mu-tab>
+            <mu-tab value="playlist">歌单</mu-tab>
+            <mu-tab value="video">视频</mu-tab>
+            <mu-tab value="user">用户</mu-tab>
+        </mu-tabs>
+        <div class="search-content">
             <CenteredTip v-if="searchType === 'user'"></CenteredTip>
-            <CenteredTip v-else-if="!haveSearched"
+            <CenteredLoading v-else-if="ui.search.pending"></CenteredLoading>
+            <CenteredTip v-else-if="haveSearched === false"
                 icon="search"
                 tip="右上角搜索框内输入，回车搜索！"></CenteredTip>
-            <CenteredLoading v-else-if="isPosting"></CenteredLoading>
-            <CenteredTip v-else-if="!haveValidResults"
+            <CenteredTip v-else-if="ui.search.result.items && ui.search.result.items.length === 0"
                 icon="inbox"
                 tip="哎呀～什么都没找到 ..."></CenteredTip>
-            <CenteredTip v-else-if="searchError"
+            <CenteredTip v-else-if="ui.search.error"
                 icon="error_outline"
-                :tip="`出错了 ... 错误代码 ${this.searchErrorCode}`"></CenteredTip>
+                :tip="`出错了 ... ${ui.search.error.code}：${ui.search.error.msg}`"></CenteredTip>
             <TrackList v-else-if="searchType === 'song'"
-                :tracks="items"
+                :tracks="ui.search.result.items"
                 :source="{ name: 'search', id: $route.query.keyword }"
                 :indexOffset="searchOffset"></TrackList>
             <ArtistList v-else-if="searchType === 'artist'"
-                :list="items"></ArtistList>
+                :list="ui.search.result.items"></ArtistList>
             <AlbumList v-else-if="searchType === 'album'"
                 showArtist
-                :list="items"></AlbumList>
+                :list="ui.search.result.items"></AlbumList>
             <PlaylistList v-else-if="searchType === 'playlist'"
-                :list="items"></PlaylistList>
+                :list="ui.search.result.items"></PlaylistList>
             <VideoList v-else-if="searchType === 'video'"
                 showBadge
-                :videos="items"></VideoList>
+                :videos="ui.search.result.items"></VideoList>
             <CenteredTip v-else
                 icon="bug_report"
                 tip="为什么会这样呢 ..."></CenteredTip>
             <div class="pagination"
-                v-if="totalItems > 20">
-                <mu-pagination :total="totalItems"
+                v-if="paginationShow">
+                <mu-pagination :total="ui.search.result.total"
                     :current="currentPage"
                     :page-size="pageSize"
                     @change="handlePageChange">
@@ -56,8 +53,7 @@
 </template>
 
 <script>
-import Api from '@/util/api';
-import { Track, Video } from '@/util/models';
+import { mapActions, mapState } from 'vuex';
 
 import TrackList from '@/components/TrackList.vue';
 import CenteredTip from '@/components/CenteredTip.vue';
@@ -72,35 +68,23 @@ export default {
     data() {
         return {
             haveSearched: false,
-            haveValidResults: false,
-            isPosting: false,
-            searchError: false,
-            searchErrorCode: null,
             searchType: 'song',
-            currentPage: 1,
-            defaultPage: 1,
             pageSize: 20,
-            items: [],
-            totalItems: 0
+            currentPage: 1
         };
     },
     computed: {
+        ...mapState(['ui']),
         searchOffset() {
             return (this.currentPage - 1) * this.pageSize;
+        },
+        paginationShow() {
+            const { pending, result: { total } } = this.ui.search;
+            return !pending && total > this.pageSize;
         }
     },
     methods: {
-        handleTabChange(val) {
-            this.searchType = val;
-            this.currentPage = this.defaultPage;
-            this.totalItems = 0;
-            this.updateQueryString();
-        },
-        handlePageChange(newIndex) {
-            this.$refs.searchContent.scrollTo({ top: 0 });
-            this.currentPage = newIndex;
-            this.updateQueryString();
-        },
+        ...mapActions(['search']),
         updateQueryString() {
             this.$router.push({
                 name: 'search',
@@ -111,47 +95,24 @@ export default {
                 }
             });
         },
+        handleTabChange(val) {
+            this.searchType = val;
+            this.currentPage = 1;
+            this.updateQueryString();
+        },
+        handlePageChange(val) {
+            this.currentPage = val;
+            this.updateQueryString();
+        },
         async handleSearch() {
-            const { keyword, type = this.searchType, page = this.defaultPage } = this.$route.query;
+            const { keyword, type = this.searchType, page = 1 } = this.$route.query;
             if (!keyword) return;
+            const offset = (page - 1) * this.pageSize;
+            if (keyword === this.ui.search.keyword &&
+                type === this.ui.search.type &&
+                offset === this.ui.search.offset) return;
+            await this.search({ keyword, type, limit: this.pageSize, offset });
             if (!this.haveSearched) this.haveSearched = true;
-            this.searchType = type;
-            this.currentPage = Number(page);
-            this.isPosting = true;
-            const resp = await Api.search(keyword, type, this.pageSize, this.searchOffset);
-            this.isPosting = false;
-            if (resp.code === 200) {
-                this.searchError = false;
-                this.searchErrorCode = -1;
-                switch (this.searchType) {
-                    case 'song':
-                        this.totalItems = resp.result.songCount;
-                        this.items = resp.result.songs.map(i => new Track(i)) || [];
-                        break;
-                    case 'artist':
-                        this.totalItems = resp.result.artistCount;
-                        this.items = resp.result.artists || [];
-                        break;
-                    case 'album':
-                        this.totalItems = resp.result.albumCount;
-                        this.items = resp.result.albums || [];
-                        break;
-                    case 'playlist':
-                        this.totalItems = resp.result.playlistCount;
-                        this.items = resp.result.playlists || [];
-                        break;
-                    case 'video':
-                        this.totalItems = resp.result.videoCount;
-                        this.items = resp.result.videos.map(v => new Video(v)) || [];
-                        break;
-                    default:
-                        break;
-                }
-                this.haveValidResults = Boolean(this.items.length);
-            } else {
-                this.searchError = true;
-                this.searchErrorCode = resp.code;
-            }
         }
     },
     beforeRouteEnter(to, from, next) {
