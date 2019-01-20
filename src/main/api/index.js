@@ -423,7 +423,7 @@ export function submitListened(id, time, source) {
         time: Math.floor(time),
         end: 'ui'
     };
-    if (source.id && source.name) {
+    if (source && source.id && source.name) {
         json.source = source.name;
         json.sourceId = `${source.id}`;
     }
