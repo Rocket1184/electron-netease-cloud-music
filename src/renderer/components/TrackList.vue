@@ -15,7 +15,19 @@
                         </div>
                     </div>
                     <div class="track-col name">{{track.name}}</div>
-                    <div class="track-col artist">{{track.artistName}}</div>
+                    <div class="track-col artist">
+                        <template v-for="(ar, index) in track.artists">
+                            <span v-if="index !== 0"
+                                :key="'sep' + index"
+                                class="sep">/</span>
+                            <router-link v-if="ar.id !== 0"
+                                class="link"
+                                :to="{ name: 'artist', params: { id: ar.id } }"
+                                :key="ar.id">{{ar.name}}</router-link>
+                            <span v-else
+                                :key="'ar' + index">{{ar.name}}</span>
+                        </template>
+                    </div>
                     <div class="track-col duration">{{track.duration / 1000 | shortTime}}</div>
                     <div class="track-col buttons">
                         <mu-button icon
@@ -132,6 +144,9 @@ export default {
             display: flex;
             flex-direction: row;
             justify-content: space-between;
+            .mu-ripple-wrapper {
+                z-index: -1;
+            }
             .track-col {
                 height: 48px;
                 line-height: 48px;
@@ -174,6 +189,15 @@ export default {
                 overflow: hidden;
                 text-overflow: ellipsis;
                 padding: 0 8px;
+                .link {
+                    color: inherit;
+                    &:hover {
+                        text-decoration: underline;
+                    }
+                }
+                .sep {
+                    margin: 0 6px;
+                }
             }
             .duration {
                 flex: 0 0 64px;
