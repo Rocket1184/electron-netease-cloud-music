@@ -144,9 +144,6 @@ export default {
             display: flex;
             flex-direction: row;
             justify-content: space-between;
-            .mu-ripple-wrapper {
-                z-index: -1;
-            }
             .track-col {
                 height: 48px;
                 line-height: 48px;
@@ -189,6 +186,7 @@ export default {
                 overflow: hidden;
                 text-overflow: ellipsis;
                 padding: 0 8px;
+                z-index: 1;
                 .link {
                     color: inherit;
                     &:hover {

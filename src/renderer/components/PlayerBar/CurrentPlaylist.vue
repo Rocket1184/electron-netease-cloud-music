@@ -97,10 +97,8 @@ export default {
     height: inherit;
     .list {
         padding: 0;
-        .mu-ripple-wrapper {
-            z-index: -1;
-        }
         .mu-item-action {
+            z-index: 1;
             width: 36px;
             min-width: 0;
         }
