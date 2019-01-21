@@ -4,9 +4,11 @@
             :src="ui.audioSrc"></audio>
         <AppNav></AppNav>
         <div class="router-view">
-            <keep-alive :include="/^page-\w+$/">
-                <router-view></router-view>
-            </keep-alive>
+            <transition :name="transitionName">
+                <keep-alive :include="/^page-\w+$/">
+                    <router-view></router-view>
+                </keep-alive>
+            </transition>
         </div>
         <PlayerBar></PlayerBar>
         <CollectPopup></CollectPopup>
@@ -21,10 +23,16 @@ import PlayerBar from '@/components/PlayerBar/PlayerBar.vue';
 import CollectPopup from '@/components/CollectPopup.vue';
 
 export default {
+    name: 'app',
     components: {
         AppNav,
         PlayerBar,
         CollectPopup
+    },
+    data() {
+        return {
+            transitionName: 'fade-down'
+        };
     },
     methods: {
         ...mapActions([
@@ -46,6 +54,22 @@ export default {
         };
     },
     created() {
+        // route stack is empty when created in 'abstract' mode
+        this.$router.push({ name: 'index' });
+        this.$router.beforeEach((to, from, next) => {
+            const { index, stack } = this.$router.history;
+            const lastRoute = stack[index - 1 >= 0 ? index - 1 : 0];
+            if (to.name === 'player') {
+                this.transitionName = 'player-in';
+            } else if (from.name === 'player') {
+                this.transitionName = 'player-out';
+            } else if (to.name === 'index' || to.path === lastRoute.path) {
+                this.transitionName = 'fade-down';
+            } else {
+                this.transitionName = 'fade-up';
+            }
+            next();
+        });
         this.restoreSettings().then(() => {
             if (this.settings.autoPlay) {
                 this.playAudio();

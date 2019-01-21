@@ -33,8 +33,14 @@ Vue.use(Toast);
 Vue.use(Message);
 Vue.use(DblclickRipple);
 
+const router = new Router({
+    // we an access route stack via `this.$router.history.stack`
+    mode: 'abstract',
+    routes
+});
+
 new Vue({
     store,
-    router: new Router({ routes }),
+    router,
     render: h => h(App)
 }).$mount(node);
