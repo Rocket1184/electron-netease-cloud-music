@@ -8,7 +8,6 @@
             class="list">
             <mu-list-item v-for="(track, index) in playlist.list"
                 button
-                :ripple="false"
                 :key="track.id"
                 :id="`cur-list-${index}`"
                 @click="handleListClick(index)">
@@ -98,6 +97,9 @@ export default {
     height: inherit;
     .list {
         padding: 0;
+        .mu-ripple-wrapper {
+            z-index: -1;
+        }
         .mu-item-action {
             width: 36px;
             min-width: 0;
