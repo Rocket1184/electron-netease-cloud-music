@@ -1,5 +1,5 @@
 <template>
-    <div class="search">
+    <div class="search ncm-page">
         <mu-tabs inverse
             v-elevation="4"
             :value="searchType"

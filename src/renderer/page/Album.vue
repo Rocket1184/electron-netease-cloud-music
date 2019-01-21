@@ -1,5 +1,6 @@
 <template>
-    <ListDetailLayout :detailLoading="detailLoading">
+    <ListDetailLayout class="ncm-page"
+        :detailLoading="detailLoading">
         <div slot="list"
             class="playlist-side">
             <mu-list>

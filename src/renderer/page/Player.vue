@@ -1,5 +1,5 @@
 <template>
-    <div class="player">
+    <div class="player ncm-page">
         <div class="bkg">
             <canvas ref="cvs"
                 width="1000"
@@ -226,9 +226,8 @@ export default {
 }
 
 .player {
+    background-color: transparent !important;
     color: black;
-    height: 100%;
-    position: relative;
     display: flex;
     flex-direction: row;
     .bkg {

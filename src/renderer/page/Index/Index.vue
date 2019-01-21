@@ -1,37 +1,39 @@
 <template>
-    <div class="index-wrapper">
-        <div class="index-actions">
-            <ActionItem v-for="a in action"
-                :key="a.title"
-                :to="a.to"
-                :icon="a.icon"
-                :title="a.title">
-            </ActionItem>
+    <div class="index ncm-page">
+        <div class="index-wrapper">
+            <div class="index-actions">
+                <ActionItem v-for="a in action"
+                    :key="a.title"
+                    :to="a.to"
+                    :icon="a.icon"
+                    :title="a.title">
+                </ActionItem>
+            </div>
+            <mu-card class="index-card">
+                <div class="h-title">推荐歌单</div>
+                <div class="h-scroller">
+                    <ScrollerItem v-for="p in playlist"
+                        :key="p.id"
+                        :to="{ name: 'playlist', params: { id: p.id } }"
+                        :img="p.picUrl"
+                        subIcon="headset"
+                        :subTitle="p.playcount || p.playCount"
+                        :desc="p.name"></ScrollerItem>
+                </div>
+            </mu-card>
+            <mu-card class="index-card">
+                <div class="h-title">推荐 MV</div>
+                <div class="h-scroller">
+                    <ScrollerItem v-for="v in mv"
+                        :key="v.id"
+                        :to="{ name: 'video', params: { id: v.id } }"
+                        :img="v.picUrl"
+                        subIcon="videocam"
+                        :subTitle="v.playCount"
+                        :desc="v.name"></ScrollerItem>
+                </div>
+            </mu-card>
         </div>
-        <mu-card class="index-card">
-            <div class="h-title">推荐歌单</div>
-            <div class="h-scroller">
-                <ScrollerItem v-for="p in playlist"
-                    :key="p.id"
-                    :to="{ name: 'playlist', params: { id: p.id } }"
-                    :img="p.picUrl"
-                    subIcon="headset"
-                    :subTitle="p.playcount || p.playCount"
-                    :desc="p.name"></ScrollerItem>
-            </div>
-        </mu-card>
-        <mu-card class="index-card">
-            <div class="h-title">推荐 MV</div>
-            <div class="h-scroller">
-                <ScrollerItem v-for="v in mv"
-                    :key="v.id"
-                    :to="{ name: 'video', params: { id: v.id } }"
-                    :img="v.picUrl"
-                    subIcon="videocam"
-                    :subTitle="v.playCount"
-                    :desc="v.name"></ScrollerItem>
-            </div>
-        </mu-card>
     </div>
 </template>
 

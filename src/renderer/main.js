@@ -17,7 +17,8 @@ const node = document.createElement('div');
 document.body.appendChild(node);
 
 MuseUI.theme.addCreateTheme((theme) => {
-    return `.action-item:hover .mu-icon{color:${theme.background.default};}`;
+    return `.ncm-page{background-color:${theme.background.default}}
+.action-item:hover .mu-icon{color:${theme.background.default}}`;
 });
 
 MuseUI.theme.add('ncm', {

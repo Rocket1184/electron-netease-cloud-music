@@ -1,126 +1,128 @@
 <template>
-    <div class="settings">
-        <mu-list>
-            <mu-sub-header>基本设置</mu-sub-header>
-            <mu-list-item>
-                <mu-list-item-title>试听音频码率</mu-list-item-title>
-                <mu-list-item-action>
-                    <mu-select :value="settings.bitRate"
-                        @change="setByName('bitRate', $event)">
-                        <mu-option label="极高 (320 kbit/s)"
-                            value="h"></mu-option>
-                        <mu-option label="较高 (192 kbit/s)"
-                            value="m"></mu-option>
-                        <mu-option label="标准 (128 kbit/s)"
-                            value="l"></mu-option>
-                    </mu-select>
-                </mu-list-item-action>
-            </mu-list-item>
-            <mu-list-item button
-                @click="toggleWindowBorder()">
-                <mu-list-item-title>使用系统标题栏</mu-list-item-title>
-                <mu-list-item-action>
-                    <mu-switch :inputValue="settings.windowBorder"
-                        color="secondary"
-                        readonly></mu-switch>
-                </mu-list-item-action>
-            </mu-list-item>
-            <mu-list-item button
-                @click="toggleByName('autoPlay')">
-                <mu-list-item-title>启动时自动开始播放</mu-list-item-title>
-                <mu-list-item-action>
-                    <mu-switch :inputValue="settings.autoPlay"
-                        color="secondary"
-                        readonly></mu-switch>
-                </mu-list-item-action>
-            </mu-list-item>
-            <mu-list-item button
-                @click="primaryPickerOpen = true">
-                <mu-list-item-title>主色调</mu-list-item-title>
-                <ColorPicker :open.sync="primaryPickerOpen"
-                    @select="setTheme('themePrimaryColor', $event)"></ColorPicker>
-                <mu-list-item-action>
-                    <mu-avatar :size="24"
-                        :color="settings.themePrimaryColor"></mu-avatar>
-                </mu-list-item-action>
-            </mu-list-item>
-            <mu-list-item button
-                @click="secondaryPickerOpen = true">
-                <mu-list-item-title>强调色</mu-list-item-title>
-                <ColorPicker :open.sync="secondaryPickerOpen"
-                    @select="setTheme('themeSecondaryColor', $event)"></ColorPicker>
-                <mu-list-item-action>
-                    <mu-avatar :size="24"
-                        :color="settings.themeSecondaryColor"></mu-avatar>
-                </mu-list-item-action>
-            </mu-list-item>
-            <mu-list-item>
-                <mu-list-item-title>背景色调</mu-list-item-title>
-                <mu-list-item-action>
-                    <mu-select :value="settings.themeVariety"
-                        @change="setTheme('themeVariety', $event)">
-                        <mu-option label="亮色"
-                            value="light"></mu-option>
-                        <mu-option label="暗色"
-                            value="dark"></mu-option>
-                    </mu-select>
-                </mu-list-item-action>
-            </mu-list-item>
-            <mu-sub-header>存储空间</mu-sub-header>
-            <mu-list-item button
-                @click="promptClearCache('chrome')">
-                <mu-list-item-title>浏览器缓存</mu-list-item-title>
-                <mu-list-item-action>
-                    <span class="nowrap">{{cacheSize | humanSize}}</span>
-                </mu-list-item-action>
-            </mu-list-item>
-            <mu-list-item button
-                @click="promptClearCache('music')">
-                <mu-list-item-title>歌曲缓存</mu-list-item-title>
-                <mu-list-item-action>
-                    <span class="nowrap">{{musicSize | humanSize}}</span>
-                </mu-list-item-action>
-            </mu-list-item>
-            <mu-list-item button
-                @click="promptClearCache('lyric')">
-                <mu-list-item-title>歌词缓存</mu-list-item-title>
-                <mu-list-item-action>
-                    <span class="nowrap">{{lyricSize | humanSize}}</span>
-                </mu-list-item-action>
-            </mu-list-item>
-            <mu-list-item button
-                @click="promptWipeAppData()">
-                <mu-list-item-title>所有应用数据</mu-list-item-title>
-                <mu-list-item-action>
-                    <span class="nowrap">{{dataSize | humanSize}}</span>
-                </mu-list-item-action>
-            </mu-list-item>
-            <mu-sub-header>高级设置</mu-sub-header>
-            <mu-list-item button
-                @click="launchDevTools">
-                <mu-list-item-title>启动开发者工具</mu-list-item-title>
-            </mu-list-item>
-            <mu-list-item button
-                @click="reloadWindow">
-                <mu-list-item-title>重新载入页面</mu-list-item-title>
-            </mu-list-item>
-            <mu-list-item button
-                @click="recreateWindow">
-                <mu-list-item-title>重新创建窗口</mu-list-item-title>
-            </mu-list-item>
-            <mu-sub-header>关于</mu-sub-header>
-            <mu-list-item button
-                @click="showVersions">
-                <mu-list-item-title>版本号</mu-list-item-title>
-                <mu-list-item-action>
-                    <span class="nowrap">{{versionName}}</span>
-                </mu-list-item-action>
-            </mu-list-item>
-            <mu-list-item button
-                @click="openBrowser('https://github.com/rocket1184/electron-netease-cloud-music')">
-                <mu-list-item-title>获取源代码</mu-list-item-title>
-            </mu-list-item>
-        </mu-list>
+    <div class="ncm-page">
+        <div class="settings">
+            <mu-list>
+                <mu-sub-header>基本设置</mu-sub-header>
+                <mu-list-item>
+                    <mu-list-item-title>试听音频码率</mu-list-item-title>
+                    <mu-list-item-action>
+                        <mu-select :value="settings.bitRate"
+                            @change="setByName('bitRate', $event)">
+                            <mu-option label="极高 (320 kbit/s)"
+                                value="h"></mu-option>
+                            <mu-option label="较高 (192 kbit/s)"
+                                value="m"></mu-option>
+                            <mu-option label="标准 (128 kbit/s)"
+                                value="l"></mu-option>
+                        </mu-select>
+                    </mu-list-item-action>
+                </mu-list-item>
+                <mu-list-item button
+                    @click="toggleWindowBorder()">
+                    <mu-list-item-title>使用系统标题栏</mu-list-item-title>
+                    <mu-list-item-action>
+                        <mu-switch :inputValue="settings.windowBorder"
+                            color="secondary"
+                            readonly></mu-switch>
+                    </mu-list-item-action>
+                </mu-list-item>
+                <mu-list-item button
+                    @click="toggleByName('autoPlay')">
+                    <mu-list-item-title>启动时自动开始播放</mu-list-item-title>
+                    <mu-list-item-action>
+                        <mu-switch :inputValue="settings.autoPlay"
+                            color="secondary"
+                            readonly></mu-switch>
+                    </mu-list-item-action>
+                </mu-list-item>
+                <mu-list-item button
+                    @click="primaryPickerOpen = true">
+                    <mu-list-item-title>主色调</mu-list-item-title>
+                    <ColorPicker :open.sync="primaryPickerOpen"
+                        @select="setTheme('themePrimaryColor', $event)"></ColorPicker>
+                    <mu-list-item-action>
+                        <mu-avatar :size="24"
+                            :color="settings.themePrimaryColor"></mu-avatar>
+                    </mu-list-item-action>
+                </mu-list-item>
+                <mu-list-item button
+                    @click="secondaryPickerOpen = true">
+                    <mu-list-item-title>强调色</mu-list-item-title>
+                    <ColorPicker :open.sync="secondaryPickerOpen"
+                        @select="setTheme('themeSecondaryColor', $event)"></ColorPicker>
+                    <mu-list-item-action>
+                        <mu-avatar :size="24"
+                            :color="settings.themeSecondaryColor"></mu-avatar>
+                    </mu-list-item-action>
+                </mu-list-item>
+                <mu-list-item>
+                    <mu-list-item-title>背景色调</mu-list-item-title>
+                    <mu-list-item-action>
+                        <mu-select :value="settings.themeVariety"
+                            @change="setTheme('themeVariety', $event)">
+                            <mu-option label="亮色"
+                                value="light"></mu-option>
+                            <mu-option label="暗色"
+                                value="dark"></mu-option>
+                        </mu-select>
+                    </mu-list-item-action>
+                </mu-list-item>
+                <mu-sub-header>存储空间</mu-sub-header>
+                <mu-list-item button
+                    @click="promptClearCache('chrome')">
+                    <mu-list-item-title>浏览器缓存</mu-list-item-title>
+                    <mu-list-item-action>
+                        <span class="nowrap">{{cacheSize | humanSize}}</span>
+                    </mu-list-item-action>
+                </mu-list-item>
+                <mu-list-item button
+                    @click="promptClearCache('music')">
+                    <mu-list-item-title>歌曲缓存</mu-list-item-title>
+                    <mu-list-item-action>
+                        <span class="nowrap">{{musicSize | humanSize}}</span>
+                    </mu-list-item-action>
+                </mu-list-item>
+                <mu-list-item button
+                    @click="promptClearCache('lyric')">
+                    <mu-list-item-title>歌词缓存</mu-list-item-title>
+                    <mu-list-item-action>
+                        <span class="nowrap">{{lyricSize | humanSize}}</span>
+                    </mu-list-item-action>
+                </mu-list-item>
+                <mu-list-item button
+                    @click="promptWipeAppData()">
+                    <mu-list-item-title>所有应用数据</mu-list-item-title>
+                    <mu-list-item-action>
+                        <span class="nowrap">{{dataSize | humanSize}}</span>
+                    </mu-list-item-action>
+                </mu-list-item>
+                <mu-sub-header>高级设置</mu-sub-header>
+                <mu-list-item button
+                    @click="launchDevTools">
+                    <mu-list-item-title>启动开发者工具</mu-list-item-title>
+                </mu-list-item>
+                <mu-list-item button
+                    @click="reloadWindow">
+                    <mu-list-item-title>重新载入页面</mu-list-item-title>
+                </mu-list-item>
+                <mu-list-item button
+                    @click="recreateWindow">
+                    <mu-list-item-title>重新创建窗口</mu-list-item-title>
+                </mu-list-item>
+                <mu-sub-header>关于</mu-sub-header>
+                <mu-list-item button
+                    @click="showVersions">
+                    <mu-list-item-title>版本号</mu-list-item-title>
+                    <mu-list-item-action>
+                        <span class="nowrap">{{versionName}}</span>
+                    </mu-list-item-action>
+                </mu-list-item>
+                <mu-list-item button
+                    @click="openBrowser('https://github.com/rocket1184/electron-netease-cloud-music')">
+                    <mu-list-item-title>获取源代码</mu-list-item-title>
+                </mu-list-item>
+            </mu-list>
+        </div>
     </div>
 </template>
 

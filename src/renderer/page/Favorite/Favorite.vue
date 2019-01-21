@@ -1,5 +1,5 @@
 <template>
-    <div class="favorite">
+    <div class="favorite ncm-page">
         <div v-elevation="4">
             <mu-tabs inverse
                 :value="tab"

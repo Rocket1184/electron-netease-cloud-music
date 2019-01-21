@@ -1,5 +1,6 @@
 <template>
-    <div class="ld-layout">
+    <div class="ld-layout"
+        :class="$props.class">
         <div class="ld-list">
             <div v-if="showTip"
                 class="tip">

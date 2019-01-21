@@ -1,5 +1,6 @@
 <template>
-    <ListDetailLayout :detailLoading="loading">
+    <ListDetailLayout class="ncm-page"
+        :detailLoading="loading">
         <mu-list slot="list">
             <ListItemBack></ListItemBack>
             <template v-if="user.loginValid">
