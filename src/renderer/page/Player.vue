@@ -19,22 +19,24 @@
                     <span>歌手：</span>
                     <template v-for="(ar, index) in playing.artists">
                         <span v-if="index !== 0"
-                            :key="index"
+                            :key="'sep' + index"
                             class="sep">/</span>
                         <router-link v-if="ar.id !== 0"
+                            :key="ar.id"
                             class="artist link"
                             :to="{ name: 'artist', params: { id: ar.id } }"
-                            :key="ar.id">{{ar.name}}</router-link>
+                            replace>{{ar.name}}</router-link>
                         <span v-else
-                            class="artist"
-                            :key="ar.id">{{ar.name}}</span>
+                            :key="'ar' + index"
+                            class="artist">{{ar.name}}</span>
                     </template>
                 </template>
                 <span class="sep"></span>
                 <template v-if="playing.album">
                     <span>专辑：</span>
-                    <router-link :to="{ name: 'album', params: { id: playing.album.id } }"
-                        class="album link">{{playing.album.name}}</router-link>
+                    <router-link class="album link"
+                        :to="{ name: 'album', params: { id: playing.album.id } }"
+                        replace>{{playing.album.name}}</router-link>
                 </template>
             </p>
             <div class="lyric">
