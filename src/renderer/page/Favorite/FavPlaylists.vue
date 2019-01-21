@@ -104,7 +104,9 @@ export default {
         },
     },
     mounted() {
-        if (!this.user.loginValid) {
+        if (this.user.loginValid) {
+            this.loadPlaylist(this.user.playlist[0].id);
+        } else {
             this.$store.subscribe((mutation) => {
                 if (mutation.type === SET_USER_PLAYLISTS) {
                     if (this.$route.name === 'favorite') {
@@ -112,8 +114,6 @@ export default {
                     }
                 }
             });
-        } else {
-            this.loadPlaylist(this.user.playlist[0].id);
         }
     },
     components: {

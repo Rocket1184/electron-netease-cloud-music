@@ -51,6 +51,7 @@
 <script>
 import { mapActions, mapState } from 'vuex';
 
+import { SET_LOGIN_VALID } from '@/vuex/mutation-types';
 import ListDetailLayout from '@/components/ListDetailLayout.vue';
 import ListItemBack from '@/components/ListItemBack.vue';
 import CenteredTip from '@/components/CenteredTip.vue';
@@ -70,14 +71,23 @@ export default {
         ...mapActions([
             'setUiRecommendSongs',
             'setUiRecommendStatistics'
-        ])
-    },
-    mounted() {
-        if (this.user.loginValid) {
+        ]),
+        fetchData() {
             this.loading = true;
             this.setUiRecommendSongs()
                 .then(() => this.loading = false);
             this.setUiRecommendStatistics();
+        },
+    },
+    mounted() {
+        if (this.user.loginValid) {
+            this.fetchData();
+        } else {
+            this.$store.subscribe(({ type, payload }) => {
+                if (type === SET_LOGIN_VALID && payload === true) {
+                    this.fetchData();
+                }
+            });
         }
     },
     components: {

@@ -22,6 +22,7 @@
 <script>
 import { mapActions, mapState } from 'vuex';
 
+import { SET_LOGIN_VALID } from '@/vuex/mutation-types';
 import AlbumDetail from '@/components/AlbumDetail.vue';
 import AvatarListItem from '@/components/AvatarListItem.vue';
 import ListDetailLayout from '@/components/ListDetailLayout.vue';
@@ -46,13 +47,7 @@ export default {
             await this.setUiFavAlbum(id);
             this.detailLoading = false;
         },
-        handleClick(id) {
-            if (this.ui.fav.album && this.ui.fav.album.id === id) return;
-            this.loadAlbum(id);
-        }
-    },
-    async mounted() {
-        if (this.user.loginValid) {
+        async fetchData() {
             this.listLoading = true;
             await this.updateUserAlbums();
             this.listLoading = false;
@@ -60,6 +55,21 @@ export default {
             if (al && al.id) {
                 this.loadAlbum(al.id);
             }
+        },
+        handleClick(id) {
+            if (this.ui.fav.album && this.ui.fav.album.id === id) return;
+            this.loadAlbum(id);
+        }
+    },
+    mounted() {
+        if (this.user.loginValid) {
+            this.fetchData();
+        } else {
+            this.$store.subscribe(({ type, payload }) => {
+                if (type === SET_LOGIN_VALID && payload === true) {
+                    this.fetchData();
+                }
+            });
         }
     },
     components: {

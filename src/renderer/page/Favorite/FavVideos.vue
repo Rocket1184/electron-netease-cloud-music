@@ -22,6 +22,7 @@
 <script>
 import { mapActions, mapState } from 'vuex';
 
+import { SET_LOGIN_VALID } from '@/vuex/mutation-types';
 import VideoDetail from '@/components/VideoDetail/VideoDetail.vue';
 import AvatarListItem from '@/components/AvatarListItem.vue';
 import ListDetailLayout from '@/components/ListDetailLayout.vue';
@@ -47,13 +48,7 @@ export default {
             await this.setUiFavVideo({ id, type });
             this.detailLoading = false;
         },
-        handleClick(id, type) {
-            if (this.ui.fav.video && this.ui.fav.video.id == id) return;
-            this.loadVideo(id, type);
-        }
-    },
-    async mounted() {
-        if (this.user.loginValid) {
+        async fetchData() {
             this.listLoading = true;
             await this.updateUserVideos();
             this.listLoading = false;
@@ -61,6 +56,21 @@ export default {
             if (v && v.id) {
                 this.loadVideo(v.id, v.type);
             }
+        },
+        handleClick(id, type) {
+            if (this.ui.fav.video && this.ui.fav.video.id == id) return;
+            this.loadVideo(id, type);
+        }
+    },
+    mounted() {
+        if (this.user.loginValid) {
+            this.fetchData();
+        } else {
+            this.$store.subscribe(({ type, payload }) => {
+                if (type === SET_LOGIN_VALID && payload === true) {
+                    this.fetchData();
+                }
+            });
         }
     },
     components: {
