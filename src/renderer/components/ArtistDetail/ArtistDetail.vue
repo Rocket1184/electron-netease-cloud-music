@@ -24,23 +24,20 @@
         </div>
         <mu-tabs inverse
             center
-            :value.sync="tab">
-            <mu-tab value="hotSongs">热门单曲</mu-tab>
-            <mu-tab value="albums">所有专辑</mu-tab>
-            <mu-tab value="mvs">相关 MV</mu-tab>
-            <mu-tab value="intro">艺人介绍</mu-tab>
+            :value="tab"
+            @change="handelTabChange">
+            <mu-tab v-for="tab in  detailTabs"
+                :key="tab[0]"
+                :value="tab[0]">{{tab[1]}}</mu-tab>
         </mu-tabs>
-        <div v-show="tab === 'hotSongs'">
-            <PlayTracks :source="trackSource"
-                :tracks="artist.hotSongs"></PlayTracks>
-            <TrackList :source="trackSource"
-                :tracks="artist.hotSongs"></TrackList>
-        </div>
-        <keep-alive>
-            <component :is="detailCompo"
-                :artist="artist.detail"
-                @scroll="handleScroll"></component>
-        </keep-alive>
+        <transition :name="transitionName"
+            mode="out-in">
+            <keep-alive>
+                <component :is="detailCompo"
+                    :artist="artist"
+                    @scroll="handleScroll"></component>
+            </keep-alive>
+        </transition>
     </div>
 </template>
 
@@ -49,14 +46,20 @@ import { mapActions, mapState } from 'vuex';
 
 import Api from '@/util/api';
 import { bkgImg, sizeImg } from '@/util/image';
-import TrackList from '@/components/TrackList.vue';
-import PlayTracks from '@/components/PlayTracks.vue';
+import HotSongs from './HotSongs.vue';
 import AllAlbums from './AllAlbums.vue';
 import RelatedMVs from './RelatedMVs.vue';
 import Introduction from './Introduction.vue';
 
-const DetailCompoMap = {
-    hotSongs: 'div',
+const DetailTabs = [
+    ['hotSongs', '热门单曲'],
+    ['albums', '所有专辑'],
+    ['mvs', '相关 MV'],
+    ['intro', '艺人介绍']
+];
+
+const DetailCompo = {
+    hotSongs: HotSongs,
     albums: AllAlbums,
     mvs: RelatedMVs,
     intro: Introduction
@@ -71,7 +74,9 @@ export default {
     data() {
         return {
             tab: 'hotSongs',
-            dynamicDetail: {}
+            dynamicDetail: {},
+            detailTabs: DetailTabs,
+            transitionName: 'slide-left'
         };
     },
     computed: {
@@ -79,14 +84,8 @@ export default {
         bkgImgStyle() {
             return bkgImg(sizeImg(this.artist.detail.picUrl, 640, 300));
         },
-        trackSource() {
-            return {
-                name: 'artist',
-                id: this.artist.detail.id
-            };
-        }, 
         detailCompo() {
-            return DetailCompoMap[this.tab];
+            return DetailCompo[this.tab];
         }
     },
     methods: {
@@ -118,6 +117,19 @@ export default {
             }
             this.updateDynamicDetail();
         },
+        handelTabChange(val) {
+            let oldIndex, newIndex;
+            DetailTabs.forEach((tab, index) => {
+                if (tab[0] === this.tab) oldIndex = index;
+                if (tab[0] === val) newIndex = index;
+            });
+            if (newIndex < oldIndex) {
+                this.transitionName = 'slide-right';
+            } else {
+                this.transitionName = 'slide-left';
+            }
+            this.tab = val;
+        },
         handleScroll() {
             const el = document.querySelector('.ld-detail');
             if (el) {
@@ -129,8 +141,6 @@ export default {
         this.updateDynamicDetail();
     },
     components: {
-        TrackList,
-        PlayTracks,
         AllAlbums,
         RelatedMVs,
         Introduction
@@ -140,6 +150,7 @@ export default {
 
 <style lang="less">
 .artist-detail {
+    overflow-x: hidden;
     .header {
         width: 100%;
         height: 300px;

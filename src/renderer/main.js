@@ -9,6 +9,7 @@ import App from './App.vue';
 import store from './vuex/store';
 import routes from './routes';
 import DblclickRipple from './util/dblclick-ripple';
+import './transition.css';
 
 const settings = window.__NCM_SETTINGS__;
 

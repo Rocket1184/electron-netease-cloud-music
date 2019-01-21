@@ -31,7 +31,7 @@ export default {
     methods: {
         async loadIntro() {
             this.loading = true;
-            const resp = await Api.getArtistIntro(this.artist.id);
+            const resp = await Api.getArtistIntro(this.artist.detail.id);
             this.intro = resp;
             this.loading = false;
         }

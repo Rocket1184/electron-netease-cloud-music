@@ -43,7 +43,7 @@ export default {
     methods: {
         async loadMVs(offset = 0, limit = this.pageSize) {
             this.loading = true;
-            const resp = await Api.getArtistMVs(this.artist.id, offset, limit);
+            const resp = await Api.getArtistMVs(this.artist.detail.id, offset, limit);
             this.mvs = resp.mvs.map(v => new Video(v));
             this.loading = false;
         },

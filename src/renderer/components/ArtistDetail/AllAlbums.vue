@@ -42,7 +42,7 @@ export default {
     methods: {
         async loadAlbums(offset = 0, limit = this.pageSize) {
             this.loading = true;
-            const resp = await Api.getArtistAlbums(this.artist.id, offset, limit);
+            const resp = await Api.getArtistAlbums(this.artist.detail.id, offset, limit);
             this.albums = resp.hotAlbums;
             this.loading = false;
         },
