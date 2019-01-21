@@ -60,6 +60,7 @@ export default {
     display: flex;
     flex-wrap: wrap;
     justify-content: center;
+    padding-bottom: 16px;
     .v-item {
         margin: 20px 10px 0;
         min-width: 160px;

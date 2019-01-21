@@ -149,7 +149,7 @@ export default {
     }
     .pagination {
         width: 100%;
-        padding: 16px;
+        padding: 16px 16px 30px;
     }
 }
 </style>
