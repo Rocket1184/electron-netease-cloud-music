@@ -53,7 +53,8 @@ export default {
             'setUiTempAlbum',
             'setUiRelatedAlbums'
         ]),
-        loadAlbum(id) {
+        loadAlbum() {
+            const id = this.$route.params.id;
             if (this.ui.temp.album && id == this.ui.temp.album.id) {
                 this.detailLoading = false;
                 this.relatedLoading = false;
@@ -71,16 +72,12 @@ export default {
         }
     },
     mounted() {
-        const id = this.$route.params.id;
-        if (id) {
-            this.loadAlbum(id);
-        }
+        this.loadAlbum();
     },
     beforeRouteUpdate(to, from, next) {
         // this component is reused in the new route
         next();
-        const id = this.$route.params.id;
-        this.loadAlbum(id);
+        this.loadAlbum();
     },
     components: {
         AlbumDetail,

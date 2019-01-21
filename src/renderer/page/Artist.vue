@@ -31,25 +31,22 @@ export default {
         ...mapActions([
             'setUiTempArtist'
         ]),
-        async loadArtist(id) {
-            if (this.ui.temp.artist.detail && id == this.ui.temp.artist.detail.id) {
-                this.detailLoading = false;
-                return;
+        async loadArtist() {
+            const id = this.$route.params.id;
+            if (!this.ui.temp.artist.detail || this.ui.temp.artist.detail.id != id) {
+                this.detailLoading = true;
+                await this.setUiTempArtist(id);
             }
-            this.detailLoading = true;
-            await this.setUiTempArtist(id);
             this.detailLoading = false;
         }
     },
     mounted() {
-        const id = this.$route.params.id;
-        this.loadArtist(id);
+        this.loadArtist();
     },
     beforeRouteUpdate(to, from, next) {
         // this component is reused in the new route
         next();
-        const id = this.$route.params.id;
-        this.loadArtist(id);
+        this.loadArtist();
     },
     components: {
         ArtistDetail,

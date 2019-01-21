@@ -36,7 +36,7 @@ export default {
         ]),
         async loadVideo() {
             const id = this.$route.params.id;
-            if (this.ui.temp.video && id != this.ui.temp.video.id) {
+            if (!this.ui.temp.video || this.ui.temp.video.id != id) {
                 this.detailLoading = true;
                 await this.setUiTempVideo({ id, type: Number(id.length >= 30) });
             }

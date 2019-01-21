@@ -54,7 +54,8 @@ export default {
             'setUiTempPlaylist',
             'setUiRelatedPlaylists'
         ]),
-        loadPlaylist(id) {
+        loadPlaylist() {
+            const id = this.$route.params.id;
             if (this.ui.temp.playlist && id == this.ui.temp.playlist.id) {
                 this.detailLoading = false;
                 this.relatedLoading = false;
@@ -79,14 +80,12 @@ export default {
         }
     },
     mounted() {
-        const id = this.$route.params.id;
-        this.loadPlaylist(id);
+        this.loadPlaylist();
     },
     beforeRouteUpdate(to, from, next) {
         // this component is reused in the new route
         next();
-        const id = this.$route.params.id;
-        this.loadPlaylist(id);
+        this.loadPlaylist();
     },
     components: {
         ListDetailLayout,
