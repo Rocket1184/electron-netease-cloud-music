@@ -24,32 +24,44 @@ export default {
     },
     data() {
         return {
-            detailLoading: true
+            detailLoading: true,
+            pausedWhenEnter: null
         };
     },
     methods: {
         ...mapActions([
-            'setUiTempVideo'
+            'setUiTempVideo',
+            'pauseAudio',
+            'playAudio'
         ]),
-        async loadVideo(id) {
-            if (this.ui.temp.video && id == this.ui.temp.video.id) {
-                this.detailLoading = false;
-                return;
+        async loadVideo() {
+            const id = this.$route.params.id;
+            if (this.ui.temp.video && id != this.ui.temp.video.id) {
+                this.detailLoading = true;
+                await this.setUiTempVideo({ id, type: Number(id.length >= 30) });
             }
-            this.detailLoading = true;
-            await this.setUiTempVideo({ id, type: Number(id.length >= 30) });
             this.detailLoading = false;
+            this.$nextTick(() => {
+                this.$el.querySelector('video').onplay = () => {
+                    if (!this.ui.paused) this.pauseAudio();
+                };
+            });
         }
     },
     mounted() {
-        const id = this.$route.params.id;
-        this.loadVideo(id);
+        this.pausedWhenEnter = this.ui.paused;
+        this.loadVideo();
+    },
+    beforeDestroy() {
+        if (!this.pausedWhenEnter) {
+            this.playAudio();
+        }
+        this.pausedWhenEnter = null;
     },
     beforeRouteUpdate(to, from, next) {
         // this component is reused in the new route
         next();
-        const id = this.$route.params.id;
-        this.loadVideo(id);
+        this.loadVideo();
     },
     components: {
         ListItemBack,

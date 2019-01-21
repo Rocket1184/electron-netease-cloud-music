@@ -8,8 +8,6 @@
 </template>
 
 <script>
-import { mapActions, mapState } from 'vuex';
-
 import MV from './MV.vue';
 import Video from './Video.vue';
 
@@ -17,40 +15,6 @@ export default {
     props: {
         video: {
             required: true
-        }
-    },
-    data() {
-        return {
-            audioPlaying: true,
-            videoPlayed: false
-        };
-    },
-    computed: {
-        ...mapState(['ui'])
-    },
-    methods: {
-        ...mapActions([
-            'playAudio',
-            'pauseAudio'
-        ])
-    },
-    created() {
-        this.audioPlaying = !this.ui.paused;
-    },
-    mounted() {
-        const elm = document.querySelector('video');
-        elm.addEventListener('playing', () => {
-            if (!this.videoPlayed) {
-                this.videoPlayed = true;
-                if (this.audioPlaying) {
-                    this.pauseAudio();
-                }
-            }
-        });
-    },
-    beforeDestroy() {
-        if (this.audioPlaying) {
-            this.playAudio();
         }
     },
     components: {

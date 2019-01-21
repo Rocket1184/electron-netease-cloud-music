@@ -31,7 +31,8 @@ export default {
     data() {
         return {
             listLoading: false,
-            detailLoading: false
+            detailLoading: false,
+            pausedWhenEnter: null
         };
     },
     computed: {
@@ -41,12 +42,18 @@ export default {
         ...mapActions([
             'updateUserVideos',
             'setUiFavVideo',
-            'setUiFavMV'
+            'pauseAudio',
+            'playAudio'
         ]),
         async loadVideo(id, type) {
             this.detailLoading = true;
             await this.setUiFavVideo({ id, type });
             this.detailLoading = false;
+            this.$nextTick(() => {
+                this.$el.querySelector('video').onplay = () => {
+                    if (!this.ui.paused) this.pauseAudio();
+                };
+            });
         },
         async fetchData() {
             this.listLoading = true;
@@ -63,6 +70,7 @@ export default {
         }
     },
     mounted() {
+        this.pausedWhenEnter = this.ui.paused;
         if (this.user.loginValid) {
             this.fetchData();
         } else {
@@ -72,6 +80,15 @@ export default {
                 }
             });
         }
+    },
+    activated() {
+        this.pausedWhenEnter = this.ui.paused;
+    },
+    deactivated() {
+        if (!this.pausedWhenEnter) {
+            this.playAudio();
+        }
+        this.pausedWhenEnter = null;
     },
     components: {
         VideoDetail,
