@@ -36,7 +36,7 @@ export default {
     },
     computed: {
         showPagination() {
-            return this.total > this.albums.length;
+            return this.total > this.pageSize;
         }
     },
     methods: {

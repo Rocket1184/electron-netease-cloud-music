@@ -37,7 +37,7 @@ export default {
     },
     computed: {
         showPagination() {
-            return this.total > this.mvs.length;
+            return this.total > this.pageSize;
         }
     },
     methods: {
