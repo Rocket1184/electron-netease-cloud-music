@@ -9,7 +9,7 @@ const d = debug(TAG);
 async function rejectTimeout(timeOut = 60000) {
     return await new Promise((_, reject) => {
         setTimeout(() => {
-            reject(`request time out after ${timeOut} ms`);
+            reject({ code: -1, msg: `request time out after ${timeOut} ms` });
         }, timeOut);
     });
 }
