@@ -194,10 +194,14 @@ export default {
     }
     .intro {
         padding: 16px 50px;
+        .subhead {
+            font-size: 16px;
+            font-weight: bold;
+        }
         .para {
             white-space: pre-wrap;
             font-size: 14px;
-            margin: 0 0.5em;
+            margin: 0.5em 0;
             line-height: 22px;
         }
     }
