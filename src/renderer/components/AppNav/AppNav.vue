@@ -209,13 +209,10 @@ export default {
 
 <style lang="less">
 .appbar {
-    z-index: 1;
-    cursor: default;
-    user-select: none;
-    -webkit-app-region: drag;
     #appbar-window-control {
         // hide window control by default
         display: none;
+        z-index: 11;
     }
     .mu-appbar-left,
     .mu-appbar-right {
@@ -239,6 +236,16 @@ export default {
             }
         }
     }
+    .mu-appbar {
+        cursor: default;
+        user-select: none;
+        -webkit-app-region: drag;
+        z-index: 10;
+        position: fixed;
+        width: 100%;
+        top: 0;
+        left: 0;
+    }
 }
 
 #appbar-window-control {
@@ -255,8 +262,8 @@ export default {
 }
 
 .appbar-drawer {
+    user-select: none;
     .header {
-        position: relative;
         display: flex;
         flex-direction: column;
         justify-content: flex-end;
@@ -272,9 +279,9 @@ export default {
             display: flex;
             justify-content: space-between;
             align-items: center;
+            filter: drop-shadow(0 2px 4px black);
             .username {
                 color: white;
-                text-shadow: 0 0 4px black;
                 font-size: 20px;
                 cursor: pointer;
                 line-height: 36px;

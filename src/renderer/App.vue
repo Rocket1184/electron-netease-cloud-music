@@ -86,6 +86,7 @@ export default {
     height: calc(100vh - 128px);
     overflow: hidden;
     position: relative;
+    margin-top: 64px;
     .ncm-page {
         width: 100%;
         height: 100%;

@@ -359,12 +359,15 @@ export default {
     display: flex;
     user-select: none;
     cursor: default;
-    font-size: 0;
     height: 64px;
-    position: relative;
+    position: fixed;
+    width: 100%;
+    bottom: 0;
+    left: 0;
     .cover {
         cursor: pointer;
         display: flex;
+        position: relative;
         align-items: center;
         justify-content: center;
         background-color: black;
@@ -396,7 +399,7 @@ export default {
     }
     .info {
         font-size: 14px;
-        padding: 4px 10px 0 10px;
+        padding: 4px 12px 0 10px;
         flex-grow: 1;
         overflow: hidden;
         display: flex;
@@ -437,13 +440,14 @@ export default {
         }
     }
     .control {
+        width: 170px;
         min-width: 170px;
         padding-right: 10px;
         display: flex;
         justify-content: space-between;
         align-items: center;
         .mu-fab-button {
-            box-shadow: white 0 0 0;
+            box-shadow: unset;
         }
     }
 }
