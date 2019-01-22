@@ -48,14 +48,14 @@ export default MPRIS;
 export function getTrackMeta(track) {
     return {
         id: track.id,
-        'mpris:length': 300 * 1e6, // this should be changed when track loaded
+        'mpris:length': track.duration * 1e3,
         'mpris:artUrl': track.album.picUrl || 'file:///dev/null',
         'xesam:album': track.album.name || '未知专辑',
         'xesam:albumArtist': track.artists.map(ar => ar.name || '未知歌手'),
         'xesam:artist': track.artistName || '未知歌手',
-        // 'xesam:discNumber': 0,
+        'xesam:discNumber': Number.parseInt(track.cd[track.cd.length - 1]),
         'xesam:title': track.name || '未知歌曲',
-        // 'xesam:tarckNumber': 0,
+        'xesam:tarckNumber': track.no || 0,
         // 'xesam:url': 'file:///dev/null', // at least It's unusable in KDE
         // 'xesam:useCount': 0,
         // 'xesam:userRating': 0
@@ -70,9 +70,6 @@ export function bindEventListener(audioEl) {
     MPRISEmitter.on('quit', () => ipcRenderer.send('quitApp'));
     MPRISEmitter.on('raise', () => ipcRenderer.send('focusApp'));
     if (audioEl) {
-        audioEl.addEventListener('loadedmetadata', () => {
-            MPRIS.patchMetadata({ 'mpris:length': audioEl.duration * 1e6 });
-        });
         audioEl.addEventListener('seeked', () => MPRIS.seeked(audioEl.currentTime));
         MPRISEmitter.on('getPosition', (_, id) => {
             senderFn('getPosition', id, audioEl.currentTime * 1e6);
