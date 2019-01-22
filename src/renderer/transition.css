@@ -12,13 +12,13 @@
 .slide-left-enter,
 .slide-right-leave-active {
     opacity: 0;
-    transform: translate(2em, 0);
+    transform: translate(64px, 0);
 }
 
 .slide-left-leave-active,
 .slide-right-enter {
     opacity: 0;
-    transform: translate(-2em, 0);
+    transform: translate(-64px, 0);
 }
 
 /* page up/down */
@@ -34,7 +34,7 @@
 
 .fade-up-enter,
 .fade-down-leave-active {
-    transform: translate(0, 64px);
+    transform: translate(0, 48px);
     opacity: 0;
 }
 
@@ -54,9 +54,8 @@
 .player-in-leave-active,
 .player-out-enter-active,
 .player-out-leave-active {
-    transition-duration: 0.5s;
+    transition-duration: 0.4s;
     transition-property: transform, opacity;
-    transition-timing-function: cubic-bezier(0.55, 0, 0.1, 1);
 }
 
 .player-in-enter-active,
