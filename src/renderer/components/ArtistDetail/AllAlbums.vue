@@ -1,5 +1,5 @@
 <template>
-    <div class="all-albums">
+    <div class="all-albums resource">
         <CenteredLoading v-if="loading"></CenteredLoading>
         <AlbumList v-else
             :list="albums"></AlbumList>

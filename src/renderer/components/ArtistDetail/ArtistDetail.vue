@@ -183,8 +183,14 @@ export default {
     .mu-tabs {
         background-color: transparent;
     }
-    .centered-loading {
-        height: 160px;
+    .resource {
+        min-height: calc(~'100vh - 176px');
+        .centered-loading {
+            height: 160px;
+        }
+        .pagination {
+            margin: 20px;
+        }
     }
     .intro {
         padding: 16px 50px;
@@ -194,9 +200,6 @@ export default {
             margin: 0 0.5em;
             line-height: 22px;
         }
-    }
-    .pagination {
-        margin: 20px;
     }
 }
 </style>

@@ -1,5 +1,5 @@
 <template>
-    <section class="intro">
+    <section class="intro resource">
         <CenteredLoading v-if="loading"></CenteredLoading>
         <template v-else>
             <p class="para">{{intro.briefDesc}}</p>

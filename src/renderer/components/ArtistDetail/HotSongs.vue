@@ -1,5 +1,5 @@
 <template>
-    <div class="hot-songs">
+    <div class="hot-songs resource">
         <PlayTracks :source="trackSource"
             :tracks="artist.hotSongs"></PlayTracks>
         <TrackList :source="trackSource"

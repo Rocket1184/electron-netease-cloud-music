@@ -1,5 +1,5 @@
 <template>
-    <div class="related-mvs">
+    <div class="related-mvs resource">
         <CenteredLoading v-if="loading"></CenteredLoading>
         <VideoList v-else
             :videos="mvs"></VideoList>
