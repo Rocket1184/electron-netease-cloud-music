@@ -23,6 +23,7 @@ export class Track {
         this.album = o.al || o.album;
         this.picUrl = this.album.picUrl;
         this.cd = o.cd;
+        this.no = o.no;
         this.artists = o.ar || o.artists;
         this.artistName = this.artists.map(a => a.name).join(' / ');
         this.duration = o.dt || o.duration;

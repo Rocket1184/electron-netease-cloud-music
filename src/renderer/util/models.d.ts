@@ -28,6 +28,7 @@ declare namespace Models {
         };
         picUrl: string;
         cd: string;
+        no: number;
         artists: Artist[];
         artistName: string;
         lyrics: {
