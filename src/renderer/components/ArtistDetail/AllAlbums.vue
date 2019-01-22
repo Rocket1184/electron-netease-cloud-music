@@ -29,7 +29,7 @@ export default {
         return {
             albums: [],
             pageSize: 30,
-            total: this.artist.albumSize,
+            total: this.artist.detail.albumSize,
             loading: true,
             currentPage: 1
         };

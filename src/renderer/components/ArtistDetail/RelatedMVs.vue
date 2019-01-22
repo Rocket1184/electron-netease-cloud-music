@@ -30,7 +30,7 @@ export default {
         return {
             mvs: [],
             pageSize: 32,
-            total: this.artist.mvSize,
+            total: this.artist.detail.mvSize,
             loading: true,
             currentPage: 1
         };
