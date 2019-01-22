@@ -49,7 +49,14 @@ function createMainWindow(url = mainURL) {
 
     switch (process.platform) {
         case 'linux':
-            require('./mpris').bindWebContents(win.webContents);
+            try {
+                require('./mpris').bindWebContents(win.webContents);
+            } catch (e) {
+                /* eslint-disable no-console */
+                console.error('Failed to load MPRIS module.');
+                console.error(e);
+                /* eslint-enable no-console */
+            }
             break;
         case 'darwin':
             win.on('close', ev => {
