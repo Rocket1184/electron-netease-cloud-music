@@ -1,7 +1,7 @@
 <template>
     <div class="search ncm-page">
-        <mu-tabs inverse
-            v-elevation="4"
+        <mu-tabs class="search-tab"
+            inverse
             :value="searchType"
             @change="handleTabChange">
             <mu-tab value="song">单曲</mu-tab>
@@ -143,6 +143,10 @@ export default {
     height: 100%;
     display: flex;
     flex-direction: column;
+    .search-tab {
+        z-index: 10;
+        box-shadow: 0 0px 12px rgba(0, 0, 0, 0.4);
+    }
     .search-content {
         height: calc(~'100% - 48px');
         overflow: auto;

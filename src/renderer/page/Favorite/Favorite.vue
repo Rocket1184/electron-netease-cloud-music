@@ -1,14 +1,13 @@
 <template>
     <div class="favorite ncm-page">
-        <div v-elevation="4">
-            <mu-tabs inverse
-                :value="tab"
-                @change="handelTabChange">
-                <mu-tab v-for="tab in  favTabs"
-                    :key="tab[0]"
-                    :value="tab[0]">{{tab[1]}}</mu-tab>
-            </mu-tabs>
-        </div>
+        <mu-tabs class="fav-tab"
+            inverse
+            :value="tab"
+            @change="handelTabChange">
+            <mu-tab v-for="tab in favTabs"
+                :key="tab[0]"
+                :value="tab[0]">{{tab[1]}}</mu-tab>
+        </mu-tabs>
         <div class="fav-content">
             <transition :name="transitionName"
                 mode="out-in">
@@ -83,6 +82,10 @@ export default {
     height: 100%;
     display: flex;
     flex-direction: column;
+    .fav-tab {
+        z-index: 10;
+        box-shadow: 0 0px 12px rgba(0, 0, 0, 0.4);
+    }
     .fav-content {
         height: calc(~'100% - 48px');
         overflow-x: hidden;
