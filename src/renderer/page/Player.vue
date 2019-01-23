@@ -5,12 +5,12 @@
                 width="1000"
                 height="600"></canvas>
         </div>
-        <div :class="{ disk: true, play: !this.ui.paused }">
-            <div class="img"
-                :style="albumImgStyle">
-                <div class="border"></div>
-            </div>
+        <div :class="{ phonograph: true, play: !this.ui.paused }">
             <div class="needle"></div>
+            <div class="cover"
+                :style="albumImgStyle">
+                <div class="disc"></div>
+            </div>
         </div>
         <div class="info">
             <span class="name">{{playing.name}}</span>
@@ -213,7 +213,7 @@ export default {
 <style lang="less">
 .shadow-text {
     color: white;
-    text-shadow: 0 0 3px black, 0 2px 4px rgba(0, 0, 0, 0.5);
+    text-shadow: 0 0 4px black, 0 2px 4px rgba(0, 0, 0, 0.7);
 }
 
 .ellipsis-text(@width: 175px) {
@@ -243,38 +243,17 @@ export default {
             height: 100%;
         }
     }
-    .disk {
+    .phonograph {
         flex: 1;
-        position: relative;
         transition: transform 25s;
-        .img {
-            will-change: transform;
-            width: 220px;
-            height: 220px;
-            position: absolute;
-            top: 130px;
-            right: calc(~'50% - 110px');
-            // fallback album cover image
-            background-image: url('~assets/img/disc_default.webp');
-            background-size: cover;
-            animation: disk-playing 25s linear infinite;
-            animation-play-state: paused;
-            .border {
-                right: 65px;
-                bottom: 65px;
-                width: 350px;
-                height: 350px;
-                background-image: url('~assets/img/disc.webp');
-                background-size: contain;
-                position: relative;
-            }
-        }
+        display: flex;
+        flex-direction: column;
+        align-items: center;
         .needle {
-            position: absolute;
-            top: -6px;
-            left: calc(~'50% - 20px');
+            z-index: 1;
             width: 100px;
             height: 200px;
+            margin: -6px 0 -132px 74px;
             background-image: url('~assets/img/needle.webp');
             background-repeat: no-repeat;
             background-size: contain;
@@ -282,20 +261,38 @@ export default {
             transform-origin: 15px 0;
             transform: rotate(-25deg);
         }
-    }
-    .play {
-        .img {
-            animation-play-state: running;
+        .cover {
+            will-change: transform;
+            width: 220px;
+            height: 220px;
+            margin: 65px;
+            // fallback album cover image
+            background-image: url('~assets/img/disc_default.webp');
+            background-size: cover;
+            animation: disk-playing 25s linear infinite;
+            animation-play-state: paused;
+            .disc {
+                width: 350px;
+                height: 350px;
+                margin: -65px;
+                background-image: url('~assets/img/disc.webp');
+                background-size: contain;
+            }
         }
-        .needle {
-            transform: rotate(0deg);
+        &.play {
+            .needle {
+                transform: rotate(0deg);
+            }
+            .cover {
+                animation-play-state: running;
+            }
         }
     }
     .info {
         flex: 1;
         & > * {
             // lyric needs padding, or its text-shadow would be cut off
-            padding-left: 10px;
+            padding-left: 6px;
         }
         .name {
             .ellipsis-text(500px);
