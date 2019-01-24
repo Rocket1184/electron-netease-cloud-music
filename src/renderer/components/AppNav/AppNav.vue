@@ -1,29 +1,32 @@
 <template>
     <div class="appbar"
         :class="appbarDynamicClassName">
-        <div id="appbar-window-control">
-            <mu-button icon
-                small
-                color="white"
-                @click="handleClose()">
-                <mu-icon value="close"
-                    :size="16"></mu-icon>
-            </mu-button>
-            <mu-button icon
-                small
-                color="white"
-                @click="handleMaximize()">
-                <mu-icon value="keyboard_arrow_up"
-                    :size="16"></mu-icon>
-            </mu-button>
-            <mu-button icon
-                small
-                color="white"
-                @click="handleMinimize()">
-                <mu-icon value="keyboard_arrow_down"
-                    :size="16"></mu-icon>
-            </mu-button>
-        </div>
+        <template v-if="!settings.windowBorder">
+            <div id="appbar-window-control">
+                <mu-button icon
+                    small
+                    color="white"
+                    @click="handleClose()">
+                    <mu-icon value="close"
+                        :size="16"></mu-icon>
+                </mu-button>
+                <mu-button icon
+                    small
+                    color="white"
+                    @click="handleMaximize()">
+                    <mu-icon value="keyboard_arrow_up"
+                        :size="16"></mu-icon>
+                </mu-button>
+                <mu-button icon
+                    small
+                    color="white"
+                    @click="handleMinimize()">
+                    <mu-icon value="keyboard_arrow_down"
+                        :size="16"></mu-icon>
+                </mu-button>
+            </div>
+            <div id="appbar-drag-region"></div>
+        </template>
         <mu-appbar title="Electron Netease Cloud Music"
             color="primary">
             <mu-button icon
@@ -209,55 +212,47 @@ export default {
 
 <style lang="less">
 .appbar {
-    #appbar-window-control {
-        // hide window control by default
-        display: none;
-        z-index: 11;
-    }
-    .mu-appbar-left,
-    .mu-appbar-right {
-        -webkit-app-region: no-drag;
-    }
     &.is-frameless {
-        #appbar-window-control {
-            display: block;
-        }
         .mu-appbar {
             padding-top: 16px;
         }
     }
     &.is-darwin {
-        #appbar-window-control {
-            display: none;
-        }
         &.is-frameless {
             .mu-appbar {
                 padding-top: 12px;
             }
         }
     }
-    .mu-appbar {
-        cursor: default;
-        user-select: none;
+    #appbar-window-control {
+        z-index: 11;
+        position: fixed;
+        top: 0;
+        left: 0;
+        button {
+            cursor: default !important;
+            width: 28px;
+            height: 28px;
+        }
+    }
+    #appbar-drag-region {
+        position: fixed;
+        left: 84px;
+        top: 2px;
+        right: 60px;
+        height: 62px;
         -webkit-app-region: drag;
+    }
+    .mu-appbar {
+        user-select: none;
         z-index: 10;
         position: fixed;
         width: 100%;
         top: 0;
         left: 0;
-    }
-}
-
-#appbar-window-control {
-    z-index: 10;
-    -webkit-app-region: no-drag;
-    position: absolute;
-    top: 0;
-    left: 0;
-    button {
-        cursor: default !important;
-        width: 28px;
-        height: 28px;
+        .mu-appbar-title {
+            line-height: unset;
+        }
     }
 }
 
