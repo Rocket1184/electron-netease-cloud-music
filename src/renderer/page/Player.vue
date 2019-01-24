@@ -11,6 +11,16 @@
                 :style="albumImgStyle">
                 <div class="disc"></div>
             </div>
+            <div class="action">
+                <mu-button flat
+                    small
+                    :to="{ name: 'comment', params: { type: 'song', id: playing.id } }">
+                    <mu-icon left
+                        :size="18"
+                        value="comment"></mu-icon>
+                    <span>{{btnCommentText}}</span>
+                </mu-button>
+            </div>
         </div>
         <div class="info">
             <span class="name">{{playing.name}}</span>
@@ -86,6 +96,12 @@
 
 <script>
 import { mapState } from 'vuex';
+
+import Api from '@/util/api';
+import {
+    SET_CURRENT_INDEX,
+    SET_ACTIVE_LYRIC
+} from '@/vuex/mutation-types';
 import { bkgImg, sizeImg, HiDpiPx } from '@/util/image';
 import defaultCoverImg from 'assets/img/cover_default.webp';
 
@@ -94,6 +110,8 @@ export default {
     data() {
         return {
             isActive: false,
+            canvasImageId: -1,
+            commentCount: '...',
             /** @type {HTMLAudioElement} */
             audioEl: null,
             lyricElemMap: [],
@@ -111,6 +129,9 @@ export default {
                 return bkgImg(sizeImg(this.playing.album.picUrl, HiDpiPx(220)));
             }
             return '';
+        },
+        btnCommentText() {
+            return `评论（${this.commentCount}）`;
         },
         lyricScrollerStyle() {
             if (typeof this.ui.lyric.txtLyric === 'string') {
@@ -159,7 +180,7 @@ export default {
             }
         },
         paintBkgCanvas() {
-            if (!this.isActive) return;
+            this.canvasImageId = this.playing.id;
             const img = new Image();
             if (this.playing.album && this.playing.album.picUrl) {
                 img.src = sizeImg(this.playing.album.picUrl, HiDpiPx(64));
@@ -179,27 +200,37 @@ export default {
                 ctx.fillRect(0, 0, w, h);
             };
             img.addEventListener('load', handler);
-        }
-    },
-    watch: {
-        ['ui.lyricSeq']() {
-            // reset lyric position
-            this.currentLyricIndex = -1;
-            // query lyric elements after they are created
-            this.$nextTick(() => this.createLyricElemMap());
         },
-        ['playlist.index']() {
-            this.paintBkgCanvas();
+        async refreshThreadInfo() {
+            this.commentCount = '...';
+            const thread = `R_SO_4_${this.playing.id}`;
+            const resp = await Api.getCommentThreadInfoE(thread);
+            if (resp.code === 200) {
+                this.commentCount = resp.commentCount;
+            } else {
+                this.commentCount = '...';
+            }
         }
     },
     mounted() {
         this.paintBkgCanvas();
+        this.refreshThreadInfo();
         this.listenAudioUpdate();
         this.createLyricElemMap();
+        this.$store.subscribe(mutation => {
+            if (mutation.type === SET_CURRENT_INDEX) {
+                this.paintBkgCanvas();
+                this.refreshThreadInfo();
+            } else if (mutation.type === SET_ACTIVE_LYRIC) {
+                this.$nextTick(() => this.createLyricElemMap());
+            }
+        });
     },
     activated() {
         this.isActive = true;
-        this.paintBkgCanvas();
+        if (this.canvasImageId !== this.playing.id) {
+            this.paintBkgCanvas();
+        }
         if (!this.lyricElemMap.length) {
             this.createLyricElemMap();
         }
@@ -278,6 +309,9 @@ export default {
                 background-image: url('~assets/img/disc.webp');
                 background-size: contain;
             }
+        }
+        .action {
+            margin-top: 16px;
         }
         &.play {
             .needle {
