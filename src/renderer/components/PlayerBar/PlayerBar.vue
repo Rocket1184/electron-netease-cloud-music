@@ -199,7 +199,7 @@ export default {
                 /** @type {Models.PlayList} */
                 const favoriteList = this.user.playlist[0];
                 if (favoriteList) {
-                    return favoriteList.tracks.filter(t => t.id === this.playing.id).length !== 0;
+                    return favoriteList.tracks.findIndex(t => t.id === this.playing.id) > -1;
                 }
                 return false;
             },
