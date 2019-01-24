@@ -14,7 +14,8 @@
             <div class="action">
                 <mu-button flat
                     small
-                    :to="{ name: 'comment', params: { type: 'song', id: playing.id } }">
+                    :to="{ name: 'comment', params: { type: 'song', id: playing.id } }"
+                    replace>
                     <mu-icon left
                         :size="18"
                         value="comment"></mu-icon>
