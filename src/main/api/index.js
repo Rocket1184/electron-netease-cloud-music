@@ -286,20 +286,67 @@ export async function getMusicUrlLocal(id, quality, ignoreCache = false) {
     };
 }
 
+const Comments = {
+    threadRegexp: /^\w_\w\w_\d{1,2}_(\d+)$/
+};
+
 /**
- * @param {number} rid
+ * get comments by thread id
+ * @param {string} thread
  * @param {number} limit
  * @param {number} offset
- * @returns {Promise<Types.MusicCommentsRes>}
+ * @returns {Promise<Types.CommentsRes>}
  */
-export function getMusicComments(rid, limit = 20, offset = 0) {
+export function getComments(thread, limit = 20, offset = 0) {
     return client.postW({
-        url: `${BaseURL}/weapi/v1/resource/comments/R_SO_4_${rid}`,
+        url: `${BaseURL}/weapi/v1/resource/comments/${thread}`,
         data: {
-            rid,
+            rid: thread.match(Comments.threadRegexp)[1],
             offset,
             limit,
         }
+    });
+}
+
+/**
+ * get hot comments by thread id
+ * @param {string} thread
+ * @param {number} limit
+ * @param {number} offset
+ * @returns {Promise<Types.HotCommentsRes>}
+ */
+export function getHotComments(thread, limit = 20, offset = 0) {
+    return client.postW({
+        url: `${BaseURL}/weapi/v1/resource/hotcomments/${thread}`,
+        data: {
+            rid: thread.match(Comments.threadRegexp)[1],
+            offset,
+            limit,
+        }
+    });
+}
+
+/**
+ * @param {string} threadId
+ * @param {number} commentId
+ * @returns {Promise<Types.LikeCommentRes>}
+ */
+export function likeComment(threadId, commentId) {
+    return client.postW({
+        url: `${BaseURL}/weapi/v1/comment/like`,
+        data: { threadId, commentId }
+    });
+}
+
+/**
+ * @param {string} threadId
+ * @param {number} commentId
+ * @returns {Promise<Types.ApiRes>}
+ */
+export function unlikeComment(threadId, commentId) {
+    return client.postW({
+        url: `${BaseURL}/weapi/v1/comment/unlike`,
+        data: { threadId, commentId }
     });
 }
 

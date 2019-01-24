@@ -641,7 +641,7 @@ namespace Types {
         url?: string;
     }
 
-    export interface UserInfoInComment {
+    export interface CommentUser {
         authStatus: number;
         avatarUrl: string;
         expertTags: string[]
@@ -653,31 +653,44 @@ namespace Types {
         vipType: number;
     }
 
-    export interface BeRepliedComment {
+    export interface CommentReplied {
         content: string;
         status: number;
-        user: UserInfoInComment;
+        user: CommentUser;
     }
 
-    export interface MusicCommentItem {
-        beReplied: BeRepliedComment[];
+    export interface CommentItem {
+        beReplied: CommentReplied[];
         commentId: number;
         content: string;
         liked: Boolean;
         likedCount: number;
         time: number;
-        user: UserInfoInComment;
+        user: CommentUser;
     }
 
-    export interface MusicCommentsRes extends ApiRes {
-        comments: MusicCommentItem[];
-        hotComments: MusicCommentItem[];
+    export interface CommentsRes extends ApiRes {
+        comments: CommentItem[];
+        hotComments?: CommentItem[];
         isMusician: Boolean;
         more: Boolean;
-        moreHot: Boolean;
-        topComments: MusicCommentItem[];
+        moreHot?: Boolean;
+        /** empty array */
+        topComments: CommentItem[];
         total: number;
         userId: number;
+    }
+
+    export interface HotCommentsRes extends ApiRes {
+        hasMore: Boolean;
+        hotComments: CommentItem[];
+        /** empty array */
+        topComments: CommentItem[];
+        total: number;
+    }
+
+    export interface LikeCommentRes extends ApiRes {
+        msg: string;
     }
 
     export interface LyricObjectItem {
