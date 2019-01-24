@@ -5,7 +5,6 @@ const state = {
     audioSrc: '',
     paused: true,
     lyric: {},
-    lyricSeq: 0,
     search: {
         pending: false,
         keyword: '',
@@ -72,7 +71,6 @@ const mutations = {
     },
     [types.SET_ACTIVE_LYRIC](state, payload) {
         state.lyric = payload;
-        state.lyricSeq = state.lyricSeq + 1;
     },
     [types.SET_LOGIN_PENDING](state, payload) {
         if (payload === true) {
