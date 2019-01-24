@@ -1,6 +1,9 @@
 <template>
     <div class="comment-list">
         <CenteredLoading v-if="loading"></CenteredLoading>
+        <CenteredTip v-else-if="comments.length === 0"
+            icon="cloud_off"
+            tip="暂无评论"></CenteredTip>
         <template v-else
             v-for="(cmt, index) in comments">
             <mu-divider v-if="index !== 0"
@@ -22,6 +25,7 @@
 
 <script>
 import CommentItem from './CommentItem.vue';
+import CenteredTip from '@/components/CenteredTip.vue';
 import CenteredLoading from '@/components/CenteredLoading.vue';
 
 export default {
@@ -44,7 +48,7 @@ export default {
         return {
             loading: false,
             page: 1,
-            comments: null,
+            comments: [],
             total: 0
         };
     },
@@ -55,8 +59,10 @@ export default {
         async loadComments() {
             this.loading = true;
             const resp = await this.getComments(this.pageSize, this.offset);
-            this.total = resp.total;
-            this.comments = resp.comments || resp.hotComments;
+            if (resp.code === 200) {
+                this.total = resp.total;
+                this.comments = resp.comments || resp.hotComments || [];
+            }
             this.loading = false;
         },
         async handleLike(comment) {
@@ -76,6 +82,7 @@ export default {
     },
     components: {
         CommentItem,
+        CenteredTip,
         CenteredLoading
     }
 };
