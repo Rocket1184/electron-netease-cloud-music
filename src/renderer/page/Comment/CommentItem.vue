@@ -11,7 +11,24 @@
                     <div class="nickname">{{comment.user.nickname}}</div>
                     <div class="time"> {{comment.time | shortDate}}</div>
                 </div>
-                <div class="like">
+                <div class="actions">
+                    <mu-button v-if="canDelete"
+                        flat
+                        small
+                        @click="$emit('delete', comment)">
+                        <mu-icon left
+                            :size="16"
+                            value="delete"></mu-icon>
+                        <span>删除</span>
+                    </mu-button>
+                    <mu-button flat
+                        small
+                        @click="$emit('reply', comment)">
+                        <mu-icon left
+                            :size="16"
+                            value="reply"></mu-icon>
+                        <span>回复</span>
+                    </mu-button>
                     <mu-button flat
                         small
                         @click="$emit('like', comment)">
@@ -52,6 +69,8 @@
 </template>
 
 <script>
+import { mapState } from 'vuex';
+
 import { shortDate } from '@/util/formatter';
 import { sizeImg, HiDpiPx } from '@/util/image';
 
@@ -59,6 +78,12 @@ export default {
     props: {
         comment: {
             required: true
+        }
+    },
+    computed: {
+        ...mapState(['user']),
+        canDelete() {
+            return this.user.loginValid && this.comment.user.userId === this.user.info.id;
         }
     },
     filters: {
@@ -95,8 +120,11 @@ export default {
                     opacity: 0.7;
                 }
             }
-            .like {
+            .actions {
                 opacity: 0.85;
+                button {
+                    min-width: 50px;
+                }
             }
         }
         .content {
