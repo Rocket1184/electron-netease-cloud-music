@@ -222,6 +222,9 @@ export default {
                 this.paintBkgCanvas();
                 this.refreshThreadInfo();
             } else if (mutation.type === SET_ACTIVE_LYRIC) {
+                // reset lyric position
+                this.currentLyricIndex = -1;
+                // query lyric elements after they are created
                 this.$nextTick(() => this.createLyricElemMap());
             }
         });
