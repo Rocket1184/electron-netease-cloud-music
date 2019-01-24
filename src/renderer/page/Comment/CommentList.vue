@@ -10,7 +10,9 @@
                 :key="cmt.commentId + 'd'"></mu-divider>
             <CommentItem :key="cmt.commentId"
                 :comment="cmt"
-                @like="handleLike"></CommentItem>
+                @like="handleLike"
+                @reply="handleReply"
+                @delete="handleDelete"></CommentItem>
         </template>
         <div class="pagination"
             v-if="total > pageSize">
@@ -39,7 +41,11 @@ export default {
             type: Function,
             required: true
         },
-        likeComment:{
+        likeComment: {
+            type: Function,
+            required: true
+        },
+        deleteComment: {
             type: Function,
             required: true
         }
@@ -71,6 +77,21 @@ export default {
                 comment.liked = !comment.liked;
                 comment.likedCount += comment.liked ? 1 : -1;
             }
+        },
+        async handleDelete({ commentId }) {
+            const confirm = await this.$confirm('真的要删除此条评论吗？', '删除评论');
+            if (confirm.result !== true) return;
+            const resp = await this.deleteComment(commentId);
+            if (resp.code === 200) {
+                this.$toast.message('删除评论成功');
+                const index = this.comments.findIndex(cmt => cmt.commentId === commentId);
+                this.comments.splice(index, 1);
+            } else {
+                this.$toast.message(`删除评论失败 ... ${resp.code}: ${resp.msg}`);
+            }
+        },
+        handleReply(comment) {
+            this.$emit('reply', comment);
         },
         async handlePageChange(val) {
             this.page = val;
