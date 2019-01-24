@@ -39,7 +39,11 @@
                                 <div class="nickname">{{reply.user.nickname}}</div>
                             </div>
                         </div>
-                        <div class="content">{{reply.content}}</div>
+                        <div class="content">
+                            <span v-if="reply.status === 0">{{reply.content}}</span>
+                            <span v-else
+                                class="deleted">评论已删除</span>
+                        </div>
                     </div>
                 </div>
             </div>
@@ -103,7 +107,11 @@ export default {
             .comment-item {
                 padding: 6px;
                 margin: 6px 0 0;
-                background-color: rgba(0, 0, 0, 0.1);
+                background-color: #0000000f;
+                .deleted {
+                    text-decoration: line-through;
+                    opacity: 0.7;
+                }
             }
         }
     }
