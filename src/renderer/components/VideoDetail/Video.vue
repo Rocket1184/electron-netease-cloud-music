@@ -30,7 +30,8 @@
                     :color="statistic.subscribed ? 'amber': ''"></mu-icon>
                 <span>{{btnFavText}}</span>
             </mu-button>
-            <mu-button flat>
+            <mu-button flat
+                :to="{ name: 'comment', params: { type: 'video', id: video.id } }">
                 <mu-icon left
                     value="comment"></mu-icon>
                 <span>{{btnCommentText}}</span>

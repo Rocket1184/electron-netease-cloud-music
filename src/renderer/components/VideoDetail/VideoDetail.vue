@@ -50,6 +50,9 @@ export default {
                 object-fit: contain;
             }
         }
+        .actions {
+            display: flex;
+        }
     }
 }
 </style>

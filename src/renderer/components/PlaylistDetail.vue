@@ -25,7 +25,8 @@
                             :value="shouldSubscribed ? 'star' : 'star_border'"></mu-icon>
                         <span>{{btnSubscribeText}}</span>
                     </mu-button>
-                    <mu-button flat>
+                    <mu-button flat
+                        :to="{ name: 'comment', params: { type: 'playlist', id: playlist.id } }">
                         <mu-icon left
                             value="comment"></mu-icon>
                         <span>{{btnCommentText}}</span>
