@@ -287,7 +287,7 @@ export async function getMusicUrlLocal(id, quality, ignoreCache = false) {
 }
 
 const Comments = {
-    threadRegexp: /^\w_\w\w_\d{1,2}_(\d+)$/
+    threadRegexp: /^\w_\w\w_(?<resType>\d{1,2})_(?<rid>\d+)$/
 };
 
 /**
@@ -298,13 +298,10 @@ const Comments = {
  * @returns {Promise<Types.CommentsRes>}
  */
 export function getComments(thread, limit = 20, offset = 0) {
+    const { rid } = thread.match(Comments.threadRegexp).groups;
     return client.postW({
         url: `${BaseURL}/weapi/v1/resource/comments/${thread}`,
-        data: {
-            rid: thread.match(Comments.threadRegexp)[1],
-            offset,
-            limit,
-        }
+        data: { rid, offset, limit }
     });
 }
 
@@ -316,17 +313,15 @@ export function getComments(thread, limit = 20, offset = 0) {
  * @returns {Promise<Types.HotCommentsRes>}
  */
 export function getHotComments(thread, limit = 20, offset = 0) {
+    const { rid } = thread.match(Comments.threadRegexp).groups;
     return client.postW({
         url: `${BaseURL}/weapi/v1/resource/hotcomments/${thread}`,
-        data: {
-            rid: thread.match(Comments.threadRegexp)[1],
-            offset,
-            limit,
-        }
+        data: { rid, offset, limit }
     });
 }
 
 /**
+ * **DO NOT USE**
  * @param {string} threadId
  * @param {number} commentId
  * @returns {Promise<Types.LikeCommentRes>}
@@ -347,6 +342,84 @@ export function unlikeComment(threadId, commentId) {
     return client.postW({
         url: `${BaseURL}/weapi/v1/comment/unlike`,
         data: { threadId, commentId }
+    });
+}
+
+/**
+ * @param {string} threadId
+ * @param {number} commentId
+ * @returns {Promise<Types.ApiRes>}
+ */
+export function likeCommentE(threadId, commentId) {
+    return client.postE({
+        url: `${BaseURL}/eapi/v1/comment/like`,
+        data: { threadId, commentId }
+    });
+}
+
+/**
+ * @param {string} threadId
+ * @param {number} commentId
+ * @returns {Promise<Types.ApiRes>}
+ */
+export function unlikeCommentE(threadId, commentId) {
+    return client.postE({
+        url: `${BaseURL}/eapi/v1/comment/unlike`,
+        data: { threadId, commentId }
+    });
+}
+
+/**
+ * post comment to thread
+ * @param {string} threadId
+ * @param {string} content
+ * @returns {Promise<Types.AddCommentRes>}
+ */
+export function addComment(threadId, content) {
+    return client.postW({
+        url: `${BaseURL}/weapi/resource/comments/add`,
+        data: { threadId, content }
+    });
+}
+
+/**
+ * delete comment from thread
+ * @param {string} threadId
+ * @param {number} commentId
+ * @returns {Types.ApiRes}
+ */
+export function deleteComment(threadId, commentId) {
+    return client.postW({
+        url: `${BaseURL}/weapi/resource/comments/delete`,
+        data: { threadId, commentId }
+    });
+}
+
+/**
+ * **DO NOT USE**
+ * @param {string} threadId
+ * @param {number} commentId
+ * @param {string} content
+ * @returns {Types.AddCommentRes}
+ */
+export function replyComment(threadId, commentId, content) {
+    return client.postW({
+        url: `${BaseURL}/api/v1/resource/comments/reply`,
+        data: { threadId, commentId, content /* checkToken */ }
+    });
+}
+
+/**
+ * @param {string} threadId
+ * @param {number} commentId
+ * @param {string} content
+ * @returns {Types.AddCommentRes}
+ */
+export function replyCommentE(threadId, commentId, content) {
+    const { resType: resourceType } = threadId.match(Comments.threadRegexp).groups;
+    return client.postE({
+        url: `${BaseURL}/eapi/v1/resource/comments/reply`,
+        data: { threadId, commentId, content, resourceType }
     });
 }
 

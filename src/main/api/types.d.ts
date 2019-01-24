@@ -693,6 +693,18 @@ namespace Types {
         msg: string;
     }
 
+    export interface AddCommentRes extends ApiRes {
+        comment: {
+            beRepliedUser?: CommentUser;
+            commentId: number;
+            commentLocationType: number;
+            content: string;
+            expressionUrl?: any;
+            time: number;
+            user: CommentUser;
+        }
+    }
+
     export interface LyricObjectItem {
         // not so clear about that
         info?: {
