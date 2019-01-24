@@ -287,7 +287,7 @@ export async function getMusicUrlLocal(id, quality, ignoreCache = false) {
 }
 
 const Comments = {
-    threadRegexp: /^\w_\w\w_(?<resType>\d{1,2})_(?<rid>\d+)$/
+    threadRegexp: /^\w_\w\w_(?<resType>\d{1,2})_(?<rid>\w+)$/
 };
 
 /**
