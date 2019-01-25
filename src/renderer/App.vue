@@ -58,12 +58,16 @@ export default {
         this.$router.push({ name: 'index' });
         this.$router.beforeEach((to, from, next) => {
             const { index, stack } = this.$router.history;
-            const lastRoute = stack[index - 1 >= 0 ? index - 1 : 0];
+            const lastRoute = stack[index - 1];
             if (to.name === 'player') {
                 this.transitionName = 'player-in';
             } else if (from.name === 'player') {
                 this.transitionName = 'player-out';
-            } else if (to.name === 'index' || to.path === lastRoute.path) {
+            } else if (to.name === 'index') {
+                this.transitionName = 'fade-down';
+            } else if (from.name === 'index') {
+                this.transitionName = 'fade-up';
+            } else if (to.path === lastRoute.path) {
                 this.transitionName = 'fade-down';
             } else {
                 this.transitionName = 'fade-up';
