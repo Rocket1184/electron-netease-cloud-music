@@ -19,7 +19,8 @@ document.body.appendChild(node);
 
 MuseUI.theme.addCreateTheme((theme) => {
     return `.ncm-page{background-color:${theme.background.default}}
-.action-item:hover .mu-icon{color:${theme.background.default}}`;
+.action-item:hover .mu-icon{color:${theme.background.default}}
+.mu-divider{background-color:rgba(0,0,0,.2)}`;
 });
 
 MuseUI.theme.add('ncm', {
