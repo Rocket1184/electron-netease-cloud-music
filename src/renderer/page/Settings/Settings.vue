@@ -2,42 +2,10 @@
     <div class="ncm-page">
         <div class="settings">
             <mu-list>
-                <mu-sub-header>基本设置</mu-sub-header>
-                <mu-list-item>
-                    <mu-list-item-title>试听音频码率</mu-list-item-title>
-                    <mu-list-item-action>
-                        <mu-select :value="settings.bitRate"
-                            @change="setByName('bitRate', $event)">
-                            <mu-option label="极高 (320 kbit/s)"
-                                value="h"></mu-option>
-                            <mu-option label="较高 (192 kbit/s)"
-                                value="m"></mu-option>
-                            <mu-option label="标准 (128 kbit/s)"
-                                value="l"></mu-option>
-                        </mu-select>
-                    </mu-list-item-action>
-                </mu-list-item>
-                <mu-list-item button
-                    @click="toggleWindowBorder()">
-                    <mu-list-item-title>使用系统标题栏</mu-list-item-title>
-                    <mu-list-item-action>
-                        <mu-switch :inputValue="settings.windowBorder"
-                            color="secondary"
-                            readonly></mu-switch>
-                    </mu-list-item-action>
-                </mu-list-item>
-                <mu-list-item button
-                    @click="toggleByName('autoPlay')">
-                    <mu-list-item-title>启动时自动开始播放</mu-list-item-title>
-                    <mu-list-item-action>
-                        <mu-switch :inputValue="settings.autoPlay"
-                            color="secondary"
-                            readonly></mu-switch>
-                    </mu-list-item-action>
-                </mu-list-item>
+                <mu-sub-header>视觉</mu-sub-header>
                 <mu-list-item button
                     @click="primaryPickerOpen = true">
-                    <mu-list-item-title>主色调</mu-list-item-title>
+                    <mu-list-item-title>主题色</mu-list-item-title>
                     <ColorPicker :open.sync="primaryPickerOpen"
                         @select="setTheme('themePrimaryColor', $event)"></ColorPicker>
                     <mu-list-item-action>
@@ -56,7 +24,7 @@
                     </mu-list-item-action>
                 </mu-list-item>
                 <mu-list-item>
-                    <mu-list-item-title>背景色调</mu-list-item-title>
+                    <mu-list-item-title>背景色</mu-list-item-title>
                     <mu-list-item-action>
                         <mu-select :value="settings.themeVariety"
                             @change="setTheme('themeVariety', $event)">
@@ -67,7 +35,31 @@
                         </mu-select>
                     </mu-list-item-action>
                 </mu-list-item>
-                <mu-sub-header>存储空间</mu-sub-header>
+                <mu-list-item button
+                    @click="toggleWindowBorder()">
+                    <mu-list-item-title>使用系统标题栏</mu-list-item-title>
+                    <mu-list-item-action>
+                        <mu-switch :inputValue="settings.windowBorder"
+                            color="secondary"
+                            readonly></mu-switch>
+                    </mu-list-item-action>
+                </mu-list-item>
+                <mu-sub-header>播放</mu-sub-header>
+                <mu-list-item>
+                    <mu-list-item-title>音频码率</mu-list-item-title>
+                    <mu-list-item-action>
+                        <mu-select :value="settings.bitRate"
+                            @change="setByName('bitRate', $event)">
+                            <mu-option label="极高 (320 kbit/s)"
+                                value="h"></mu-option>
+                            <mu-option label="较高 (192 kbit/s)"
+                                value="m"></mu-option>
+                            <mu-option label="标准 (128 kbit/s)"
+                                value="l"></mu-option>
+                        </mu-select>
+                    </mu-list-item-action>
+                </mu-list-item>
+                <mu-sub-header>存储</mu-sub-header>
                 <mu-list-item button
                     @click="promptClearCache('chrome')">
                     <mu-list-item-title>浏览器缓存</mu-list-item-title>
@@ -96,7 +88,7 @@
                         <span class="nowrap">{{dataSize | humanSize}}</span>
                     </mu-list-item-action>
                 </mu-list-item>
-                <mu-sub-header>高级设置</mu-sub-header>
+                <mu-sub-header>调试</mu-sub-header>
                 <mu-list-item button
                     @click="launchDevTools">
                     <mu-list-item-title>启动开发者工具</mu-list-item-title>
@@ -294,6 +286,7 @@ export default {
 .settings {
     max-width: 600px;
     margin: 0 auto 100px;
+    user-select: none;
     .nowrap {
         white-space: nowrap;
     }
