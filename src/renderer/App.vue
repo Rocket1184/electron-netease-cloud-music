@@ -70,11 +70,7 @@ export default {
             }
             next();
         });
-        this.restoreSettings().then(() => {
-            if (this.settings.autoPlay) {
-                this.playAudio();
-            }
-        });
+        this.restoreSettings();
         this.restoreUserInfo();
         this.restorePlaylist();
     }
