@@ -14,6 +14,7 @@
             <div class="action">
                 <mu-button flat
                     small
+                    color="black"
                     :to="{ name: 'comment', params: { type: 'song', id: playing.id } }"
                     replace>
                     <mu-icon left
@@ -132,7 +133,7 @@ export default {
             return '';
         },
         btnCommentText() {
-            return `评论（${this.commentCount}）`;
+            return `评论 (${this.commentCount})`;
         },
         lyricScrollerStyle() {
             if (typeof this.ui.lyric.txtLyric === 'string') {
