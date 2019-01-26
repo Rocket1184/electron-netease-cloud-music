@@ -7,7 +7,7 @@
                     @click="primaryPickerOpen = true">
                     <mu-list-item-title>主题色</mu-list-item-title>
                     <ColorPicker :open.sync="primaryPickerOpen"
-                        @select="setTheme('themePrimaryColor', $event)"></ColorPicker>
+                        @select="setThemeVariable('themePrimaryColor', $event)"></ColorPicker>
                     <mu-list-item-action>
                         <mu-avatar :size="24"
                             :color="settings.themePrimaryColor"></mu-avatar>
@@ -17,7 +17,7 @@
                     @click="secondaryPickerOpen = true">
                     <mu-list-item-title>强调色</mu-list-item-title>
                     <ColorPicker :open.sync="secondaryPickerOpen"
-                        @select="setTheme('themeSecondaryColor', $event)"></ColorPicker>
+                        @select="setThemeVariable('themeSecondaryColor', $event)"></ColorPicker>
                     <mu-list-item-action>
                         <mu-avatar :size="24"
                             :color="settings.themeSecondaryColor"></mu-avatar>
@@ -27,7 +27,7 @@
                     <mu-list-item-title>背景色</mu-list-item-title>
                     <mu-list-item-action>
                         <mu-select :value="settings.themeVariety"
-                            @change="setTheme('themeVariety', $event)">
+                            @change="setThemeVariable('themeVariety', $event)">
                             <mu-option label="亮色"
                                 value="light"></mu-option>
                             <mu-option label="暗色"
@@ -121,9 +121,9 @@
 <script>
 import { ipcRenderer, remote, shell } from 'electron';
 import { mapState, mapActions } from 'vuex';
-import MuseUI from 'muse-ui';
 
 import Api from '@/util/api';
+import { setTheme } from '@/util/theme';
 import ColorPicker from './ColorPicker.vue';
 import { humanSize } from '@/util/formatter';
 
@@ -187,13 +187,12 @@ export default {
         setByName(name, val) {
             return this.updateSettings({ [name]: val });
         },
-        async setTheme(name, val) {
+        async setThemeVariable(name, val) {
             await this.setByName(name, val);
-            const id = Date.now();
-            MuseUI.theme.add(id, {
+            setTheme({
                 primary: this.settings.themePrimaryColor,
                 secondary: this.settings.themeSecondaryColor
-            }, this.settings.themeVariety).use(id);
+            }, this.settings.themeVariety);
         },
         async clearStorage() {
             return new Promise(resolve => webContents.session.clearStorageData(resolve));
