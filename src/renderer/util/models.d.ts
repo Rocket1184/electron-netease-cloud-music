@@ -49,6 +49,8 @@ declare namespace Models {
             name: string;
             id: string;
         }
+        /** MV ID */
+        mv: number;
     }
 
     export class PlayList {

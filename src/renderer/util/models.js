@@ -29,6 +29,7 @@ export class Track {
         this.duration = o.dt || o.duration;
         this.commentThreadId = o.commentThreadId;
         this.source = o.source || source;
+        this.mv = o.mv;
     }
 }
 
