@@ -25,7 +25,19 @@
             </div>
         </div>
         <div class="info">
-            <span class="name">{{playing.name}}</span>
+            <div class="title">
+                <span class="name">{{playing.name}}</span>
+                <mu-button v-if="playing.mv"
+                    icon
+                    small
+                    color="primary"
+                    class="btn-mv"
+                    title="查看 MV"
+                    :to="{ name: 'video', params: { id: playing.mv } }"
+                    replace>
+                    <mu-icon value="music_video"></mu-icon>
+                </mu-button>
+            </div>
             <p class="source">
                 <template v-if="playing.artists">
                     <span>歌手：</span>
@@ -193,7 +205,7 @@ export default {
             const h = 600;
             /** @type {CanvasRenderingContext2D} */
             const ctx = this.$refs.cvs.getContext('2d');
-            ctx.fillStyle = 'rgba(255, 255, 255, 0.15)';
+            ctx.fillStyle = 'rgba(255, 255, 255, 0.3)';
             ctx.filter = 'blur(60px)';
             ctx.clearRect(0, 0, w, h);
             const handler = () => {
@@ -329,17 +341,27 @@ export default {
     }
     .info {
         flex: 1;
-        & > * {
+        .title,
+        .source,
+        .lyric {
             // lyric needs padding, or its text-shadow would be cut off
             padding-left: 6px;
         }
-        .name {
-            .ellipsis-text(500px);
-            font-size: 28px;
-            margin-top: 18px;
+        .title {
+            margin-top: 16px;
+            display: flex;
+            align-items: center;
+            .name {
+                .ellipsis-text(calc(~'50vw - 48px'));
+                font-size: 24px;
+            }
+            .btn-mv {
+                margin-left: 4px;
+            }
         }
         .source {
             user-select: none;
+            margin: 14px 0 20px;
             .sep {
                 margin: 0 6px;
             }
