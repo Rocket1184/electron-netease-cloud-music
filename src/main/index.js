@@ -3,7 +3,7 @@
 import { join } from 'path';
 import { app, BrowserWindow, ipcMain, Menu } from 'electron';
 
-import { getCurrent } from './settings';
+import { appName, getCurrent } from './settings';
 import { devPort } from '../../script/config';
 
 const isDev = process.env.NODE_ENV === 'development';
@@ -15,6 +15,11 @@ const mainURL = isDev ? `http://localhost:${devPort}` : `file://${__dirname}/ind
 /** @type {BrowserWindow} */
 let loginWindow;
 let loginURL = isDev ? `http://localhost:${devPort}/login.html` : `file://${__dirname}/login.html`;
+
+const BackgroundColor = {
+    light: '#fafafa',
+    dark: '#303030'
+};
 
 if (app.requestSingleInstanceLock()) {
     app.on('second-instance', () => {
@@ -39,7 +44,8 @@ function createMainWindow(url = mainURL) {
         width: 1000,
         frame: settings.windowBorder,
         titleBarStyle: settings.windowBorder ? 'default' : 'hidden',
-        name: 'Electron Netease Cloud Music',
+        backgroundColor: BackgroundColor[settings.themeVariety],
+        name: appName,
         webPreferences: {
             preload: join(__dirname, 'preload.js'),
             nodeIntegration: isDev,
