@@ -481,10 +481,12 @@ export async function getMusicLyric(id) {
 
 /**
  * @param {number} id
+ * @param {boolean} ignoreCache
  * @returns {Promise<Types.MusicLyricRes>}
  */
-export async function getMusicLyricCached(id) {
-    if (await lyricCache.has(id)) {
+export async function getMusicLyricCached(id, ignoreCache = false) {
+    const hasCache = await lyricCache.has(id);
+    if (hasCache && !ignoreCache) {
         const pathname = lyricCache.fullPath(id);
         const text = await fsPromises.readFile(pathname, 'utf8');
         return JSON.parse(text);
