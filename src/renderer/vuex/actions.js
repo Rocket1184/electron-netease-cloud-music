@@ -120,23 +120,23 @@ export async function search({ commit }, { keyword, type, limit = 20, offset = 0
         switch (type) {
             case 'song':
                 result.total = resp.result.songCount;
-                result.items = resp.result.songs.map(i => new Track(i)) || [];
+                result.items = resp.result.songs.map(i => new Track(i));
                 break;
             case 'artist':
                 result.total = resp.result.artistCount;
-                result.items = resp.result.artists || [];
+                result.items = resp.result.artists;
                 break;
             case 'album':
                 result.total = resp.result.albumCount;
-                result.items = resp.result.albums || [];
+                result.items = resp.result.albums;
                 break;
             case 'playlist':
                 result.total = resp.result.playlistCount;
-                result.items = resp.result.playlists || [];
+                result.items = resp.result.playlists;
                 break;
             case 'video':
                 result.total = resp.result.videoCount;
-                result.items = resp.result.videos.map(v => new Video(v)) || [];
+                result.items = resp.result.videos.map(v => new Video(v));
                 break;
         }
         commit(types.SET_SEARCH_RESULT, result);
@@ -155,10 +155,10 @@ export async function updateUiAudioSrc({ commit, state }, { ignoreCache = false 
     }
 }
 
-export async function updateUiLyric({ commit, state }) {
+export async function updateUiLyric({ commit, state }, { ignoreCache = false } = {}) {
     const track = state.playlist.list[state.playlist.index];
     if (track && track.id) {
-        const lyric = await Api.getMusicLyricCached(track.id);
+        const lyric = await Api.getMusicLyricCached(track.id, ignoreCache);
         commit(types.SET_ACTIVE_LYRIC, lyric);
     }
 }
