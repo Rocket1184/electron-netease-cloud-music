@@ -7,7 +7,7 @@ const overrides = {
 export function initTheme(...args) {
     MuseUI.theme.addCreateTheme((theme) => {
         return `
-.ncm-page{background-color:${theme.background.default}}
+.player-bar,.ncm-page{background-color:${theme.background.default}}
 .action-item:hover .mu-icon{color:${theme.background.default}}
 `.trim();
     });

@@ -1,5 +1,5 @@
 <template>
-    <div class="player-bar-wrapper">
+    <div class="player-bar">
         <div class="cover"
             @click="handleCoverClick">
             <div class="img"
@@ -354,7 +354,7 @@ export default {
 </script>
 
 <style lang="less">
-.player-bar-wrapper {
+.player-bar {
     box-shadow: 0 2px 12px rgba(0, 0, 0, 0.4);
     display: flex;
     user-select: none;
