@@ -108,10 +108,11 @@ export async function logout({ commit }) {
     }
 }
 
-export async function search({ commit }, { keyword, type, limit = 20, offset = 0 }) {
+export async function search({ state, commit }, { keyword, type, limit = 20, offset = 0 }) {
     commit(types.SET_SEARCH_PENDING, true);
     commit(types.SET_SEARCH_PARAM, { keyword, type, offset });
     const resp = await Api.search(keyword, type, limit, offset);
+    if (state.ui.search.type !== type) return;
     if (resp.code === 200) {
         let result = {
             total: 0,
