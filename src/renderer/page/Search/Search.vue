@@ -2,7 +2,7 @@
     <div class="search ncm-page">
         <mu-tabs class="search-tab"
             inverse
-            :value="searchType"
+            :value="tab"
             @change="handleTabChange">
             <mu-tab value="song">单曲</mu-tab>
             <mu-tab value="artist">歌手</mu-tab>
@@ -12,7 +12,7 @@
             <mu-tab value="user">用户</mu-tab>
         </mu-tabs>
         <div class="search-content">
-            <CenteredTip v-if="searchType === 'user'"></CenteredTip>
+            <CenteredTip v-if="tab === 'user'"></CenteredTip>
             <CenteredLoading v-else-if="ui.search.pending"></CenteredLoading>
             <CenteredTip v-else-if="haveSearched === false"
                 icon="search"
@@ -23,18 +23,18 @@
             <CenteredTip v-else-if="ui.search.error"
                 icon="error_outline"
                 :tip="`出错了 ... ${ui.search.error.code}：${ui.search.error.msg}`"></CenteredTip>
-            <TrackList v-else-if="searchType === 'song'"
+            <TrackList v-else-if="tab === 'song'"
                 :tracks="ui.search.result.items"
                 :source="{ name: 'search', id: $route.query.keyword }"
                 :indexOffset="searchOffset"></TrackList>
-            <ArtistList v-else-if="searchType === 'artist'"
+            <ArtistList v-else-if="tab === 'artist'"
                 :list="ui.search.result.items"></ArtistList>
-            <AlbumList v-else-if="searchType === 'album'"
+            <AlbumList v-else-if="tab === 'album'"
                 showArtist
                 :list="ui.search.result.items"></AlbumList>
-            <PlaylistList v-else-if="searchType === 'playlist'"
+            <PlaylistList v-else-if="tab === 'playlist'"
                 :list="ui.search.result.items"></PlaylistList>
-            <VideoList v-else-if="searchType === 'video'"
+            <VideoList v-else-if="tab === 'video'"
                 showBadge
                 :videos="ui.search.result.items"></VideoList>
             <CenteredTip v-else
@@ -68,7 +68,7 @@ export default {
     data() {
         return {
             haveSearched: false,
-            searchType: 'song',
+            tab: 'song',
             pageSize: 20,
             currentPage: 1
         };
@@ -79,8 +79,8 @@ export default {
             return (this.currentPage - 1) * this.pageSize;
         },
         paginationShow() {
-            const { pending, result: { total } } = this.ui.search;
-            return !pending && total > this.pageSize;
+            const { result: { total } } = this.ui.search;
+            return this.haveSearched && total > this.pageSize;
         }
     },
     methods: {
@@ -90,24 +90,23 @@ export default {
                 name: 'search',
                 query: {
                     keyword: this.$route.query.keyword,
-                    type: this.searchType,
-                    page: this.currentPage
+                    type: this.tab
                 }
             });
         },
         handleTabChange(val) {
-            this.searchType = val;
+            this.tab = val;
             this.currentPage = 1;
             this.updateQueryString();
         },
         handlePageChange(val) {
             this.currentPage = val;
-            this.updateQueryString();
+            this.handleSearch();
         },
         async handleSearch() {
-            const { keyword, type = this.searchType, page = 1 } = this.$route.query;
+            const { keyword, type = this.tab } = this.$route.query;
             if (!keyword) return;
-            const offset = (page - 1) * this.pageSize;
+            const offset = this.searchOffset;
             if (keyword === this.ui.search.keyword &&
                 type === this.ui.search.type &&
                 offset === this.ui.search.offset) return;
@@ -150,6 +149,9 @@ export default {
     .search-content {
         height: calc(~'100% - 48px');
         overflow: auto;
+    }
+    .centered-loading {
+        height: calc(~'100% - 78px');
     }
     .pagination {
         width: 100%;
