@@ -158,8 +158,10 @@ export async function updateUiAudioSrc({ commit, state }, { ignoreCache = false 
 export async function updateUiLyric({ commit, state }, { ignoreCache = false } = {}) {
     const track = state.playlist.list[state.playlist.index];
     if (track && track.id) {
+        commit(types.SET_LYRIC_LOADING, true);
         const lyric = await Api.getMusicLyricCached(track.id, ignoreCache);
         commit(types.SET_ACTIVE_LYRIC, lyric);
+        commit(types.SET_LYRIC_LOADING, false);
     }
 }
 
@@ -173,7 +175,6 @@ export function pauseAudio({ commit }) {
 
 export async function playTrackIndex({ commit, dispatch }, index) {
     commit(types.SET_CURRENT_INDEX, index);
-    commit(types.SET_ACTIVE_LYRIC, {});
     dispatch('updateUiLyric');
     await dispatch('updateUiAudioSrc');
     commit(types.RESUME_PLAYING_MUSIC);

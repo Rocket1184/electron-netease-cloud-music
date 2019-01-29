@@ -4,6 +4,7 @@ import { Artist, Album, Video, PlayList, Track } from '@/util/models';
 const state = {
     audioSrc: '',
     paused: true,
+    lyricLoading: false,
     lyric: {},
     search: {
         pending: false,
@@ -68,6 +69,13 @@ const mutations = {
     },
     [types.UPDATE_PLAYING_URL](state, payload) {
         state.audioSrc = payload;
+    },
+    [types.SET_LYRIC_LOADING](state, payload) {
+        if (payload === true) {
+            state.lyricLoading = true;
+        } else {
+            state.lyricLoading = false;
+        }
     },
     [types.SET_ACTIVE_LYRIC](state, payload) {
         state.lyric = payload;
