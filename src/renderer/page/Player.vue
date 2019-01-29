@@ -64,44 +64,62 @@
                 </template>
             </p>
             <div class="lyric">
-                <div class="scroller"
-                    :style="lyricScrollerStyle">
-                    <template v-if="ui.lyric.mlrc">
-                        <p v-for="(line, index) in ui.lyric.mlrc.lyrics"
-                            class="line"
-                            :key="index"
-                            :class="{active: index == currentLyricIndex}"
-                            :data-time="line.timestamp">
-                            <span>{{line.content}}</span>
-                            <br>
-                            <span>{{line.trans}}</span>
-                        </p>
-                    </template>
-                    <template v-else-if="ui.lyric.lrc">
-                        <p v-for="(line, index) in ui.lyric.lrc.lyrics"
-                            :key="index"
-                            class="line"
-                            :class="{active: index == currentLyricIndex}"
-                            :data-time="line.timestamp">
-                            <span>{{line.content}}</span>
-                        </p>
-                    </template>
-                    <template v-else-if="ui.lyric.txtLyric">
-                        <pre>{{ui.lyric.txtLyric}}</pre>
-                    </template>
-                    <template v-else>
-                        <p>暂无歌词</p>
-                    </template>
-                    <template v-if="ui.lyric.lyricUser">
-                        <p><br></p>
-                        <p>
-                            <span>歌词贡献者：{{ui.lyric.lyricUser.nickname}}</span>
-                            <template v-if="ui.lyric.transUser">
+                <div class="control">
+                    <mu-button flat
+                        small
+                        color="black"
+                        @click="handleLyricRefresh">
+                        <mu-icon left
+                            value="refresh"></mu-icon>
+                        <span>刷新歌词</span>
+                    </mu-button>
+                </div>
+                <div v-if="ui.lyricLoading"
+                    class="mask">
+                    <p>歌词加载中 ...</p>
+                </div>
+                <div v-show="!ui.lyricLoading"
+                    class="scroller-wrapper">
+                    <div class="scroller"
+                        :style="lyricScrollerStyle">
+                        <template v-if="ui.lyric.mlrc">
+                            <p v-for="(line, index) in ui.lyric.mlrc.lyrics"
+                                class="line"
+                                :key="index"
+                                :class="{active: index == currentLyricIndex}"
+                                :data-time="line.timestamp">
+                                <span>{{line.content}}</span>
                                 <br>
-                                <span>翻译贡献者：{{ui.lyric.transUser.nickname}}</span>
-                            </template>
-                        </p>
-                    </template>
+                                <span>{{line.trans}}</span>
+                            </p>
+                        </template>
+                        <template v-else-if="ui.lyric.lrc">
+                            <p v-for="(line, index) in ui.lyric.lrc.lyrics"
+                                :key="index"
+                                class="line"
+                                :class="{active: index == currentLyricIndex}"
+                                :data-time="line.timestamp">
+                                <span>{{line.content}}</span>
+                            </p>
+                        </template>
+                        <template v-else-if="ui.lyric.txtLyric">
+                            <pre>{{ui.lyric.txtLyric}}</pre>
+                            <p><br><br></p>
+                        </template>
+                        <template v-else>
+                            <p>暂无歌词</p>
+                        </template>
+                        <template v-if="ui.lyric.lyricUser">
+                            <p><br></p>
+                            <p>
+                                <span>歌词贡献者：{{ui.lyric.lyricUser.nickname}}</span>
+                                <template v-if="ui.lyric.transUser">
+                                    <br>
+                                    <span>翻译贡献者：{{ui.lyric.transUser.nickname}}</span>
+                                </template>
+                            </p>
+                        </template>
+                    </div>
                 </div>
             </div>
         </div>
@@ -109,7 +127,7 @@
 </template>
 
 <script>
-import { mapState } from 'vuex';
+import { mapState, mapActions } from 'vuex';
 
 import Api from '@/util/api';
 import {
@@ -162,6 +180,7 @@ export default {
         }
     },
     methods: {
+        ...mapActions(['updateUiLyric']),
         listenAudioUpdate() {
             this.audioEl = document.getElementById('playerbar-audio');
             this.audioEl.addEventListener('timeupdate', ev => {
@@ -224,6 +243,9 @@ export default {
             } else {
                 this.commentCount = '...';
             }
+        },
+        handleLyricRefresh() {
+            this.updateUiLyric({ ignoreCache: true });
         }
     },
     mounted() {
@@ -259,11 +281,6 @@ export default {
 </script>
 
 <style lang="less">
-.shadow-text {
-    color: white;
-    text-shadow: 0 0 4px black, 0 2px 4px rgba(0, 0, 0, 0.7);
-}
-
 .ellipsis-text(@width: 175px) {
     display: inline-block;
     max-width: @width;
@@ -353,7 +370,7 @@ export default {
             align-items: center;
             .name {
                 .ellipsis-text(calc(~'50vw - 48px'));
-                font-size: 24px;
+                font-size: 26px;
             }
             .btn-mv {
                 margin-left: 4px;
@@ -361,7 +378,7 @@ export default {
         }
         .source {
             user-select: none;
-            margin: 14px 0 20px;
+            margin: 16px 0 24px;
             .sep {
                 margin: 0 6px;
             }
@@ -376,15 +393,43 @@ export default {
         }
         .lyric {
             height: 340px;
-            overflow: hidden;
-            // -webkit-mask-image: -webkit-linear-gradient(top, transparent, white 15%, white 85%, transparent);
-            .scroller {
-                transition: transform 0.5s cubic-bezier(0.25, 0.46, 0.45, 0.94);
-                .line {
-                    margin: 14px 0;
+            position: relative;
+            .control {
+                position: absolute;
+                bottom: 0;
+                z-index: 0;
+                opacity: 0;
+                transition: 0.5s opacity;
+            }
+            .mask {
+                height: 100%;
+                display: flex;
+                align-items: center;
+            }
+            .scroller-wrapper {
+                height: 100%;
+                overflow: hidden;
+                transition: 0.5s -webkit-mask-image;
+                .scroller {
+                    transition: transform 0.5s
+                        cubic-bezier(0.25, 0.46, 0.45, 0.94);
+                    .line {
+                        margin: 14px 0;
+                    }
+                    .active {
+                        color: white;
+                        text-shadow: 0 0 4px black, 0 2px 4px rgba(0, 0, 0, 0.7);
+                    }
                 }
-                .active {
-                    .shadow-text;
+            }
+            &:hover {
+                .scroller-wrapper {
+                    -webkit-mask-image: -webkit-linear-gradient(top, #000 80%, transparent 93%);
+                    mask-image: linear-gradient(top, #000 80%, transparent 93%);
+                }
+                .control {
+                    z-index: 1;
+                    opacity: 1;
                 }
             }
         }
