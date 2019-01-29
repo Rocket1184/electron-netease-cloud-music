@@ -360,7 +360,7 @@ export default {
         flex: 1;
         .title,
         .source,
-        .lyric {
+        .scroller-wrapper {
             // lyric needs padding, or its text-shadow would be cut off
             padding-left: 6px;
         }
