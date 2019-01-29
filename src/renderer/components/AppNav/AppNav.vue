@@ -92,7 +92,7 @@ import SearchBox from './SearchBox.vue';
 import LoginDialog from './LoginDialog.vue';
 import { bkgImg, sizeImg, HiDpiPx } from "@/util/image";
 
-const SignIconMap = {
+const SignIcon = {
     0: 'looks_5',
     2: 'looks_3',
     3: 'looks_two',
@@ -143,7 +143,7 @@ export default {
             return '未签到';
         },
         btnSignIcon() {
-            return SignIconMap[this.signLevel];
+            return SignIcon[this.signLevel];
         }
     },
     methods: {
@@ -196,8 +196,8 @@ export default {
                 }
             }
             if (points > 0) {
+                await this.updateUserSignStatus();
                 this.$toast.message(`签到成功，获得 ${points} 点积分`);
-                this.updateUserSignStatus();
             } else {
                 this.$toast.message('是不是已经签到过了呢 ：）');
             }
@@ -274,7 +274,7 @@ export default {
             display: flex;
             justify-content: space-between;
             align-items: center;
-            filter: drop-shadow(0 2px 4px black);
+            filter: drop-shadow(0 1px 2px #000000aa);
             .username {
                 color: white;
                 font-size: 20px;
