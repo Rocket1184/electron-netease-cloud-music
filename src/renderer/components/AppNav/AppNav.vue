@@ -274,7 +274,7 @@ export default {
             display: flex;
             justify-content: space-between;
             align-items: center;
-            filter: drop-shadow(0 1px 2px #000000aa);
+            filter: drop-shadow(0 1px 2px rgba(0, 0, 0, 0.66));
             .username {
                 color: white;
                 font-size: 20px;
