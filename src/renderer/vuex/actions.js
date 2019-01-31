@@ -156,6 +156,8 @@ export async function updateUiAudioSrc({ commit, state }, { ignoreCache = false 
     if (track && track.id) {
         const resp = await Api.getMusicUrlLocal(track.id, quality, ignoreCache);
         commit(types.UPDATE_PLAYING_URL, resp.url);
+    } else {
+        commit(types.UPDATE_PLAYING_URL, '');
     }
 }
 
@@ -166,6 +168,8 @@ export async function updateUiLyric({ commit, state }, { ignoreCache = false } =
         const lyric = await Api.getMusicLyricCached(track.id, ignoreCache);
         commit(types.SET_ACTIVE_LYRIC, lyric);
         commit(types.SET_LYRIC_LOADING, false);
+    } else {
+        commit(types.SET_ACTIVE_LYRIC, {});
     }
 }
 
