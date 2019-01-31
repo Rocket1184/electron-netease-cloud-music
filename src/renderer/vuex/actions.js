@@ -234,6 +234,13 @@ export async function playPlaylist({ commit, dispatch, state }, { tracks, source
     dispatch('playTrackIndex', firstIndex);
 }
 
+export function clearPlaylist({ commit, dispatch }) {
+    commit(types.SET_PLAY_LIST, []);
+    commit(types.SET_CURRENT_INDEX, 0);
+    dispatch('updateUiAudioSrc');
+    dispatch('updateUiLyric');
+}
+
 export function storePlaylist({ state }) {
     localStorage.setItem('playlist', JSON.stringify(state.playlist));
 }
