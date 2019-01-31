@@ -32,6 +32,23 @@ ipcMain.on(TAG, (_, type, ...args) => {
     MPRISEmitter.emit(type, ...args);
 });
 
+/**
+ * @param {import('electron').BrowserWindow} win 
+ */
+function bindWindow(win) {
+    MPRISEmitter.on('dbus:raise', () => {
+        if (win.isMinimized()) {
+            win.restore();
+        }
+        win.focus();
+    });
+    MPRISEmitter.on('dbus:quit', () => win.close());
+    bindWebContents(win.webContents);
+}
+
+/**
+ * @param {import('electron').WebContents} wc
+ */
 function bindWebContents(wc) {
     const getterListeners = dbusGetters.map(type => cb => {
         msgId++;
@@ -67,5 +84,6 @@ function bindWebContents(wc) {
 
 module.exports = {
     MPRISEmitter,
+    bindWindow,
     bindWebContents
 };

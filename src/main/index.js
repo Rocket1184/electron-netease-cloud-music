@@ -56,7 +56,7 @@ function createMainWindow(url = mainURL) {
     switch (process.platform) {
         case 'linux':
             try {
-                require('./mpris').bindWebContents(win.webContents);
+                require('./mpris').bindWindow(win);
             } catch (e) {
                 /* eslint-disable no-console */
                 console.error('Failed to load MPRIS module.');
@@ -123,12 +123,3 @@ ipcMain.on('showLoginWindow', () => {
     });
     loginWindow.loadURL(loginURL);
 });
-
-ipcMain.on('focusApp', () => {
-    if (mainWindow.isMinimized()) {
-        mainWindow.restore();
-    }
-    mainWindow.focus();
-});
-
-ipcMain.on('quitApp', () => app.quit());
