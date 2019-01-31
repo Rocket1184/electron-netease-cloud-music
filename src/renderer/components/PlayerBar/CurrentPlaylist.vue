@@ -5,6 +5,7 @@
             icon="music_note"></CenteredTip>
         <template v-else>
             <div class="actions">
+                <span class="count">共 {{playlist.list.length}} 首</span>
                 <mu-button flat
                     small
                     @click="handleCollectAll">
@@ -138,9 +139,12 @@ export default {
         padding: 0 8px;
         display: flex;
         align-items: center;
-        justify-content: flex-end;
         opacity: 0.75;
         box-shadow: 0 1px 3px rgba(0, 0, 0, 0.2);
+        .count {
+            margin-left: 8px;
+            flex-grow: 1;
+        }
     }
     .list {
         padding: 0;
