@@ -23,10 +23,14 @@
                     {{track.name}}
                     <span class="track-artist mu-item-after-text"> - {{track.artistName}}</span>
                 </mu-list-item-title>
-                <mu-list-item-action v-if="track.source"
-                    :title="sourceTipText(track)">
-                    <mu-icon value="link"
-                        @click="handleSourceClick($event, track.source)"></mu-icon>
+                <mu-list-item-action class="current-list-after">
+                    <mu-icon value="close"
+                        title="从列表中删除"
+                        @click.stop="handleRemove(index)"></mu-icon>
+                    <mu-icon v-if="track.source"
+                        value="link"
+                        :title="sourceTipText(track)"
+                        @click.stop="handleSourceClick(track.source)"></mu-icon>
                 </mu-list-item-action>
             </mu-list-item>
         </mu-list>
@@ -61,15 +65,17 @@ export default {
         }
     },
     methods: {
-        ...mapActions(['playTrackIndex']),
+        ...mapActions([
+            'playTrackIndex',
+            'removeTrackFromPlaylist'
+        ]),
         handleListClick(index) {
             this.playTrackIndex(index);
         },
         sourceTipText(track) {
             return `来自${SourceName[track.source.name]}`;
         },
-        handleSourceClick(ev, source) {
-            ev.stopPropagation();
+        handleSourceClick(source) {
             const name = RouteName[source.name];
             switch (source.name) {
                 case 'list':
@@ -84,6 +90,9 @@ export default {
                     break;
             }
             this.$emit('navigate');
+        },
+        handleRemove(index) {
+            this.removeTrackFromPlaylist({ start: index, count: 1 });
         }
     },
     components: {
@@ -97,13 +106,26 @@ export default {
     height: inherit;
     .list {
         padding: 0;
-        .mu-item-action {
-            z-index: 1;
-            width: 36px;
-            min-width: 0;
-        }
-        .track-artist {
-            font-size: 11px;
+        .mu-item {
+            padding-right: 8px;
+            .mu-item-action {
+                z-index: 1;
+                width: 36px;
+                min-width: 0;
+            }
+            .track-artist {
+                font-size: 11px;
+            }
+            .current-list-after {
+                opacity: 0;
+                min-width: 50px;
+                flex-direction: row-reverse;
+            }
+            &:hover {
+                .current-list-after {
+                    opacity: 0.6;
+                }
+            }
         }
     }
 }
