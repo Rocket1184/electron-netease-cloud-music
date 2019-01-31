@@ -86,6 +86,7 @@ import { mapActions, mapState } from 'vuex';
 import Api from '@/util/api';
 import CurrentPlaylist from './CurrentPlaylist.vue';
 import {
+    UPDATE_PLAYING_URL,
     HIDE_COLLECT_POPUP,
     PAUSE_PLAYING_MUSIC,
     RESUME_PLAYING_MUSIC
@@ -331,6 +332,12 @@ export default {
 
         this.$store.subscribe(mutation => {
             switch (mutation.type) {
+                case UPDATE_PLAYING_URL:
+                    if (!mutation.payload) {
+                        _unsetUpdateTimeInterval();
+                        this.timeTotal = this.timeCurrent = 0;
+                    }
+                    break;
                 case PAUSE_PLAYING_MUSIC:
                     _audioEl.pause();
                     break;
@@ -455,7 +462,7 @@ export default {
 .playerbar-current-list {
     border-radius: 0; // avoid 'repaint on scroll'
     width: 420px;
-    height: 360px;
+    height: 396px;
     font-size: 14px;
     position: fixed;
     top: unset !important;
