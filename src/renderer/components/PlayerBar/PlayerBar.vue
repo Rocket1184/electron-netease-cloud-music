@@ -149,10 +149,9 @@ export default {
             }
             // it would take some time for NetEase to update playlist cover
             // img, so we just wait 200 ms
-            setTimeout(async () => {
-                await this.updatePlaylistDetail(list.id);
-                this.shouldFavorite = null;
-            }, 0);
+            await new Promise(_ => setTimeout(() => _(), 200));
+            await this.updatePlaylistDetail(list.id);
+            this.shouldFavorite = null;
         },
         handleLoopMode() {
             this.nextLoopMode();
