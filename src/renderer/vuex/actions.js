@@ -232,10 +232,7 @@ export async function playPlaylist({ commit, dispatch, state }, { tracks, source
     dispatch('playTrackIndex', firstIndex);
 }
 
-export function storePlaylist({ commit, state }) {
-    if (!state.settings.autoPlay) {
-        commit(types.PAUSE_PLAYING_MUSIC);
-    }
+export function storePlaylist({ state }) {
     localStorage.setItem('playlist', JSON.stringify(state.playlist));
 }
 
