@@ -67,7 +67,10 @@ export function getTrackMeta(track) {
  * @param {HTMLAudioElement} audioEl
  */
 export function bindEventListener(audioEl) {
-    MPRISEmitter.on('quit', () => ipcRenderer.send('quitApp'));
+    MPRISEmitter.on('quit', () => {
+        MPRIS.stop();
+        ipcRenderer.send('quitApp');
+    });
     MPRISEmitter.on('raise', () => ipcRenderer.send('focusApp'));
     if (audioEl) {
         audioEl.addEventListener('seeked', () => MPRIS.seeked(audioEl.currentTime));
@@ -89,7 +92,12 @@ function subscribeHandler(mutation, state) {
     const track = state.playlist.list[state.playlist.index];
     switch (mutation.type) {
         case UPDATE_PLAYING_URL:
-            MPRIS.metadata(getTrackMeta(track));
+            if (track) {
+                MPRIS.metadata(getTrackMeta(track));
+            } else {
+                MPRIS.metadata({});
+                MPRIS.stop();
+            }
             break;
         case PAUSE_PLAYING_MUSIC:
             MPRIS.pause();
