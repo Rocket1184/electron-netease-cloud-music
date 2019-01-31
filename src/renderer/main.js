@@ -26,15 +26,16 @@ Vue.use(Toast);
 Vue.use(Message);
 Vue.use(DblclickRipple);
 
-const node = document.createElement('div');
-document.body.appendChild(node);
+const el = document.createElement('div');
+document.body.appendChild(el);
 
 new Vue({
+    el,
     store,
     router: new Router({
         // we an access route stack via `this.$router.history.stack`
         mode: 'abstract',
         routes
     }),
-    render: h => h(App)
-}).$mount(node);
+    ...App
+});
