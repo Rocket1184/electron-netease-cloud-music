@@ -11,7 +11,8 @@
                 :style="albumImgStyle">
                 <div class="disc"></div>
             </div>
-            <div class="action">
+            <div v-if="playing.id"
+                class="action">
                 <mu-button flat
                     small
                     color="black"
@@ -64,7 +65,8 @@
                 </template>
             </p>
             <div class="lyric">
-                <div class="control">
+                <div v-if="playing.id"
+                    class="control">
                     <mu-button flat
                         small
                         color="black"
@@ -235,6 +237,7 @@ export default {
             img.addEventListener('load', handler);
         },
         async refreshThreadInfo() {
+            if (!this.playing.id) return;
             this.commentCount = '...';
             const thread = `R_SO_4_${this.playing.id}`;
             const resp = await Api.getCommentThreadInfoE(thread);
