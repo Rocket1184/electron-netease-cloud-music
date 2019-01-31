@@ -217,17 +217,15 @@ export function playPreviousTrack({ dispatch, state }) {
 }
 
 export async function playPlaylist({ commit, dispatch, state }, { tracks, source }) {
+    const list = tracks.map(t => Object.assign({}, t));
     if (source) {
-        const list = tracks.map(t => Object.assign({}, t, { source }));
-        commit(types.SET_PLAY_LIST, list);
-    } else {
-        commit(types.SET_PLAY_LIST, tracks);
+        list.forEach(t => t.source = source);
     }
-    const { list, loopMode } = state.playlist;
+    commit(types.SET_PLAY_LIST, list);
     let firstIndex;
-    switch (loopMode) {
+    switch (state.playlist.loopMode) {
         case LOOP_MODE.RANDOM:
-            firstIndex = Math.floor(Math.random * list.length);
+            firstIndex = Math.floor(Math.random * state.playlist.list.length);
             break;
         default:
             firstIndex = 0;
