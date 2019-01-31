@@ -63,27 +63,17 @@ export function getTrackMeta(track) {
 }
 
 /**
- * bind DOM events listener to MPRIS service
+ * bind audio element and MPRIS Emitter
  * @param {HTMLAudioElement} audioEl
  */
-export function bindEventListener(audioEl) {
-    MPRISEmitter.on('quit', () => {
-        MPRIS.stop();
-        ipcRenderer.send('quitApp');
+export function bindAudioElement(audioEl) {
+    audioEl.addEventListener('seeked', () => MPRIS.seeked(audioEl.currentTime));
+    MPRISEmitter.on('getPosition', (_, id) => {
+        senderFn('getPosition', id, audioEl.currentTime * 1e6);
     });
-    MPRISEmitter.on('raise', () => ipcRenderer.send('focusApp'));
-    if (audioEl) {
-        audioEl.addEventListener('seeked', () => MPRIS.seeked(audioEl.currentTime));
-        MPRISEmitter.on('getPosition', (_, id) => {
-            senderFn('getPosition', id, audioEl.currentTime * 1e6);
-        });
-        MPRISEmitter.on('seek', (_, __, pos) => audioEl.currentTime = pos);
-        MPRISEmitter.on('stop', () => {
-            audioEl.pause();
-            audioEl.currentTime = 0;
-        });
-        senderFn('renderer-ready');
-    }
+    MPRISEmitter.on('seek', (_, __, pos) => audioEl.currentTime = pos);
+    MPRISEmitter.on('stop', () => audioEl.currentTime = 0);
+    senderFn('renderer-ready');
     // TODO: MPRIS `LoopStatus` and `Shuffle` support; which DE support those props?
 }
 
@@ -109,8 +99,11 @@ function subscribeHandler(mutation, state) {
 }
 
 export function injectStore(store) {
+    // ensure 'PlaybackStatus' is 'Stopped' when this module loads
+    MPRIS.stop();
     store.subscribe(subscribeHandler);
     MPRISEmitter.on('play', () => store.dispatch('playAudio'));
+    MPRISEmitter.on('stop', () => store.dispatch('pauseAudio'));
     MPRISEmitter.on('pause', () => store.dispatch('pauseAudio'));
     MPRISEmitter.on('next', () => store.dispatch('playNextTrack'));
     MPRISEmitter.on('prev', () => store.dispatch('playPreviousTrack'));

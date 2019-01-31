@@ -344,7 +344,7 @@ export default {
         });
 
         if (platform() === 'linux') {
-            require('@/util/mpris').bindEventListener(_audioEl);
+            require('@/util/mpris').bindAudioElement(_audioEl);
         }
     },
     components: {
