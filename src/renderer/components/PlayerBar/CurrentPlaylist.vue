@@ -3,37 +3,54 @@
         <CenteredTip v-if="playlist.list.length === 0"
             tip="列表里什么都没有，快去找几首歌吧 φ(≧ω≦*)♪"
             icon="music_note"></CenteredTip>
-        <mu-list v-else
-            dense
-            class="list">
-            <mu-list-item v-for="(track, index) in playlist.list"
-                button
-                :key="track.id"
-                :id="`cur-list-${index}`"
-                @click="handleListClick(index)">
-                <mu-list-item-action>
-                    <mu-icon v-if="track.id == playingId"
-                        color="secondary"
-                        value="volume_up"
-                        :size="18">
-                    </mu-icon>
-                    <span v-else>{{index + 1}}</span>
-                </mu-list-item-action>
-                <mu-list-item-title>
-                    {{track.name}}
-                    <span class="track-artist mu-item-after-text"> - {{track.artistName}}</span>
-                </mu-list-item-title>
-                <mu-list-item-action class="current-list-after">
-                    <mu-icon value="close"
-                        title="从列表中删除"
-                        @click.stop="handleRemove(index)"></mu-icon>
-                    <mu-icon v-if="track.source"
-                        value="link"
-                        :title="sourceTipText(track)"
-                        @click.stop="handleSourceClick(track.source)"></mu-icon>
-                </mu-list-item-action>
-            </mu-list-item>
-        </mu-list>
+        <template v-else>
+            <div class="actions">
+                <mu-button flat
+                    small
+                    @click="handleCollectAll">
+                    <mu-icon left
+                        value="library_add"></mu-icon>
+                    <span>收藏全部</span>
+                </mu-button>
+                <mu-button flat
+                    small
+                    @click="handleClearPlaylist">
+                    <mu-icon left
+                        value="delete_sweep"></mu-icon>
+                    <span>清空列表</span>
+                </mu-button>
+            </div>
+            <mu-list dense
+                class="list">
+                <mu-list-item v-for="(track, index) in playlist.list"
+                    button
+                    :key="track.id"
+                    :id="`cur-list-${index}`"
+                    @click="handleListClick(index)">
+                    <mu-list-item-action>
+                        <mu-icon v-if="track.id == playingId"
+                            color="secondary"
+                            value="volume_up"
+                            :size="18">
+                        </mu-icon>
+                        <span v-else>{{index + 1}}</span>
+                    </mu-list-item-action>
+                    <mu-list-item-title>
+                        {{track.name}}
+                        <span class="track-artist mu-item-after-text"> - {{track.artistName}}</span>
+                    </mu-list-item-title>
+                    <mu-list-item-action class="current-list-after">
+                        <mu-icon value="close"
+                            title="从列表中删除"
+                            @click.stop="handleRemove(index)"></mu-icon>
+                        <mu-icon v-if="track.source"
+                            value="link"
+                            :title="sourceTipText(track)"
+                            @click.stop="handleSourceClick(track.source)"></mu-icon>
+                    </mu-list-item-action>
+                </mu-list-item>
+            </mu-list>
+        </template>
     </div>
 </template>
 
@@ -66,9 +83,21 @@ export default {
     },
     methods: {
         ...mapActions([
+            'clearPlaylist',
             'playTrackIndex',
+            'toggleCollectPopup',
             'removeTrackFromPlaylist'
         ]),
+        handleCollectAll() {
+            const ids = this.playlist.list.map(t => t.id);
+            this.toggleCollectPopup(ids);
+        },
+        async handleClearPlaylist() {
+            const msg = await this.$confirm('真的要清空播放列表吗？', '提示');
+            if (msg.result === true) {
+                this.clearPlaylist();
+            }
+        },
         handleListClick(index) {
             this.playTrackIndex(index);
         },
@@ -103,9 +132,19 @@ export default {
 
 <style lang="less">
 .current-list {
-    height: inherit;
+    height: 100%;
+    .actions {
+        height: 36px;
+        padding: 0 8px;
+        display: flex;
+        align-items: center;
+        justify-content: flex-end;
+        opacity: 0.75;
+        box-shadow: 0 1px 3px rgba(0, 0, 0, 0.2);
+    }
     .list {
         padding: 0;
+        height: calc(~'100% - 36px');
         .mu-item {
             padding-right: 8px;
             .mu-item-action {
