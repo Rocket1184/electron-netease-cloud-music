@@ -299,6 +299,16 @@ export function insertTrackIntoPlaylist({ commit, state }, payload) {
     commit(types.INSERT_TRACK_INTO_PLAYLIST, { tracks, index });
 }
 
+export function removeTrackFromPlaylist({ state, commit, dispatch }, payload) {
+    const track1 = state.playlist.list[state.playlist.index];
+    commit(types.REMOVE_TRACK_FROM_PLAYLIST, payload);
+    const track2 = state.playlist.list[state.playlist.index];
+    if (!track2 || track1.id !== track2.id) {
+        dispatch('updateUiLyric');
+        dispatch('updateUiAudioSrc');
+    }
+}
+
 export async function subscribePlaylist({ commit }, payload) {
     const resp = await Api.subscribePlaylist(payload.id);
     if (resp.code === 200) {
