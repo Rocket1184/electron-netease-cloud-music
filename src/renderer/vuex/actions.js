@@ -110,7 +110,7 @@ export async function logout({ commit }) {
 
 export async function search({ state, commit }, { keyword, type, limit = 20, offset = 0 }) {
     commit(types.SET_SEARCH_PENDING, true);
-    if (state.ui.search.type !== type) {
+    if (state.ui.search.type !== type || state.ui.search.keyword !== keyword) {
         commit(types.SET_SEARCH_RESULT, { total: 0, items: [] });
     }
     commit(types.SET_SEARCH_PARAM, { keyword, type, offset });
