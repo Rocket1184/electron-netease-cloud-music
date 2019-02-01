@@ -110,6 +110,7 @@ export default {
             if (keyword === this.ui.search.keyword &&
                 type === this.ui.search.type &&
                 offset === this.ui.search.offset) return;
+            if (keyword !== this.ui.search.keyword) this.currentPage = 1;
             await this.search({ keyword, type, limit: this.pageSize, offset });
             if (!this.haveSearched) this.haveSearched = true;
         }
