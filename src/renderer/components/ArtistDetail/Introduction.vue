@@ -1,24 +1,19 @@
 <template>
     <section class="intro resource">
         <CenteredLoading v-if="loading"></CenteredLoading>
-        <template v-else>
-            <template v-if="intro.briefDesc">
-                <h2 class="subhead">
-                    <span class="mu-primary-color">&nbsp;</span>
-                    <span>&nbsp;{{artist.detail.name}}简介</span>
-                </h2>
-                <p class="para">{{intro.briefDesc}}</p>
-            </template>
-            <CenteredTip v-else
-                icon="cloud_off"
-                tip="暂无介绍"></CenteredTip>
+        <template v-else-if="hasDesc">
+            <p v-if="intro.briefDesc"
+                class="para">{{intro.briefDesc}}</p>
             <template v-for="i in intro.introduction">
                 <h2 class="subhead"
-                    :key="i.ti+'ti'">{{i.ti}}</h2>
+                    :key="i.ti">{{i.ti}}</h2>
                 <p class="para"
-                    :key="i.ti+'tx'">{{i.txt}}</p>
+                    :key="i.ti + 't'">{{i.txt}}</p>
             </template>
         </template>
+        <CenteredTip v-else
+            icon="cloud_off"
+            tip="暂无介绍"></CenteredTip>
     </section>
 </template>
 
@@ -38,6 +33,11 @@ export default {
             intro: {},
             loading: true
         };
+    },
+    computed: {
+        hasDesc() {
+            return this.intro.briefDesc.length > 0 || this.intro.introduction.length > 0;
+        }
     },
     methods: {
         async loadIntro() {
