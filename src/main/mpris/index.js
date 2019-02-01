@@ -61,8 +61,9 @@ function bindWebContents(wc) {
         wc.send(TAG, type, msgId, ...args);
         d('↑ %s %d', type, msgId, ...args);
     });
-    ipcMain.once(TAG, (_, msg) => {
+    const handler = (_, msg) => {
         if (msg === 'renderer-ready') {
+            ipcMain.removeListener(TAG, handler);
             d('bindWebContents');
             dbusGetters.forEach((type, index) => {
                 MPRISEmitter.on(type, getterListeners[index]);
@@ -71,7 +72,8 @@ function bindWebContents(wc) {
                 MPRISEmitter.on(`dbus:${type}`, dbusListeners[index]);
             });
         }
-    });
+    };
+    ipcMain.on(TAG, handler);
     wc.on('destroyed', () => {
         dbusGetters.forEach((type, index) => {
             MPRISEmitter.removeListener(type, getterListeners[index]);
