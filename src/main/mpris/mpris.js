@@ -136,7 +136,7 @@ const PlaybackStatus = makeProp('PlaybackStatus', 'Stopped', {
 });
 
 IMP2Player.addProperty(PlaybackStatus._name, {
-    type: DBus.Define(String),
+    type: 's',
     ...makeGetter(PlaybackStatus)
 });
 
@@ -149,7 +149,7 @@ const LoopStatus = makeProp('LoopStatus', 'Playlist', {
 });
 
 IMP2Player.addProperty(LoopStatus._name, {
-    type: DBus.Define(String),
+    type: 's',
     ...makeGetterSetter(LoopStatus)
 });
 
@@ -158,7 +158,7 @@ emitter.on('loopStatus', loop => LoopStatus.value = loop);
 const Rate = makeProp('Rate', 1.0);
 
 IMP2Player.addProperty(Rate._name, {
-    type: DBus.Define(Number),
+    type: 'x',
     ...makeGetterSetter(Rate)
 });
 
@@ -167,7 +167,7 @@ emitter.on('rate', rate => Rate.value = rate);
 const Shuffle = makeProp('Shuffle', false);
 
 IMP2Player.addProperty('Shuffle', {
-    type: DBus.Define(Boolean),
+    type: 'b',
     ...makeGetterSetter(Shuffle)
 });
 
@@ -183,7 +183,7 @@ emitter.on('shuffle', shuf => Shuffle.value = shuf);
 const Metadata = makeProp('Metadata', {});
 
 IMP2Player.addProperty('Metadata', {
-    type: DBus.Define(Object),
+    type: 'a{sv}',
     ...makeGetter(Metadata)
 });
 
@@ -201,7 +201,7 @@ emitter.on('patchMetadata', patch => {
 const Volume = makeProp('Volume', 1.0);
 
 IMP2Player.addProperty('Volume', {
-    type: DBus.Define(Number),
+    type: 'd',
     ...makeGetterSetter(Volume)
 });
 
@@ -210,7 +210,7 @@ IMP2Player.addProperty('Volume', {
  * is *not* emitted when this property changes.
  */
 IMP2Player.addProperty('Position', {
-    type: DBus.Define(Number),
+    type: 'x',
     getter(cb) {
         const cnt = emitter.listenerCount('getPosition');
         if (cnt === 0) {
@@ -223,14 +223,14 @@ IMP2Player.addProperty('Position', {
 const MinimumRate = makeProp('MinimumRate', 0);
 
 IMP2Player.addProperty('MinimumRate', {
-    type: DBus.Define(Number),
+    type: 'd',
     ...makeGetter(MinimumRate)
 });
 
 const MaximumRate = makeProp('MaximumRate', 1.0);
 
 IMP2Player.addProperty('MaximumRate', {
-    type: DBus.Define(Number),
+    type: 'd',
     ...makeGetter(MaximumRate)
 });
 
