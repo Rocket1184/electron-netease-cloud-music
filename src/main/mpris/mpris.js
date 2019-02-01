@@ -58,6 +58,7 @@ function makeProp(name, value, type) {
         _value: value,
         get value() { return this._value; },
         set value(val) {
+            if (this._value == val) return;
             this._value = val;
             d(`%s set to %s %o`, name, typeof this._value, this._value);
             object.propertyInterface.emitSignal(
