@@ -195,13 +195,13 @@ export default {
     .intro {
         padding: 16px 50px;
         .subhead {
+            margin: 12px 0;
             font-size: 16px;
             font-weight: bold;
         }
         .para {
-            white-space: pre-wrap;
             font-size: 14px;
-            margin: 0.5em 0;
+            margin: 0;
             line-height: 22px;
         }
     }
