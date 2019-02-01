@@ -270,18 +270,13 @@ export function getMusicUrlE(idOrIds, quality) {
  * @returns {Types.MusicUrlLocalRes}
  */
 export async function getMusicUrlLocal(id, quality, ignoreCache = false) {
-    if (ignoreCache) {
-        try {
-            await musicCache.rm(id);
-        } catch (e) { /* nothing happened */ }
-    }
     return {
         url: url.format({
             protocol: 'http:',
             hostname: 'localhost',
             port: musicServerPort,
             pathname: '/music',
-            query: { id, quality }
+            query: ignoreCache ? { id, quality, ignoreCache } : { id, quality }
         })
     };
 }

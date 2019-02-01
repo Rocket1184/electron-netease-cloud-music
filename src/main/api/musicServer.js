@@ -98,18 +98,24 @@ class MusicServer {
         }
         const id = params['id'];
         const quality = params['quality'] || 'l';
+        const ignoreCache = params['ignoreCache'] === 'true';
         const fileName = `${id}${quality}`;
         const filePath = this.cache.fullPath(fileName);
         // check cache first
         if (await this.cache.has(fileName)) {
-            d('Hit cache for music id=%d', id);
-            const stat = await fsPromises.stat(filePath);
-            const range = MusicServer.getRange(req, stat.size);
-            // TODO: <range-end> may larger than <file-size>, cause file is still being downloaded
-            const file = fs.createReadStream(filePath, { start: range[0], end: range[1] });
-            res.writeHead(206, MusicServer.buildHeaders(range));
-            file.pipe(res);
-            return;
+            if (ignoreCache) {
+                d('ignoreCache set, delete cache for music id=%d', id);
+                await this.cache.rm(id);
+            } else {
+                d('Hit cache for music id=%d', id);
+                const stat = await fsPromises.stat(filePath);
+                const range = MusicServer.getRange(req, stat.size);
+                // TODO: <range-end> may larger than <file-size>, cause file is still being downloaded
+                const file = fs.createReadStream(filePath, { start: range[0], end: range[1] });
+                res.writeHead(206, MusicServer.buildHeaders(range));
+                file.pipe(res);
+                return;
+            }
         }
         try {
             const music = await this.getMusicUrl(id, quality);
