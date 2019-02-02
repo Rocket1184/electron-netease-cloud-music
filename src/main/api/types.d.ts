@@ -1733,6 +1733,113 @@ namespace Types {
             validityTime: number;
         }[];
     }
+
+    export interface RadioRes extends ApiRes {
+        data: RadioSong[];
+        popAdjust: boolean;
+    }
+
+    export interface RadioSong {
+        album: RadioAlbum;
+        alg: string;
+        alias: string[];
+        artists: RadioArtist[];
+        audition: any;
+        bMusic: RadioMusic;
+        commentThreadId: string;
+        copyFrom: string;
+        copyright: number;
+        copyrightId: number;
+        crbt: any;
+        dayPlays: number;
+        disc: string;
+        duration: number;
+        fee: number;
+        ftype: number;
+        hMusic: RadioMusic;
+        hearTime: number;
+        id: number;
+        lMusic: RadioMusic;
+        mMusic: RadioMusic;
+        mp3Url: any;
+        mvid: number;
+        name: string;
+        no: number;
+        playedNum: number;
+        popularity: number;
+        position: number;
+        privilege: Privilege;
+        ringtone: string;
+        rtUrl: any;
+        rtUrls: any[];
+        rtype: number;
+        rurl: any;
+        score: number;
+        sign: any;
+        starred: boolean;
+        starredNum: number;
+        status: number;
+        transName: any;
+    }
+
+    export interface RadioAlbum {
+        alias: string[];
+        artist: RadioArtist;
+        artists: RadioArtist[];
+        blurPicUrl: string;
+        briefDesc: string;
+        commentThreadId: string;
+        company: string;
+        companyId: number;
+        copyrightId: number;
+        description: string;
+        id: number;
+        name: string;
+        pic: number;
+        picId: number;
+        picUrl: string;
+        publishTime: number;
+        size: number;
+        songs: any[];
+        status: number;
+        subType: string;
+        tags: string;
+        transName: null;
+        type: string;
+        picId_str?: string;
+    }
+
+    export interface RadioArtist {
+        albumSize: number;
+        alias: string[];
+        briefDesc: string;
+        id: number;
+        img1v1Id: number;
+        img1v1Url: string;
+        musicSize: number;
+        name: string;
+        picId: number;
+        picUrl: string;
+        trans: string;
+    }
+
+    export interface RadioMusic {
+        bitrate: number;
+        dfsId: number;
+        extension: string;
+        id: number;
+        name?: string;
+        playTime: number;
+        size: number;
+        sr: number;
+        volumeDelta: number;
+    }
+
+    export interface DislikeRadioSongRes extends ApiRes {
+        count: number;
+        /** not sure what's this */
+        songs: any[];
+    }
 }
 
 export as namespace Types;

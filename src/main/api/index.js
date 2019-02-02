@@ -1321,3 +1321,26 @@ export function unlikeResource(threadId) {
         data: { threadId }
     });
 }
+
+/**
+ * @returns {Promise<Types.RadioRes>}
+ */
+export function getRadio() {
+    return client.postW({
+        url: `${BaseURL}/weapi/v1/radio/get`,
+        data: {}
+    });
+}
+
+/**
+ * @param {number} songId
+ * @param {number} time
+ * @returns {Promise<Types.DislikeRadioSongRes>}
+ */
+export function dislikeRadioSong(songId, time) {
+    const query = qs.stringify({ alg: 'RT', songId, time });
+    return client.postW({
+        url: `${BaseURL}/weapi/radio/trash/add?${query}`,
+        data: { songId }
+    });
+}
