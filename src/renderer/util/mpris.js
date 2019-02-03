@@ -44,6 +44,7 @@ export default MPRIS;
  * convert track to MPRIS meta
  * @param {import('@/util/models').Track} track
  * @returns MPRIS Metadata
+ * @see https://www.freedesktop.org/wiki/Specifications/mpris-spec/metadata/
  */
 export function getTrackMeta(track) {
     return {
@@ -51,8 +52,8 @@ export function getTrackMeta(track) {
         'mpris:length': track.duration * 1e3,
         'mpris:artUrl': track.album.picUrl || 'file:///dev/null',
         'xesam:album': track.album.name || '未知专辑',
-        'xesam:albumArtist': track.artists.map(ar => ar.name || '未知歌手'),
-        'xesam:artist': track.artistName || '未知歌手',
+        // 'xesam:albumArtist': track.artists.map(ar => ar.name || '未知歌手'),
+        'xesam:artist': [track.artistName],
         'xesam:discNumber': Number.parseInt(track.cd) || 1,
         'xesam:title': track.name || '未知歌曲',
         'xesam:tarckNumber': track.no || 0,
