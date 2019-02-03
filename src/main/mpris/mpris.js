@@ -71,15 +71,16 @@ function makeProp(name, value, type) {
     };
 }
 
-function makeGetter(prop) {
+function makeGetter(type, prop) {
     return {
+        type: { type },
         getter(cb) { cb(null, prop.value); }
     };
 }
 
-function makeGetterSetter(prop) {
+function makeGetterSetter(type, prop) {
     return {
-        ...makeGetter(prop),
+        ...makeGetter(type, prop),
         setter(val, done) {
             prop.value = val;
             done();
@@ -135,10 +136,7 @@ const PlaybackStatus = makeProp('PlaybackStatus', 'Stopped', {
     Playing: 'Playing', Paused: 'Paused', Stopped: 'Stopped'
 });
 
-IMP2Player.addProperty(PlaybackStatus._name, {
-    type: 's',
-    ...makeGetter(PlaybackStatus)
-});
+IMP2Player.addProperty(PlaybackStatus._name, makeGetter('s', PlaybackStatus));
 
 emitter.on('play', () => PlaybackStatus.value = PlaybackStatus.type.Playing);
 emitter.on('pause', () => PlaybackStatus.value = PlaybackStatus.type.Paused);
@@ -148,28 +146,19 @@ const LoopStatus = makeProp('LoopStatus', 'Playlist', {
     None: 'None', Track: 'Track', Playlist: 'Playlist'
 });
 
-IMP2Player.addProperty(LoopStatus._name, {
-    type: 's',
-    ...makeGetterSetter(LoopStatus)
-});
+IMP2Player.addProperty(LoopStatus._name, makeGetterSetter('s', LoopStatus));
 
 emitter.on('loopStatus', loop => LoopStatus.value = loop);
 
 const Rate = makeProp('Rate', 1.0);
 
-IMP2Player.addProperty(Rate._name, {
-    type: 'x',
-    ...makeGetterSetter(Rate)
-});
+IMP2Player.addProperty(Rate._name, makeGetterSetter('x', Rate));
 
 emitter.on('rate', rate => Rate.value = rate);
 
 const Shuffle = makeProp('Shuffle', false);
 
-IMP2Player.addProperty('Shuffle', {
-    type: 'b',
-    ...makeGetterSetter(Shuffle)
-});
+IMP2Player.addProperty('Shuffle', makeGetterSetter('b', Shuffle));
 
 emitter.on('shuffle', shuf => Shuffle.value = shuf);
 
@@ -182,10 +171,7 @@ emitter.on('shuffle', shuf => Shuffle.value = shuf);
  */
 const Metadata = makeProp('Metadata', {});
 
-IMP2Player.addProperty('Metadata', {
-    type: 'a{sv}',
-    ...makeGetter(Metadata)
-});
+IMP2Player.addProperty('Metadata', makeGetter('a{sv}', Metadata));
 
 emitter.on('metadata', meta => {
     if (!meta['mpris:trackid']) {
@@ -200,17 +186,14 @@ emitter.on('patchMetadata', patch => {
 
 const Volume = makeProp('Volume', 1.0);
 
-IMP2Player.addProperty('Volume', {
-    type: 'd',
-    ...makeGetterSetter(Volume)
-});
+IMP2Player.addProperty('Volume', makeGetterSetter('d', Volume));
 
 /**
  * The `org.freedesktop.DBus.Properties.PropertiesChanged` signal
  * is *not* emitted when this property changes.
  */
 IMP2Player.addProperty('Position', {
-    type: 'x',
+    type: { type: 'x' },
     getter(cb) {
         const cnt = emitter.listenerCount('getPosition');
         if (cnt === 0) {
@@ -222,17 +205,11 @@ IMP2Player.addProperty('Position', {
 
 const MinimumRate = makeProp('MinimumRate', 0);
 
-IMP2Player.addProperty('MinimumRate', {
-    type: 'd',
-    ...makeGetter(MinimumRate)
-});
+IMP2Player.addProperty('MinimumRate', makeGetter('d', MinimumRate));
 
 const MaximumRate = makeProp('MaximumRate', 1.0);
 
-IMP2Player.addProperty('MaximumRate', {
-    type: 'd',
-    ...makeGetter(MaximumRate)
-});
+IMP2Player.addProperty('MaximumRate', makeGetter('d', MaximumRate));
 
 // Interface MediaPlayer2.Player => Methods
 IMP2Player.addMethod('Next', {}, () => {
