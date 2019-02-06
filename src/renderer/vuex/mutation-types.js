@@ -56,3 +56,10 @@ export const REMOVE_TRACK_FROM_PLAYLIST = 'REMOVE_TRACK_FROM_PLAYLIST';
 
 // Settings
 export const UPDATE_SETTINGS = 'UPDATE_SETTINGS';
+
+// Radio
+export const ACTIVATE_RADIO = 'ACTIVATE_RADIO';
+export const APPEND_RADIO = 'APPEND_RADIO';
+export const REMOVE_RADIO = 'REMOVE_RADIO';
+export const SET_RADIO_INDEX = 'SET_RADIO_INDEX';
+export const RESTORE_RADIO = 'RESTORE_RADIO';

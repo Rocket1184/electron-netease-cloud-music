@@ -44,7 +44,8 @@ const state = {
         playlist: null,
         relatedPlaylists: null,
         video: null
-    }
+    },
+    radioMode: false
 };
 
 function setStateArtist(section, payload) {
@@ -151,6 +152,9 @@ const mutations = {
     },
     [types.SET_UI_RECOMMEND_STATISTICS](state, payload) {
         state.recommendStatistics = payload;
+    },
+    [types.ACTIVATE_RADIO](state, payload) {
+        state.radioMode = payload;
     }
 };
 

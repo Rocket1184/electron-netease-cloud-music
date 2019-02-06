@@ -2,14 +2,16 @@ import { platform } from 'os';
 import Vue from 'vue';
 import Vuex from 'vuex';
 
+import * as modules from './modules';
 import * as actions from './actions';
-import modules from './modules';
+import * as getters from './getters';
 
 Vue.use(Vuex);
 
 const store = new Vuex.Store({
-    actions,
     modules,
+    actions,
+    getters,
     strict: process.env.NODE_ENV !== 'production'
 });
 

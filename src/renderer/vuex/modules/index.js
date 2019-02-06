@@ -1,11 +1,5 @@
-import playlist from './playlist';
-import settings from './settings';
-import user from './user';
-import ui from './ui';
-
-export default {
-    playlist,
-    settings,
-    user,
-    ui
-};
+export { default as playlist } from './playlist';
+export { default as settings } from './settings';
+export { default as radio } from './radio';
+export { default as user } from './user';
+export { default as ui } from './ui';
