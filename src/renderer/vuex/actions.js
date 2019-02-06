@@ -493,3 +493,59 @@ export async function unlikeResource(_, id) {
     if (resp.code === 200) return resp;
     throw resp;
 }
+
+export function storeRadio({ state }) {
+    localStorage.setItem('radio', JSON.stringify(state.radio));
+}
+
+export function restoreRadio({ commit }) {
+    try {
+        const stored = localStorage.getItem('radio');
+        if (stored) {
+            const radio = JSON.parse(stored);
+            commit(types.RESTORE_RADIO, radio);
+        }
+    } catch (e) {
+        // eslint-disable-next-line no-console
+        console.info('Radio stored in localStorage not valid.');
+    }
+}
+
+export async function getRadio({ commit }) {
+    const resp = await Api.getRadio();
+    if (resp.code === 200) {
+        const tracks = resp.data.map(t => new Track(t));
+        commit(types.APPEND_RADIO, { tracks });
+    }
+}
+
+export async function dislikeRadioSong({ commit, dispatch, getters }, { id, time }) {
+    const resp = await Api.dislikeRadioSong(id, time);
+    if (resp.code === 200) {
+        const track1 = getters.playing;
+        commit(types.REMOVE_RADIO, { id });
+        const track2 = getters.playing;
+        if (!track2 || track1.id !== track2.id) {
+            dispatch('updateUiLyric');
+            dispatch('updateUiAudioSrc');
+        }
+    }
+}
+
+export async function activateRadio({ state, commit, dispatch }, payload) {
+    if (payload === true) {
+        commit(types.ACTIVATE_RADIO, true);
+        if (state.radio.list.length === 0) {
+            await dispatch('getRadio');
+        }
+    } else {
+        commit(types.ACTIVATE_RADIO, false);
+    }
+    dispatch('updateUiLyric');
+    await dispatch('updateUiAudioSrc');
+    if (payload === true) {
+        commit(types.RESUME_PLAYING_MUSIC);
+    } else {
+        commit(types.PAUSE_PLAYING_MUSIC);
+    }
+}
