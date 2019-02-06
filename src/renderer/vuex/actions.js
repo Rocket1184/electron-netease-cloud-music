@@ -181,8 +181,12 @@ export function pauseAudio({ commit }) {
     commit(types.PAUSE_PLAYING_MUSIC);
 }
 
-export async function playTrackIndex({ commit, dispatch }, index) {
-    commit(types.SET_CURRENT_INDEX, index);
+export async function playTrackIndex({ state, commit, dispatch }, index) {
+    if (state.ui.radioMode === true) {
+        commit(types.SET_RADIO_INDEX, index);
+    } else {
+        commit(types.SET_CURRENT_INDEX, index);
+    }
     dispatch('updateUiLyric');
     await dispatch('updateUiAudioSrc');
     commit(types.RESUME_PLAYING_MUSIC);
@@ -222,6 +226,9 @@ export async function playPlaylist({ commit, dispatch, state }, { tracks, source
         list.forEach(t => t.source = source);
     }
     commit(types.SET_PLAY_LIST, list);
+    if (state.ui.radioMode === true) {
+        commit(types.ACTIVATE_RADIO, false);
+    }
     let firstIndex;
     switch (state.playlist.loopMode) {
         case LOOP_MODE.RANDOM:
