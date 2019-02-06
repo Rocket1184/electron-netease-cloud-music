@@ -80,7 +80,8 @@ export function bindAudioElement(audioEl) {
 
 // Vuex mutation subscribe handler
 function subscribeHandler(mutation, state) {
-    const track = state.playlist.list[state.playlist.index];
+    const queue = state.ui.radioMode === true ? state.radio : state.playlist;
+    const track = queue.list[queue.index];
     switch (mutation.type) {
         case UPDATE_PLAYING_URL:
             if (track) {
