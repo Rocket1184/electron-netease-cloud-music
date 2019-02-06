@@ -45,7 +45,7 @@
                             color="secondary"
                             v-model="currentListShown"></mu-checkbox>
                         <CurrentPlaylist slot="content"
-                            @navigate="currentListShown = false"></CurrentPlaylist>
+                            @navigate="handleSourceNavigate"></CurrentPlaylist>
                     </mu-menu>
                 </div>
             </div>
@@ -81,7 +81,7 @@
 
 <script>
 import { platform } from 'os';
-import { mapActions, mapState } from 'vuex';
+import { mapActions, mapGetters, mapState } from 'vuex';
 
 import Api from '@/util/api';
 import CurrentPlaylist from './CurrentPlaylist.vue';
@@ -154,8 +154,12 @@ export default {
             this.shouldFavorite = null;
         },
         handleLoopMode() {
+            if (this.ui.radioMode) {
+                this.$toast.message('私人 FM');
+                return;
+            }
             this.nextLoopMode();
-            switch (this.playlist.loopMode) {
+            switch (this.queue.loopMode) {
                 case LOOP_MODE.LIST:
                     this.$toast.message('列表顺序播放');
                     break;
@@ -166,15 +170,14 @@ export default {
                     this.$toast.message('随机播放');
                     break;
             }
+        },
+        handleSourceNavigate() {
+            this.currentListShown = false;
         }
     },
     computed: {
-        ...mapState(['playlist', 'ui', 'user']),
-        /** @returns {Models.Track} */
-        playing() {
-            const { list, index } = this.playlist;
-            return list[index] || ({ name: 'Electron Netease Cloud Music' });
-        },
+        ...mapState(['ui', 'user']),
+        ...mapGetters(['playing', 'queue']),
         coverImgStyle() {
             if (this.playing.album && this.playing.album.picUrl) {
                 return bkgImg(sizeImg(this.playing.album.picUrl, HiDpiPx(64)));
@@ -234,7 +237,7 @@ export default {
             set(val) {
                 if (val === true) {
                     setTimeout(() => {
-                        const el = document.getElementById(`cur-list-${this.playlist.index}`);
+                        const el = document.getElementById(`cur-list-${this.queue.index}`);
                         if (el) el.scrollIntoViewIfNeeded();
                     }, 100);
                 }
@@ -242,7 +245,7 @@ export default {
             }
         },
         iconLoopMode() {
-            switch (this.playlist.loopMode) {
+            switch (this.queue.loopMode) {
                 case LOOP_MODE.LIST:
                     return 'repeat';
                 case LOOP_MODE.SINGLE:
@@ -274,8 +277,7 @@ export default {
         _audioEl.addEventListener('loadedmetadata', () => {
             _unsetUpdateTimeInterval();
             this.timeTotal = _audioEl.duration;
-            this.timeCurrent = _audioEl.currentTime = 0;
-            if (!this.ui.paused) _audioEl.play();
+            this.timeCurrent = _audioEl.currentTime;
         });
 
         // keep audio progress when HMR
@@ -309,7 +311,7 @@ export default {
         _audioEl.addEventListener('ended', () => {
             _unsetUpdateTimeInterval();
             this.submitListened();
-            if (this.playlist.loopMode === LOOP_MODE.SINGLE) {
+            if (this.queue.loopMode === LOOP_MODE.SINGLE) {
                 _audioEl.play();
             } else {
                 this.playNextTrack();
