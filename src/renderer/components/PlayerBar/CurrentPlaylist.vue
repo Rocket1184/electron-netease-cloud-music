@@ -1,11 +1,11 @@
 <template>
     <div class="current-list">
-        <CenteredTip v-if="playlist.list.length === 0"
+        <CenteredTip v-if="queueEmpty"
             tip="列表里什么都没有，快去找几首歌吧 φ(≧ω≦*)♪"
             icon="music_note"></CenteredTip>
         <template v-else>
             <div class="actions">
-                <span class="count">共 {{playlist.list.length}} 首</span>
+                <span class="count">{{titleText}}</span>
                 <mu-button flat
                     small
                     @click="handleCollectAll">
@@ -23,13 +23,13 @@
             </div>
             <mu-list dense
                 class="list">
-                <mu-list-item v-for="(track, index) in playlist.list"
+                <mu-list-item v-for="(track, index) in queue.list"
                     button
                     :key="track.id"
                     :id="`cur-list-${index}`"
                     @click="handleListClick(index)">
                     <mu-list-item-action>
-                        <mu-icon v-if="track.id == playingId"
+                        <mu-icon v-if="track.id == playing.id"
                             color="secondary"
                             value="volume_up"
                             :size="18">
@@ -41,13 +41,20 @@
                         <span class="track-artist mu-item-after-text"> - {{track.artistName}}</span>
                     </mu-list-item-title>
                     <mu-list-item-action class="current-list-after">
-                        <mu-icon value="close"
-                            title="从列表中删除"
-                            @click.stop="handleRemove(index)"></mu-icon>
-                        <mu-icon v-if="track.source"
-                            value="link"
-                            :title="sourceTipText(track)"
-                            @click.stop="handleSourceClick(track.source)"></mu-icon>
+                        <template v-if="radioMode">
+                            <mu-icon value="delete"
+                                title="不喜欢"
+                                @click.stop="handleTrash(track.id)"></mu-icon>
+                        </template>
+                        <template v-else>
+                            <mu-icon v-if="track.source"
+                                value="link"
+                                :title="sourceTipText(track)"
+                                @click.stop="handleSourceClick(track.source)"></mu-icon>
+                            <mu-icon value="close"
+                                title="从列表中删除"
+                                @click.stop="handleRemove(index)"></mu-icon>
+                        </template>
                     </mu-list-item-action>
                 </mu-list-item>
             </mu-list>
@@ -56,7 +63,7 @@
 </template>
 
 <script>
-import { mapActions, mapState } from 'vuex';
+import { mapActions, mapGetters, mapState } from 'vuex';
 
 import CenteredTip from '@/components/CenteredTip.vue';
 
@@ -76,10 +83,21 @@ const RouteName = {
 
 export default {
     computed: {
-        ...mapState(['playlist']),
-        playingId() {
-            const { list, index } = this.playlist;
-            return list[index].id;
+        ...mapState(['ui']),
+        ...mapGetters(['playing', 'queue']),
+        queueEmpty() {
+            return this.queue.list.length === 0;
+        },
+        radioMode() {
+            return this.ui.radioMode === true;
+        },
+        list() {
+            if (this.radioMode) return this.radio.list;
+            return this.playlist.list;
+        },
+        titleText() {
+            if (this.radioMode) return '私人 FM';
+            return `共 ${this.queue.list.length} 首`;
         }
     },
     methods: {
@@ -87,7 +105,8 @@ export default {
             'clearPlaylist',
             'playTrackIndex',
             'toggleCollectPopup',
-            'removeTrackFromPlaylist'
+            'removeTrackFromPlaylist',
+            'dislikeRadioSong'
         ]),
         handleCollectAll() {
             const ids = this.playlist.list.map(t => t.id);
@@ -123,6 +142,10 @@ export default {
         },
         handleRemove(index) {
             this.removeTrackFromPlaylist({ start: index, count: 1 });
+        },
+        handleTrash(id) {
+            const time = Math.trunc(document.querySelector('audio').currentTime);
+            this.dislikeRadioSong({ id, time });
         }
     },
     components: {
@@ -162,7 +185,8 @@ export default {
             .current-list-after {
                 opacity: 0;
                 min-width: 50px;
-                flex-direction: row-reverse;
+                flex-direction: row;
+                justify-content: flex-end;
             }
             &:hover {
                 .current-list-after {
