@@ -9,6 +9,7 @@ import Settings from '@/page/Settings/Settings.vue';
 import Favorite from '@/page/Favorite/Favorite.vue';
 import RecommendSongs from '@/page/RecommendSongs.vue';
 import Comment from '@/page/Comment/Comment.vue';
+import Radio from '@/page/Radio.vue';
 import CenteredTip from '@/components/CenteredTip.vue';
 
 export default [
@@ -67,6 +68,11 @@ export default [
         name: 'comment',
         path: '/comment/:type/:id',
         component: Comment
+    },
+    {
+        name: 'radio',
+        path: '/radio',
+        component: Radio
     },
     {
         name: 'settings',

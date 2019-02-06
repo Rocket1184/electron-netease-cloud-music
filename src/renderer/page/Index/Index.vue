@@ -47,8 +47,8 @@ export default {
     data() {
         return {
             action: [
-                { title: '私人 FM', icon: 'radio', to: { path: '/fm' } },
-                { title: '每日推荐', icon: 'audiotrack', to: { path: '/recommend' } },
+                { title: '私人 FM', icon: 'radio', to: { name: 'radio' } },
+                { title: '每日推荐', icon: 'audiotrack', to: { name: 'recommend' } },
                 { title: '歌单', icon: 'playlist_play', to: { path: '/goodie' } },
                 { title: '排行榜', icon: 'equalizer', to: { path: '/top' } }
             ],
