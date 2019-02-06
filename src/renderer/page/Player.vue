@@ -129,11 +129,12 @@
 </template>
 
 <script>
-import { mapState, mapActions } from 'vuex';
+import { mapActions, mapGetters, mapState } from 'vuex';
 
 import Api from '@/util/api';
 import {
     SET_CURRENT_INDEX,
+    SET_RADIO_INDEX,
     SET_ACTIVE_LYRIC
 } from '@/vuex/mutation-types';
 import { bkgImg, sizeImg, HiDpiPx } from '@/util/image';
@@ -154,10 +155,7 @@ export default {
     },
     computed: {
         ...mapState(['ui', 'playlist']),
-        playing() {
-            const { list, index } = this.playlist;
-            return list[index] || ({ name: '（暂无歌曲）' });
-        },
+        ...mapGetters(['playing']),
         albumImgStyle() {
             if (this.playing.album && this.playing.album.picUrl) {
                 return bkgImg(sizeImg(this.playing.album.picUrl, HiDpiPx(220)));
@@ -228,9 +226,9 @@ export default {
             const ctx = this.$refs.cvs.getContext('2d');
             ctx.fillStyle = 'rgba(255, 255, 255, 0.3)';
             ctx.filter = 'blur(60px)';
-            ctx.clearRect(0, 0, w, h);
             const handler = () => {
                 img.removeEventListener('load', handler);
+                ctx.clearRect(0, 0, w, h);
                 ctx.drawImage(img, 0, 0, w, h);
                 ctx.fillRect(0, 0, w, h);
             };
@@ -257,7 +255,7 @@ export default {
         this.listenAudioUpdate();
         this.createLyricElemMap();
         this.$store.subscribe(mutation => {
-            if (mutation.type === SET_CURRENT_INDEX) {
+            if (mutation.type === SET_CURRENT_INDEX || mutation.type === SET_RADIO_INDEX) {
                 this.paintBkgCanvas();
                 this.refreshThreadInfo();
             } else if (mutation.type === SET_ACTIVE_LYRIC) {
