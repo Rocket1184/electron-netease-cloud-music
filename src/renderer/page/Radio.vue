@@ -42,10 +42,21 @@ export default {
     },
     methods: {
         ...mapActions([
-            'activateRadio'
+            'playAudio',
+            'pauseAudio',
+            'activateRadio',
+            'updateUiLyric',
+            'updateUiAudioSrc'
         ]),
         async handleActivate(val) {
-            this.activateRadio(val);
+            await this.activateRadio(val);
+            this.updateUiLyric();
+            await this.updateUiAudioSrc();
+            if (val === true) {
+                this.playAudio();
+            } else {
+                this.pauseAudio();
+            }
         }
     },
     components: {

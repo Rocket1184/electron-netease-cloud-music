@@ -548,11 +548,4 @@ export async function activateRadio({ state, commit, dispatch }, payload) {
     } else {
         commit(types.ACTIVATE_RADIO, false);
     }
-    dispatch('updateUiLyric');
-    await dispatch('updateUiAudioSrc');
-    if (payload === true) {
-        commit(types.RESUME_PLAYING_MUSIC);
-    } else {
-        commit(types.PAUSE_PLAYING_MUSIC);
-    }
 }
