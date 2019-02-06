@@ -35,7 +35,8 @@
                             @click="handleCollect(track.id)">
                             <mu-icon value="bookmark_border"></mu-icon>
                         </mu-button>
-                        <mu-button icon
+                        <mu-button v-if="!isRadio"
+                            icon
                             title="添加到播放列表"
                             @click="handleAdd(index)">
                             <mu-icon value="playlist_add"></mu-icon>
@@ -51,7 +52,7 @@
 </template>
 
 <script>
-import { mapActions, mapState } from 'vuex';
+import { mapActions, mapGetters, mapState } from 'vuex';
 
 import { shortTime } from '@/util/formatter';
 import CenteredTip from './CenteredTip.vue';
@@ -69,16 +70,23 @@ export default {
             type: Number,
             default: 0,
             required: false
+        },
+        isRadio: {
+            type: Boolean,
+            required: false,
+            default: false
         }
     },
     filters: {
         shortTime
     },
     computed: {
-        ...mapState(['user', 'playlist'])
+        ...mapState(['ui', 'user', 'playlist']),
+        ...mapGetters(['queue'])
     },
     methods: {
         ...mapActions([
+            'activateRadio',
             'playTrackIndex',
             'toggleCollectPopup',
             'insertTrackIntoPlaylist'
@@ -100,6 +108,10 @@ export default {
             return this.playlist.list.findIndex(t => t.id === track.id);
         },
         handleAdd(index) {
+            if (this.ui.radioMode) {
+                this.$toast.message('正在播放私人 FM，无法添加到播放列表');
+                return;
+            }
             if (this.findTrackInPlaylist(index) > -1) {
                 // track exists in playlist
                 this.$toast.message('已经在播放列表中了  ( >﹏<。)～');
@@ -113,6 +125,15 @@ export default {
             this.$toast.message('已添加到播放列表  _(:з」∠)_');
         },
         handlePlay(index) {
+            if (this.ui.radioMode) {
+                if (this.isRadio) {
+                    this.playTrackIndex(index);
+                    return;
+                } else {
+                    this.$toast.message('已退出私人 FM');
+                    this.activateRadio(false);
+                }
+            }
             const i = this.findTrackInPlaylist(index);
             if (i > -1) {
                 // track exists in playlist
