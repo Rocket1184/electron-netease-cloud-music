@@ -150,9 +150,9 @@ export async function search({ state, commit }, { keyword, type, limit = 20, off
     commit(types.SET_SEARCH_PENDING, false);
 }
 
-export async function updateUiAudioSrc({ commit, state }, { ignoreCache = false } = {}) {
+export async function updateUiAudioSrc({ commit, state, getters }, { ignoreCache = false } = {}) {
     const quality = state.settings.bitRate;
-    const track = state.playlist.list[state.playlist.index];
+    const track = getters.playing;
     if (track && track.id) {
         const resp = await Api.getMusicUrlLocal(track.id, quality, ignoreCache);
         commit(types.UPDATE_PLAYING_URL, resp.url);
@@ -161,8 +161,8 @@ export async function updateUiAudioSrc({ commit, state }, { ignoreCache = false 
     }
 }
 
-export async function updateUiLyric({ commit, state }, { ignoreCache = false } = {}) {
-    const track = state.playlist.list[state.playlist.index];
+export async function updateUiLyric({ commit, getters }, { ignoreCache = false } = {}) {
+    const track = getters.playing;
     if (track && track.id) {
         commit(types.SET_LYRIC_LOADING, true);
         const lyric = await Api.getMusicLyricCached(track.id, ignoreCache);
@@ -188,8 +188,8 @@ export async function playTrackIndex({ commit, dispatch }, index) {
     commit(types.RESUME_PLAYING_MUSIC);
 }
 
-export function playNextTrack({ dispatch, state }) {
-    const { index, list, loopMode } = state.playlist;
+export function playNextTrack({ dispatch, getters }) {
+    const { index, list, loopMode } = getters.queue;
     let nextIndex;
     switch (loopMode) {
         case LOOP_MODE.RANDOM:
@@ -202,8 +202,8 @@ export function playNextTrack({ dispatch, state }) {
     dispatch('playTrackIndex', nextIndex);
 }
 
-export function playPreviousTrack({ dispatch, state }) {
-    const { index, list, loopMode } = state.playlist;
+export function playPreviousTrack({ dispatch, getters }) {
+    const { index, list, loopMode } = getters.queue;
     let nextIndex;
     switch (loopMode) {
         case LOOP_MODE.RANDOM:
@@ -308,10 +308,10 @@ export function insertTrackIntoPlaylist({ commit, state }, payload) {
     commit(types.INSERT_TRACK_INTO_PLAYLIST, { tracks, index });
 }
 
-export function removeTrackFromPlaylist({ state, commit, dispatch }, payload) {
-    const track1 = state.playlist.list[state.playlist.index];
+export function removeTrackFromPlaylist({ getters, commit, dispatch }, payload) {
+    const track1 = getters.playing;
     commit(types.REMOVE_TRACK_FROM_PLAYLIST, payload);
-    const track2 = state.playlist.list[state.playlist.index];
+    const track2 = getters.playing;
     if (!track2 || track1.id !== track2.id) {
         dispatch('updateUiLyric');
         dispatch('updateUiAudioSrc');
