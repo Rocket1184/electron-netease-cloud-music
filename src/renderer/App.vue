@@ -40,7 +40,9 @@ export default {
             'restoreUserInfo',
             'restoreSettings',
             'storePlaylist',
-            'restorePlaylist'
+            'restorePlaylist',
+            'storeRadio',
+            'restoreRadio'
         ])
     },
     computed: {
@@ -51,6 +53,7 @@ export default {
         // 'unload' would be prevented.
         window.onbeforeunload = () => {
             this.storePlaylist();
+            this.storeRadio();
         };
     },
     created() {
@@ -77,6 +80,7 @@ export default {
         this.restoreSettings();
         this.restoreUserInfo();
         this.restorePlaylist();
+        this.restoreRadio();
     }
 };
 </script>
