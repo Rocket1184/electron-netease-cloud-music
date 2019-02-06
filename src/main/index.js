@@ -6,6 +6,10 @@ import { app, BrowserWindow, ipcMain, Menu } from 'electron';
 import { appName, getCurrent } from './settings';
 import { devPort } from '../../script/config';
 
+// allow audio play before user gesture
+// eg: control play via MPRIS
+app.commandLine.appendSwitch('autoplay-policy', 'no-user-gesture-required');
+
 const isDev = process.env.NODE_ENV === 'development';
 
 let shouldAppQuit = true;
