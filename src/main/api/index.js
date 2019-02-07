@@ -136,8 +136,10 @@ export function getRecommendSongs() {
 
 /** 
  * 每日歌曲推荐 -> 不感兴趣
+ * @param {number} id
+ * @returns {Promise<Types.DislikeRecommendRes>}
  */
-export function dislikeMusic(id) {
+export function dislikeRecommend(id) {
     return client.postW({
         url: `${BaseURL}/weapi/v2/discovery/recommend/dislike`,
         data: {

@@ -449,6 +449,10 @@ namespace Types {
         recommend: RecommendSong[];
     }
 
+    export interface DislikeRecommendRes extends ApiRes {
+        data: RecommendSong;
+    }
+
     export interface RecommendPlaylistCreator {
         accountStatus: number;
         authStatus: number;
