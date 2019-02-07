@@ -17,22 +17,20 @@
                 </div>
                 <div class="shortcut">
                     <div title="喜欢">
-                        <mu-checkbox ref="chkFavorite"
-                            uncheck-icon="favorite_border"
+                        <mu-checkbox uncheck-icon="favorite_border"
                             checked-icon="favorite"
                             color="red"
                             v-model="isFavorite"></mu-checkbox>
                     </div>
                     <div title="收藏到歌单">
-                        <mu-checkbox ref="chkShowPlaylists"
-                            uncheck-icon="bookmark_border"
+                        <mu-checkbox uncheck-icon="bookmark_border"
                             checked-icon="bookmark"
                             color="secondary"
-                            v-model="collectPopupShown"></mu-checkbox>
+                            :inputValue="collectPopupShown"
+                            @click="handleCollect"></mu-checkbox>
                     </div>
                     <div title="循环模式">
-                        <mu-checkbox ref="chkLoopMode"
-                            :uncheck-icon="iconLoopMode"
+                        <mu-checkbox :uncheck-icon="iconLoopMode"
                             @click="handleLoopMode"
                             color="secondary"></mu-checkbox>
                     </div>
@@ -43,7 +41,7 @@
                         <mu-checkbox uncheck-icon="queue_music"
                             checked-icon="queue_music"
                             color="secondary"
-                            v-model="currentListShown"></mu-checkbox>
+                            :inputValue="currentListShown"></mu-checkbox>
                         <CurrentPlaylist slot="content"
                             @navigate="handleSourceNavigate"></CurrentPlaylist>
                     </mu-menu>
@@ -103,8 +101,8 @@ export default {
             timeTotal: 0,
             timeCurrent: 0,
             shouldFavorite: null,
-            realCollectPopupShown: false,
-            realCurrentListShown: false
+            collectPopupShown: false,
+            currentListShown: false
         };
     },
     methods: {
@@ -152,6 +150,18 @@ export default {
             await new Promise(_ => setTimeout(() => _(), 200));
             await this.updatePlaylistDetail(list.id);
             this.shouldFavorite = null;
+        },
+        handleCollect() {
+            if (!this.user.loginValid) {
+                this.$toast.message('汝还没有登录呀      (눈‸눈)');
+                return;
+            }
+            if (!this.playing) {
+                this.$toast.message('究竟想收藏什么呢     (｡ŏ_ŏ)');
+                return;
+            }
+            this.collectPopupShown = true;
+            this.toggleCollectPopup(this.playing.id);
         },
         handleLoopMode() {
             if (this.ui.radioMode) {
@@ -209,39 +219,6 @@ export default {
             set(val) {
                 this.shouldFavorite = val === true;
                 this.handleFavorite();
-            }
-        },
-        collectPopupShown: {
-            get() { return this.realCollectPopupShown; },
-            set(val) {
-                if (!this.user.loginValid && val === true && this.realCollectPopupShown === false) {
-                    this.$toast.message('汝还没有登录呀      (눈‸눈)');
-                    // set value of real `<input>` element to `false`.
-                    // it depends on MuseUI impl
-                    this.$refs.chkShowPlaylists.inputValue = false;
-                    return;
-                }
-                if (!this.playing) {
-                    this.$toast.message('究竟想收藏什么呢     (｡ŏ_ŏ)');
-                    this.$refs.chkShowPlaylists.inputValue = false;
-                    return;
-                }
-                this.realCollectPopupShown = val;
-                if (val === true) {
-                    this.toggleCollectPopup(this.playing.id);
-                }
-            }
-        },
-        currentListShown: {
-            get() { return this.realCurrentListShown; },
-            set(val) {
-                if (val === true) {
-                    setTimeout(() => {
-                        const el = document.getElementById(`cur-list-${this.queue.index}`);
-                        if (el) el.scrollIntoViewIfNeeded();
-                    }, 100);
-                }
-                this.realCurrentListShown = val;
             }
         },
         iconLoopMode() {
