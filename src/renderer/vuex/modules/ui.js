@@ -20,12 +20,6 @@ const state = {
     loginPending: false,
     collectPopupShow: false,
     collectTrackIds: [],
-    recommendSongs: [],
-    recommendStatistics: {
-        playCnt: '...',
-        likeCnt: '...',
-        followCnt: '...'
-    },
     fav: {
         album: null,
         artist: {
@@ -146,12 +140,6 @@ const mutations = {
     },
     [types.SET_UI_TEMP_VIDEO](state, payload) {
         state.temp.video = new Video(payload);
-    },
-    [types.SET_UI_RECOMMEND_SONGS](state, payload) {
-        state.recommendSongs = payload.map(t => new Track(t));
-    },
-    [types.SET_UI_RECOMMEND_STATISTICS](state, payload) {
-        state.recommendStatistics = payload;
     },
     [types.ACTIVATE_RADIO](state, payload) {
         state.radioMode = payload;

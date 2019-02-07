@@ -363,14 +363,22 @@ export async function setUiRelatedPlaylists({ commit }, id) {
     commit(types.SET_UI_TEMP_RELATED_PLAYLISTS, resp.data);
 }
 
-export async function setUiRecommendSongs({ commit }) {
+export async function updateRecommendSongs({ commit }) {
     const resp = await Api.getRecommendSongs();
-    commit(types.SET_UI_RECOMMEND_SONGS, resp.recommend);
+    commit(types.SET_RECOMMEND_SONGS, resp.recommend);
 }
 
-export async function setUiRecommendStatistics({ commit }) {
+export async function updateRecommendStatistics({ commit }) {
     const resp = await Api.getRecommendStatistics();
-    commit(types.SET_UI_RECOMMEND_STATISTICS, resp.data);
+    commit(types.SET_RECOMMEND_STATISTICS, resp.data);
+}
+
+export async function dislikeRecommend({ commit }, id) {
+    const resp = await Api.dislikeRecommend(id);
+    if (resp.code === 200) {
+        commit(types.REPLACE_RECOMMEND_SONG, { id, track: resp.data });
+        return;
+    }
 }
 
 export async function setUiTempAlbum({ commit }, id) {
