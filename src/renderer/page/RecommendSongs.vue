@@ -17,19 +17,19 @@
                     <mu-list-item-action>
                         <mu-icon value="play_circle_filled"></mu-icon>
                     </mu-list-item-action>
-                    <mu-list-item-title>你播放了 <span class="recommend-cnt">{{ui.recommendStatistics.playCnt}}</span> 首音乐</mu-list-item-title>
+                    <mu-list-item-title>你播放了 <span class="recommend-cnt">{{recommend.statistics.playCnt}}</span> 首音乐</mu-list-item-title>
                 </mu-list-item>
                 <mu-list-item>
                     <mu-list-item-action>
                         <mu-icon value="favorite"></mu-icon>
                     </mu-list-item-action>
-                    <mu-list-item-title>你喜欢了 <span class="recommend-cnt">{{ui.recommendStatistics.likeCnt}}</span> 首音乐</mu-list-item-title>
+                    <mu-list-item-title>你喜欢了 <span class="recommend-cnt">{{recommend.statistics.likeCnt}}</span> 首音乐</mu-list-item-title>
                 </mu-list-item>
                 <mu-list-item>
                     <mu-list-item-action>
                         <mu-icon value="person_add"></mu-icon>
                     </mu-list-item-action>
-                    <mu-list-item-title>你收藏了 <span class="recommend-cnt">{{ui.recommendStatistics.followCnt}}</span> 位歌手</mu-list-item-title>
+                    <mu-list-item-title>你收藏了 <span class="recommend-cnt">{{recommend.statistics.followCnt}}</span> 位歌手</mu-list-item-title>
                 </mu-list-item>
             </template>
         </mu-list>
@@ -39,8 +39,8 @@
                     sub-title="根据你的音乐口味生成，每天 6:00 更新">
                     <div class="recommend-header"></div>
                 </mu-card-media>
-                <PlayTracks :tracks="ui.recommendSongs"></PlayTracks>
-                <TrackList :tracks="ui.recommendSongs"></TrackList>
+                <PlayTracks :tracks="recommend.songs"></PlayTracks>
+                <TrackList :tracks="recommend.songs"></TrackList>
             </template>
             <CenteredTip v-else
                 icon="nature_people"
@@ -66,19 +66,35 @@ export default {
         };
     },
     computed: {
-        ...mapState(['ui', 'user'])
+        ...mapState(['recommend', 'user'])
     },
     methods: {
         ...mapActions([
-            'setUiRecommendSongs',
-            'setUiRecommendStatistics'
+            'dislikeRecommend',
+            'updateRecommendSongs',
+            'updateRecommendStatistics'
         ]),
-        fetchData() {
-            this.loading = true;
-            this.setUiRecommendSongs()
-                .then(() => this.loading = false);
-            this.setUiRecommendStatistics();
+        shouldUpdateSongs() {
+            if (this.recommend.timestamp < 0) return true;
+            const now = new Date();
+            const lastUpdate = new Date(this.recommend.timestamp);
+            if (now.getUTCDay() >= lastUpdate.getUTCDay() &&
+                now.getUTCHours() >= 22 && lastUpdate.getUTCHours() < 22) {
+                return true;
+            }
+            return false;
         },
+        fetchData() {
+            if (this.shouldUpdateSongs()) {
+                this.loading = true;
+                this.updateRecommendSongs()
+                    .then(() => this.loading = false);
+            }
+            this.updateRecommendStatistics();
+        },
+        handleDislike(track) {
+            this.dislikeRecommend(track.id);
+        }
     },
     mounted() {
         if (this.user.loginValid) {
