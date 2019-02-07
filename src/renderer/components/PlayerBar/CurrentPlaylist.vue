@@ -109,7 +109,7 @@ export default {
             'dislikeRadioSong'
         ]),
         handleCollectAll() {
-            const ids = this.playlist.list.map(t => t.id);
+            const ids = this.queue.list.map(t => t.id);
             this.toggleCollectPopup(ids);
         },
         async handleClearPlaylist() {
