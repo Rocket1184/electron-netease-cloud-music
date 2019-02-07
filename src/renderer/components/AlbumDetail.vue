@@ -70,7 +70,7 @@
 import { mapActions, mapState } from 'vuex';
 
 import Api from '@/util/api';
-import TrackList from './TrackList.vue';
+import TrackList from './TrackList/TrackList.vue';
 import PlayTracks from './PlayTracks.vue';
 import { shortDate } from '@/util/formatter';
 import { sizeImg, HiDpiPx } from '@/util/image';

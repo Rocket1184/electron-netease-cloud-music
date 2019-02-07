@@ -8,7 +8,7 @@
 </template>
 
 <script>
-import TrackList from '@/components/TrackList.vue';
+import TrackList from '@/components/TrackList/TrackList.vue';
 import PlayTracks from '@/components/PlayTracks.vue';
 
 export default {

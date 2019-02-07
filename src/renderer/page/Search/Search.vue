@@ -55,7 +55,7 @@
 <script>
 import { mapActions, mapState } from 'vuex';
 
-import TrackList from '@/components/TrackList.vue';
+import TrackList from '@/components/TrackList/TrackList.vue';
 import CenteredTip from '@/components/CenteredTip.vue';
 import CenteredLoading from '@/components/CenteredLoading.vue';
 import VideoList from '@/components/VideoList.vue';

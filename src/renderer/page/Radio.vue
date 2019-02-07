@@ -32,7 +32,7 @@
 <script>
 import { mapActions, mapState } from 'vuex';
 
-import TrackList from '@/components/TrackList.vue';
+import TrackList from '@/components/TrackList/TrackList.vue';
 import ListItemBack from '@/components/ListItemBack.vue';
 import ListDetailLayout from '@/components/ListDetailLayout.vue';
 
