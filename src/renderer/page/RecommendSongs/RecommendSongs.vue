@@ -39,8 +39,10 @@
                     sub-title="根据你的音乐口味生成，每天 6:00 更新">
                     <div class="recommend-header"></div>
                 </mu-card-media>
-                <PlayTracks :tracks="recommend.songs"></PlayTracks>
-                <TrackList :tracks="recommend.songs"></TrackList>
+                <PlayTracks :tracks="recommend.songs"
+                    :source="trackSoruce"></PlayTracks>
+                <RecommendSongList :tracks="recommend.songs"
+                    :source="trackSoruce"></RecommendSongList>
             </template>
             <CenteredTip v-else
                 icon="nature_people"
@@ -57,7 +59,11 @@ import ListDetailLayout from '@/components/ListDetailLayout.vue';
 import ListItemBack from '@/components/ListItemBack.vue';
 import CenteredTip from '@/components/CenteredTip.vue';
 import PlayTracks from '@/components/PlayTracks.vue';
-import TrackList from '@/components/TrackList.vue';
+import RecommendSongList from './RecommendSongList.vue';
+
+const trackSoruce = {
+    name: 'recommend'
+};
 
 export default {
     data() {
@@ -66,11 +72,11 @@ export default {
         };
     },
     computed: {
-        ...mapState(['recommend', 'user'])
+        ...mapState(['recommend', 'user']),
+        trackSoruce() { return trackSoruce; }
     },
     methods: {
         ...mapActions([
-            'dislikeRecommend',
             'updateRecommendSongs',
             'updateRecommendStatistics'
         ]),
@@ -91,9 +97,6 @@ export default {
                     .then(() => this.loading = false);
             }
             this.updateRecommendStatistics();
-        },
-        handleDislike(track) {
-            this.dislikeRecommend(track.id);
         }
     },
     mounted() {
@@ -112,7 +115,7 @@ export default {
         ListItemBack,
         CenteredTip,
         PlayTracks,
-        TrackList
+        RecommendSongList
     }
 };
 </script>
@@ -132,3 +135,4 @@ export default {
     background-position: 50%, 50%;
 }
 </style>
+

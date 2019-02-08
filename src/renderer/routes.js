@@ -7,7 +7,7 @@ import Artist from '@/page/Artist.vue';
 import Video from '@/page/Video.vue';
 import Settings from '@/page/Settings/Settings.vue';
 import Favorite from '@/page/Favorite/Favorite.vue';
-import RecommendSongs from '@/page/RecommendSongs.vue';
+import RecommendSongs from '@/page/RecommendSongs/RecommendSongs.vue';
 import Comment from '@/page/Comment/Comment.vue';
 import Radio from '@/page/Radio/Radio.vue';
 import CenteredTip from '@/components/CenteredTip.vue';
