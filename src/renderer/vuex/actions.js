@@ -241,9 +241,13 @@ export async function playPlaylist({ commit, dispatch, state }, { tracks, source
     dispatch('playTrackIndex', firstIndex);
 }
 
-export function clearPlaylist({ commit, dispatch }) {
-    commit(types.SET_PLAY_LIST, []);
-    commit(types.SET_CURRENT_INDEX, 0);
+export function clearPlaylist({ state, commit, dispatch }) {
+    if (state.ui.radioMode) {
+        commit(types.RESTORE_RADIO, { list: [], index: 0 });
+    } else {
+        commit(types.SET_PLAY_LIST, []);
+        commit(types.SET_CURRENT_INDEX, 0);
+    }
     dispatch('updateUiAudioSrc');
     dispatch('updateUiLyric');
 }
