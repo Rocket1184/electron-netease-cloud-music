@@ -292,12 +292,10 @@ export default {
 }
 
 .player {
-    background-color: transparent !important;
     color: black;
     display: flex;
     flex-direction: row;
     .bkg {
-        z-index: -1;
         position: absolute;
         top: 0;
         left: 0;
@@ -309,6 +307,10 @@ export default {
             height: 100%;
         }
     }
+    .phonograph,
+    .info {
+        z-index: 1;
+    }
     .phonograph {
         flex: 1;
         transition: transform 25s;
@@ -316,7 +318,7 @@ export default {
         flex-direction: column;
         align-items: center;
         .needle {
-            z-index: 1;
+            z-index: 2;
             width: 100px;
             height: 200px;
             margin: -6px 0 -132px 74px;
