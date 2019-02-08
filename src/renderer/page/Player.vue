@@ -146,6 +146,7 @@ export default {
         return {
             isActive: false,
             canvasImageId: -1,
+            threadInfoId: -1,
             commentCount: '...',
             /** @type {HTMLAudioElement} */
             audioEl: null,
@@ -235,6 +236,7 @@ export default {
             img.addEventListener('load', handler);
         },
         async refreshThreadInfo() {
+            this.threadInfoId = this.playing.id;
             if (!this.playing.id) return;
             this.commentCount = '...';
             const thread = `R_SO_4_${this.playing.id}`;
@@ -256,6 +258,7 @@ export default {
         this.createLyricElemMap();
         this.$store.subscribe(mutation => {
             if (mutation.type === SET_CURRENT_INDEX || mutation.type === SET_RADIO_INDEX) {
+                if (!this.isActive) return;
                 this.paintBkgCanvas();
                 this.refreshThreadInfo();
             } else if (mutation.type === SET_ACTIVE_LYRIC) {
@@ -270,6 +273,9 @@ export default {
         this.isActive = true;
         if (this.canvasImageId !== this.playing.id) {
             this.paintBkgCanvas();
+        }
+        if (this.threadInfoId !== this.playing.id) {
+            this.refreshThreadInfo();
         }
         if (!this.lyricElemMap.length) {
             this.createLyricElemMap();
