@@ -148,8 +148,10 @@ export default {
             }
             const list = this.user.playlist[0];
             if (list.tracks.find(t => t.id === this.playing.id)) {
+                this.shouldFavorite = false;
                 await Api.uncollectTrack(list.id, this.playing.id);
             } else {
+                this.shouldFavorite = true;
                 await Api.collectTrack(list.id, this.playing.id);
             }
             // it would take some time for NetEase to update playlist cover
