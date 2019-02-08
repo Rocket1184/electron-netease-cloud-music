@@ -82,11 +82,7 @@ export default {
             const track = this.tracks[index];
             return this.playlist.list.findIndex(t => t.id === track.id);
         },
-        handleQueue(index) {
-            if (this.ui.radioMode) {
-                this.$toast.message('正在播放私人 FM，无法添加到播放列表');
-                return;
-            }
+        queueTrack(index) {
             if (this.findTrackInPlaylist(index) > -1) {
                 // track exists in playlist
                 this.$toast.message('已经在播放列表中了  ( >﹏<。)～');
@@ -99,16 +95,14 @@ export default {
             });
             this.$toast.message('已添加到播放列表  _(:з」∠)_');
         },
-        handlePlay(index) {
+        handleQueue(index) {
             if (this.ui.radioMode) {
-                if (this.isRadio) {
-                    this.playTrackIndex(index);
-                    return;
-                } else {
-                    this.$toast.message('已退出私人 FM');
-                    this.activateRadio(false);
-                }
+                this.$toast.message('正在播放私人 FM，无法添加到播放列表');
+                return;
             }
+            this.queueTrack(index);
+        },
+        playTrack(index) {
             const i = this.findTrackInPlaylist(index);
             if (i > -1) {
                 // track exists in playlist
@@ -122,6 +116,13 @@ export default {
             });
             const newIndex = this.findTrackInPlaylist(index);
             this.playTrackIndex(newIndex);
+        },
+        handlePlay(index) {
+            if (this.ui.radioMode === true) {
+                this.$toast.message('已退出私人 FM');
+                this.activateRadio(false);
+            }
+            this.playTrack(index);
         }
     },
     components: {
