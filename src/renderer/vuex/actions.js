@@ -534,17 +534,12 @@ export async function getRadio({ commit }) {
     }
 }
 
-export async function dislikeRadioSong({ commit, dispatch, getters }, { id, time }) {
+export async function dislikeRadioSong(_, { id, time }) {
     const resp = await Api.dislikeRadioSong(id, time);
     if (resp.code === 200) {
-        const track1 = getters.playing;
-        commit(types.REMOVE_RADIO, { id });
-        const track2 = getters.playing;
-        if (!track2 || track1.id !== track2.id) {
-            dispatch('updateUiLyric');
-            dispatch('updateUiAudioSrc');
-        }
+        return resp;
     }
+    throw resp;
 }
 
 export async function activateRadio({ state, commit, dispatch }, payload) {
