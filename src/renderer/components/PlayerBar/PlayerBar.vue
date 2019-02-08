@@ -20,7 +20,8 @@
                         <mu-checkbox uncheck-icon="favorite_border"
                             checked-icon="favorite"
                             color="red"
-                            v-model="isFavorite"></mu-checkbox>
+                            :inputValue="isFavorite"
+                            @click="handleFavorite"></mu-checkbox>
                     </div>
                     <div title="收藏到歌单">
                         <mu-checkbox uncheck-icon="bookmark_border"
@@ -141,7 +142,7 @@ export default {
             }
         },
         async handleFavorite() {
-            if (!this.user.loginValid || !this.playing) {
+            if (!this.user.loginValid || !this.playing.id) {
                 this.$toast.message('真的这么喜欢我吗 o(*////▽////*)q');
                 return;
             }
@@ -162,7 +163,7 @@ export default {
                 this.$toast.message('汝还没有登录呀      (눈‸눈)');
                 return;
             }
-            if (!this.playing) {
+            if (!this.playing.id) {
                 this.$toast.message('究竟想收藏什么呢     (｡ŏ_ŏ)');
                 return;
             }
@@ -216,25 +217,19 @@ export default {
         songProgress() {
             return 100 * this.timeCurrent / this.timeTotal || 0;
         },
-        isFavorite: {
-            get() {
-                if (!this.user.loginValid || !this.playing) {
-                    return false;
-                }
-                if (this.shouldFavorite !== null) {
-                    return this.shouldFavorite;
-                }
-                /** @type {Models.PlayList} */
-                const favoriteList = this.user.playlist[0];
-                if (favoriteList) {
-                    return favoriteList.tracks.findIndex(t => t.id === this.playing.id) > -1;
-                }
+        isFavorite() {
+            if (!this.user.loginValid || !this.playing) {
                 return false;
-            },
-            set(val) {
-                this.shouldFavorite = val === true;
-                this.handleFavorite();
             }
+            if (this.shouldFavorite !== null) {
+                return this.shouldFavorite;
+            }
+            /** @type {Models.PlayList} */
+            const favoriteList = this.user.playlist[0];
+            if (favoriteList) {
+                return favoriteList.tracks.findIndex(t => t.id === this.playing.id) > -1;
+            }
+            return false;
         },
         iconLoopMode() {
             switch (this.queue.loopMode) {
@@ -250,6 +245,17 @@ export default {
     },
     filters: {
         time: shortTime
+    },
+    watch: {
+        currentListShown(val) {
+            // scroll current playlist to playing item when open
+            if (val === true) {
+                setTimeout(() => {
+                    const el = document.getElementById(`cur-list-${this.queue.index}`);
+                    if (el) el.scrollIntoViewIfNeeded();
+                }, 100);
+            }
+        }
     },
     mounted() {
         /** @type {HTMLAudioElement} */
@@ -411,7 +417,7 @@ export default {
             .name {
                 overflow: hidden;
                 text-overflow: ellipsis;
-                width: calc(100% - 33px * 4);
+                width: calc(100% - 36px * 4);
                 span {
                     max-width: 310px;
                     white-space: nowrap;
@@ -422,7 +428,7 @@ export default {
                 }
             }
             .shortcut {
-                width: calc(33px * 4); // 33px * button count
+                width: calc(36px * 4);
                 display: flex;
                 justify-content: space-between;
                 font-size: 0;
