@@ -32,7 +32,7 @@
                         <mu-icon v-if="track.id == playing.id"
                             color="secondary"
                             value="volume_up"
-                            :size="14">
+                            :size="18">
                         </mu-icon>
                         <span v-else>{{index + 1}}</span>
                     </mu-list-item-action>
@@ -44,9 +44,11 @@
                         class="current-list-after">
                         <mu-icon v-if="track.source"
                             value="link"
+                            :size="22"
                             :title="sourceTipText(track)"
                             @click.stop="handleSourceClick(track.source)"></mu-icon>
                         <mu-icon value="close"
+                            :size="22"
                             title="从列表中删除"
                             @click.stop="handleRemove(index)"></mu-icon>
                     </mu-list-item-action>
@@ -167,7 +169,7 @@ export default {
         padding: 0;
         height: calc(~'100% - 36px');
         .mu-item {
-            padding-right: 8px;
+            padding-right: 4px;
             .mu-item-action {
                 z-index: 1;
                 width: 36px;
