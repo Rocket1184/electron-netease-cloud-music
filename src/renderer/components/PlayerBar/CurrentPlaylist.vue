@@ -32,7 +32,7 @@
                         <mu-icon v-if="track.id == playing.id"
                             color="secondary"
                             value="volume_up"
-                            :size="18">
+                            :size="14">
                         </mu-icon>
                         <span v-else>{{index + 1}}</span>
                     </mu-list-item-action>
@@ -40,21 +40,15 @@
                         {{track.name}}
                         <span class="track-artist mu-item-after-text"> - {{track.artistName}}</span>
                     </mu-list-item-title>
-                    <mu-list-item-action class="current-list-after">
-                        <template v-if="radioMode">
-                            <mu-icon value="delete"
-                                title="不喜欢"
-                                @click.stop="handleTrash(track.id)"></mu-icon>
-                        </template>
-                        <template v-else>
-                            <mu-icon v-if="track.source"
-                                value="link"
-                                :title="sourceTipText(track)"
-                                @click.stop="handleSourceClick(track.source)"></mu-icon>
-                            <mu-icon value="close"
-                                title="从列表中删除"
-                                @click.stop="handleRemove(index)"></mu-icon>
-                        </template>
+                    <mu-list-item-action v-if="!ui.radioMode"
+                        class="current-list-after">
+                        <mu-icon v-if="track.source"
+                            value="link"
+                            :title="sourceTipText(track)"
+                            @click.stop="handleSourceClick(track.source)"></mu-icon>
+                        <mu-icon value="close"
+                            title="从列表中删除"
+                            @click.stop="handleRemove(index)"></mu-icon>
                     </mu-list-item-action>
                 </mu-list-item>
             </mu-list>
@@ -71,14 +65,18 @@ const SourceName = {
     list: '歌单',
     album: '专辑',
     artist: '歌手',
-    search: '搜索'
+    search: '搜索',
+    radio: '私人 FM',
+    recommend: '每日歌曲推荐'
 };
 
 const RouteName = {
     list: 'playlist',
     album: 'album',
     artist: 'artist',
-    search: 'search'
+    search: 'search',
+    radio: 'radio',
+    recommend: 'recommend'
 };
 
 export default {
@@ -88,15 +86,12 @@ export default {
         queueEmpty() {
             return this.queue.list.length === 0;
         },
-        radioMode() {
-            return this.ui.radioMode === true;
-        },
         list() {
-            if (this.radioMode) return this.radio.list;
+            if (this.ui.radioMode) return this.radio.list;
             return this.playlist.list;
         },
         titleText() {
-            if (this.radioMode) return '私人 FM';
+            if (this.ui.radioMode) return '私人 FM';
             return `共 ${this.queue.list.length} 首`;
         }
     },
@@ -105,8 +100,7 @@ export default {
             'clearPlaylist',
             'playTrackIndex',
             'toggleCollectPopup',
-            'removeTrackFromPlaylist',
-            'dislikeRadioSong'
+            'removeTrackFromPlaylist'
         ]),
         handleCollectAll() {
             const ids = this.queue.list.map(t => t.id);
@@ -135,6 +129,10 @@ export default {
                 case 'search':
                     this.$router.push({ name, query: { keyword: source.id, type: 'song' } });
                     break;
+                case 'radio':
+                case 'recommend':
+                    this.$router.push({ name });
+                    break;
                 default:
                     break;
             }
@@ -142,10 +140,6 @@ export default {
         },
         handleRemove(index) {
             this.removeTrackFromPlaylist({ start: index, count: 1 });
-        },
-        handleTrash(id) {
-            const time = Math.trunc(document.querySelector('audio').currentTime);
-            this.dislikeRadioSong({ id, time });
         }
     },
     components: {
