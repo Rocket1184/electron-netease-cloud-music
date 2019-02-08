@@ -105,7 +105,9 @@ class MusicServer {
         if (await this.cache.has(fileName)) {
             if (ignoreCache) {
                 d('ignoreCache set, delete cache for music id=%d', id);
-                await this.cache.rm(id);
+                try {
+                    await this.cache.rm(fileName);
+                } catch (e) { /* nothing happened */ }
             } else {
                 d('Hit cache for music id=%d', id);
                 const stat = await fsPromises.stat(filePath);
