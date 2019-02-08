@@ -381,8 +381,8 @@ export async function dislikeRecommend({ commit }, id) {
     const resp = await Api.dislikeRecommend(id);
     if (resp.code === 200) {
         commit(types.REPLACE_RECOMMEND_SONG, { id, track: resp.data });
-        return;
     }
+    return resp;
 }
 
 export async function setUiTempAlbum({ commit }, id) {
