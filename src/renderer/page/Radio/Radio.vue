@@ -19,8 +19,8 @@
                 </div>
                 <mu-sub-header>播放记录</mu-sub-header>
                 <mu-divider></mu-divider>
-                <TrackList isRadio
-                    :tracks="radio.list"></TrackList>
+                <RadioSongList :tracks="radio.list"
+                    :source="trackSource"></RadioSongList>
             </template>
             <CenteredTip v-else
                 icon="nature_people"
@@ -32,13 +32,16 @@
 <script>
 import { mapActions, mapState } from 'vuex';
 
-import TrackList from '@/components/TrackList/TrackList.vue';
+import RadioSongList from './RadioSongList.vue';
 import ListItemBack from '@/components/ListItemBack.vue';
 import ListDetailLayout from '@/components/ListDetailLayout.vue';
 
+const trackSource = { name: 'radio' };
+
 export default {
     computed: {
-        ...mapState(['ui', 'radio', 'user'])
+        ...mapState(['ui', 'radio', 'user']),
+        trackSource() { return trackSource; }
     },
     methods: {
         ...mapActions([
@@ -60,7 +63,7 @@ export default {
         }
     },
     components: {
-        TrackList,
+        RadioSongList,
         ListItemBack,
         ListDetailLayout
     }
