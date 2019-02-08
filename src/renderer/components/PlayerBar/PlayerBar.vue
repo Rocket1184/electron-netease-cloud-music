@@ -29,10 +29,15 @@
                             :inputValue="collectPopupShown"
                             @click="handleCollect"></mu-checkbox>
                     </div>
-                    <div title="循环模式">
+                    <div v-if="ui.radioMode"
+                        title="不喜欢">
+                        <mu-checkbox uncheck-icon="delete_outline"
+                            @click="handleRadioDislike"></mu-checkbox>
+                    </div>
+                    <div v-else
+                        title="循环模式">
                         <mu-checkbox :uncheck-icon="iconLoopMode"
-                            @click="handleLoopMode"
-                            color="secondary"></mu-checkbox>
+                            @click="handleLoopMode"></mu-checkbox>
                     </div>
                     <mu-menu :open.sync="currentListShown"
                         placement="top"
@@ -114,7 +119,8 @@ export default {
             'playPreviousTrack',
             'updatePlaylistDetail',
             'toggleCollectPopup',
-            'nextLoopMode'
+            'nextLoopMode',
+            'dislikeRadioSong'
         ]),
         handleCoverClick() {
             if (this.$route.name === 'player') {
@@ -180,6 +186,15 @@ export default {
                     this.$toast.message('随机播放');
                     break;
             }
+        },
+        handleRadioDislike() {
+            if (!this.playing.id) {
+                this.$toast.message('不跟你玩了，哼  o(￣ヘ￣o＃)');
+                return;
+            }
+            const time = Math.trunc(document.querySelector('audio').currentTime);
+            this.dislikeRadioSong({ id: this.playing.id, time });
+            this.playNextTrack();
         },
         handleSourceNavigate() {
             this.currentListShown = false;
