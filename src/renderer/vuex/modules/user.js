@@ -44,7 +44,8 @@ const mutations = {
         }
     },
     [types.SUBSCRIBE_PLAYLIST](state, payload) {
-        state.playlist.splice(0, 0, new PlayList(payload));
+        const start = state.playlist.findIndex(p => p.creator.id !== state.info.id);
+        state.playlist.splice(start, 0, new PlayList(payload));
     },
     [types.UNSUBSCRIBE_PLAYLIST](state, { id }) {
         const index = state.playlist.findIndex(l => l.id === id);
