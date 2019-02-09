@@ -55,8 +55,9 @@
 </template>
 
 <script>
-import Api from '@/util/api';
+import { mapState } from 'vuex';
 
+import Api from '@/util/api';
 import CommentList from './CommentList.vue';
 import ListItemBack from '@/components/ListItemBack.vue';
 import ListDetailLayout from '@/components/ListDetailLayout.vue';
@@ -84,6 +85,7 @@ export default {
         };
     },
     computed: {
+        ...mapState(['user']),
         transitionName() {
             if (this.tab === 'hot') return 'slide-right';
             return 'slide-left';
@@ -119,12 +121,20 @@ export default {
             }
         },
         handleCompose() {
+            if (!this.user.loginValid) {
+                this.$toast('登录后才能发布评论呢 (,,Ծ‸Ծ,,)');
+                return;
+            }
             this.replyTo = -1;
             this.editorContent = '';
             this.editorPlaceholder = '请输入评论内容 ヽ( ^∀^)ﾉ';
             this.toggleEditor();
         },
         handleReply(comment) {
+            if (!this.user.loginValid) {
+                this.$toast('登录后才能回复评论呢 └(￣^￣ )┐');
+                return;
+            }
             this.replyTo = comment.commentId;
             this.editorContent = '';
             this.editorPlaceholder = `回复 @${comment.user.nickname}:`;
@@ -171,7 +181,6 @@ export default {
         background-color: transparent;
         z-index: unset;
         .btn-compose {
-            justify-self: flex-end;
             margin-left: auto;
             margin-right: 6px;
         }
