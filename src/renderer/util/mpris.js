@@ -56,7 +56,7 @@ export function getTrackMeta(track) {
         'xesam:artist': [track.artistName],
         'xesam:discNumber': Number.parseInt(track.cd) || 1,
         'xesam:title': track.name || '未知歌曲',
-        'xesam:tarckNumber': track.no || 0,
+        'xesam:trackNumber': track.no || 0,
         // 'xesam:url': 'file:///dev/null', // at least It's unusable in KDE
         // 'xesam:useCount': 0,
         // 'xesam:userRating': 0
