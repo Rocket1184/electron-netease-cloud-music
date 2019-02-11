@@ -9,6 +9,7 @@
     "compilerOptions": {
         "target": "esnext",
         "baseUrl": ".",
+        "experimentalDecorators": true,
         "paths": {
             "@/*": [
                 "./src/renderer/*"

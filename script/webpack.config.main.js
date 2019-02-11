@@ -20,6 +20,18 @@ let cfg = {
     module: {
         rules: [
             {
+                test: /\.js$/,
+                use: {
+                    loader: 'babel-loader',
+                    options: {
+                        plugins: [
+                            '@babel/plugin-proposal-class-properties',
+                            ['@babel/plugin-proposal-decorators', { decoratorsBeforeExport: true }]
+                        ]
+                    }
+                },
+            },
+            {
                 test: /\.node$/,
                 use: 'native-ext-loader'
             }
