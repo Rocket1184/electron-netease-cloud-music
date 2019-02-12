@@ -41,38 +41,17 @@ const MPRIS = new Proxy({}, {
 export default MPRIS;
 
 /**
- * convert track to MPRIS meta
- * @param {import('@/util/models').Track} track
- * @returns MPRIS Metadata
- * @see https://www.freedesktop.org/wiki/Specifications/mpris-spec/metadata/
- */
-export function getTrackMeta(track) {
-    return {
-        id: track.id,
-        'mpris:length': track.duration * 1e3,
-        'mpris:artUrl': track.album.picUrl || 'file:///dev/null',
-        'xesam:album': track.album.name || '未知专辑',
-        // 'xesam:albumArtist': track.artists.map(ar => ar.name || '未知歌手'),
-        'xesam:artist': [track.artistName],
-        'xesam:discNumber': Number.parseInt(track.cd) || 1,
-        'xesam:title': track.name || '未知歌曲',
-        'xesam:trackNumber': track.no || 0,
-        // 'xesam:url': 'file:///dev/null', // at least It's unusable in KDE
-        // 'xesam:useCount': 0,
-        // 'xesam:userRating': 0
-    };
-}
-
-/**
  * bind audio element and MPRIS Emitter
  * @param {HTMLAudioElement} audioEl
  */
 export function bindAudioElement(audioEl) {
     audioEl.addEventListener('seeked', () => MPRIS.seeked(audioEl.currentTime));
-    MPRISEmitter.on('getPosition', (_, id) => {
-        senderFn('getPosition', id, audioEl.currentTime * 1e6);
+    MPRISEmitter.on('position', (event, id, TrackId, Position) => {
+        audioEl.currentTime = Position;
     });
-    MPRISEmitter.on('seek', (_, __, pos) => audioEl.currentTime = pos);
+    MPRISEmitter.on('seek', (event, id, Offset) => {
+        audioEl.currentTime += Offset;
+    });
     MPRISEmitter.on('stop', () => audioEl.currentTime = 0);
     senderFn('renderer-ready');
     // TODO: MPRIS `LoopStatus` and `Shuffle` support; which DE support those props?
@@ -85,7 +64,7 @@ function subscribeHandler(mutation, state) {
     switch (mutation.type) {
         case UPDATE_PLAYING_URL:
             if (track) {
-                MPRIS.metadata(getTrackMeta(track));
+                MPRIS.metadata(track);
             } else {
                 MPRIS.metadata({});
                 MPRIS.stop();
