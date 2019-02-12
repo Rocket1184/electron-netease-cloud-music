@@ -25,6 +25,7 @@ let cfg = {
                     loader: 'babel-loader',
                     options: {
                         plugins: [
+                            '@babel/plugin-syntax-bigint',
                             '@babel/plugin-proposal-class-properties',
                             ['@babel/plugin-proposal-decorators', { decoratorsBeforeExport: true }]
                         ]

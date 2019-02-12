@@ -18,6 +18,7 @@ require('@babel/register')({
     sourceMaps: 'inline',
     only: [/src\/main\//],
     plugins: [
+        '@babel/plugin-syntax-bigint',
         '@babel/plugin-proposal-class-properties',
         '@babel/plugin-syntax-object-rest-spread',
         '@babel/plugin-transform-modules-commonjs',

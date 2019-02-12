@@ -15,6 +15,7 @@
     "@babel/core": "^7.2.2",
     "@babel/plugin-proposal-class-properties": "^7.3.0",
     "@babel/plugin-proposal-decorators": "^7.3.0",
+    "@babel/plugin-syntax-bigint": "^7.2.0",
     "@babel/plugin-syntax-object-rest-spread": "^7.2.0",
     "@babel/plugin-transform-modules-commonjs": "^7.2.0",
     "@babel/register": "^7.0.0",
@@ -35,7 +36,7 @@
     "native-ext-loader": "^2.3.0",
     "style-loader": "^0.23.1",
     "vue-loader": "^15.6.2",
-    "vue-template-compiler": "2.6.4",
+    "vue-template-compiler": "2.6.5",
     "webpack": "^4.29.3",
     "webpack-dev-server": "^3.1.14"
   },
@@ -51,7 +52,7 @@
     "muse-ui-message": "^0.2.1",
     "muse-ui-toast": "^0.3.0",
     "node-fetch": "^2.3.0",
-    "vue": "2.6.4",
+    "vue": "2.6.5",
     "vue-router": "^3.0.2",
     "vuex": "^3.1.0"
   }
