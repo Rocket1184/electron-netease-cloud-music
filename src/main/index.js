@@ -25,21 +25,6 @@ const BackgroundColor = {
     dark: '#303030'
 };
 
-if (app.requestSingleInstanceLock()) {
-    app.on('second-instance', () => {
-        if (!mainWindow) {
-            mainWindow = createMainWindow();
-            return;
-        }
-        if (mainWindow.isMinimized()) {
-            mainWindow.restore();
-        }
-        mainWindow.focus();
-    });
-} else {
-    app.quit();
-}
-
 function createMainWindow(url = mainURL) {
     const settings = getCurrent();
 
@@ -81,15 +66,29 @@ function createMainWindow(url = mainURL) {
     return win;
 }
 
-app.on('ready', () => {
-    // do not display default menu bar
-    if (!isDev) {
-        Menu.setApplicationMenu(null);
-    }
-    mainWindow = createMainWindow();
-    // boot up ApiHost
-    require('./apiHost');
-});
+if (app.requestSingleInstanceLock()) {
+    app.on('ready', () => {
+        // do not display default menu bar
+        if (!isDev) {
+            Menu.setApplicationMenu(null);
+        }
+        mainWindow = createMainWindow();
+        // boot up ApiHost
+        require('./apiHost');
+    });
+    app.on('second-instance', () => {
+        if (!mainWindow) {
+            mainWindow = createMainWindow();
+            return;
+        }
+        if (mainWindow.isMinimized()) {
+            mainWindow.restore();
+        }
+        mainWindow.focus();
+    });
+} else {
+    app.exit();
+}
 
 app.on('window-all-closed', () => {
     if (shouldAppQuit) {
