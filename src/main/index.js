@@ -31,10 +31,13 @@ function createMainWindow(url = mainURL) {
     const win = new BrowserWindow({
         height: 700,
         width: 1000,
+        useContentSize: true,
+        minWidth: 670,
+        minHeight: 640,
         frame: settings.windowBorder,
         titleBarStyle: settings.windowBorder ? 'default' : 'hidden',
         backgroundColor: BackgroundColor[settings.themeVariety],
-        name: appName,
+        title: appName,
         webPreferences: {
             preload: join(__dirname, 'preload.js'),
             nodeIntegration: isDev,
@@ -121,8 +124,13 @@ ipcMain.on('recreateWindow', (event, url) => {
 ipcMain.on('showLoginWindow', () => {
     loginWindow = new BrowserWindow({
         height: 700,
-        width: 1150,
-        name: 'Login'
+        width: 1200,
+        useContentSize: true,
+        minHeight: 360,
+        minWidth: 1080,
+        title: `Login - ${appName}`,
+        parent: mainWindow,
+        modal: true
     });
     loginWindow.loadURL(loginURL);
 });
