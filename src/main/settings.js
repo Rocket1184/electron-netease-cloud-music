@@ -12,6 +12,7 @@ export const appVer = pkgJSON.version;
 export const defaultSettings = {
     bitRate: 'l',
     windowBorder: true,
+    windowZoom: null,
     themePrimaryColor: '#7e57c2',
     themeSecondaryColor: '#ff4081',
     themeVariety: 'light'
