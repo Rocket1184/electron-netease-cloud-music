@@ -15,6 +15,10 @@ import './transition.css';
 
 const settings = window.__NCM_SETTINGS__;
 
+if (typeof settings.windowZoom === 'number') {
+    document.body.style.zoom = settings.windowZoom.toString();
+}
+
 initTheme({
     primary: settings.themePrimaryColor,
     secondary: settings.themeSecondaryColor
