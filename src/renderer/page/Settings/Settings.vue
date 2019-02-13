@@ -35,6 +35,24 @@
                         </mu-select>
                     </mu-list-item-action>
                 </mu-list-item>
+                <mu-list-item @click="setWindowZoom">
+                    <mu-list-item-title>界面缩放</mu-list-item-title>
+                    <mu-select :value="settings.windowZoom"
+                        @change="setWindowZoom($event)">
+                        <mu-option label="跟随系统"
+                            :value="null"></mu-option>
+                        <mu-option label="1x"
+                            :value="1"></mu-option>
+                        <mu-option label="1.25x"
+                            :value="1.25"></mu-option>
+                        <mu-option label="1.5x"
+                            :value="1.5"></mu-option>
+                        <mu-option label="1.75x"
+                            :value="1.75"></mu-option>
+                        <mu-option label="2x"
+                            :value="2"></mu-option>
+                    </mu-select>
+                </mu-list-item>
                 <mu-list-item button
                     @click="toggleWindowBorder()">
                     <mu-list-item-title>使用系统标题栏</mu-list-item-title>
@@ -193,6 +211,14 @@ export default {
                 primary: this.settings.themePrimaryColor,
                 secondary: this.settings.themeSecondaryColor
             }, this.settings.themeVariety);
+        },
+        setWindowZoom(val) {
+            this.setByName('windowZoom', val);
+            if (val === null) {
+                document.body.style.zoom = '';
+                return;
+            }
+            document.body.style.zoom = val;
         },
         async clearStorage() {
             return new Promise(resolve => webContents.session.clearStorageData(resolve));
