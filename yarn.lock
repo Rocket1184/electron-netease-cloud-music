@@ -256,10 +256,10 @@
     lodash "^4.17.10"
     to-fast-properties "^2.0.0"
 
-"@types/node@^10.12.18":
-  version "10.12.24"
-  resolved "https://registry.yarnpkg.com/@types/node/-/node-10.12.24.tgz#b13564af612a22a20b5d95ca40f1bffb3af315cf"
-  integrity sha512-GWWbvt+z9G5otRBW8rssOFgRY87J9N/qbhqfjMZ+gUuL6zoL+Hm6gP/8qQBG4jjimqdaNLCehcVapZ/Fs2WjCQ==
+"@types/node@^8.0.24":
+  version "8.10.40"
+  resolved "https://registry.yarnpkg.com/@types/node/-/node-8.10.40.tgz#4314888d5cd537945d73e9ce165c04cc550144a4"
+  integrity sha512-RRSjdwz63kS4u7edIwJUn8NqKLLQ6LyqF/X4+4jp38MBT3Vwetewi2N4dgJEshLbDwNgOJXNYoOwzVZUSSLhkQ==
 
 "@vue/component-compiler-utils@^2.5.1":
   version "2.5.1"
@@ -1550,25 +1550,18 @@ dayjs@^1.8.2:
   resolved "https://registry.yarnpkg.com/dayjs/-/dayjs-1.8.4.tgz#e5a8fe080a7955e210045e6c26c5d1d4c88cf602"
   integrity sha512-Gd2W9A8f40Dwr17/O1W12cC61PSq8aUGKBWRVMs7n4XQNwPPIM9m7YzZPHMlW465Sia6t5KlKK52rYd5oT2T6A==
 
-dbus-next@^0.1.0:
+"dbus-next@https://github.com/acrisci/node-dbus-next.git":
   version "0.1.0"
-  resolved "https://registry.yarnpkg.com/dbus-next/-/dbus-next-0.1.0.tgz#54099d8bc655f49586bd36fb143806f89df64ce2"
-  integrity sha512-d+af/KcUv0uyt+E977hNJf6OGqZI7hUSV/ao88c2DaS6DuGN0Dg2GyPoBjalUqJnL3pd2SDQPVJui+7WEXp8Dg==
+  resolved "https://github.com/acrisci/node-dbus-next.git#9a6389bcd35dd0fb278eecf98163360d38634a92"
   dependencies:
     event-stream "3.3.4"
     hexy "^0.2.10"
+    jsbi "^2.0.5"
     put "0.0.6"
     safe-buffer "^5.1.1"
     xml2js "^0.4.17"
   optionalDependencies:
     abstract-socket "^2.0.0"
-
-dbus@^1.0.3:
-  version "1.0.3"
-  resolved "https://registry.yarnpkg.com/dbus/-/dbus-1.0.3.tgz#bceda148673bc2fcca2042ba06a95965762689bc"
-  integrity sha1-vO2hSGc7wvzKIEK6BqlZZXYmibw=
-  dependencies:
-    nan "^2.1.0"
 
 de-indent@^1.0.2:
   version "1.0.2"
@@ -1926,12 +1919,12 @@ electron-packager@^13.0.1:
     semver "^5.3.0"
     yargs-parser "^11.0.0"
 
-electron@4.0.4:
-  version "4.0.4"
-  resolved "https://registry.yarnpkg.com/electron/-/electron-4.0.4.tgz#638e32ccbe9ded1124c3e6dbbaa1e16d37c32019"
-  integrity sha512-zG5VtLrmPfmw1fXY/3BEtRZk7OZ7djQhweZ6rW+R5NeF6s8RTz/AwTGtLoBo4z8wmJ5QTy0Y941FZw4pe5YlpA==
+electron@3.1.3:
+  version "3.1.3"
+  resolved "https://registry.yarnpkg.com/electron/-/electron-3.1.3.tgz#848fa0fc62d131978cde15ec04ce195a08dc4155"
+  integrity sha512-Y1TbV5py2O0br0JVYh+ew1cW4cIOOgRNRMzwTwWuZNMZ9fK/XLlqsbZr1GpYHdiN2yIU1koO+g4Cw8VuW86NXQ==
   dependencies:
-    "@types/node" "^10.12.18"
+    "@types/node" "^8.0.24"
     electron-download "^4.1.0"
     extract-zip "^1.0.3"
 
@@ -3411,6 +3404,11 @@ js-yaml@^3.12.0:
     argparse "^1.0.7"
     esprima "^4.0.0"
 
+jsbi@^2.0.5:
+  version "2.0.5"
+  resolved "https://registry.yarnpkg.com/jsbi/-/jsbi-2.0.5.tgz#82589011da87dc59b4b549d94dcef51a9155f6fe"
+  integrity sha512-TzO/62Hxeb26QMb4IGlI/5X+QLr9Uqp1FPkwp2+KOICW+Q+vSuFj61c8pkT6wAns4WcK56X7CmSHhJeDGWOqxQ==
+
 jsbn@~0.1.0:
   version "0.1.1"
   resolved "https://registry.yarnpkg.com/jsbn/-/jsbn-0.1.1.tgz#a5e654c2e5a2deb5f201d96cefbca80c0ef2f513"
@@ -4033,7 +4031,7 @@ mute-stream@0.0.7:
   resolved "https://registry.yarnpkg.com/mute-stream/-/mute-stream-0.0.7.tgz#3075ce93bc21b8fab43e1bc4da7e8115ed1e7bab"
   integrity sha1-MHXOk7whuPq0PhvE2n6BFe0ee6s=
 
-nan@^2.0.9, nan@^2.1.0, nan@^2.9.2:
+nan@^2.0.9, nan@^2.9.2:
   version "2.12.1"
   resolved "https://registry.yarnpkg.com/nan/-/nan-2.12.1.tgz#7b1aa193e9aa86057e3c7bbd0ac448e770925552"
   integrity sha512-JY7V6lRkStKcKTvHO5NVSQRv+RV+FIL5pvDoLiAtSL9pKlC5x9PKQcZDsq7m4FO4d57mkhC6Z+QhAh3Jdk5JFw==
