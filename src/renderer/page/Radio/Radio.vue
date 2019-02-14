@@ -33,6 +33,7 @@
 import { mapActions, mapState } from 'vuex';
 
 import RadioSongList from './RadioSongList.vue';
+import CenteredTip from '@/components/CenteredTip.vue';
 import ListItemBack from '@/components/ListItemBack.vue';
 import ListDetailLayout from '@/components/ListDetailLayout.vue';
 
@@ -64,6 +65,7 @@ export default {
     },
     components: {
         RadioSongList,
+        CenteredTip,
         ListItemBack,
         ListDetailLayout
     }
