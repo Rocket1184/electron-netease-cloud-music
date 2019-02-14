@@ -50,6 +50,9 @@ if (isProd) {
     cfg.plugins = [
         new webpack.DefinePlugin({ 'process.env.NODE_ENV': '"production"' })
     ];
+    cfg.resolve = {
+        mainFields: ['main']
+    };
 } else {
     // dev config
     cfg.mode = 'development';
