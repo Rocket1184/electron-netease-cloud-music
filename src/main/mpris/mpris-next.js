@@ -1,9 +1,12 @@
 import { EventEmitter } from 'events';
 
 import debug from 'debug';
-import { sessionBus, Variant, interface as iface } from 'dbus-next';
+import { BigInt } from 'jsbi';
+import { sessionBus, Variant, interface as iface, setBigIntCompat } from 'dbus-next';
 
 import { Timer } from './timer';
+
+setBigIntCompat(true);
 
 const {
     Interface,
@@ -118,7 +121,7 @@ class MediaPlayer2Player extends Interface {
             'xesam:trackNumber': new Variant('n', value.no || 0),
         };
         d('property: Metadata %o', this._Metadata);
-        this.PropertiesChanged({
+        Interface.emitPropertiesChanged(this, {
             Metadata: this._Metadata
         });
         this.timer.reset();
@@ -140,7 +143,7 @@ class MediaPlayer2Player extends Interface {
 
     setPlaybackStatus(val) {
         this._PlaybackStatus.value = val;
-        this.PropertiesChanged({
+        Interface.emitPropertiesChanged(this, {
             PlaybackStatus: this._PlaybackStatus.value
         });
         switch (this._PlaybackStatus.value) {
@@ -172,7 +175,7 @@ class MediaPlayer2Player extends Interface {
 
     set LoopStatus(value) {
         this._LoopStatus.value = value;
-        this.PropertiesChanged({
+        Interface.emitPropertiesChanged(this, {
             Metadata: this._LoopStatus.value
         });
     }
