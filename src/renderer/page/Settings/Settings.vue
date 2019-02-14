@@ -37,21 +37,23 @@
                 </mu-list-item>
                 <mu-list-item @click="setWindowZoom">
                     <mu-list-item-title>界面缩放</mu-list-item-title>
-                    <mu-select :value="settings.windowZoom"
-                        @change="setWindowZoom($event)">
-                        <mu-option label="跟随系统"
-                            :value="null"></mu-option>
-                        <mu-option label="1x"
-                            :value="1"></mu-option>
-                        <mu-option label="1.25x"
-                            :value="1.25"></mu-option>
-                        <mu-option label="1.5x"
-                            :value="1.5"></mu-option>
-                        <mu-option label="1.75x"
-                            :value="1.75"></mu-option>
-                        <mu-option label="2x"
-                            :value="2"></mu-option>
-                    </mu-select>
+                    <mu-list-item-action>
+                        <mu-select :value="settings.windowZoom"
+                            @change="setWindowZoom($event)">
+                            <mu-option label="跟随系统"
+                                :value="null"></mu-option>
+                            <mu-option label="1x"
+                                :value="1"></mu-option>
+                            <mu-option label="1.25x"
+                                :value="1.25"></mu-option>
+                            <mu-option label="1.5x"
+                                :value="1.5"></mu-option>
+                            <mu-option label="1.75x"
+                                :value="1.75"></mu-option>
+                            <mu-option label="2x"
+                                :value="2"></mu-option>
+                        </mu-select>
+                    </mu-list-item-action>
                 </mu-list-item>
                 <mu-list-item button
                     @click="toggleWindowBorder()">
@@ -203,6 +205,7 @@ export default {
             this.$nextTick(() => this.recreateWindow());
         },
         setByName(name, val) {
+            if (this.settings[name] === val) return;
             return this.updateSettings({ [name]: val });
         },
         async setThemeVariable(name, val) {
@@ -254,8 +257,8 @@ export default {
             this.$confirm(
                 '所有应用数据都将被清除，包括缓存以及账号登录状态，之后窗口将重新加载。确定吗？',
                 '清除所有应用数据'
-            ).then(({ result }) => {
-                if (result) {
+            ).then(msgReturn => {
+                if (msgReturn.result === true) {
                     window.onbeforeunload = null;
                     Promise.all([
                         Api.updateCookie(),
@@ -285,11 +288,7 @@ export default {
             }
         },
         showVersions() {
-            this.$alert(
-                // class 'mono-font' was declared in file 'App.vue'
-                h => h('pre', { class: 'mono-font' }, ver),
-                '版本号'
-            );
+            this.$alert(h => h('pre', { class: 'mono-font' }, ver), '版本号');
         }
     },
     filters: {
@@ -318,6 +317,8 @@ export default {
     .mu-item-action {
         .mu-input {
             margin: 0;
+            padding: 0;
+            min-height: unset;
         }
     }
 }
