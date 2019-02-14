@@ -21,7 +21,6 @@ update_ver_hash() {
 }
 
 dist() {
-    npm rebuild dbus
     rm dist/.gitkeep
     yarn run dist
     cp ./LICENSE dist/

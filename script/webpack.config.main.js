@@ -17,14 +17,6 @@ let cfg = {
         libraryTarget: 'commonjs2',
         path: absPath('dist')
     },
-    module: {
-        rules: [
-            {
-                test: /\.node$/,
-                use: 'native-ext-loader'
-            }
-        ]
-    },
     node: {
         __dirname: false,
         __filename: false
