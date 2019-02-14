@@ -2,8 +2,7 @@ import { ipcMain } from 'electron';
 
 import debug from 'debug';
 
-// const MPRISEmitter = require('./mpris');
-import MPRISEmitter from './mpris-next';
+import MPRISEmitter from './mpris-native';
 
 const TAG = 'MPRIS:IPC';
 const d = debug(TAG);
