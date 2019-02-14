@@ -16,14 +16,14 @@ export class Timer {
     }
 
     set(millisecond) {
-        this.sum = millisecond;
+        this.sum = Math.trunc(millisecond);
         if (this.running) {
             this.begin = new Date();
         }
     }
 
     offset(offset) {
-        const target = this.get() + offset;
+        const target = this.get() + Math.trunc(offset);
         this.set(target);
     }
 
