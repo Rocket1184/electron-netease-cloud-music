@@ -8,10 +8,12 @@ export class Timer {
         return (until.getTime() - since.getTime());
     }
 
-    /** time elapsed in millisecond */
-    sum = 0;
-    running = false;
-    begin = new Date(0);
+    constructor() {
+        /** time elapsed in millisecond */
+        this.sum = 0;
+        this.running = false;
+        this.begin = new Date(0);
+    }
 
     set(millisecond) {
         this.sum = millisecond;
