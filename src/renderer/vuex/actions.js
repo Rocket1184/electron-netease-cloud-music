@@ -63,12 +63,18 @@ export async function signDailyTask(_, { type }) {
     return resp;
 }
 
-export async function updateUserPlaylists({ state, commit, dispatch }) {
+export async function updateUserPlaylistDetail({ commit }, payload) {
+    const listId = typeof payload === 'number' ? payload : payload.id;
+    const resp = await Api.getListDetail(listId);
+    commit(types.UPDATE_USER_PLAYLIST, resp.playlist);
+}
+
+export async function updateUserPlaylist({ state, commit, dispatch }) {
     const { playlist } = await Api.getUserPlaylist(state.user.info.id);
     commit(types.UPDATE_USER_INFO, playlist[0].creator);
     commit(types.SET_USER_PLAYLISTS, playlist);
     if (playlist[0].name.endsWith('喜欢的音乐')) {
-        dispatch('updatePlaylistDetail', playlist[0].id);
+        dispatch('updateUserPlaylistDetail', playlist[0].id);
     }
     return playlist;
 }
@@ -77,7 +83,7 @@ export function setLoginValid({ commit, dispatch }, payload) {
     if (payload === undefined || payload === true) {
         commit(types.SET_LOGIN_VALID, true);
         dispatch('updateUserSignStatus');
-        dispatch('updateUserPlaylists');
+        dispatch('updateUserPlaylist');
     } else {
         commit(types.SET_LOGIN_VALID, false);
     }
@@ -270,12 +276,6 @@ export function restorePlaylist({ commit, dispatch }) {
         // eslint-disable-next-line no-console
         console.info('Playlist stored in localStorage not valid.');
     }
-}
-
-export async function updatePlaylistDetail({ commit }, payload) {
-    const listId = typeof payload === 'number' ? payload : payload.id;
-    const resp = await Api.getListDetail(listId);
-    commit(types.UPDATE_USER_PLAYLIST, resp.playlist);
 }
 
 export function toggleCollectPopup({ commit, state }, payload = {}) {

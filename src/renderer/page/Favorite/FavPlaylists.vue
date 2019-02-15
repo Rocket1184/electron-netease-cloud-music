@@ -78,16 +78,19 @@ export default {
         }
     },
     methods: {
-        ...mapActions(['updateUserPlaylists', 'updatePlaylistDetail']),
+        ...mapActions([
+            'updateUserPlaylist',
+            'updateUserPlaylistDetail'
+        ]),
         async handleListRefresh() {
             this.listRefreshing = true;
-            await this.updateUserPlaylists();
+            await this.updateUserPlaylist();
             this.listRefreshing = false;
             this.loadPlaylist(this.playlistId);
         },
         async loadPlaylist(id) {
             this.detailLoading = true;
-            await this.updatePlaylistDetail(id);
+            await this.updateUserPlaylistDetail(id);
             this.playlistId = id;
             this.detailLoading = false;
         },
