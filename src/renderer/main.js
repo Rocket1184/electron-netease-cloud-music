@@ -13,16 +13,13 @@ import DblclickRipple from './util/dblclick-ripple';
 import './style.css';
 import './transition.css';
 
-const settings = window.__NCM_SETTINGS__;
-
-if (typeof settings.windowZoom === 'number') {
-    document.body.style.zoom = settings.windowZoom.toString();
-}
-
-initTheme({
-    primary: settings.themePrimaryColor,
-    secondary: settings.themeSecondaryColor
-}, settings.themeVariety);
+try {
+    const settings = JSON.parse(sessionStorage.getItem('settings'));
+    initTheme({
+        primary: settings.themePrimaryColor,
+        secondary: settings.themeSecondaryColor
+    }, settings.themeVariety);
+} catch (e) { sessionStorage.removeItem('settings'); }
 
 Vue.use(Router);
 Vue.use(MuseUI);
