@@ -10,6 +10,7 @@ export async function restoreSettings({ commit }) {
 
 export async function updateSettings({ commit, state }, payload) {
     commit(types.UPDATE_SETTINGS, payload);
+    sessionStorage.setItem('settings', JSON.stringify(state.settings));
     await Api.writeSettings(state.settings);
 }
 
