@@ -294,6 +294,36 @@ export function toggleCollectPopup({ commit, state }, payload = {}) {
     commit(types.SHOW_COLLECT_POPUP);
 }
 
+export async function collectTrack(_, { playlist, tracks }) {
+    const resp = await Api.collectTrack(playlist, ...tracks);
+    if (resp.code === 200) {
+        return resp;
+    }
+    throw resp;
+}
+
+export async function uncollectTrack(_, { playlist, tracks }) {
+    const resp = await Api.uncollectTrack(playlist, ...tracks);
+    if (resp.code === 200) {
+        return resp;
+    }
+    throw resp;
+}
+
+export async function favoriteTrack({ state, dispatch }, { favorite, id }) {
+    const playlist = state.user.playlist[0].id;
+    const payload = { playlist, tracks: [id] };
+    if (favorite) {
+        await dispatch('collectTrack', payload);
+    } else {
+        await dispatch('uncollectTrack', payload);
+    }
+    // it would take some time for NetEase to update playlist cover
+    // img, so we just wait 200 ms
+    await new Promise(_ => setTimeout(() => _(), 200));
+    await dispatch('updateUserPlaylistDetail', playlist);
+}
+
 export function nextLoopMode({ commit, state }) {
     const { loopMode } = state.playlist;
     switch (loopMode) {
