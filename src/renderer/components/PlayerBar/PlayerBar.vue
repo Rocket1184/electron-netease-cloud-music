@@ -118,7 +118,7 @@ export default {
             'updateUiAudioSrc',
             'playNextTrack',
             'playPreviousTrack',
-            'updatePlaylistDetail',
+            'favoriteTrack',
             'toggleCollectPopup',
             'nextLoopMode',
             'dislikeRadioSong'
@@ -146,18 +146,9 @@ export default {
                 this.$toast.message('真的这么喜欢我吗 o(*////▽////*)q');
                 return;
             }
-            const list = this.user.playlist[0];
-            if (list.tracks.find(t => t.id === this.playing.id)) {
-                this.shouldFavorite = false;
-                await Api.uncollectTrack(list.id, this.playing.id);
-            } else {
-                this.shouldFavorite = true;
-                await Api.collectTrack(list.id, this.playing.id);
-            }
-            // it would take some time for NetEase to update playlist cover
-            // img, so we just wait 200 ms
-            await new Promise(_ => setTimeout(() => _(), 200));
-            await this.updatePlaylistDetail(list.id);
+            if (this.shouldFavorite !== null) return;
+            this.shouldFavorite = !this.isFavorite;
+            await this.favoriteTrack({ favorite: this.shouldFavorite, id: this.playing.id });
             this.shouldFavorite = null;
         },
         handleCollect() {
