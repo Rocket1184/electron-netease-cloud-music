@@ -10,7 +10,7 @@
                 :img="list.coverImgUrl"
                 :title="list.name"
                 :subTitle="`共 ${list.trackCount} 首`"
-                @click="handleCollect(list, index)">
+                @click="handleCollect(list.id, index)">
             </AvatarListItem>
         </mu-list>
         <mu-button slot="actions"
@@ -23,7 +23,6 @@
 import { mapActions, mapState } from 'vuex';
 
 import AvatarListItem from '@/components/AvatarListItem.vue';
-import Api from '@/util/api';
 
 export default {
     computed: {
@@ -33,25 +32,30 @@ export default {
         }
     },
     methods: {
-        ...mapActions(['toggleCollectPopup', 'updatePlaylistDetail']),
+        ...mapActions([
+            'collectTrack',
+            'toggleCollectPopup',
+            'updateUserPlaylistDetail'
+        ]),
         handleClose() {
             this.toggleCollectPopup();
             this.$emit('close');
         },
-        async handleCollect(list) {
+        async handleCollect(playlist) {
             if (!this.user.loginValid) {
                 this.$toast.message('讲道理不应该这样的呀  (✘﹏✘ა)');
                 return;
             }
-            const resp = await Api.collectTrack(list.id, ...this.ui.collectTrackIds);
-            if (resp.code === 200) {
+            try {
+                await this.collectTrack({ playlist, tracks: this.ui.collectTrackIds });
                 this.$toast.message('成功添加到歌单     (๑•̀ㅂ•́)و✧');
-                // same to above
-                setTimeout(() => this.updatePlaylistDetail(list.id), 200);
-            } else if (resp.code === 502) {
-                this.$toast.message('歌曲已存在        ¯\\_(ツ)_/¯');
-            } else {
-                this.$toast.message(`失败了 ∑(っ °Д °;)っ 错误代码 ${resp.code}`);
+                setTimeout(() => this.updateUserPlaylistDetail(playlist), 200);
+            } catch (resp) {
+                if (resp.code === 502) {
+                    this.$toast.message('歌曲已存在        ¯\\_(ツ)_/¯');
+                } else {
+                    this.$toast.message(`失败了 ∑(っ °Д °;)っ 错误代码 ${resp.code}`);
+                }
             }
         }
     },
