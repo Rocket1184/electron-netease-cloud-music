@@ -8,7 +8,9 @@ let settings = {};
 try {
     settings = JSON.parse(process.argv.find(v => v.startsWith(arg)).slice(arg.length));
 } finally {
-    window.__NCM_SETTINGS__ = settings;
+    if (!sessionStorage.getItem('settings')) {
+        sessionStorage.setItem('settings', JSON.stringify(settings));
+    }
 }
 
 if (!localStorage.getItem('debug')) {

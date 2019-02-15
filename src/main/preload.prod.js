@@ -1,6 +1,6 @@
 'use strict';
 
-const { remote, ipcRenderer, shell } = require('electron');
+const { remote, ipcRenderer, shell, webFrame } = require('electron');
 const { EventEmitter } = require('events');
 const platform = require('os').platform();
 const versions = process.versions;
@@ -15,7 +15,11 @@ window.require = function (id) {
                     getCurrentWebContents: remote.getCurrentWebContents
                 },
                 ipcRenderer: ipcRenderer,
-                shell: { openExternal: shell.openExternal }
+                shell: { openExternal: shell.openExternal },
+                webFrame: {
+                    getZoomFactor: webFrame.getZoomFactor,
+                    setZoomFactor: webFrame.setZoomFactor
+                }
             };
         case 'os':
             return { platform: () => platform };
@@ -31,5 +35,7 @@ let settings = {};
 try {
     settings = JSON.parse(process.argv.find(v => v.startsWith(arg)).slice(arg.length));
 } finally {
-    window.__NCM_SETTINGS__ = settings;
+    if (!sessionStorage.getItem('settings')) {
+        sessionStorage.setItem('settings', JSON.stringify(settings));
+    }
 }
