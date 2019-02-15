@@ -217,11 +217,7 @@ export default {
         },
         setWindowZoom(val) {
             this.setByName('windowZoom', val);
-            if (val === null) {
-                document.body.style.zoom = '';
-                return;
-            }
-            document.body.style.zoom = val;
+            webContents.setZoomFactor(val || 1);
         },
         async clearStorage() {
             return new Promise(resolve => webContents.session.clearStorageData(resolve));
