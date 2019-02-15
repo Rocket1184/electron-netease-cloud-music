@@ -191,10 +191,7 @@ class MediaPlayer2Player {
     }
 
     setPlaybackStatus(val) {
-        if (val === this.PlaybackStatus) return;
-        this.PlaybackStatus = val;
-        this.PropertiesChanged({ PlaybackStatus: ['s', this.PlaybackStatus] });
-        switch (this.PlaybackStatus) {
+        switch (val) {
             case this._PlaybackStatus.types.Playing:
                 this.timer.start();
                 break;
@@ -205,6 +202,9 @@ class MediaPlayer2Player {
                 this.timer.reset();
                 break;
         }
+        if (val === this.PlaybackStatus) return;
+        this.PlaybackStatus = val;
+        this.PropertiesChanged({ PlaybackStatus: ['s', this.PlaybackStatus] });
     }
 
     Next() {
