@@ -39,6 +39,7 @@ function createMainWindow(url = mainURL) {
         backgroundColor: BackgroundColor[settings.themeVariety],
         title: appName,
         webPreferences: {
+            zoomFactor: settings.windowZoom || 1,
             preload: join(__dirname, 'preload.js'),
             nodeIntegration: isDev,
             additionalArguments: [`--initial-settings=${JSON.stringify(settings)}`]
