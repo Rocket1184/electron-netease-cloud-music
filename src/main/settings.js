@@ -13,6 +13,9 @@ export const defaultSettings = {
     bitRate: 'l',
     windowBorder: true,
     windowZoom: null,
+    showTrayIcon: true,
+    trayIconVariety: 'light',
+    exitOnWindowClose: true,
     themePrimaryColor: '#7e57c2',
     themeSecondaryColor: '#ff4081',
     themeVariety: 'light'
