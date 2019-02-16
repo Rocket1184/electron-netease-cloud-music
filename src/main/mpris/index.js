@@ -1,4 +1,4 @@
-import { ipcMain } from 'electron';
+import { app, ipcMain } from 'electron';
 
 import debug from 'debug';
 
@@ -21,12 +21,14 @@ ipcMain.on(TAG, (_, type, ...args) => {
  */
 export function bindWindow(win) {
     MPRISEmitter.on('dbus:raise', () => {
-        if (win.isMinimized()) {
-            win.restore();
-        }
+        win.show();
         win.focus();
     });
-    MPRISEmitter.on('dbus:quit', () => win.close());
+    MPRISEmitter.on('dbus:quit', () => {
+        win.removeAllListeners('close');
+        win.close();
+        app.quit();
+    });
     bindWebContents(win.webContents);
 }
 
@@ -37,7 +39,7 @@ export function bindWebContents(wc) {
     const dbusListeners = dbusEvents.map(type => (...args) => {
         msgId++;
         wc.send(TAG, type, msgId, ...args);
-        d('↑ %s %d', type, msgId, ...args);
+        d('↑ %s %d, %o', type, msgId, ...args);
     });
     const handler = (_, msg) => {
         if (msg === 'renderer-ready') {
