@@ -14,10 +14,14 @@ app.commandLine.appendSwitch('autoplay-policy', 'no-user-gesture-required');
 const isDev = process.env.NODE_ENV === 'development';
 
 let shouldAppQuit = true;
-/** @type {BrowserWindow} */
+const preventQuitHandler = ev => {
+    ev.preventDefault();
+    mainWindow.hide();
+};
+/** @type {import('electron').BrowserWindow} */
 let mainWindow;
 const mainURL = isDev ? `http://localhost:${devPort}` : `file://${__dirname}/index.html`;
-/** @type {BrowserWindow} */
+/** @type {import('electron').BrowserWindow} */
 let loginWindow;
 let loginURL = isDev ? `http://localhost:${devPort}/login.html` : `file://${__dirname}/login.html`;
 /** @type {AppTray} */
@@ -28,9 +32,12 @@ const BackgroundColor = {
     dark: '#303030'
 };
 
-function createMainWindow(url = mainURL) {
-    const settings = getCurrent();
-
+/**
+ * @param {import('./settings').defaultSettings} settings 
+ * @param {string} url 
+ * @returns {import('electron').BrowserWindow}
+ */
+function createMainWindow(settings, url = mainURL) {
     const win = new BrowserWindow({
         height: 700,
         width: 1000,
@@ -61,15 +68,11 @@ function createMainWindow(url = mainURL) {
             }
             break;
         case 'darwin':
-            win.on('close', ev => {
-                ev.preventDefault();
-                win.hide();
-            });
+            win.on('close', preventQuitHandler);
             break;
     }
 
     win.loadURL(url);
-
     return win;
 }
 
@@ -80,7 +83,7 @@ if (app.requestSingleInstanceLock()) {
         if (!isDev) {
             Menu.setApplicationMenu(null);
         }
-        mainWindow = createMainWindow();
+        mainWindow = createMainWindow(settings);
         if (settings.showTrayIcon) {
             appTray = new AppTray(settings.trayIconVariety);
             appTray.bindWindow(mainWindow);
@@ -89,13 +92,7 @@ if (app.requestSingleInstanceLock()) {
         require('./apiHost');
     });
     app.on('second-instance', () => {
-        if (!mainWindow) {
-            mainWindow = createMainWindow();
-            return;
-        }
-        if (mainWindow.isMinimized()) {
-            mainWindow.restore();
-        }
+        mainWindow.show();
         mainWindow.focus();
     });
 } else {
@@ -116,18 +113,52 @@ app.on('before-quit', () => {
 });
 
 app.on('activate', () => {
-    if (!mainWindow) {
-        mainWindow = createMainWindow();
-        return;
-    }
     mainWindow.show();
+    mainWindow.focus();
 });
 
-ipcMain.on('recreateWindow', (event, url) => {
-    shouldAppQuit = false;
-    mainWindow.close();
-    mainWindow = createMainWindow(url);
-    shouldAppQuit = true;
+ipcMain.on('Settings', (event, type, ...args) => {
+    switch (type) {
+        case 'recreateWindow':
+            // prevent App quit
+            shouldAppQuit = false;
+            // ensure window can be closed
+            mainWindow.removeAllListeners('close');
+            mainWindow.close();
+            const settings = getCurrent();
+            mainWindow = createMainWindow(settings, args[0]);
+            if (!shouldAppQuit) {
+                mainWindow.on('close', preventQuitHandler);
+            }
+            if (appTray) {
+                appTray.bindWindow(mainWindow);
+            }
+            shouldAppQuit = settings.exitOnWindowClose;
+            break;
+        case 'showTrayIcon':
+            if (args[0] === true) {
+                const settings = getCurrent();
+                appTray = new AppTray(settings.trayIconVariety);
+                appTray.bindWindow(mainWindow);
+            } else if (args[0] === false) {
+                appTray.destroy();
+                appTray = null;
+            }
+            break;
+        case 'trayIconVariety':
+            if (appTray) {
+                appTray.setColor(args[0]);
+            }
+            break;
+        case 'exitOnWindowClose':
+            shouldAppQuit = args[0];
+            if (args[0] === true) {
+                mainWindow.removeListener('close', preventQuitHandler);
+            } else {
+                mainWindow.on('close', preventQuitHandler);
+            }
+            break;
+    }
 });
 
 ipcMain.on('showLoginWindow', () => {
