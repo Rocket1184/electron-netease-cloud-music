@@ -22,4 +22,6 @@ if (platform() === 'linux') {
     require('@/util/mpris').injectStore(store);
 }
 
+require('@/util/tray').injectStore(store);
+
 export default store;
