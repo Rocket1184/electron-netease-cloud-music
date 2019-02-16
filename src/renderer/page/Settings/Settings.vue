@@ -64,6 +64,40 @@
                             readonly></mu-switch>
                     </mu-list-item-action>
                 </mu-list-item>
+                <mu-sub-header>行为</mu-sub-header>
+                <mu-list-item button
+                    @click="setIPCVariable('showTrayIcon', !settings.showTrayIcon)">
+                    <mu-list-item-title>显示托盘图标</mu-list-item-title>
+                    <mu-list-item-action>
+                        <mu-switch :inputValue="settings.showTrayIcon"
+                            color="secondary"
+                            readonly></mu-switch>
+                    </mu-list-item-action>
+                </mu-list-item>
+                <mu-list-item>
+                    <mu-list-item-title>托盘图标颜色</mu-list-item-title>
+                    <mu-list-item-action>
+                        <mu-select :value="settings.trayIconVariety"
+                            @change="setIPCVariable('trayIconVariety', $event)">
+                            <mu-option label="亮色"
+                                value="light"></mu-option>
+                            <mu-option label="暗色"
+                                value="dark"></mu-option>
+                        </mu-select>
+                    </mu-list-item-action>
+                </mu-list-item>
+                <mu-list-item>
+                    <mu-list-item-title>关闭窗口时</mu-list-item-title>
+                    <mu-list-item-action>
+                        <mu-select :value="settings.exitOnWindowClose"
+                            @change="setIPCVariable('exitOnWindowClose', $event)">
+                            <mu-option label="退出程序"
+                                :value="true"></mu-option>
+                            <mu-option label="最小化到托盘"
+                                :value="false"></mu-option>
+                        </mu-select>
+                    </mu-list-item-action>
+                </mu-list-item>
                 <mu-sub-header>播放</mu-sub-header>
                 <mu-list-item>
                     <mu-list-item-title>音频码率</mu-list-item-title>
@@ -147,6 +181,7 @@ import { setTheme } from '@/util/theme';
 import ColorPicker from './ColorPicker.vue';
 import { humanSize } from '@/util/formatter';
 
+const TAG = 'Settings';
 const browserWindow = remote.getCurrentWindow();
 const webContents = remote.getCurrentWebContents();
 
@@ -219,6 +254,10 @@ export default {
             this.setByName('windowZoom', val);
             webContents.setZoomFactor(val || 1);
         },
+        setIPCVariable(name, val) {
+            this.setByName(name, val);
+            ipcRenderer.send(TAG, name, val);
+        },
         async clearStorage() {
             return new Promise(resolve => webContents.session.clearStorageData(resolve));
         },
@@ -274,7 +313,7 @@ export default {
             browserWindow.reload();
         },
         recreateWindow() {
-            ipcRenderer.send('recreateWindow');
+            ipcRenderer.send(TAG, 'recreateWindow');
         },
         openBrowser(url) {
             try {
