@@ -105,9 +105,7 @@ if (isProd) {
         new webpack.DefinePlugin({ 'process.env.NODE_DEV': '"production"' }),
         new MiniCSSExtractPlugin(),
         new CopyWebpackPlugin([
-            { from: absPath('package.json'), to: absPath('dist') },
-            { from: absPath('src/renderer/login.html'), to: absPath('dist') },
-            { from: absPath('src/main/preload.prod.js'), to: absPath('dist/preload.js') }
+            { from: absPath('src/renderer/login.html'), to: absPath('dist') }
         ])
     );
 } else {
