@@ -5,6 +5,7 @@ import { app, BrowserWindow, ipcMain, Menu } from 'electron';
 
 import { appName, getCurrent } from './settings';
 import { devPort } from '../../script/config';
+import { AppTray } from './tray';
 
 // allow audio play before user gesture
 // eg: control play via MPRIS
@@ -19,6 +20,8 @@ const mainURL = isDev ? `http://localhost:${devPort}` : `file://${__dirname}/ind
 /** @type {BrowserWindow} */
 let loginWindow;
 let loginURL = isDev ? `http://localhost:${devPort}/login.html` : `file://${__dirname}/login.html`;
+/** @type {AppTray} */
+let appTray;
 
 const BackgroundColor = {
     light: '#fafafa',
@@ -72,11 +75,16 @@ function createMainWindow(url = mainURL) {
 
 if (app.requestSingleInstanceLock()) {
     app.on('ready', () => {
+        const settings = getCurrent();
         // do not display default menu bar
         if (!isDev) {
             Menu.setApplicationMenu(null);
         }
         mainWindow = createMainWindow();
+        if (settings.showTrayIcon) {
+            appTray = new AppTray(settings.trayIconVariety);
+            appTray.bindWindow(mainWindow);
+        }
         // boot up ApiHost
         require('./apiHost');
     });
