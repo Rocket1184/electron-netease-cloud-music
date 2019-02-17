@@ -36,7 +36,8 @@ export default {
     },
     computed: {
         hasDesc() {
-            return this.intro.briefDesc.length > 0 || this.intro.introduction.length > 0;
+            const { briefDesc, introduction } = this.intro;
+            return (briefDesc && briefDesc.length > 0) || (introduction && introduction.length > 0);
         }
     },
     methods: {
