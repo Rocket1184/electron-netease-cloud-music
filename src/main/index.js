@@ -56,6 +56,10 @@ function createMainWindow(settings, url = mainURL) {
         }
     });
 
+    if (!settings.exitOnWindowClose) {
+        win.on('close', preventQuitHandler);
+    }
+
     switch (process.platform) {
         case 'linux':
             try {
@@ -127,9 +131,6 @@ ipcMain.on('Settings', (event, type, ...args) => {
             mainWindow.close();
             const settings = getCurrent();
             mainWindow = createMainWindow(settings, args[0]);
-            if (!shouldAppQuit) {
-                mainWindow.on('close', preventQuitHandler);
-            }
             if (appTray) {
                 appTray.bindWindow(mainWindow);
             }
@@ -141,8 +142,10 @@ ipcMain.on('Settings', (event, type, ...args) => {
                 appTray = new AppTray(settings.trayIconVariety);
                 appTray.bindWindow(mainWindow);
             } else if (args[0] === false) {
-                appTray.destroy();
-                appTray = null;
+                if (appTray) {
+                    appTray.destroy();
+                    appTray = null;
+                }
             }
             break;
         case 'trayIconVariety':
