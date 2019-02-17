@@ -216,8 +216,9 @@ export default {
         paintBkgCanvas() {
             this.canvasImageId = this.playing.id;
             const img = new Image();
+            const size = HiDpiPx(64);
             if (this.playing.album && this.playing.album.picUrl) {
-                img.src = sizeImg(this.playing.album.picUrl, HiDpiPx(64));
+                img.src = sizeImg(this.playing.album.picUrl, size);
             } else {
                 img.src = defaultCoverImg;
             }
@@ -225,13 +226,12 @@ export default {
             const h = 600;
             /** @type {CanvasRenderingContext2D} */
             const ctx = this.$refs.cvs.getContext('2d');
-            ctx.fillStyle = 'rgba(255, 255, 255, 0.3)';
-            ctx.filter = 'blur(60px)';
+            ctx.globalAlpha = 0.9;
+            ctx.filter = 'blur(60px) brightness(0.75)';
             const handler = () => {
                 img.removeEventListener('load', handler);
                 ctx.clearRect(0, 0, w, h);
-                ctx.drawImage(img, 0, 0, w, h);
-                ctx.fillRect(0, 0, w, h);
+                ctx.drawImage(img, 0, 0, size, size, -30, -30, w + 60, h + 60);
             };
             img.addEventListener('load', handler);
         },
@@ -418,7 +418,7 @@ export default {
             .scroller-wrapper {
                 height: 100%;
                 overflow: hidden;
-                transition: 0.5s -webkit-mask-image;
+                // transition: 0.5s mask-image;
                 .scroller {
                     transition: transform 0.5s
                         cubic-bezier(0.25, 0.46, 0.45, 0.94);
@@ -433,8 +433,10 @@ export default {
             }
             &:hover {
                 .scroller-wrapper {
-                    -webkit-mask-image: -webkit-linear-gradient(top, #000 80%, transparent 93%);
-                    mask-image: linear-gradient(top, #000 80%, transparent 93%);
+                    mask-image: linear-gradient(to top, transparent 32px, #000 82px),
+                        linear-gradient(to left, #000 10px, transparent 10px, transparent);
+                    -webkit-mask-image: linear-gradient(to top, transparent 32px, #000 82px),
+                        linear-gradient(to left, #000 10px, transparent 10px, transparent);
                 }
                 .control {
                     z-index: 1;
