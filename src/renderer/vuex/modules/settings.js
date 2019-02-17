@@ -12,7 +12,7 @@ try {
         bitRate: 'l',
         windowBorder: true,
         windowZoom: null,
-        showTrayIcon: true,
+        showTrayIcon: false,
         trayIconVariety: 'light',
         exitOnWindowClose: true,
         themePrimaryColor: '#7e57c2',
