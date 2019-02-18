@@ -9,6 +9,7 @@ try {
 } catch (e) {
     sessionStorage.removeItem('settings');
     state = {
+        autoSign: false,
         bitRate: 'l',
         windowBorder: true,
         windowZoom: null,
@@ -23,9 +24,7 @@ try {
 
 const mutations = {
     [types.UPDATE_SETTINGS](state, payload) {
-        Reflect.ownKeys(payload).forEach(key => {
-            state[key] = payload[key];
-        });
+        Object.entries(payload).forEach(([key, val]) => state[key] = val);
     }
 };
 
