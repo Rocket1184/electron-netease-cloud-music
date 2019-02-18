@@ -3,7 +3,11 @@ import { User, PlayList, Artist, Album, Video } from '@/util/models';
 
 const state = {
     loginValid: false,
-    signStatus: {},
+    signStatus: {
+        timestamp: -1,
+        pcSign: false,
+        mobileSign: false
+    },
     playlist: [],
     info: {},
     artists: [],
