@@ -1,4 +1,25 @@
-import { RESUME_PLAYING_MUSIC } from './mutation-types';
+import {
+    SET_USER_SIGN_STATUS,
+    RESUME_PLAYING_MUSIC
+} from './mutation-types';
+
+let signStatusTimeoutId = -1;
+
+async function autoUpdateSignStatus(mutation, state) {
+    if (mutation.type === SET_USER_SIGN_STATUS) {
+        if (signStatusTimeoutId < 0) {
+            const time = new Date(state.user.signStatus.timestamp);
+            const nextDue = new Date(state.user.signStatus.timestamp);
+            nextDue.setUTCDate(time.getUTCDate() + 1);
+            nextDue.setUTCHours(16, 0, 5, 0);
+            const timeout = nextDue.getTime() - state.user.signStatus.timestamp;
+            signStatusTimeoutId = setTimeout(() => {
+                signStatusTimeoutId = -1;
+                this.dispatch('updateUserSignStatus');
+            }, timeout);
+        }
+    }
+}
 
 async function moreRadioSongs(mutation, state) {
     if (mutation.type === RESUME_PLAYING_MUSIC) {
@@ -10,5 +31,6 @@ async function moreRadioSongs(mutation, state) {
 }
 
 export default function (store) {
+    store.subscribe(autoUpdateSignStatus.bind(store));
     store.subscribe(moreRadioSongs.bind(store));
 }
