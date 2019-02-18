@@ -203,7 +203,7 @@ export default {
         });
         this.$store.subscribeAction({
             after: (action, state) => {
-                if (action.type === 'updateUserSignStatus' && state.payload.autoSign === true) {
+                if (action.type === 'updateUserSignStatus' && state.settings.autoSign === true) {
                     this.signOnDemand();
                 }
             }
