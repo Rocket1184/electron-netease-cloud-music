@@ -5,7 +5,7 @@ import {
 
 let signStatusTimeoutId = -1;
 
-async function autoUpdateSignStatus(mutation, state) {
+function autoUpdateSignStatus(mutation, state) {
     if (mutation.type === SET_USER_SIGN_STATUS) {
         if (signStatusTimeoutId < 0) {
             const time = new Date(state.user.signStatus.timestamp);
@@ -21,7 +21,7 @@ async function autoUpdateSignStatus(mutation, state) {
     }
 }
 
-async function moreRadioSongs(mutation, state) {
+function moreRadioSongs(mutation, state) {
     if (mutation.type === RESUME_PLAYING_MUSIC) {
         const { list, index } = state.radio;
         if (state.ui.radioMode === true && list.length - 1 === index) {
