@@ -91,6 +91,7 @@ import Routes from '@/routes';
 import SearchBox from './SearchBox.vue';
 import LoginDialog from './LoginDialog.vue';
 import { bkgImg, sizeImg, HiDpiPx } from "@/util/image";
+import { UPDATE_SETTINGS } from '@/vuex/mutation-types';
 
 const SignIcon = {
     0: 'looks_5',
@@ -187,7 +188,26 @@ export default {
             } else {
                 this.$toast.message('是不是已经签到过了呢 ：）');
             }
+        },
+        signOnDemand() {
+            const { pcSign, mobileSign } = this.user.signStatus;
+            if (pcSign && mobileSign) return;
+            this.handleSign();
         }
+    },
+    created() {
+        this.$store.subscribe(mutation => {
+            if (mutation.type === UPDATE_SETTINGS && mutation.payload.autoSign === true) {
+                this.signOnDemand();
+            }
+        });
+        this.$store.subscribeAction({
+            after: (action, state) => {
+                if (action.type === 'updateUserSignStatus' && state.payload.autoSign === true) {
+                    this.signOnDemand();
+                }
+            }
+        });
     },
     components: {
         LoginDialog,
