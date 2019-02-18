@@ -48,21 +48,48 @@ export async function restoreUserInfo({ commit, dispatch }) {
 }
 
 export async function updateUserSignStatus({ commit }) {
+    commit(types.SET_USER_SIGN_PENDING, true);
     const timestamp = Date.now();
     const resp = await Api.getDailyTask();
+    commit(types.SET_USER_SIGN_PENDING, false);
     if (resp.code === 200) {
         const { pcSign, mobileSign } = resp;
         commit(types.SET_USER_SIGN_STATUS, { timestamp, pcSign, mobileSign });
     }
 }
 
-export async function signDailyTask(_, { type }) {
+export async function signDailyTask({ commit }, { type }) {
+    commit(types.SET_USER_SIGN_PENDING, true);
     let resp;
     switch (type) {
-        case 0: resp = await Api.postDailyTaskE(0); break;
-        case 1: resp = await Api.postDailyTask(1); break;
+        case 0:
+            resp = await Api.postDailyTaskE(0);
+            if (resp.code === 200) {
+                commit(types.SET_USER_SIGN_STATUS, { mobileSign: true });
+            }
+            break;
+        case 1:
+            resp = await Api.postDailyTask(1);
+            if (resp.code === 200) {
+                commit(types.SET_USER_SIGN_STATUS, { pcSign: true });
+            }
+            break;
     }
+    commit(types.SET_USER_SIGN_PENDING, false);
     return resp;
+}
+
+export async function checkin({ state, dispatch }) {
+    let points = 0;
+    if (!state.user.signStatus.mobileSign) {
+        const resp = await dispatch('signDailyTask', { type: 0 });
+        if (resp.code === 200) points += resp.point;
+    }
+    if (!state.user.signStatus.pcSign) {
+        const resp = await dispatch('signDailyTask', { type: 1 });
+        if (resp.code === 200) points += resp.point;
+    }
+    return points;
 }
 
 export async function updateUserPlaylistDetail({ commit }, payload) {
@@ -73,6 +100,7 @@ export async function updateUserPlaylistDetail({ commit }, payload) {
 
 export async function updateUserPlaylist({ state, commit, dispatch }) {
     const { playlist } = await Api.getUserPlaylist(state.user.info.id);
+    // TODO: extract action updateUserInfo
     commit(types.UPDATE_USER_INFO, playlist[0].creator);
     commit(types.SET_USER_PLAYLISTS, playlist);
     if (playlist[0].name.endsWith('喜欢的音乐')) {
@@ -112,7 +140,7 @@ export async function logout({ commit }) {
         commit(types.SET_UI_FAV_ALBUM, null);
         commit(types.SET_UI_FAV_VIDEO, null);
         commit(types.SET_UI_FAV_ARTIST, null);
-        commit(types.SET_USER_SIGN_STATUS, {});
+        commit(types.SET_USER_SIGN_STATUS, null);
         ['user', 'cookie'].forEach(k => localStorage.removeItem(k));
     }
 }
