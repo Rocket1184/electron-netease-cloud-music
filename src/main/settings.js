@@ -10,6 +10,7 @@ const configPath = path.join(configDir, configName);
 export const appVer = pkgJSON.version;
 
 export const defaultSettings = {
+    autoSign: false,
     bitRate: 'l',
     windowBorder: true,
     windowZoom: null,
