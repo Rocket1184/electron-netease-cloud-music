@@ -108,7 +108,7 @@ export default {
         };
     },
     computed: {
-        ...mapState(['settings', 'user', 'ui']),
+        ...mapState(['settings', 'user']),
         validRoutes() {
             return Routes.filter(r => r.title);
         },
@@ -122,7 +122,7 @@ export default {
             return sizeImg(this.user.info.avatarUrl, HiDpiPx(80));
         },
         username() {
-            if (this.ui.loginPending) return '登录中 ...';
+            if (this.user.loginPending) return '登录中 ...';
             if (this.user.loginValid) return this.user.info.nickname;
             return '点击登录';
         },
@@ -136,7 +136,7 @@ export default {
             return res;
         },
         btnSignDisabled() {
-            return this.signLevel === 5;
+            return this.user.signPending || this.signLevel === 5;
         },
         btnSignText() {
             if (this.signLevel === 5) return '已签到';
@@ -149,8 +149,7 @@ export default {
     methods: {
         ...mapActions([
             'logout',
-            'signDailyTask',
-            'updateUserSignStatus'
+            'checkin'
         ]),
         handleClose() {
             this.currentWindow.close();
@@ -182,21 +181,8 @@ export default {
             }
         },
         async handleSign() {
-            let points = 0;
-            if (!this.user.signStatus.mobileSign) {
-                const resp = await this.signDailyTask({ type: 0 });
-                if (resp.code === 200) {
-                    points += resp.point;
-                }
-            }
-            if (!this.user.signStatus.pcSign) {
-                const resp = await this.signDailyTask({ type: 1 });
-                if (resp.code === 200) {
-                    points += resp.point;
-                }
-            }
+            const points = await this.checkin();
             if (points > 0) {
-                await this.updateUserSignStatus();
                 this.$toast.message(`签到成功，获得 ${points} 点积分`);
             } else {
                 this.$toast.message('是不是已经签到过了呢 ：）');
