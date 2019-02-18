@@ -3,6 +3,8 @@ import { User, PlayList, Artist, Album, Video } from '@/util/models';
 
 const state = {
     loginValid: false,
+    loginPending: false,
+    signPending: false,
     signStatus: {
         timestamp: -1,
         pcSign: false,
@@ -17,11 +19,10 @@ const state = {
 
 const mutations = {
     [types.SET_LOGIN_VALID](state, payload) {
-        if (payload === true) {
-            state.loginValid = true;
-        } else {
-            state.loginValid = false;
-        }
+        state.loginValid = payload;
+    },
+    [types.SET_LOGIN_PENDING](state, payload) {
+        state.loginPending = payload;
     },
     [types.SET_USER_INFO](state, payload) {
         state.info = new User(payload);
@@ -29,8 +30,19 @@ const mutations = {
     [types.UPDATE_USER_INFO](state, payload) {
         Object.assign(state.info, new User(payload));
     },
+    [types.SET_USER_SIGN_PENDING](state, payload) {
+        state.signPending = payload;
+    },
     [types.SET_USER_SIGN_STATUS](state, payload) {
-        state.signStatus = payload;
+        if (!payload) {
+            state.signStatus = {
+                timestamp: -1,
+                pcSign: false,
+                mobileSign: false
+            };
+            return;
+        }
+        Object.entries(payload).forEach(([key, val]) => state.signStatus[key] = val);
     },
     [types.SET_USER_PLAYLISTS](state, payload) {
         state.playlist = payload.map(l => new PlayList(l));

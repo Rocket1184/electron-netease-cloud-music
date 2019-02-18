@@ -17,7 +17,6 @@ const state = {
         },
         error: null
     },
-    loginPending: false,
     collectPopupShow: false,
     collectTrackIds: [],
     fav: {
@@ -74,13 +73,6 @@ const mutations = {
     },
     [types.SET_ACTIVE_LYRIC](state, payload) {
         state.lyric = payload;
-    },
-    [types.SET_LOGIN_PENDING](state, payload) {
-        if (payload === true) {
-            state.loginPending = true;
-        } else {
-            state.loginPending = false;
-        }
     },
     [types.SET_SEARCH_PARAM](state, { keyword, type, offset }) {
         state.search.keyword = keyword;
