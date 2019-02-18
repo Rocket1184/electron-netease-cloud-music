@@ -48,9 +48,11 @@ export async function restoreUserInfo({ commit, dispatch }) {
 }
 
 export async function updateUserSignStatus({ commit }) {
+    const timestamp = Date.now();
     const resp = await Api.getDailyTask();
     if (resp.code === 200) {
-        commit(types.SET_USER_SIGN_STATUS, resp);
+        const { pcSign, mobileSign } = resp;
+        commit(types.SET_USER_SIGN_STATUS, { timestamp, pcSign, mobileSign });
     }
 }
 
