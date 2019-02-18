@@ -62,8 +62,7 @@
                     <mu-list-item-title>使用系统标题栏</mu-list-item-title>
                     <mu-list-item-action>
                         <mu-switch :inputValue="settings.windowBorder"
-                            color="secondary"
-                            readonly></mu-switch>
+                            color="secondary"></mu-switch>
                     </mu-list-item-action>
                 </mu-list-item>
                 <mu-list-item button
@@ -113,6 +112,15 @@
                             <mu-option label="标准 (128 kbit/s)"
                                 value="l"></mu-option>
                         </mu-select>
+                    </mu-list-item-action>
+                </mu-list-item>
+                <mu-sub-header>特性</mu-sub-header>
+                <mu-list-item button
+                    @click="toggleByName('autoSign')">
+                    <mu-list-item-title>自动签到</mu-list-item-title>
+                    <mu-list-item-action>
+                        <mu-switch :inputValue="settings.autoSign"
+                            color="secondary"></mu-switch>
                     </mu-list-item-action>
                 </mu-list-item>
                 <mu-sub-header>存储</mu-sub-header>
