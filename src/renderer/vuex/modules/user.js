@@ -48,15 +48,9 @@ const mutations = {
         state.playlist = payload.map(l => new PlayList(l));
     },
     [types.UPDATE_USER_PLAYLIST](state, payload) {
-        const target = state.playlist.find(l => l.id === payload.id);
-        if (target) {
-            let newList = new PlayList(payload);
-            for (const key in newList) {
-                if (newList[key] === undefined) {
-                    delete newList[key];
-                }
-            }
-            Object.assign(target, newList);
+        const i = state.playlist.findIndex(p => p.id === payload.id);
+        if (i >= 0) {
+            state.playlist.splice(i, 1, new PlayList(payload));
         }
     },
     [types.SUBSCRIBE_PLAYLIST](state, payload) {
