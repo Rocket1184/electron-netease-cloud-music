@@ -3,11 +3,6 @@ import * as types from './mutation-types';
 import { Track, Video } from '@/util/models';
 import { LOOP_MODE } from './modules/playlist';
 
-export async function restoreSettings({ commit }) {
-    const st = await Api.getCurrentSettings();
-    commit(types.UPDATE_SETTINGS, st);
-}
-
 export async function updateSettings({ commit, state }, payload) {
     commit(types.UPDATE_SETTINGS, payload);
     sessionStorage.setItem('settings', JSON.stringify(state.settings));

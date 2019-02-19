@@ -38,7 +38,6 @@ export default {
         ...mapActions([
             'playAudio',
             'restoreUserInfo',
-            'restoreSettings',
             'storePlaylist',
             'restorePlaylist',
             'storeRadio',
@@ -77,7 +76,6 @@ export default {
             }
             next();
         });
-        this.restoreSettings();
         this.restoreUserInfo();
         this.restorePlaylist();
         this.restoreRadio();
