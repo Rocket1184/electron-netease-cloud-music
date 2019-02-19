@@ -33,10 +33,6 @@ document.body.appendChild(el);
 new Vue({
     el,
     store,
-    router: new Router({
-        // we an access route stack via `this.$router.history.stack`
-        mode: 'abstract',
-        routes
-    }),
+    router: new Router({ routes }),
     ...App
 });

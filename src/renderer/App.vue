@@ -31,7 +31,7 @@ export default {
     },
     data() {
         return {
-            transitionName: 'fade-down'
+            transitionName: 'fade-up'
         };
     },
     methods: {
@@ -56,21 +56,14 @@ export default {
         };
     },
     created() {
-        // route stack is empty when created in 'abstract' mode
-        this.$router.push({ name: 'index' });
         this.$router.beforeEach((to, from, next) => {
-            const { index, stack } = this.$router.history;
-            const lastRoute = stack[index - 1];
             if (to.name === 'player') {
                 this.transitionName = 'player-in';
             } else if (from.name === 'player') {
                 this.transitionName = 'player-out';
-            } else if (to.name === 'index') {
+            } else if (window.__NAV_BACK__ === true) {
                 this.transitionName = 'fade-down';
-            } else if (from.name === 'index') {
-                this.transitionName = 'fade-up';
-            } else if (to.path === lastRoute.path) {
-                this.transitionName = 'fade-down';
+                window.__NAV_BACK__ = false;
             } else {
                 this.transitionName = 'fade-up';
             }
