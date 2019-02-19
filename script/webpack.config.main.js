@@ -14,7 +14,6 @@ let cfg = {
     },
     output: {
         filename: '[name].js',
-        libraryTarget: 'commonjs2',
         path: absPath('dist')
     },
     node: {
