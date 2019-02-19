@@ -68,13 +68,12 @@
             <mu-list>
                 <mu-list-item v-for="route in validRoutes"
                     button
-                    @click="closeDrawer"
                     :key="route.name"
-                    :to="route.path">
+                    @click="handleSideNav(route)">
                     <mu-list-item-action>
                         <mu-icon :value="route.icon || 'bug_report'"></mu-icon>
                     </mu-list-item-action>
-                    <mu-list-item-title>{{route.title}}{{route.icon ? '' : ' (debug)'}}</mu-list-item-title>
+                    <mu-list-item-title>{{route.title}}</mu-list-item-title>
                 </mu-list-item>
             </mu-list>
         </mu-drawer>
@@ -164,8 +163,10 @@ export default {
             else
                 this.currentWindow.maximize();
         },
-        closeDrawer() {
+        handleSideNav(route) {
             this.drawerOpen = false;
+            if (route.name === 'index') window.__NAV_BACK__ = true;
+            this.$router.push(route.path);
         },
         handleNameClick() {
             if (!this.user.loginValid) {
