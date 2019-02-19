@@ -91,7 +91,7 @@ import Routes from '@/routes';
 import SearchBox from './SearchBox.vue';
 import LoginDialog from './LoginDialog.vue';
 import { bkgImg, sizeImg, HiDpiPx } from "@/util/image";
-import { UPDATE_SETTINGS } from '@/vuex/mutation-types';
+import { UPDATE_SETTINGS, SET_USER_SIGN_STATUS } from '@/vuex/mutation-types';
 
 const SignIcon = {
     0: 'looks_5',
@@ -188,24 +188,18 @@ export default {
             } else {
                 this.$toast.message('是不是已经签到过了呢 ：）');
             }
-        },
-        signOnDemand() {
-            const { pcSign, mobileSign } = this.user.signStatus;
-            if (pcSign && mobileSign) return;
-            this.handleSign();
         }
     },
     created() {
-        this.$store.subscribe(mutation => {
-            if (mutation.type === UPDATE_SETTINGS && mutation.payload.autoSign === true) {
-                this.signOnDemand();
-            }
-        });
-        this.$store.subscribeAction({
-            after: (action, state) => {
-                if (action.type === 'updateUserSignStatus' && state.settings.autoSign === true) {
-                    this.signOnDemand();
-                }
+        this.$store.subscribe((mutation, state) => {
+            // settings.autoSign enabled
+            if ((mutation.type === UPDATE_SETTINGS && mutation.payload.autoSign === true) ||
+                // signStatus updated via `actions.updateUserSignStatus`
+                (mutation.type === SET_USER_SIGN_STATUS && typeof mutation.payload.timestamp === 'number')) {
+                const { timestamp, pcSign, mobileSign } = state.user.signStatus;
+                // signStatus was not up-to-date || signed already
+                if (timestamp < 0 || pcSign && mobileSign) return;
+                this.handleSign();
             }
         });
     },
