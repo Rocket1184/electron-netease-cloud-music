@@ -11,8 +11,9 @@
 
 <script>
 export default {
-    methods:{
+    methods: {
         handleBack() {
+            window.__NAV_BACK__ = true;
             this.$router.back();
         }
     }
