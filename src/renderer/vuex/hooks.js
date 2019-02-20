@@ -10,7 +10,9 @@ function autoUpdateSignStatus(mutation, state) {
         if (signStatusTimeoutId < 0) {
             const time = new Date(state.user.signStatus.timestamp);
             const nextDue = new Date(state.user.signStatus.timestamp);
-            nextDue.setUTCDate(time.getUTCDate() + 1);
+            if (time.getUTCHours() >= 16) {
+                nextDue.setUTCDate(time.getUTCDate() + 1);
+            }
             nextDue.setUTCHours(16, 0, 5, 0);
             const timeout = nextDue.getTime() - state.user.signStatus.timestamp;
             signStatusTimeoutId = setTimeout(() => {
