@@ -196,7 +196,7 @@ export default {
             // settings.autoSign enabled
             if ((mutation.type === UPDATE_SETTINGS && mutation.payload.autoSign === true) ||
                 // signStatus updated via `actions.updateUserSignStatus`
-                (mutation.type === SET_USER_SIGN_STATUS && typeof mutation.payload.timestamp === 'number')) {
+                (mutation.type === SET_USER_SIGN_STATUS && typeof mutation.payload.timestamp === 'number' && state.settings.autoSign === true)) {
                 const { timestamp, pcSign, mobileSign } = state.user.signStatus;
                 // signStatus was not up-to-date || signed already
                 if (timestamp < 0 || pcSign && mobileSign) return;
