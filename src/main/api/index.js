@@ -733,7 +733,8 @@ export function manipulatePlaylistTracks(op, pid, tracks) {
 /**
  * add tracks to playlist
  * @param {number} pid playlist id
- * @param  {number[]} tracks track to add
+ * @param {number[]} tracks track to add
+ * @returns {Promise<Types.CollectTrackRes>}
  */
 export function collectTrack(pid, ...tracks) {
     return manipulatePlaylistTracks('add', pid, tracks);
@@ -742,7 +743,8 @@ export function collectTrack(pid, ...tracks) {
 /**
  * remove tracks from playlist
  * @param {number} pid playlist id
- * @param  {number[]} tracks track to remove
+ * @param {number[]} tracks track to remove
+ * @returns {Promise<Types.UncollectTrackRes>}
  */
 export function uncollectTrack(pid, ...tracks) {
     return manipulatePlaylistTracks('del', pid, tracks);

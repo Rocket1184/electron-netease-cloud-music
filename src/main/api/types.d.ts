@@ -751,6 +751,17 @@ namespace Types {
         shareSina: boolean;
     }
 
+    export interface CollectTrackRes extends ApiRes {
+        cloudCount: number;
+        count: number;
+        rackIds: string;
+    }
+
+    export interface UncollectTrackRes extends ApiRes {
+        cloudCount: number;
+        count: number;
+    }
+
     export interface SearchSuggestArtist {
         id: number;
         name: string;
