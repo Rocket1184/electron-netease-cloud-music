@@ -15,6 +15,21 @@ export async function resetSettings({ commit }) {
     commit(types.UPDATE_SETTINGS, st);
 }
 
+export function storeUiState({ state }) {
+    let obj = {};
+    ['audioVolume', 'audioMute'].forEach(k => obj[k] = state.ui[k]);
+    localStorage.setItem('ui', JSON.stringify(obj));
+}
+
+export function restoreUiState({ commit }) {
+    try {
+        const obj = JSON.parse(localStorage.getItem('ui'));
+        commit(types.RESTORE_UI_STATE, obj);
+    } catch (e) {
+        localStorage.removeItem('ui');
+    }
+}
+
 export async function storeUserInfo({ state }) {
     localStorage.setItem('user', JSON.stringify(state.user.info));
     const cookie = await Api.getCookie();
@@ -191,6 +206,10 @@ export async function updateUiAudioSrc({ commit, state, getters }, { ignoreCache
     } else {
         commit(types.UPDATE_PLAYING_URL, '');
     }
+}
+
+export function setAudioVolume({ commit }, payload) {
+    commit(types.SET_AUDIO_VOLUME, payload);
 }
 
 export async function updateUiLyric({ commit, getters }, { ignoreCache = false } = {}) {
