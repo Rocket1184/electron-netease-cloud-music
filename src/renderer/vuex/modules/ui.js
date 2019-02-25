@@ -3,6 +3,8 @@ import { Artist, Album, Video, PlayList, Track } from '@/util/models';
 
 const state = {
     audioSrc: '',
+    audioVolume: 100,
+    audioMute: false,
     paused: true,
     lyricLoading: false,
     lyric: {},
@@ -55,6 +57,9 @@ function setStateArtist(section, payload) {
 }
 
 const mutations = {
+    [types.RESTORE_UI_STATE](state, payload) {
+        Object.entries(payload).forEach(([key, val]) => state[key] = val);        
+    },
     [types.PAUSE_PLAYING_MUSIC](state) {
         state.paused = true;
     },
@@ -63,6 +68,10 @@ const mutations = {
     },
     [types.UPDATE_PLAYING_URL](state, payload) {
         state.audioSrc = payload;
+    },
+    [types.SET_AUDIO_VOLUME](state, { mute, volume }) {
+        if (typeof mute === 'boolean') state.audioMute = mute;
+        if (typeof volume === 'number') state.audioVolume = volume;
     },
     [types.SET_LYRIC_LOADING](state, payload) {
         if (payload === true) {
