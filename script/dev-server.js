@@ -53,6 +53,5 @@ const wdsOpt = {
 // enable HMR.
 // see https://webpack.js.org/guides/hot-module-replacement/#via-the-node-js-api
 WebpackDevServer.addDevServerEntrypoints(compileCfg, wdsOpt);
-compileCfg.plugins.push(new webpack.HotModuleReplacementPlugin());
 
 new WebpackDevServer(webpack(compileCfg), wdsOpt).listen(config.devPort);
