@@ -23,13 +23,31 @@
                             :inputValue="isFavorite"
                             @click="handleFavorite"></mu-checkbox>
                     </div>
-                    <div title="收藏到歌单">
-                        <mu-checkbox uncheck-icon="bookmark_border"
-                            checked-icon="bookmark"
+                    <mu-menu :open.sync="volumeShown"
+                        placement="top"
+                        popover-class="playerbar-volume"
+                        title="音量">
+                        <mu-checkbox :uncheck-icon="iconVolume"
+                            :checked-icon="iconVolume"
                             color="secondary"
-                            :inputValue="collectPopupShown"
-                            @click="handleCollect"></mu-checkbox>
-                    </div>
+                            :inputValue="volumeShown"
+                            @wheel="handleVolumeWheel"
+                            @auxclick="handleVolumeMute"></mu-checkbox>
+                        <div slot="content"
+                            class="content"
+                            @mouseenter="cancelHideVolume"
+                            @mouseleave="scheduleHideVolume"
+                            @wheel="handleVolumeWheel">
+                            <mu-slider :value="ui.audioVolume"
+                                :min="0"
+                                :max="100"
+                                :step="1"
+                                :disabled="ui.audioMute"
+                                :display-value="false"
+                                @change="handleVolumeChange"></mu-slider>
+                            <span class="value">{{ui.audioVolume}}</span>
+                        </div>
+                    </mu-menu>
                     <div v-if="ui.radioMode"
                         title="不喜欢">
                         <mu-checkbox uncheck-icon="delete_outline"
@@ -71,7 +89,7 @@
             <mu-button fab
                 class="button"
                 @click="handlePlayOrPause">
-                <mu-icon :value="this.audioEl.paused ? 'play_arrow' : 'pause'"></mu-icon>
+                <mu-icon :value="ui.paused ? 'play_arrow' : 'pause'"></mu-icon>
             </mu-button>
             <mu-button fab
                 small
@@ -91,7 +109,7 @@ import Api from '@/util/api';
 import CurrentPlaylist from './CurrentPlaylist.vue';
 import {
     UPDATE_PLAYING_URL,
-    HIDE_COLLECT_POPUP,
+    SET_AUDIO_VOLUME,
     PAUSE_PLAYING_MUSIC,
     RESUME_PLAYING_MUSIC
 } from '@/vuex/mutation-types';
@@ -99,15 +117,24 @@ import { LOOP_MODE } from '@/vuex/modules/playlist';
 import { sizeImg, HiDpiPx, bkgImg } from '@/util/image';
 import { shortTime } from '@/util/formatter';
 
+const VolumeIcon = [
+    'volume_off',
+    'volume_mute',
+    'volume_down',
+    'volume_up'
+];
+
 export default {
     data() {
         return {
-            audioEl: {},
+            /** @type {HTMLAudioElement} */
+            audioEl: null,
             hasRetried: false,
             timeTotal: 0,
             timeCurrent: 0,
             shouldFavorite: null,
-            collectPopupShown: false,
+            volumeShown: false,
+            volumeHideTimeoutId: -1,
             currentListShown: false
         };
     },
@@ -116,10 +143,10 @@ export default {
             'playAudio',
             'pauseAudio',
             'updateUiAudioSrc',
+            'setAudioVolume',
             'playNextTrack',
             'playPreviousTrack',
             'favoriteTrack',
-            'toggleCollectPopup',
             'nextLoopMode',
             'dislikeRadioSong'
         ]),
@@ -131,7 +158,7 @@ export default {
             this.$router.push({ name: 'player' });
         },
         handlePlayOrPause() {
-            this.ui.audioSrc && (this.audioEl.paused ? this.playAudio() : this.pauseAudio());
+            this.ui.audioSrc && (this.ui.paused ? this.playAudio() : this.pauseAudio());
         },
         handleProgressDrag(value) {
             this.audioEl.currentTime = this.timeTotal * value / 100;
@@ -151,17 +178,41 @@ export default {
             await this.favoriteTrack({ favorite: this.shouldFavorite, id: this.playing.id });
             this.shouldFavorite = null;
         },
-        handleCollect() {
-            if (!this.user.loginValid) {
-                this.$toast.message('汝还没有登录呀      (눈‸눈)');
-                return;
+        cancelHideVolume() {
+            if (this.volumeHideTimeoutId >= 0) {
+                window.clearTimeout(this.volumeHideTimeoutId);
             }
-            if (!this.playing.id) {
-                this.$toast.message('究竟想收藏什么呢     (｡ŏ_ŏ)');
-                return;
+        },
+        scheduleHideVolume() {
+            this.cancelHideVolume();
+            this.volumeHideTimeoutId = setTimeout(() => {
+                this.volumeHideTimeoutId = -1;
+                this.volumeShown = false;
+            }, 750);
+        },
+        handleVolumeChange(value) {
+            let volume = value;
+            if (value > 100) {
+                volume = 100;
+            } else if (volume < 0) {
+                volume = 0;
             }
-            this.collectPopupShown = true;
-            this.toggleCollectPopup(this.playing.id);
+            this.setAudioVolume({ volume });
+        },
+        handleVolumeWheel(ev) {
+            if (this.volumeShown === false) {
+                this.volumeShown = true;
+            }
+            this.scheduleHideVolume();
+            if (this.ui.audioMute === true) this.ui.audioMute = false;
+            if (ev.deltaY > 0) {
+                this.handleVolumeChange(this.ui.audioVolume - 5);
+            } else {
+                this.handleVolumeChange(this.ui.audioVolume + 5);
+            }
+        },
+        handleVolumeMute() {
+            this.setAudioVolume({ mute: !this.ui.audioMute });
         },
         handleLoopMode() {
             if (this.ui.radioMode) {
@@ -186,7 +237,7 @@ export default {
                 this.$toast.message('不跟你玩了，哼  o(￣ヘ￣o＃)');
                 return;
             }
-            const time = Math.trunc(document.querySelector('audio').currentTime);
+            const time = Math.trunc(this.audioEl.currentTime);
             this.dislikeRadioSong({ id: this.playing.id, time });
             this.playNextTrack();
         },
@@ -224,6 +275,12 @@ export default {
             }
             return false;
         },
+        iconVolume() {
+            if (this.ui.audioMute === true || this.ui.audioVolume <= 0) return VolumeIcon[0];
+            if (this.ui.audioVolume <= 33) return VolumeIcon[1];
+            if (this.ui.audioVolume <= 66) return VolumeIcon[2];
+            return VolumeIcon[3];
+        },
         iconLoopMode() {
             switch (this.queue.loopMode) {
                 case LOOP_MODE.LIST:
@@ -255,6 +312,12 @@ export default {
         const _audioEl = document.getElementById('playerbar-audio');
         let _playingIntervalId;
         this.audioEl = _audioEl;
+
+        if (this.ui.audioMute === true) {
+            _audioEl.volume = 0;
+        } else {
+            _audioEl.volume = this.ui.audioVolume / 100;
+        }
 
         const _updateTime = () => this.timeCurrent = this.audioEl.currentTime;
         const _setUpdateTimeInterval = () => {
@@ -330,14 +393,18 @@ export default {
                         this.timeTotal = this.timeCurrent = 0;
                     }
                     break;
+                case SET_AUDIO_VOLUME:
+                    if (this.ui.audioMute === true) {
+                        this.audioEl.volume = 0;
+                    } else {
+                        this.audioEl.volume = this.ui.audioVolume / 100;
+                    }
+                    break;
                 case PAUSE_PLAYING_MUSIC:
                     _audioEl.pause();
                     break;
                 case RESUME_PLAYING_MUSIC:
                     _audioEl.play();
-                    break;
-                case HIDE_COLLECT_POPUP:
-                    this.collectPopupShown = false;
                     break;
             }
         });
@@ -447,6 +514,28 @@ export default {
         align-items: center;
         .mu-fab-button {
             box-shadow: unset;
+        }
+    }
+}
+
+.playerbar-volume {
+    border-radius: 0;
+    height: 40px;
+    width: 170px;
+    top: unset !important;
+    left: unset !important;
+    right: 164px !important;
+    bottom: 72px !important;
+    .content {
+        display: flex;
+        align-items: center;
+        justify-content: space-between;
+        .mu-slider {
+            margin: 8px 16px;
+            width: 100px;
+        }
+        .value {
+            margin-right: 8px;
         }
     }
 }
