@@ -16,6 +16,15 @@
                 <mu-button flat
                     small
                     color="black"
+                    @click="handleCollect">
+                    <mu-icon left
+                        :size="18"
+                        value="bookmark_border"></mu-icon>
+                    <span>收藏</span>
+                </mu-button>
+                <mu-button flat
+                    small
+                    color="black"
                     :to="{ name: 'comment', params: { type: 'song', id: playing.id } }"
                     replace>
                     <mu-icon left
@@ -155,7 +164,7 @@ export default {
         };
     },
     computed: {
-        ...mapState(['ui', 'playlist']),
+        ...mapState(['ui', 'user']),
         ...mapGetters(['playing']),
         albumImgStyle() {
             if (this.playing.album && this.playing.album.picUrl) {
@@ -181,7 +190,10 @@ export default {
         }
     },
     methods: {
-        ...mapActions(['updateUiLyric']),
+        ...mapActions([
+            'updateUiLyric',
+            'toggleCollectPopup'
+        ]),
         listenAudioUpdate() {
             this.audioEl = document.getElementById('playerbar-audio');
             this.audioEl.addEventListener('timeupdate', ev => {
@@ -249,7 +261,18 @@ export default {
         },
         handleLyricRefresh() {
             this.updateUiLyric({ ignoreCache: true });
-        }
+        },
+        handleCollect() {
+            if (!this.user.loginValid) {
+                this.$toast.message('汝还没有登录呀      (눈‸눈)');
+                return;
+            }
+            if (!this.playing.id) {
+                this.$toast.message('究竟想收藏什么呢    (｡ŏ_ŏ)');
+                return;
+            }
+            this.toggleCollectPopup(this.playing.id);
+        },
     },
     mounted() {
         this.paintBkgCanvas();
@@ -355,6 +378,7 @@ export default {
         }
         .action {
             margin-top: 16px;
+            display: flex;
         }
         &.play {
             .needle {
@@ -420,8 +444,7 @@ export default {
                 overflow: hidden;
                 // transition: 0.5s mask-image;
                 .scroller {
-                    transition: transform 0.5s
-                        cubic-bezier(0.25, 0.46, 0.45, 0.94);
+                    transition: transform 0.5s cubic-bezier(0.25, 0.46, 0.45, 0.94);
                     .line {
                         margin: 14px 0;
                     }
