@@ -38,6 +38,8 @@ export default {
         ...mapActions([
             'playAudio',
             'restoreUserInfo',
+            'storeUiState',
+            'restoreUiState',
             'storePlaylist',
             'restorePlaylist',
             'storeRadio',
@@ -52,6 +54,7 @@ export default {
         // 'unload' would be prevented.
         window.onbeforeunload = () => {
             this.storePlaylist();
+            this.storeUiState();
             this.storeRadio();
         };
     },
@@ -71,6 +74,7 @@ export default {
         });
         this.restoreUserInfo();
         this.restorePlaylist();
+        this.restoreUiState();
         this.restoreRadio();
     }
 };
