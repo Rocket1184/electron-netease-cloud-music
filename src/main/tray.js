@@ -87,7 +87,7 @@ export class AppTray {
             return;
         }
         this.trackMenu = [
-            { label: track.name },
+            { label: ellipsisText(track.name, 30) },
             { label: ellipsisText(`🎤 ${track.artist}`, 28) },
             { label: ellipsisText(`💿 ${track.album}`, 28) },
             { type: 'separator' },
