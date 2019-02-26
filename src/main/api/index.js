@@ -1348,3 +1348,86 @@ export function dislikeRadioSong(songId, time) {
         data: { songId }
     });
 }
+
+/**
+ * @returns {Promise<Types.RadioRes>}
+ */
+export function getRadioE() {
+    return client.postE({
+        url: `${BaseURL}/eapi/v1/radio/get`,
+        data: {}
+    });
+}
+
+/**
+ * @param {number} songId
+ * @param {number} time time in ms
+ * @returns {Types.SkipRadioERes}
+ */
+export function skipRadioE(songId, time) {
+    return client.postE({
+        url: `${BaseURL}/eapi/v1/radio/skip`,
+        data: {
+            songId,
+            time,
+            alg: 'itembased'
+        }
+    });
+}
+
+/**
+ * @param {number} trackId
+ * @param {number} time time in ms
+ * @param {boolean} like should like or not
+ * @returns {Types.LikeRadioERes}
+ */
+export function likeRadioE(trackId, time, like = true) {
+    return client.postE({
+        url: `${BaseURL}/eapi/v1/radio/like`,
+        data: {
+            trackId,
+            time,
+            alg: 'itembased',
+            like
+        }
+    });
+}
+
+/**
+ * @param {number} songId
+ * @param {number} time time in ms
+ * @returns {Types.AddRadioTrashERes}
+ */
+export function addRadioTrashE(songId, time) {
+    return client.postE({
+        url: `${BaseURL}/eapi/v1/radio/trash/add`,
+        data: {
+            songId,
+            time,
+            alg: 'alg_fm_rt_bysong'
+        }
+    });
+}
+
+/**
+ * @param {number} limit
+ * @param {number} addTime 
+ * @returns {Types.RadioTrashERes}
+ */
+export function getRadioTrashE(limit, addTime) {
+    return client.postE({
+        url: `${BaseURL}/eapi/v2/radio/trash/get`,
+        data: { limit, addTime }
+    });
+}
+
+/**
+ * @param {number} songId
+ * @returns {Types.ApiRes}
+ */
+export function removeRadioTrashE(songId) {
+    return client.postE({
+        url: `${BaseURL}/eapi/radio/trash/del`,
+        data: { songId }
+    });
+}

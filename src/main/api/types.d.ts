@@ -382,7 +382,7 @@ namespace Types {
         picId_str: string;
     }
 
-    export interface RecommendSongMusic {
+    export interface SongDetailMusic {
         name: string;
         id: number;
         size: number;
@@ -426,10 +426,10 @@ namespace Types {
         copyright: number;
         transName: string;
         sign?: any;
-        hMusic: RecommendSongMusic;
-        mMusic: RecommendSongMusic;
-        lMusic: RecommendSongMusic;
-        bMusic: RecommendSongMusic;
+        hMusic: SongDetailMusic;
+        mMusic: SongDetailMusic;
+        lMusic: SongDetailMusic;
+        bMusic: SongDetailMusic;
         mvid: number;
         rurl?: any;
         rtype: number;
@@ -1084,28 +1084,29 @@ namespace Types {
         }[];
     }
 
+    export interface AlbumDetailArtist {
+        albumSize: number;
+        alias: any[];
+        briefDesc: string;
+        id: number;
+        img1v1Id: any;
+        img1v1Id_str: string;
+        img1v1Url: string;
+        musicSize: number;
+        name: string;
+        picId: number;
+        picUrl: string;
+        topicPerson: number;
+        trans: string;
+    }
+
     export interface SubscribedAlbumRes extends ApiRes {
         count: number;
         hasMore: boolean;
         paidCount: number;
         data: {
             alias: string[];
-            artists: {
-                albumSize: number;
-                alias: string[];
-                briefDesc: string;
-                followed: boolean;
-                id: number;
-                img1v1Id: any;
-                img1v1Id_str: string;
-                img1v1Url: string;
-                musicSize: number;
-                name: string;
-                picId: number;
-                picUrl: string;
-                topicPerson: number;
-                trans: string;
-            }[];
+            artists: AlbumDetailArtist[];
             id: number;
             msg: any[];
             name: string;
@@ -1132,7 +1133,7 @@ namespace Types {
         tags: string;
         company: string;
         briefDesc?: any;
-        artist: Artist;
+        artist: AlbumDetailArtist;
         songs: any[];
         alias: any[];
         status: number;
@@ -1484,25 +1485,12 @@ namespace Types {
         type: string;
     }
 
-    export interface ArtistDetailWMusic {
-        bitrate: number;
-        dfsId: any;
-        extension: string;
-        id: any;
-        name: string;
-        playTime: number;
-        size: number;
-        sr: number;
-        volumeDelta: number;
-        dfsId_str: string;
-    }
-
     export interface ArtistDetailWArtistHotSong {
         album: ArtistDetailWAlbum;
         alias: string[];
         artists: ArtistDetailWArtist[];
         audition?: any;
-        bMusic: ArtistDetailWMusic;
+        bMusic: SongDetailMusic;
         copyFrom: string;
         copyrightId: number;
         crbt?: any;
@@ -1511,11 +1499,11 @@ namespace Types {
         duration: number;
         fee: number;
         ftype: number;
-        hMusic: ArtistDetailWMusic;
+        hMusic: SongDetailMusic;
         hearTime: number;
         id: number;
-        lMusic: ArtistDetailWMusic;
-        mMusic: ArtistDetailWMusic;
+        lMusic: SongDetailMusic;
+        mMusic: SongDetailMusic;
         mp3Url: string;
         mvid: number;
         name: string;
@@ -1760,7 +1748,7 @@ namespace Types {
         alias: string[];
         artists: RadioArtist[];
         audition: any;
-        bMusic: RadioMusic;
+        bMusic: SongDetailMusic;
         commentThreadId: string;
         copyFrom: string;
         copyright: number;
@@ -1771,11 +1759,11 @@ namespace Types {
         duration: number;
         fee: number;
         ftype: number;
-        hMusic: RadioMusic;
+        hMusic: SongDetailMusic;
         hearTime: number;
         id: number;
-        lMusic: RadioMusic;
-        mMusic: RadioMusic;
+        lMusic: SongDetailMusic;
+        mMusic: SongDetailMusic;
         mp3Url: any;
         mvid: number;
         name: string;
@@ -1838,22 +1826,77 @@ namespace Types {
         trans: string;
     }
 
-    export interface RadioMusic {
-        bitrate: number;
-        dfsId: number;
-        extension: string;
-        id: number;
-        name?: string;
-        playTime: number;
-        size: number;
-        sr: number;
-        volumeDelta: number;
-    }
-
     export interface DislikeRadioSongRes extends ApiRes {
         count: number;
         /** not sure what's this */
         songs: any[];
+    }
+
+    export interface RadioTrashERes extends ApiRes {
+        hasMore: boolean;
+        /** for pagination */
+        addTime: number;
+        data: TrashSong[];
+        count: number;
+    }
+
+    export interface TrashSong {
+        name: string;
+        id: number;
+        position: number;
+        alias: string[];
+        status: number;
+        fee: number;
+        copyrightId: number;
+        disc: string;
+        no: number;
+        artists: RadioArtist[];
+        album: RadioAlbum;
+        starred: boolean;
+        popularity: number;
+        score: number;
+        starredNum: number;
+        duration: number;
+        playedNum: number;
+        dayPlays: number;
+        hearTime: number;
+        ringtone: null | string;
+        crbt: null;
+        audition: null;
+        copyFrom: string;
+        commentThreadId: string;
+        rtUrl: null;
+        ftype: number;
+        rtUrls: any[];
+        copyright: number;
+        transName: null;
+        sign: null;
+        hMusic: SongDetailMusic;
+        mMusic: SongDetailMusic;
+        lMusic: SongDetailMusic;
+        bMusic: SongDetailMusic;
+        mvid: number;
+        rtype: number;
+        mp3Url: null;
+        rurl: null;
+        privilege: Privilege;
+    }
+
+    export interface SkipRadioERes extends ApiRes {
+        /** empty */
+        songs: [];
+    }
+
+    export interface LikeRadioERes extends ApiRes {
+        /** empty */
+        songs: [];
+        playlistId: number;
+    }
+
+    export interface AddRadioTrashERes extends ApiRes {
+        /** empty */
+        songs: [];
+        count: number;
     }
 }
 
