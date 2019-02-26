@@ -83,18 +83,18 @@
             <mu-button fab
                 small
                 class="button"
-                @click="playPreviousTrack">
+                @click="handlePrev">
                 <mu-icon value="skip_previous"></mu-icon>
             </mu-button>
             <mu-button fab
                 class="button"
-                @click="handlePlayOrPause">
-                <mu-icon :value="ui.paused ? 'play_arrow' : 'pause'"></mu-icon>
+                @click="handlePlayPause">
+                <mu-icon :value="iconPlayPause"></mu-icon>
             </mu-button>
             <mu-button fab
                 small
                 class="button"
-                @click="playNextTrack">
+                @click="handleNext">
                 <mu-icon value="skip_next"></mu-icon>
             </mu-button>
         </div>
@@ -146,9 +146,12 @@ export default {
             'setAudioVolume',
             'playNextTrack',
             'playPreviousTrack',
+            'updateUserPlaylistDetail',
             'favoriteTrack',
             'nextLoopMode',
-            'dislikeRadioSong'
+            'likeRadio',
+            'skipRadio',
+            'trashRadio'
         ]),
         handleCoverClick() {
             if (this.$route.name === 'player') {
@@ -157,8 +160,20 @@ export default {
             }
             this.$router.push({ name: 'player' });
         },
-        handlePlayOrPause() {
+        handlePrev() {
+            this.playPreviousTrack();
+        },
+        handlePlayPause() {
             this.ui.audioSrc && (this.ui.paused ? this.playAudio() : this.pauseAudio());
+        },
+        handleNext() {
+            if (this.ui.radioMode === true) {
+                this.skipRadio({
+                    id: this.playing.id,
+                    time: Math.trunc(this.audioEl.currentTime * 1000)
+                });
+            }
+            this.playPreviousTrack();
         },
         handleProgressDrag(value) {
             this.audioEl.currentTime = this.timeTotal * value / 100;
@@ -175,8 +190,24 @@ export default {
             }
             if (this.shouldFavorite !== null) return;
             this.shouldFavorite = !this.isFavorite;
-            await this.favoriteTrack({ favorite: this.shouldFavorite, id: this.playing.id });
-            this.shouldFavorite = null;
+            try {
+                let resp;
+                if (this.ui.radioMode) {
+                    resp = await this.likeRadio({
+                        id: this.playing.id,
+                        time: Math.trunc(this.audioEl.currentTime * 1000),
+                        like: this.shouldFavorite
+                    });
+                } else {
+                    resp = await this.favoriteTrack({ id: this.playing.id, favorite: this.shouldFavorite });
+                }
+                // it would take some time for NetEase to update playlist cover
+                // img, so we just wait 200 ms
+                await new Promise(_ => setTimeout(() => _(), 200));
+                await this.updateUserPlaylistDetail(resp.playlistId);
+            } finally {
+                this.shouldFavorite = null;
+            }
         },
         cancelHideVolume() {
             if (this.volumeHideTimeoutId >= 0) {
@@ -237,8 +268,8 @@ export default {
                 this.$toast.message('不跟你玩了，哼  o(￣ヘ￣o＃)');
                 return;
             }
-            const time = Math.trunc(this.audioEl.currentTime);
-            this.dislikeRadioSong({ id: this.playing.id, time });
+            const time = Math.trunc(this.audioEl.currentTime * 1000);
+            this.trashRadio({ id: this.playing.id, time });
             this.playNextTrack();
         },
         handleSourceNavigate() {
@@ -291,6 +322,9 @@ export default {
                     return 'shuffle';
             }
             return 'not_interested';
+        },
+        iconPlayPause() {
+            return this.ui.paused ? 'play_arrow' : 'pause';
         }
     },
     filters: {
