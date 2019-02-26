@@ -50,9 +50,12 @@ export default {
             await this.setUiFavVideo({ id, type });
             this.detailLoading = false;
             this.$nextTick(() => {
-                this.$el.querySelector('video').onplay = () => {
-                    if (!this.ui.paused) this.pauseAudio();
-                };
+                const vid = this.$el.querySelector('video');
+                if (vid) {
+                    vid.addEventListener('play', () => {
+                        if (!this.ui.paused) this.pauseAudio();
+                    });
+                }
             });
         },
         async fetchData() {
