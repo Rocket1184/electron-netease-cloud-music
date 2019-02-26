@@ -19,8 +19,6 @@
 </template>
 
 <script>
-import { mapActions } from 'vuex';
-
 import TrackItem from '@/components/TrackList/TrackItem.vue';
 import TrackList from '@/components/TrackList/TrackList.vue';
 import CenteredTip from '@/components/CenteredTip.vue';
@@ -28,7 +26,6 @@ import CenteredTip from '@/components/CenteredTip.vue';
 export default {
     extends: TrackList,
     methods: {
-        ...mapActions(['dislikeRadioSong']),
         handlePlay(index) {
             if (this.ui.radioMode) {
                 this.playTrackIndex(index);
