@@ -1898,6 +1898,10 @@ namespace Types {
         songs: [];
         count: number;
     }
+
+    export interface LikeSongERes extends ApiRes {
+        playlistId: number;
+    }
 }
 
 export as namespace Types;

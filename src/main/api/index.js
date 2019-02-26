@@ -1431,3 +1431,19 @@ export function removeRadioTrashE(songId) {
         data: { songId }
     });
 }
+
+/**
+ * @param {number} trackId
+ * @param {boolean} like
+ * @returns {Types.LikeSongERes}
+ */
+export function likeSongE(trackId, like = true) {
+    return client.postE({
+        url: `${BaseURL}/eapi/song/like`,
+        data: {
+            trackId,
+            like,
+            userid: 0
+        }
+    });
+}
