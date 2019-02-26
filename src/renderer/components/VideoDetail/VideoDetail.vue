@@ -24,6 +24,47 @@ export default {
             return { video: this.video };
         }
     },
+    methods: {
+        togglePlayPause() {
+            const vid = this.$refs.detailCompo.$refs.videoEl;
+            if (vid) vid.paused ? vid.play() : vid.pause();
+        },
+        /**
+         * @param {KeyboardEvent} ev
+         */
+        handlePlayPause(ev) {
+            if (ev.keyCode === 32 /* space */) {
+                this.togglePlayPause();
+            }
+        }
+    },
+    mounted() {
+        /** @type {HTMLVideoElement} */
+        const vid = this.$refs.detailCompo.$refs.videoEl;
+        vid.addEventListener('click', () => vid.paused ? vid.play() : vid.pause());
+        vid.addEventListener('auxclick', () => vid.muted = !vid.muted);
+        vid.addEventListener('wheel', ev => {
+            let volume = vid.volume;
+            if (ev.deltaY > 0) {
+                volume -= 0.05;
+                if (volume < 0) volume = 0;
+            } else {
+                volume += 0.05;
+                if (volume > 1) volume = 1;
+            }
+            vid.volume = volume;
+        });
+        document.addEventListener('keydown', this.handlePlayPause);
+    },
+    activated() {
+        document.addEventListener('keydown', this.handlePlayPause);
+    },
+    deactivated() {
+        document.removeEventListener('keydown', this.handlePlayPause);
+    },
+    beforeDestroy() {
+        document.removeEventListener('keydown', this.handlePlayPause);
+    },
     components: {
         MV,
         Video
