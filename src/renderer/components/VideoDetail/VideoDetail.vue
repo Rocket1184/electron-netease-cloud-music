@@ -1,10 +1,7 @@
 <template>
-    <div class="video-detail">
-        <MV v-if="video.type === 0"
-            :mv="video"></MV>
-        <Video v-else
-            :video="video"></Video>
-    </div>
+    <component ref="detailCompo"
+        :is="compoName"
+        v-bind="bindProp"></component>
 </template>
 
 <script>
@@ -17,6 +14,16 @@ export default {
             required: true
         }
     },
+    computed: {
+        compoName() {
+            if (this.video.type === 0) return 'MV';
+            return 'Video';
+        },
+        bindProp() {
+            if (this.video.type === 0) return { mv: this.video };
+            return { video: this.video };
+        }
+    },
     components: {
         MV,
         Video
@@ -26,33 +33,31 @@ export default {
 
 <style lang="less">
 .video-detail {
-    .v-wrapper {
-        width: 720px;
-        margin: auto;
-        .desc {
-            margin: 8px 0;
-            .title {
-                font-size: 20px;
-            }
-            .by,
-            .creator {
-                padding-left: 8px;
-                font-size: 14px;
-            }
-            .creator:hover {
-                text-decoration: underline;
-            }
+    padding: 0 16px;
+    width: 100%;
+    display: flex;
+    flex-direction: column;
+    .desc {
+        margin: 8px 0;
+        .title {
+            font-size: 20px;
         }
-        .video {
-            video {
-                height: 405px;
-                width: 720px;
-                object-fit: contain;
-            }
+        .by,
+        .creator {
+            padding-left: 8px;
+            font-size: 14px;
         }
-        .actions {
-            display: flex;
+        .creator:hover {
+            text-decoration: underline;
         }
+    }
+    video {
+        max-width: 100%;
+        object-fit: contain;
+    }
+    .actions {
+        margin: 8px 0;
+        display: flex;
     }
 }
 </style>

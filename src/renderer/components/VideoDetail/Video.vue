@@ -1,5 +1,5 @@
 <template>
-    <div class="v-wrapper">
+    <div class="video-detail">
         <div class="desc">
             <span class="title">{{video.name}}</span>
             <span class="by">by</span>
@@ -9,14 +9,14 @@
                 :to="{ path: '/user', params: { id: u.id } }"
                 tag="a">{{u.name}}</router-link>
         </div>
-        <div class="video">
-            <video :src="videoSrc"
-                :poster="videoPoster"
-                preload="none"
-                controls></video>
-        </div>
+        <video ref="videoEl"
+            :src="videoSrc"
+            :poster="videoPoster"
+            preload="none"
+            controls></video>
         <div class="actions">
             <mu-button flat
+                small
                 @click="handleLike">
                 <mu-icon left
                     :color="threadInfo.liked ? 'primary': ''"
@@ -24,6 +24,7 @@
                 <span>{{btnLikeText}}</span>
             </mu-button>
             <mu-button flat
+                small
                 @click="handleSubscribe">
                 <mu-icon left
                     :value="statistic.subscribed ? 'star': 'star_border'"
@@ -31,6 +32,7 @@
                 <span>{{btnFavText}}</span>
             </mu-button>
             <mu-button flat
+                small
                 :to="{ name: 'comment', params: { type: 'video', id: video.id } }">
                 <mu-icon left
                     value="comment"></mu-icon>
