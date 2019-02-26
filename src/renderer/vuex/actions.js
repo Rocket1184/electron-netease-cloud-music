@@ -354,18 +354,12 @@ export async function uncollectTrack(_, { playlist, tracks }) {
     throw resp;
 }
 
-export async function favoriteTrack({ state, dispatch }, { favorite, id }) {
-    const playlist = state.user.playlist[0].id;
-    const payload = { playlist, tracks: [id] };
-    if (favorite) {
-        await dispatch('collectTrack', payload);
-    } else {
-        await dispatch('uncollectTrack', payload);
+export async function favoriteTrack(_, { id, favorite = true }) {
+    const resp = await Api.likeSongE(id, favorite);
+    if (resp.code === 200) {
+        return resp;
     }
-    // it would take some time for NetEase to update playlist cover
-    // img, so we just wait 200 ms
-    await new Promise(_ => setTimeout(() => _(), 200));
-    await dispatch('updateUserPlaylistDetail', playlist);
+    throw resp;
 }
 
 export function nextLoopMode({ commit, state }) {
@@ -606,19 +600,11 @@ export function restoreRadio({ commit }) {
 }
 
 export async function getRadio({ commit }) {
-    const resp = await Api.getRadio();
+    const resp = await Api.getRadioE();
     if (resp.code === 200) {
         const tracks = resp.data.map(t => new Track(t));
         commit(types.APPEND_RADIO, { tracks });
     }
-}
-
-export async function dislikeRadioSong(_, { id, time }) {
-    const resp = await Api.dislikeRadioSong(id, time);
-    if (resp.code === 200) {
-        return resp;
-    }
-    throw resp;
 }
 
 export async function activateRadio({ state, commit, dispatch }, payload) {
@@ -630,4 +616,37 @@ export async function activateRadio({ state, commit, dispatch }, payload) {
     } else {
         commit(types.ACTIVATE_RADIO, false);
     }
+}
+
+/**
+ * time in ms
+ */
+export async function likeRadio(_, { id, time, like = true }) {
+    const resp = await Api.likeRadioE(id, time, like);
+    if (resp.code === 200) {
+        return resp;
+    }
+    throw resp;
+}
+
+/**
+ * time in ms
+ */
+export async function skipRadio(_, { id, time }) {
+    const resp = await Api.skipRadioE(id, time);
+    if (resp.code === 200) {
+        return resp;
+    }
+    throw resp;
+}
+
+/**
+ * time in ms
+ */
+export async function trashRadio(_, { id, time }) {
+    const resp = await Api.addRadioTrashE(id, time);
+    if (resp.code === 200) {
+        return resp;
+    }
+    throw resp;
 }
