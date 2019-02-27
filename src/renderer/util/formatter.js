@@ -1,9 +1,9 @@
 export function shortDate(timeStamp) {
-        const dt = new Date(timeStamp);
-        const y = dt.getFullYear();
-        const m = dt.getMonth() + 1;
-        const d = dt.getDate();
-        return `${y}-${m}-${d}`;
+    const dt = new Date(timeStamp);
+    const y = dt.getFullYear();
+    const m = dt.getMonth() + 1;
+    const d = dt.getDate();
+    return `${y}-${m}-${d}`;
 }
 
 export function shortTime(seconds) {
@@ -26,4 +26,9 @@ export function humanSize(val) {
         else val /= 1024;
     }
     return `${val.toFixed(1)} ${unit[i]}B`;
+}
+
+export function humanCount(val) {
+    if (val < 100000) return Math.trunc(val);
+    return `${Math.trunc(val / 10000)}万`;
 }
