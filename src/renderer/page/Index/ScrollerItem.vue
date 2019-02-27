@@ -1,16 +1,24 @@
 <template>
     <router-link :to="to"
+        :title="title"
         tag="div"
         class="s-item">
-        <div class="it-cover"
+        <div class="i-pic"
             :style="bkgImgStyle(img)">
-            <div class="co-name">
-                <mu-icon :value="subIcon"
+            <div v-if="maskIcon"
+                class="p-mask">
+                <mu-icon :value="maskIcon"
                     :size="16"></mu-icon>
-                <span class="name-cnt">{{subTitle}}</span>
+                <span class="m-text">{{maskText}}</span>
             </div>
         </div>
-        <div class="it-desc">{{desc}}</div>
+        <div v-if="itemSubTitle"
+            class="i-title-2-lines">
+            <div class="i-title-div">{{itemTitle}}</div>
+            <div class="i-title-div i-title-sub">{{itemSubTitle}}</div>
+        </div>
+        <div v-else
+            class="i-title-1-line">{{itemTitle}}</div>
     </router-link>
 </template>
 
@@ -26,15 +34,25 @@ export default {
             type: String,
             required: true
         },
-        subIcon: {
+        title: {
+            type: String,
+            required: false
+        },
+        maskIcon: {
+            type: String,
+            required: false
+        },
+        maskText: {
+            type: String,
+            required: false
+        },
+        itemTitle: {
             type: String,
             required: true
         },
-        subTitle: {
-            required: true
-        },
-        desc: {
-            required: true
+        itemSubTitle: {
+            type: String,
+            required: false
         }
     },
     methods: {
@@ -47,26 +65,27 @@ export default {
 
 <style lang="less">
 .s-item {
-    min-width: 160px;
+    direction: ltr;
+    transform-origin: 100% 0;
+    transform: rotate(90deg) translateX(100%);
     width: 160px;
-    height: 210px;
-    margin-left: 12px;
+    height: 160px;
+    margin: 12px 0;
+    overflow: visible;
     cursor: pointer;
-    &:last-child {
-        padding-right: 12px;
-    }
-    .it-cover {
+    position: relative;
+    .i-pic {
         height: 160px;
         background-size: cover;
         display: flex;
         flex-direction: column-reverse;
-        .co-name {
+        .p-mask {
             color: #e5e2e5;
             padding: 0.4em 0.8em;
             background-color: rgba(0, 0, 0, 0.54);
             display: flex;
             align-items: center;
-            .name-cnt {
+            .m-text {
                 margin-left: 4px;
                 flex-grow: 1;
             }
@@ -75,12 +94,26 @@ export default {
             color: #e5e2e5;
         }
     }
-    .it-desc {
-        overflow: hidden;
-        text-overflow: ellipsis;
+    .i-title-1-line {
         display: -webkit-box;
         -webkit-line-clamp: 2;
         -webkit-box-orient: vertical;
+    }
+    .i-title-1-line,
+    .i-title-2-lines,
+    .i-title-div {
+        overflow: hidden;
+        text-overflow: ellipsis;
+    }
+    .i-title-1-line,
+    .i-title-2-lines {
+        height: 42px;
+    }
+    .i-title-div {
+        white-space: nowrap;
+    }
+    .i-title-sub {
+        opacity: 0.62;
     }
 }
 </style>
