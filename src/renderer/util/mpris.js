@@ -45,6 +45,7 @@ export default MPRIS;
  * @param {HTMLAudioElement} audioEl
  */
 export function bindAudioElement(audioEl) {
+    // TODO: check if listener exists before add
     audioEl.addEventListener('seeked', () => MPRIS.seeked(audioEl.currentTime));
     MPRISEmitter.on('position', (event, id, TrackId, Position) => {
         audioEl.currentTime = Position;
@@ -86,6 +87,12 @@ export function injectStore(store) {
     MPRISEmitter.on('play', () => store.dispatch('playAudio'));
     MPRISEmitter.on('stop', () => store.dispatch('pauseAudio'));
     MPRISEmitter.on('pause', () => store.dispatch('pauseAudio'));
-    MPRISEmitter.on('next', () => store.dispatch('playNextTrack'));
+    MPRISEmitter.on('next', () => {
+        store.dispatch('playNextTrack');
+        if (store.state.ui.radioMode === true) {
+            const time = Math.trunc(document.querySelector('audio').currentTime * 1000);
+            store.dispatch('skipRadio', { id: store.getters.playing.id, time });
+        }
+    });
     MPRISEmitter.on('prev', () => store.dispatch('playPreviousTrack'));
 }
