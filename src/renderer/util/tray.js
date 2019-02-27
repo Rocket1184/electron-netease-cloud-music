@@ -68,14 +68,30 @@ export function injectStore(store) {
         if (store.state.ui.paused) store.dispatch('playAudio');
         else store.dispatch('pauseAudio');
     });
-    TrayEmitter.on('next', () => store.dispatch('playNextTrack'));
+    TrayEmitter.on('next', () => {
+        store.dispatch('playNextTrack');
+        if (store.state.ui.radioMode === true) {
+            const time = Math.trunc(document.querySelector('audio').currentTime * 1000);
+            store.dispatch('skipRadio', { id: store.getters.playing.id, time });
+        }
+    });
     TrayEmitter.on('prev', () => store.dispatch('playPreviousTrack'));
-    TrayEmitter.on('favorite', id => {
-        store.dispatch('favoriteTrack', { favorite: !isFavorite(store.state, id), id });
+    TrayEmitter.on('favorite', async id => {
+        const shouldFav = !isFavorite(store.state, id);
+        try {
+            let resp;
+            if (store.state.ui.radioMode === true) {
+                const time = Math.trunc(document.querySelector('audio').currentTime * 1000);
+                resp = await store.dispatch('likeRadio', { id, like: shouldFav, time });
+            } else {
+                resp = await store.dispatch('favoriteTrack', { id, favorite: shouldFav });
+            }
+            store.dispatch('updateUserPlaylistDetail', resp.playlistId);
+        } catch (e) { /* that's embarrassing */ }
     });
     TrayEmitter.on('dislike', id => {
-        const time = Math.trunc(document.querySelector('audio').currentTime);
-        store.dispatch('dislikeRadioSong', { id, time });
+        const time = Math.trunc(document.querySelector('audio').currentTime * 1000);
+        store.dispatch('trashRadio', { id, time });
         store.dispatch('playNextTrack');
     });
     TrayEmitter.on('get', () => sendTrackMeta(store.state, store.getters.playing));
