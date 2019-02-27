@@ -1902,6 +1902,29 @@ namespace Types {
     export interface LikeSongERes extends ApiRes {
         playlistId: number;
     }
+
+    export interface NewAlbumsRes extends ApiRes {
+        category: number;
+        result: NewAlbumAlbum[];
+    }
+
+    type NewAlbumAlg = "featured" | "artistbased" | "tagbased" | "cityLevel_A";
+
+    export interface NewAlbumAlbum {
+        alg: NewAlbumAlg;
+        artistName: string;
+        artists: {
+            id: number;
+            name: string;
+        }[];
+        canDislike: boolean;
+        copywriter: string;
+        id: number;
+        name: string;
+        picUrl: string;
+        type: number;
+    }
+
 }
 
 export as namespace Types;

@@ -1447,3 +1447,28 @@ export function likeSongE(trackId, like = true) {
         }
     });
 }
+
+/**
+ * 首页推荐->最新音乐
+ * @returns {Types.NewAlbumsRes}
+ */
+export function getNewAlbums() {
+    return client.postE({
+        url: `${BaseURL}/eapi/personalized/newalbum`,
+        data: {}
+    });
+}
+
+/**
+ * 首页->Banner 横幅
+ * @param {"pc" | "web" | "android" | "iphone"} clientType
+ * @returns {Types.ApiRes} // TODO: tsd BannersRes
+ */
+export function getBanners(clientType = 'pc') {
+    return client.postE({
+        url: `${BaseURL}/eapi/banner/get/v3`,
+        data: {
+            clientType
+        }
+    });
+}
