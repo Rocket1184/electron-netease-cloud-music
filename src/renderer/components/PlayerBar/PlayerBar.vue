@@ -173,7 +173,7 @@ export default {
                     time: Math.trunc(this.audioEl.currentTime * 1000)
                 });
             }
-            this.playPreviousTrack();
+            this.playNextTrack();
         },
         handleProgressDrag(value) {
             this.audioEl.currentTime = this.timeTotal * value / 100;
