@@ -29,6 +29,6 @@ export function humanSize(val) {
 }
 
 export function humanCount(val) {
-    if (val < 100000) return Math.trunc(val);
+    if (val < 100000) return Math.trunc(val).toString();
     return `${Math.trunc(val / 10000)}万`;
 }
