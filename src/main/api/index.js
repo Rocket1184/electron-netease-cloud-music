@@ -178,6 +178,7 @@ export function dislikePlaylist(id, alg) {
 }
 
 /**
+ * 包含歌曲列表的歌单详情，最多能获取前 1000 首，不能分页
  * @param {number} id
  * @returns {Promise<Types.ListDetailRes>}
  */
@@ -186,10 +187,9 @@ export function getListDetail(id) {
         url: `${BaseURL}/weapi/v3/playlist/detail`,
         data: {
             id,
-            offset: 0,
-            total: true,
-            limit: 1000,
-            n: 1000,
+            s: 0,
+            t: 0,
+            n: 1000
         }
     });
 }
@@ -206,7 +206,7 @@ const QualityMap = {
  * @param {Types.MusicQuality} quality
  * @returns {Promise<Types.MusicUrlRes>}
  */
-export function getMusicUrl(idOrIds, quality) {
+export function getMusicUrlW(idOrIds, quality) {
     if (!QualityMap[quality]) throw new Error(`Quality type '${quality}' is not in [h,m,l]`);
     let ids;
     if (Array.isArray(idOrIds)) ids = idOrIds;
@@ -226,7 +226,7 @@ export function getMusicUrl(idOrIds, quality) {
  * @param {Types.MusicQuality} quality
  * @returns {Promise<Types.MusicUrlRes>}
  */
-export function getMusicUrlLinux(idOrIds, quality) {
+export function getMusicUrlL(idOrIds, quality) {
     if (!QualityMap[quality]) throw new Error(`Quality type '${quality}' is not in [h,m,l]`);
     let ids;
     if (Array.isArray(idOrIds)) ids = idOrIds;
