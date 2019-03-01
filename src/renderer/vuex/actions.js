@@ -280,14 +280,9 @@ export async function playPlaylist({ commit, dispatch, state }, { tracks, source
     if (state.ui.radioMode === true) {
         commit(types.ACTIVATE_RADIO, false);
     }
-    let firstIndex;
-    switch (state.playlist.loopMode) {
-        case LOOP_MODE.RANDOM:
-            firstIndex = Math.floor(Math.random * state.playlist.list.length);
-            break;
-        default:
-            firstIndex = 0;
-            break;
+    let firstIndex = 0;
+    if (state.playlist.loopMode === LOOP_MODE.RANDOM) {
+        firstIndex = Math.floor(Math.random() * list.length);
     }
     dispatch('playTrackIndex', firstIndex);
 }
