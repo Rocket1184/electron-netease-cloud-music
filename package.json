@@ -12,7 +12,7 @@
   "license": "GPL-3.0",
   "repository": "github:rocket1184/electron-netease-cloud-music",
   "devDependencies": {
-    "@babel/core": "^7.3.3",
+    "@babel/core": "^7.3.4",
     "@babel/plugin-transform-modules-commonjs": "^7.2.0",
     "@babel/register": "^7.0.0",
     "babel-loader": "^8.0.5",
@@ -30,10 +30,10 @@
     "mini-css-extract-plugin": "^0.5.0",
     "native-ext-loader": "^2.3.0",
     "style-loader": "^0.23.1",
-    "vue-loader": "^15.6.4",
+    "vue-loader": "^15.7.0",
     "vue-template-compiler": "2.6.7",
-    "webpack": "^4.29.5",
-    "webpack-dev-server": "3.2.0"
+    "webpack": "^4.29.6",
+    "webpack-dev-server": "3.2.1"
   },
   "dependencies": {
     "big-integer": "^1.6.42",
