@@ -57,7 +57,7 @@ let cfg = {
     plugins: [
         new HtmlWebpackPlugin({
             filename: 'index.html',
-            title: config.appName
+            title: config.productName
         }),
         new VueLoaderPlugin()
     ],

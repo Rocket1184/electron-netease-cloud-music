@@ -2,12 +2,9 @@ import fs from 'fs';
 import path from 'path';
 import { app } from 'electron';
 
-const pkgJSON = require('../../package.json');
-export const appName = process.env.NODE_ENV === 'development' ? 'Electron' : pkgJSON.name;
-const configName = 'settings.json';
-const configDir = path.join(app.getPath('appData'), appName);
-const configPath = path.join(configDir, configName);
-export const appVer = pkgJSON.version;
+export const productName = 'Electron NCM';
+const configDir = app.getPath('userData');
+const configPath = path.join(configDir, 'settings.json');
 
 export const defaultSettings = {
     autoSign: false,
@@ -26,7 +23,7 @@ function writeFile(target) {
     fs.writeFileSync(configPath, JSON.stringify(target, null, 4), 'utf8');
 }
 
-export function getCurrent() {
+export function get() {
     let settings = defaultSettings;
     if (!fs.existsSync(configDir)) {
         fs.mkdirSync(configDir);

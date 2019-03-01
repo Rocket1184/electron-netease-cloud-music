@@ -3,8 +3,7 @@
 import { join } from 'path';
 import { app, BrowserWindow, ipcMain, Menu } from 'electron';
 
-import { appName, getCurrent } from './settings';
-import { devPort } from '../../script/config';
+import * as Settings from './settings';
 import { AppTray } from './tray';
 
 // allow audio play before user gesture
@@ -20,10 +19,11 @@ const preventQuitHandler = ev => {
 };
 /** @type {import('electron').BrowserWindow} */
 let mainWindow;
-const mainURL = isDev ? `http://localhost:${devPort}` : `file://${__dirname}/index.html`;
+/** URL defined in `index.dev.js` or `webpack.config.renderer.js` */
+const mainURL = process.env.MAIN_URL;
 /** @type {import('electron').BrowserWindow} */
 let loginWindow;
-let loginURL = isDev ? `http://localhost:${devPort}/login.html` : `file://${__dirname}/login.html`;
+let loginURL = process.env.LOGIN_URL;
 /** @type {AppTray} */
 let appTray;
 
@@ -47,7 +47,7 @@ function createMainWindow(settings, url = mainURL) {
         frame: settings.windowBorder,
         titleBarStyle: settings.windowBorder ? 'default' : 'hidden',
         backgroundColor: BackgroundColor[settings.themeVariety],
-        title: appName,
+        title: Settings.productName,
         webPreferences: {
             zoomFactor: settings.windowZoom || 1,
             preload: join(__dirname, 'preload.js'),
@@ -82,7 +82,7 @@ function createMainWindow(settings, url = mainURL) {
 
 if (app.requestSingleInstanceLock()) {
     app.on('ready', () => {
-        const settings = getCurrent();
+        const settings = Settings.get();
         // do not display default menu bar
         if (!isDev) {
             Menu.setApplicationMenu(null);
@@ -129,7 +129,7 @@ ipcMain.on('Settings', (event, type, ...args) => {
             // ensure window can be closed
             mainWindow.removeAllListeners('close');
             mainWindow.close();
-            const settings = getCurrent();
+            const settings = Settings.get();
             mainWindow = createMainWindow(settings, args[0]);
             if (appTray) {
                 appTray.bindWindow(mainWindow);
@@ -138,7 +138,7 @@ ipcMain.on('Settings', (event, type, ...args) => {
             break;
         case 'showTrayIcon':
             if (args[0] === true) {
-                const settings = getCurrent();
+                const settings = Settings.get();
                 appTray = new AppTray(settings.trayIconVariety);
                 appTray.bindWindow(mainWindow);
             } else if (args[0] === false) {
@@ -171,7 +171,7 @@ ipcMain.on('showLoginWindow', () => {
         useContentSize: true,
         minHeight: 360,
         minWidth: 1080,
-        title: `Login - ${appName}`,
+        title: `Login - ${Settings.productName}`,
         parent: mainWindow,
         modal: true
     });

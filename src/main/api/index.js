@@ -18,14 +18,14 @@ const BaseURL = 'https://music.163.com';
 
 const client = new Client();
 
-const appDataPath = path.join(app.getPath('appData'), Settings.appName);
-const cachePathMap = {
-    all: appDataPath,
-    music: path.join(appDataPath, 'musicCache'),
-    lyric: path.join(appDataPath, 'lyricCache')
+const dataPath = app.getPath('userData');
+const CachePath = {
+    all: dataPath,
+    music: path.join(dataPath, 'musicCache'),
+    lyric: path.join(dataPath, 'lyricCache')
 };
-const musicCache = new Cache(cachePathMap.music);
-const lyricCache = new Cache(cachePathMap.lyric);
+const musicCache = new Cache(CachePath.music);
+const lyricCache = new Cache(CachePath.lyric);
 
 const musicServer = new MusicServer(musicCache);
 let musicServerPort = 0;
@@ -600,7 +600,7 @@ export function removeRecursive(pathname) {
  * @returns {Promise<{ok: boolean; size: number; msg?: string}>}
  */
 export async function getDataSize(type) {
-    const cachePath = cachePathMap[type];
+    const cachePath = CachePath[type];
     try {
         const size = await getDiskUsage(cachePath);
         return { ok: true, size };
@@ -620,7 +620,7 @@ export async function getDataSize(type) {
  */
 export async function clearCache(type) {
     try {
-        await removeRecursive(cachePathMap[type]);
+        await removeRecursive(CachePath[type]);
     } catch (e) {
         return {
             ok: false,
@@ -646,7 +646,7 @@ function execAsync(...args) {
  * @returns {Promise<string>}
  */
 export async function getVersionName() {
-    let version = Settings.appVer;
+    let version = app.getVersion();
     if (process.env.NODE_ENV === 'development') {
         try {
             const hash = await execAsync('git rev-parse --short HEAD');
@@ -662,7 +662,7 @@ export async function getVersionName() {
  * @returns {Promise<Types.Settings>}
  */
 export function getCurrentSettings() {
-    return Settings.getCurrent();
+    return Settings.get();
 }
 
 /**

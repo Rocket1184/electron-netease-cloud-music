@@ -1,5 +1,8 @@
+const pkgJson = require('../package.json');
+
 module.exports = {
-    appName: 'Electron NCM',
-    packageName: require('../package.json').name,
+    name: pkgJson.name,
+    version: pkgJson.version,
+    productName: 'Electron NCM',
     devPort: 24353
 };

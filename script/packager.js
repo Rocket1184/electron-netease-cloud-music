@@ -14,8 +14,8 @@ if (argv[0] === 'clean') {
 }
 
 require('electron-packager')({
-    name: config.appName ,
-    executableName: config.packageName,
+    name: config.productName,
+    executableName: config.name,
     arch: 'x64',
     asar: true,
     icon: absPath('assets/icons/icon'),

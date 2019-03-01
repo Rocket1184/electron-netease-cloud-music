@@ -21,12 +21,22 @@ require('@babel/register')({
     ]
 });
 
+const { app } = require('electron');
+const { devPort, version } = require('../../script/config');
+
 // Install `vue-devtools`
-require('electron').app.on('ready', () => {
+app.on('ready', () => {
     const { default: install, VUEJS_DEVTOOLS } = require('electron-devtools-installer');
     // eslint-disable-next-line no-console
     install(VUEJS_DEVTOOLS.id).catch(console.log);
 });
+
+// App version
+app.setVersion(version);
+
+// BrowserWindow URL
+process.env.MAIN_URL = `http://localhost:${devPort}`;
+process.env.LOGIN_URL = `http://localhost:${devPort}/login.html`;
 
 // Require `main` process to boot app
 require('./index');
