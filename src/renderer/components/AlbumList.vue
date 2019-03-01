@@ -57,13 +57,19 @@ export default {
 <style lang="less">
 .album-list {
     display: flex;
-    flex-direction: row;
     flex-wrap: wrap;
     justify-content: center;
+    margin-bottom: 20px;
+    .item,
+    .empty {
+        width: 200px;
+        margin: 20px 10px 0;
+    }
+    .empty {
+        margin-top: 0;
+    }
     .item {
         cursor: pointer;
-        width: 200px;
-        margin: 20px;
         .pic {
             width: 200px;
             height: 200px;
@@ -94,10 +100,6 @@ export default {
                 filter: drop-shadow(0 0 4px black);
             }
         }
-    }
-    .empty {
-        width: 200px;
-        margin: 0 20px;
     }
 }
 </style>

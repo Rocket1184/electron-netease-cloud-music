@@ -60,12 +60,16 @@ export default {
     display: flex;
     flex-wrap: wrap;
     justify-content: center;
-    padding-bottom: 16px;
-    .v-item {
-        margin: 20px 10px 0;
-        min-width: 160px;
+    margin-bottom: 10px;
+    .v-item,
+    .empty {
+        margin: 20px 8px 0;
         width: 160px;
-        margin-left: 12px;
+    }
+    .empty {
+        margin-top: 0;
+    }
+    .v-item {
         cursor: pointer;
         .v-cover {
             height: 120px;
@@ -108,10 +112,6 @@ export default {
                 margin-right: 4px;
             }
         }
-    }
-    .empty {
-        margin: 0 10px;
-        width: 160px;
     }
 }
 </style>

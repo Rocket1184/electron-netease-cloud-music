@@ -22,7 +22,7 @@ export default {
             type: Array
         }
     },
-    methods:{
+    methods: {
         navigateToArtsit(id) {
             this.$router.push({ name: 'artist', params: { id } });
         }
@@ -43,13 +43,19 @@ export default {
 <style lang="less">
 .artist-list {
     display: flex;
-    flex-direction: row;
     flex-wrap: wrap;
     justify-content: center;
+    margin-bottom: 10px;
+    .item,
+    .empty {
+        width: 200px;
+        margin: 20px 10px 0;
+    }
+    .empty {
+        margin-top: 0;
+    }
     .item {
         cursor: pointer;
-        margin: 20px;
-        display: inline-block;
         .mu-card-media {
             width: 200px;
             height: 160px;
@@ -66,10 +72,6 @@ export default {
                 filter: drop-shadow(0 0 4px black);
             }
         }
-    }
-    .empty {
-        width: 200px;
-        margin: 0 20px;
     }
 }
 </style>
