@@ -21,33 +21,29 @@ if (argv.includes('main')) webpackCfg.push(require('./webpack.config.main'));
 if (argv.includes('renderer')) webpackCfg.push(require('./webpack.config.renderer'));
 
 if (!webpackCfg.length) {
-    console.error('No pack target specified.');
-    console.log('Expected "main" or "renderer"\n');
+    console.error('No dist target, expected "main" or "renderer"');
     process.exit(1);
 }
 
 /** @type {import('webpack').Stats.ToStringOptions} */
 const toStrOpt = {
-    all: undefined,
-    errorDetails: true,
-    env: true,
-    hash: false,
-    builtAt: false,
+    all: false,
+    assets: true,
     colors: true,
-    modules: false,
-    entrypoints: false,
-    performance: false
+    errors: true,
+    timings: true,
+    version: true
 };
 
 webpack(webpackCfg, (err, stats) => {
     if (err) throw err;
     else if (stats.hasErrors()) {
         process.stderr.write(stats.toString(toStrOpt));
-        console.log(`'\n\nError when packing ${argv.join(', ')}.`);
+        console.log(`'\n\nError when bundling ${argv.join(', ')}.`);
         process.exit(1);
     } else {
         process.stdout.write(stats.toString(toStrOpt));
-        console.log(`'\n\nPack for ${argv.join(', ')} succeed.`);
+        console.log(`'\n\nModule ${argv.join(', ')} bundled successfully.`);
         process.exit(0);
     }
 });
