@@ -225,11 +225,11 @@ export async function updateUiLyric({ commit, getters }, { ignoreCache = false }
 }
 
 export function playAudio({ commit }) {
-    commit(types.RESUME_PLAYING_MUSIC);
+    commit(types.SET_AUDIO_PAUSED, false);
 }
 
 export function pauseAudio({ commit }) {
-    commit(types.PAUSE_PLAYING_MUSIC);
+    commit(types.SET_AUDIO_PAUSED, true);
 }
 
 export async function playTrackIndex({ state, commit, dispatch }, index) {
@@ -240,7 +240,7 @@ export async function playTrackIndex({ state, commit, dispatch }, index) {
     }
     dispatch('updateUiLyric');
     await dispatch('updateUiAudioSrc');
-    commit(types.RESUME_PLAYING_MUSIC);
+    dispatch('playAudio');
 }
 
 export function playNextTrack({ dispatch, getters }) {

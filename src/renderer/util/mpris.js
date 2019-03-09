@@ -4,8 +4,7 @@ import { ipcRenderer } from 'electron';
 
 import {
     UPDATE_PLAYING_URL,
-    PAUSE_PLAYING_MUSIC,
-    RESUME_PLAYING_MUSIC
+    SET_AUDIO_PAUSED
 } from '@/vuex/mutation-types';
 
 const MPRISEmitter = new EventEmitter();
@@ -71,11 +70,8 @@ function subscribeHandler(mutation, state) {
                 MPRIS.stop();
             }
             break;
-        case PAUSE_PLAYING_MUSIC:
-            MPRIS.pause();
-            break;
-        case RESUME_PLAYING_MUSIC:
-            MPRIS.play();
+        case SET_AUDIO_PAUSED:
+            mutation.payload === true ? MPRIS.pause() : MPRIS.play();
             break;
     }
 }

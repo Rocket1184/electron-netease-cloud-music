@@ -110,8 +110,7 @@ import CurrentPlaylist from './CurrentPlaylist.vue';
 import {
     UPDATE_PLAYING_URL,
     SET_AUDIO_VOLUME,
-    PAUSE_PLAYING_MUSIC,
-    RESUME_PLAYING_MUSIC
+    SET_AUDIO_PAUSED
 } from '@/vuex/mutation-types';
 import { LOOP_MODE } from '@/vuex/modules/playlist';
 import { sizeImg, HiDpiPx, bkgImg } from '@/util/image';
@@ -434,11 +433,8 @@ export default {
                         this.audioEl.volume = this.ui.audioVolume / 100;
                     }
                     break;
-                case PAUSE_PLAYING_MUSIC:
-                    _audioEl.pause();
-                    break;
-                case RESUME_PLAYING_MUSIC:
-                    _audioEl.play();
+                case SET_AUDIO_PAUSED:
+                    mutation.payload === true ? _audioEl.pause() : _audioEl.play();
                     break;
             }
         });

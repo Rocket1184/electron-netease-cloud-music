@@ -60,11 +60,8 @@ const mutations = {
     [types.RESTORE_UI_STATE](state, payload) {
         Object.entries(payload).forEach(([key, val]) => state[key] = val);        
     },
-    [types.PAUSE_PLAYING_MUSIC](state) {
-        state.paused = true;
-    },
-    [types.RESUME_PLAYING_MUSIC](state) {
-        state.paused = false;
+    [types.SET_AUDIO_PAUSED](state, payload) {
+        state.paused = payload;
     },
     [types.UPDATE_PLAYING_URL](state, payload) {
         state.audioSrc = payload;

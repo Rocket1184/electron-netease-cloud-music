@@ -1,6 +1,6 @@
 import {
     SET_USER_SIGN_STATUS,
-    RESUME_PLAYING_MUSIC
+    SET_AUDIO_PAUSED
 } from './mutation-types';
 
 let signStatusTimeoutId = -1;
@@ -24,7 +24,7 @@ function autoUpdateSignStatus(mutation, state) {
 }
 
 function moreRadioSongs(mutation, state) {
-    if (mutation.type === RESUME_PLAYING_MUSIC) {
+    if (mutation.type === SET_AUDIO_PAUSED && mutation.payload === false) {
         const { list, index } = state.radio;
         if (state.ui.radioMode === true && list.length - 1 === index) {
             this.dispatch('getRadio');
