@@ -2,7 +2,8 @@
     <div class="appbar"
         :class="appbarDynamicClassName">
         <template v-if="!settings.windowBorder">
-            <div id="appbar-window-control">
+            <div v-if="!isDarwin"
+                id="appbar-window-control">
                 <mu-button icon
                     small
                     color="white"
@@ -92,6 +93,7 @@ import LoginDialog from './LoginDialog.vue';
 import { bkgImg, sizeImg, HiDpiPx } from "@/util/image";
 import { UPDATE_SETTINGS, SET_USER_SIGN_STATUS } from '@/vuex/mutation-types';
 
+const currentWindow = remote.getCurrentWindow();
 const SignIcon = {
     0: 'looks_5',
     2: 'looks_3',
@@ -102,7 +104,7 @@ const SignIcon = {
 export default {
     data() {
         return {
-            currentWindow: remote.getCurrentWindow(),
+            isDarwin: platform() === 'darwin',
             drawerOpen: false,
             loginDlgShow: false
         };
@@ -114,7 +116,7 @@ export default {
         },
         appbarDynamicClassName() {
             return {
-                'is-darwin': platform() === 'darwin',
+                'is-darwin': this.isDarwin,
                 'is-frameless': this.settings.windowBorder === false
             };
         },
@@ -152,16 +154,16 @@ export default {
             'checkin'
         ]),
         handleClose() {
-            this.currentWindow.close();
+            currentWindow.close();
         },
         handleMinimize() {
-            this.currentWindow.minimize();
+            currentWindow.minimize();
         },
         handleMaximize() {
-            if (this.currentWindow.isMaximized())
-                this.currentWindow.unmaximize();
+            if (currentWindow.isMaximized())
+                currentWindow.unmaximize();
             else
-                this.currentWindow.maximize();
+                currentWindow.maximize();
         },
         handleSideNav(route) {
             this.drawerOpen = false;
