@@ -9,7 +9,7 @@ const configPath = path.join(configDir, 'settings.json');
 export const defaultSettings = {
     autoSign: false,
     bitRate: 'l',
-    windowBorder: true,
+    windowBorder: process.platform !== 'darwin',
     windowZoom: null,
     showTrayIcon: false,
     trayIconVariety: 'light',
