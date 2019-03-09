@@ -9,11 +9,15 @@ const d = debug(TAG);
 const IPC_TAG = `${TAG}:IPC`;
 const dd = debug(IPC_TAG);
 
-function requireIcon(filename) {
-    if (process.env.NODE_ENV === 'development') {
-        return join(process.cwd(), 'assets/icons', `${filename}.png`);
+function requireIcon(name) {
+    let file = `${name}.png`;
+    if (process.platform === 'darwin') {
+        file = `${name}Template.png`;
     }
-    return join(__dirname, 'icons/', `${filename}.png`);
+    if (process.env.NODE_ENV === 'development') {
+        return join(process.cwd(), 'assets/icons', file);
+    }
+    return join(__dirname, 'icons/', file);
 }
 
 function ellipsisText(str, length) {
