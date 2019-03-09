@@ -25,6 +25,10 @@ function ellipsisText(str, length) {
     return str.substr(0, length) + '...';
 }
 
+const isKDE = [
+    process.env['XDG_CURRENT_DESKTOP'] || '',
+    process.env['XDG_SESSION_DESKTOP'] || ''
+].some(s => s.toUpperCase().endsWith('KDE'));
 
 export class AppTray {
     static get SendEvents() {
@@ -35,13 +39,13 @@ export class AppTray {
         return ['track'];
     }
 
-    constructor(variety = 'light') {
+    constructor(color = 'light') {
         this.emitter = new EventEmitter();
-        // workaround: force use 'appindicator' for tray impl
         const xcd = process.env.XDG_CURRENT_DESKTOP;
-        process.env.XDG_CURRENT_DESKTOP = 'Unity';
-        this.tray = new Tray(requireIcon(`tray.${variety}`));
-        process.env.XDG_CURRENT_DESKTOP = xcd;
+        // KDE tray icon scale hack
+        if (isKDE) process.env.XDG_CURRENT_DESKTOP = 'Unity';
+        this.tray = new Tray(requireIcon(`tray.${color}`));
+        if (isKDE) process.env.XDG_CURRENT_DESKTOP = xcd;
         // doesn't work when using 'appindicator'
         this.tray.on('click', () => this.emit('raise'));
         // doesn't work on KDE Plasma
