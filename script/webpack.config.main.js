@@ -34,7 +34,7 @@ if (isProd) {
             { from: absPath('package.json'), to: absPath('dist') },
             { from: absPath('src/main/preload.prod.js'), to: absPath('dist/preload.js') },
             {
-                from: { glob: absPath('assets/icons/tray.*.png') },
+                from: { glob: absPath('assets/icons/tray*.png') },
                 to: absPath('dist/icons/[name].[ext]'),
                 toType: 'template'
             },
