@@ -365,6 +365,9 @@ export default {
             _unsetUpdateTimeInterval();
             this.timeTotal = _audioEl.duration;
             this.timeCurrent = _audioEl.currentTime;
+            if (this.ui.paused === false) {
+                this.playAudio();
+            }
         });
 
         // keep audio progress when HMR
@@ -381,8 +384,9 @@ export default {
         _audioEl.addEventListener('playing', () => {
             _updateTime();
             // update playing process time after the time reaches a 'integer' second
-            // why use 1.1 not 1 ? maybe there is a little lag in event loop... I don't know
-            const timeOut = (1.1 - _audioEl.currentTime % 1) * 1000;
+            // why use 1.15 not 1 ? maybe there is a little lag in event loop... I don't know
+            // maybe the value should be different on every device?
+            const timeOut = (1.15 - _audioEl.currentTime % 1) * 1000;
             _unsetUpdateTimeInterval();
             setTimeout(() => {
                 _updateTime();
