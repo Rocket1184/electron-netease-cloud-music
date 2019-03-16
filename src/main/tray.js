@@ -12,7 +12,7 @@ const dd = debug(IPC_TAG);
 function requireIcon(name) {
     let file = `${name}.png`;
     if (process.platform === 'darwin') {
-        file = `${name}Template.png`;
+        file = 'trayTemplate.png';
     }
     if (process.env.NODE_ENV === 'development') {
         return join(process.cwd(), 'assets/icons', file);
