@@ -114,6 +114,14 @@
                         </mu-select>
                     </mu-list-item-action>
                 </mu-list-item>
+                <mu-list-item button
+                    @click="toggleByName('autoPlay')">
+                    <mu-list-item-title>启动时自动开始播放</mu-list-item-title>
+                    <mu-list-item-action>
+                        <mu-switch :inputValue="settings.autoPlay"
+                            color="secondary"></mu-switch>
+                    </mu-list-item-action>
+                </mu-list-item>
                 <mu-sub-header>特性</mu-sub-header>
                 <mu-list-item button
                     @click="toggleByName('autoSign')">
