@@ -1,5 +1,3 @@
-'use strict';
-
 import { join } from 'path';
 import { app, BrowserWindow, ipcMain, Menu } from 'electron';
 
@@ -154,6 +152,7 @@ ipcMain.on('Settings', (event, type, ...args) => {
             }
             break;
         case 'exitOnWindowClose':
+            if (process.platform === 'darwin') return;
             shouldAppQuit = args[0];
             if (args[0] === true) {
                 mainWindow.removeListener('close', preventQuitHandler);
