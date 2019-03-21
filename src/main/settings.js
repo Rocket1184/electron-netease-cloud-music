@@ -7,6 +7,7 @@ const configDir = app.getPath('userData');
 const configPath = path.join(configDir, 'settings.json');
 
 export const defaultSettings = {
+    autoPlay: false,
     autoSign: false,
     bitRate: 'l',
     windowBorder: process.platform !== 'darwin',
@@ -36,8 +37,8 @@ export function get() {
                 ...defaultSettings,
                 ...JSON.parse(fs.readFileSync(configPath).toString())
             };
-            Reflect.ownKeys(settings).forEach(k => {
-                if (!Reflect.has(defaultSettings, k)) {
+            Object.keys(settings).forEach(k => {
+                if (!defaultSettings.hasOwnProperty(k)) {
                     delete settings[k];
                 }
             });
