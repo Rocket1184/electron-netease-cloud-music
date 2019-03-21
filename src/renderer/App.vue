@@ -74,8 +74,8 @@ export default {
         });
         this.restoreUserInfo();
         this.restorePlaylist();
-        this.restoreUiState();
         this.restoreRadio();
+        this.restoreUiState();
     }
 };
 </script>

@@ -17,17 +17,23 @@ export async function resetSettings({ commit }) {
 
 export function storeUiState({ state }) {
     let obj = {};
-    ['audioVolume', 'audioMute'].forEach(k => obj[k] = state.ui[k]);
+    [
+        'audioVolume',
+        'audioMute',
+        'radioMode'
+    ].forEach(k => obj[k] = state.ui[k]);
     localStorage.setItem('ui', JSON.stringify(obj));
 }
 
-export function restoreUiState({ commit }) {
+export function restoreUiState({ commit, dispatch }) {
     try {
         const obj = JSON.parse(localStorage.getItem('ui'));
         commit(types.RESTORE_UI_STATE, obj);
     } catch (e) {
         localStorage.removeItem('ui');
     }
+    dispatch('updateUiAudioSrc');
+    dispatch('updateUiLyric');
 }
 
 export async function storeUserInfo({ state }) {
@@ -302,14 +308,12 @@ export function storePlaylist({ state }) {
     localStorage.setItem('playlist', JSON.stringify(state.playlist));
 }
 
-export function restorePlaylist({ commit, dispatch }) {
+export function restorePlaylist({ commit }) {
     try {
         const stored = localStorage.getItem('playlist');
         if (stored) {
             const playlist = JSON.parse(stored);
             commit(types.RESTORE_PLAYLIST, playlist);
-            dispatch('updateUiAudioSrc');
-            dispatch('updateUiLyric');
         }
     } catch (e) {
         // eslint-disable-next-line no-console
