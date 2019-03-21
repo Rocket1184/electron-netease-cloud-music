@@ -67,7 +67,7 @@
                 </mu-list-item>
                 <mu-list-item button
                     nested
-                    :open="settings.showTrayIcon"
+                    :open="!isDarwin && settings.showTrayIcon"
                     @click="toggleTrayIcon()">
                     <mu-list-item-title>显示托盘图标</mu-list-item-title>
                     <mu-list-item-action>
@@ -191,6 +191,7 @@
 </template>
 
 <script>
+import { platform } from 'os';
 import { ipcRenderer, remote, shell } from 'electron';
 import { mapState, mapActions } from 'vuex';
 
@@ -226,6 +227,7 @@ export default {
     name: 'page-settings',
     data() {
         return {
+            isDarwin: platform() === 'darwin',
             primaryPickerOpen: false,
             secondaryPickerOpen: false,
             cacheSize: 0,
