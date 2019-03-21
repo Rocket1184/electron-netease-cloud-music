@@ -66,10 +66,10 @@ export default {
                 this.transitionName = 'player-out';
             } else if (window.__NAV_BACK__ === true) {
                 this.transitionName = 'fade-down';
-                window.__NAV_BACK__ = false;
             } else {
                 this.transitionName = 'fade-up';
             }
+            window.__NAV_BACK__ = false;
             next();
         });
         this.restoreUserInfo();
