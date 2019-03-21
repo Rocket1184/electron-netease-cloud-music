@@ -9,6 +9,7 @@ try {
 } catch (e) {
     sessionStorage.removeItem('settings');
     state = {
+        autoPlay: false,
         autoSign: false,
         bitRate: 'l',
         windowBorder: true,
