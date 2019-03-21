@@ -167,6 +167,7 @@ export default {
         },
         handleSideNav(route) {
             this.drawerOpen = false;
+            if (route.name === this.$route.name) return;
             if (route.name === 'index') window.__NAV_BACK__ = true;
             this.$router.push(route.path);
         },
