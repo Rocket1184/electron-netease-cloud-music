@@ -76,6 +76,9 @@ export default {
         this.restorePlaylist();
         this.restoreRadio();
         this.restoreUiState();
+        if (this.settings.autoPlay === true) {
+            this.playAudio();
+        }
     }
 };
 </script>
