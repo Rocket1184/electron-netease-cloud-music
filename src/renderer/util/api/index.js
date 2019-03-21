@@ -1,5 +1,3 @@
-'use strict';
-
 import debug from 'debug';
 import { ipcRenderer } from 'electron';
 
@@ -12,10 +10,9 @@ const methodMap = new Map();
 const resolveMap = new Map();
 
 ipcRenderer.on(TAG, (_, id, data) => {
+    d('🔻 %d %o', id, data);
     if (resolveMap.has(id)) {
-        d('🔻 %d %o', id, data);
-        const resolve = resolveMap.get(id);
-        resolve(data);
+        resolveMap.get(id).call(null, data);
         resolveMap.delete(id);
     }
 });
