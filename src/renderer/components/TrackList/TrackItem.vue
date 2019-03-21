@@ -1,7 +1,8 @@
 <template>
     <ncm-mu-dbclick-ripple class="track-row"
         @dblclick="handleDblClick">
-        <div class="track-col index">{{index}}</div>
+        <div v-if="index"
+            class="track-col index">{{index}}</div>
         <div class="track-col name">{{track.name}}</div>
         <div class="track-col artist">
             <template v-for="(ar, index) in track.artists">
@@ -37,7 +38,7 @@ export default {
     props: {
         index: {
             type: Number,
-            required: true
+            required: false
         },
         track: {
             required: true
