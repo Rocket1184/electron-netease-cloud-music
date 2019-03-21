@@ -84,5 +84,10 @@ export default {
         align-items: center;
         justify-content: space-between;
     }
+    .tracklist {
+        .track-row {
+            padding-left: 16px;
+        }
+    }
 }
 </style>

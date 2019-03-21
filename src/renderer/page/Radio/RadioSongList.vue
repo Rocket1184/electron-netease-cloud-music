@@ -2,14 +2,13 @@
     <div class="tracklist">
         <template v-if="tracks.length !== 0">
             <div class="list">
-                <TrackItem v-for="(track, index) in tracks"
-                    :key="track.id"
-                    :index="1 + index + indexOffset"
-                    :track="track"
+                <TrackItem v-for="n in tracks.length"
+                    :key="tracks[tracks.length - n].id"
+                    :track="tracks[tracks.length - n]"
                     :shortcuts="shortcuts"
-                    @dblclick="handlePlay(index)"
-                    @collect="handleCollect(track.id)"
-                    @queue="handleQueue(index)"></TrackItem>
+                    @dblclick="handlePlay(tracks.length - n)"
+                    @collect="handleCollect(tracks[tracks.length - n].id)"
+                    @queue="handleQueue(tracks.length - n)"></TrackItem>
             </div>
         </template>
         <CenteredTip v-else
