@@ -27,10 +27,12 @@ const mutations = {
                 toAppend.push(t);
             }
         });
+        const MaxLength = 150;
         state.list.push.apply(state.list, toAppend);
-        if (state.list.length > 150) {
-            state.list.splice(0, state.length - 150);
-            state.index -= toAppend.length;
+        if (state.list.length > MaxLength) {
+            const removeCount = state.list.length - MaxLength;
+            state.list.splice(0, removeCount);
+            state.index -= removeCount;
         }
     },
     [types.REMOVE_RADIO](state, { id }) {
