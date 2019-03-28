@@ -365,8 +365,8 @@ export default {
             _unsetUpdateTimeInterval();
             this.timeTotal = _audioEl.duration;
             this.timeCurrent = _audioEl.currentTime;
-            if (this.ui.paused === false) {
-                this.playAudio();
+            if (this.ui.paused === false && _audioEl.paused) {
+                _audioEl.play();
             }
         });
 
