@@ -32,6 +32,15 @@
                         value="comment"></mu-icon>
                     <span>{{btnCommentText}}</span>
                 </mu-button>
+                <mu-button flat
+                    small
+                    color="black"
+                    @click="toggleShare">
+                    <mu-icon left
+                        :size="18"
+                        value="share"></mu-icon>
+                    <span>分享</span>
+                </mu-button>
             </div>
         </div>
         <div class="info">
@@ -134,6 +143,19 @@
                 </div>
             </div>
         </div>
+        <mu-dialog width="400"
+            dialog-class="share-dlg"
+            :open.sync="dlgShareOpen">
+            <div class="share-content">
+                <img class="share-img"
+                    :src="shareImgSrc">
+                <div class="share-text">{{ shareText }}</div>
+            </div>
+            <mu-button slot="actions"
+                flat
+                color="primary"
+                @click="toggleShare">关闭</mu-button>
+        </mu-dialog>
     </div>
 </template>
 
@@ -160,7 +182,8 @@ export default {
             /** @type {HTMLAudioElement} */
             audioEl: null,
             lyricElemMap: [],
-            currentLyricIndex: -1
+            currentLyricIndex: -1,
+            dlgShareOpen: false
         };
     },
     computed: {
@@ -174,6 +197,15 @@ export default {
         },
         btnCommentText() {
             return `评论 (${this.commentCount})`;
+        },
+        shareImgSrc() {
+            if (!this.playing.id) return '';
+            return sizeImg(this.playing.picUrl, 352);
+        },
+        shareText() {
+            if (!this.playing.id) return '';
+            const { id, name, artistName } = this.playing;
+            return `分享 ${artistName} 的单曲 《${name}》：https://music.163.com/song/${id}`;
         },
         lyricScrollerStyle() {
             if (typeof this.ui.lyric.txtLyric === 'string') {
@@ -273,6 +305,21 @@ export default {
             }
             this.toggleCollectPopup(this.playing.id);
         },
+        toggleShare() {
+            this.dlgShareOpen = !this.dlgShareOpen;
+            if (this.dlgShareOpen) this.$nextTick(() => {
+                const node = document.querySelector('.share-text');
+                if (!node) return;
+                const selection = window.getSelection();
+                const range = document.createRange();
+                range.selectNodeContents(node);
+                selection.removeAllRanges();
+                selection.addRange(range);
+                document.execCommand('copy');
+                selection.removeAllRanges();
+                this.$toast.message('已复制分享内容到粘贴版');
+            });
+        }
     },
     mounted() {
         this.paintBkgCanvas();
@@ -476,6 +523,14 @@ export default {
     }
     100% {
         transform: rotate(360deg);
+    }
+}
+
+.share-content {
+    .share-img {
+        width: 100%;
+        height: 352px;
+        object-fit: contain;
     }
 }
 </style>
