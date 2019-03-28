@@ -16,7 +16,7 @@
     "@babel/plugin-transform-modules-commonjs": "^7.4.0",
     "@babel/register": "^7.4.0",
     "babel-loader": "^8.0.5",
-    "copy-webpack-plugin": "^5.0.1",
+    "copy-webpack-plugin": "^5.0.2",
     "css-loader": "^2.1.1",
     "electron-devtools-installer": "^2.2.4",
     "electron-packager": "^13.1.1",
@@ -36,7 +36,7 @@
     "webpack-dev-server": "3.2.1"
   },
   "dependencies": {
-    "big-integer": "^1.6.42",
+    "big-integer": "^1.6.43",
     "cookiejar": "^2.1.2",
     "dbus-native": "^0.4.0",
     "debug": "^4.1.1",
