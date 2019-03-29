@@ -3,6 +3,10 @@ import {
     SET_AUDIO_PAUSED
 } from './mutation-types';
 
+/**
+ * @type {(() => void)[]}
+ */
+const unSubFns = [];
 let signStatusTimeoutId = -1;
 
 function autoUpdateSignStatus(mutation, state) {
@@ -32,7 +36,22 @@ function moreRadioSongs(mutation, state) {
     }
 }
 
-export default function (store) {
-    store.subscribe(autoUpdateSignStatus.bind(store));
-    store.subscribe(moreRadioSongs.bind(store));
+export function unsubscribeAll() {
+    unSubFns.forEach(unSub => unSub());
+    if (signStatusTimeoutId > 0) {
+        clearTimeout(signStatusTimeoutId);
+        signStatusTimeoutId = -1;
+    }
+    unSubFns.slice(0, 0);
+}
+
+/**
+ * @param {import('node_modules/vuex/types/index').Store} store 
+ */
+export function installHooks(store) {
+    const subFns = [
+        autoUpdateSignStatus,
+        moreRadioSongs
+    ];
+    unSubFns.push.apply(unSubFns, subFns.map(subFn => store.subscribe(subFn.bind(store))));
 }

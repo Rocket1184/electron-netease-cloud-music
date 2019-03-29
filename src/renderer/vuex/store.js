@@ -5,7 +5,7 @@ import Vuex from 'vuex';
 import * as modules from './modules';
 import * as actions from './actions';
 import * as getters from './getters';
-import installHooks from './hooks';
+import { installHooks } from './hooks';
 
 Vue.use(Vuex);
 
@@ -25,3 +25,24 @@ if (platform() === 'linux') {
 require('@/util/tray').injectStore(store);
 
 export default store;
+
+// store hot reload
+if (process.env.NODE_ENV === 'development' && module.hot) {
+    let { unsubscribeAll } = require('./hooks');
+    module.hot.accept([
+        './modules',
+        './actions',
+        './getters',
+        './hooks'
+    ], () => {
+        unsubscribeAll();
+        store.hotUpdate({
+            modules: require('./modules'),
+            actions: require('./actions'),
+            getters: require('./getters')
+        });
+        const hooks = require('./hooks');
+        hooks.installHooks(store);
+        unsubscribeAll = hooks.unsubscribeAll;
+    });
+}
