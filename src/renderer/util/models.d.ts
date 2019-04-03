@@ -1,6 +1,7 @@
 declare namespace Models {
 
     export class User {
+        constructor(o: any);
         id: number;
         nickname: string;
         avatarUrl: string;
@@ -18,6 +19,7 @@ declare namespace Models {
     }
 
     export class Track {
+        constructor(o: any);
         id: number;
         name: string;
         album: {
@@ -54,6 +56,7 @@ declare namespace Models {
     }
 
     export class PlayList {
+        constructor(o: any);
         id: number;
         name: string;
         creator: User;
@@ -71,6 +74,7 @@ declare namespace Models {
     }
 
     export class Artist {
+        constructor(o: any);
         id: number;
         name: string;
         trans?: string;
@@ -89,6 +93,7 @@ declare namespace Models {
     }
 
     export class Album {
+        constructor(o: any);
         id: number;
         name: string;
         alias: string[];
@@ -116,6 +121,7 @@ declare namespace Models {
     }
 
     export class Video {
+        constructor(o: any);
         id: string;
         name: number;
         alias: string[];
