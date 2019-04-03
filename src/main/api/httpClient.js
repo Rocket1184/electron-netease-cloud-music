@@ -39,7 +39,7 @@ class HttpClient {
 
     /**
      * clear all cookies, and set cookie as given arguments
-     * @param {string | string[] | Record<string, string>} arg 
+     * @param {string | string[] | Record<string, string>} [arg=''] 
      */
     updateCookie(arg = '') {
         this.initCookieJar();
@@ -51,6 +51,9 @@ class HttpClient {
         this.cookieJar.setCookies(cookies);
     }
 
+    /**
+     * @param {string} [key]
+     */
     getCookie(key) {
         const cookies = this.cookieJar.getCookies(CookieAccessInfo.All);
         if (!key) {

@@ -33,14 +33,14 @@ musicServer.listen().then(addr => musicServerPort = addr.port);
 
 /**
  * clear all cookies, and set cookie as given arguments
- * @param {string | string[] | Record<string, string>} arg 
+ * @param {string | string[] | Record<string, string>} [cookie]
  */
 export function updateCookie(cookie) {
     client.updateCookie(cookie);
 }
 
 /**
- * @param {string?} key
+ * @param {string} [key]
  * @returns {string | Record<string, string>}
  */
 export function getCookie(key) {
@@ -659,7 +659,7 @@ export async function getVersionName() {
 }
 
 /**
- * @returns {Promise<Types.Settings>}
+ * @returns {Promise<typeof Settings.defaultSettings>}
  */
 export function getCurrentSettings() {
     return Settings.get();
@@ -667,7 +667,7 @@ export function getCurrentSettings() {
 
 /**
  * write and save settings to file
- * @param {Types.Settings} target settings to write
+ * @param {typeof Settings.defaultSettings} target settings to write
  */
 export function writeSettings(target) {
     Settings.set(target);
@@ -1076,7 +1076,7 @@ export function getArtistDetailE(id) {
 
 /**
  * @param {number|string} id
- * @returns {Promise<Types.AritstDetailWRes>}
+ * @returns {Promise<Types.ArtistDetailWRes>}
  */
 export function getArtistDetailW(id) {
     return client.postW({
@@ -1097,7 +1097,7 @@ export function getArtistDynamicDetail(id) {
 
 /**
  * @param {number|string} artistId
- * @returns {Promise<{Types.ApiRes}>}
+ * @returns {Promise<Types.ApiRes>}
  */
 export function followArtist(artistId) {
     return client.postW({

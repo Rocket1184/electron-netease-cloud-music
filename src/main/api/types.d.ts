@@ -1036,15 +1036,6 @@ namespace Types {
         }
     }
 
-    export interface Settings {
-        bitRate: MusicQuality;
-        windowBorder: boolean;
-        autoPlay: boolean;
-        themePrimaryColor: string;
-        themeSecondaryColor: string;
-        themeVariety: string;
-    }
-
     export interface SubscribedArtistRes extends ApiRes {
         count: number;
         hasMore: boolean;
@@ -1238,25 +1229,29 @@ namespace Types {
         data: Privilege[];
     }
 
-    export interface RelatedPlaylistsRes extends ApiRes {
-        data: {
+    export interface RelatedPlaylist {
+        id: string;
+        name: string;
+        picUrl: string;
+        creator: {
             id: string;
             name: string;
-            picUrl: string;
-            creator: {
-                id: string;
-                name: string;
-            }
-        }[];
+        }
+    }
+
+    export interface RelatedPlaylistsRes extends ApiRes {
+        data: RelatedPlaylist[];
+    }
+
+    export interface RelatedAlbum {
+        id: string;
+        name: string;
+        picUrl: string;
+        publishDate: string;
     }
 
     export interface RelatedAlbumsRes extends ApiRes {
-        data: {
-            id: string;
-            name: string;
-            picUrl: string;
-            publishDate: string;
-        }
+        data: RelatedAlbum[];
     }
 
     export interface SubscribeAlbumRes extends ApiRes {
@@ -1521,7 +1516,7 @@ namespace Types {
         status: number;
     }
 
-    export interface AritstDetailWRes extends ApiRes {
+    export interface ArtistDetailWRes extends ApiRes {
         artist: ArtistDetailWArtist;
         hotSongs: ArtistDetailWArtistHotSong[];
         more: boolean;
