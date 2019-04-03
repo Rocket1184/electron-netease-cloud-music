@@ -5,7 +5,7 @@ import { ipcRenderer } from 'electron';
 import {
     UPDATE_PLAYING_URL,
     SET_AUDIO_PAUSED
-} from '@/vuex/mutation-types';
+} from '@/store/mutation-types';
 
 const MPRISEmitter = new EventEmitter();
 const TAG = 'MPRIS:IPC';

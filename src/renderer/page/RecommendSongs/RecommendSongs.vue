@@ -54,7 +54,7 @@
 <script>
 import { mapActions, mapState } from 'vuex';
 
-import { SET_LOGIN_VALID } from '@/vuex/mutation-types';
+import { SET_LOGIN_VALID } from '@/store/mutation-types';
 import ListDetailLayout from '@/components/ListDetailLayout.vue';
 import ListItemBack from '@/components/ListItemBack.vue';
 import CenteredTip from '@/components/CenteredTip.vue';

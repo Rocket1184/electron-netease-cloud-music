@@ -27,8 +27,10 @@ require('@/util/tray').injectStore(store);
 export default store;
 
 // store hot reload
+// @ts-ignore
 if (process.env.NODE_ENV === 'development' && module.hot) {
     let { unsubscribeAll } = require('./hooks');
+    // @ts-ignore
     module.hot.accept([
         './modules',
         './actions',

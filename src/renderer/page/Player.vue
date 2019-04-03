@@ -167,7 +167,7 @@ import {
     SET_CURRENT_INDEX,
     SET_RADIO_INDEX,
     SET_ACTIVE_LYRIC
-} from '@/vuex/mutation-types';
+} from '@/store/mutation-types';
 import { bkgImg, sizeImg, HiDpiPx } from '@/util/image';
 import defaultCoverImg from 'assets/img/cover_default.webp';
 

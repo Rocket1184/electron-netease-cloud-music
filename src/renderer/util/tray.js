@@ -7,7 +7,7 @@ import {
     SET_LOGIN_VALID,
     UPDATE_PLAYING_URL,
     UPDATE_USER_PLAYLIST
-} from '@/vuex/mutation-types';
+} from '@/store/mutation-types';
 
 const TrayEmitter = new EventEmitter();
 const TAG = 'Tray:IPC';

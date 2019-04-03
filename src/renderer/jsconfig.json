@@ -1,0 +1,22 @@
+{
+    "compilerOptions": {
+        "lib": [
+            "dom",
+            "dom.iterable",
+            "scripthost",
+            "es6",
+            "es7",
+            "esnext"
+        ],
+        "checkJs": true,
+        "baseUrl": ".",
+        "paths": {
+            "@/*": [
+                "./*"
+            ],
+            "assets/*": [
+                "../../assets/*"
+            ]
+        }
+    }
+}

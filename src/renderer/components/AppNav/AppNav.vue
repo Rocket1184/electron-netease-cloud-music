@@ -91,7 +91,7 @@ import Routes from '@/routes';
 import SearchBox from './SearchBox.vue';
 import LoginDialog from './LoginDialog.vue';
 import { bkgImg, sizeImg, HiDpiPx } from "@/util/image";
-import { UPDATE_SETTINGS, SET_USER_SIGN_STATUS } from '@/vuex/mutation-types';
+import { UPDATE_SETTINGS, SET_USER_SIGN_STATUS } from '@/store/mutation-types';
 
 const currentWindow = remote.getCurrentWindow();
 const SignIcon = {

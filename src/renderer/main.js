@@ -6,7 +6,7 @@ import Toast from 'muse-ui-toast';
 import Message from 'muse-ui-message';
 
 import App from './App.vue';
-import store from './vuex/store';
+import store from './store';
 import routes from './routes';
 import { initTheme } from './util/theme';
 import DblclickRipple from './util/dblclick-ripple';

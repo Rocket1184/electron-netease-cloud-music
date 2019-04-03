@@ -22,7 +22,7 @@
 <script>
 import { mapActions, mapState } from 'vuex';
 
-import { SET_LOGIN_VALID } from '@/vuex/mutation-types';
+import { SET_LOGIN_VALID } from '@/store/mutation-types';
 import VideoDetail from '@/components/VideoDetail/VideoDetail.vue';
 import AvatarListItem from '@/components/AvatarListItem.vue';
 import ListDetailLayout from '@/components/ListDetailLayout.vue';

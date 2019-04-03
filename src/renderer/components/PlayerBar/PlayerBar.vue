@@ -111,8 +111,8 @@ import {
     UPDATE_PLAYING_URL,
     SET_AUDIO_VOLUME,
     SET_AUDIO_PAUSED
-} from '@/vuex/mutation-types';
-import { LOOP_MODE } from '@/vuex/modules/playlist';
+} from '@/store/mutation-types';
+import { LOOP_MODE } from '@/store/modules/playlist';
 import { sizeImg, HiDpiPx, bkgImg } from '@/util/image';
 import { shortTime } from '@/util/formatter';
 
