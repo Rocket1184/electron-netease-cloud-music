@@ -5,6 +5,8 @@ import debug from 'debug';
 
 import {
     SET_LOGIN_VALID,
+    SET_AUDIO_VOLUME,
+    RESTORE_UI_STATE,
     UPDATE_PLAYING_URL,
     UPDATE_USER_PLAYLIST
 } from '@/store/mutation-types';
@@ -81,6 +83,10 @@ function subscribeHandler(mutation, state) {
         case UPDATE_USER_PLAYLIST:
             sendTrackMeta(state, track);
             break;
+        case SET_AUDIO_VOLUME:
+        case RESTORE_UI_STATE:
+            send('mute', state.ui.audioMute);
+            break;
     }
 }
 
@@ -119,5 +125,12 @@ export function injectStore(store) {
         store.dispatch('trashRadio', { id, time });
         store.dispatch('playNextTrack');
     });
-    TrayEmitter.on('get', () => sendTrackMeta(store.state, store.getters.playing));
+    TrayEmitter.on('mute', () => {
+        const mute = !store.state.ui.audioMute;
+        store.dispatch('setAudioVolume', { mute });
+    });
+    TrayEmitter.on('get', () => {
+        sendTrackMeta(store.state, store.getters.playing);
+        send('mute', store.state.ui.audioMute);
+    });
 }
