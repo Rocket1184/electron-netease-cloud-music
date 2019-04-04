@@ -39,11 +39,11 @@ const isKDE = [
 
 export class AppTray {
     static get SendEvents() {
-        return ['prev', 'next', 'playpause', 'favorite', 'dislike', 'get'];
+        return ['prev', 'next', 'playpause', 'favorite', 'dislike', 'get', 'mute'];
     }
 
     static get RecvEvents() {
-        return ['track'];
+        return ['track', 'mute'];
     }
 
     constructor(color = 'light') {
@@ -66,21 +66,64 @@ export class AppTray {
             { type: 'separator' },
             { label: '⏮ 上一首', click: () => this.emit('prev') },
             { label: '⏭ 下一首', click: () => this.emit('next') },
-            { label: '⏯ 播放 / 暂停', click: () => this.emit('playpause') },
-            { type: 'separator' },
+            { label: '⏯ 播放 / 暂停', click: () => this.emit('playpause') }
         ];
+        this.muted = false;
         /**
-         * @type {import('electron').MenuItemConstructorOptions[]}
+         * @param {import('../renderer/util/tray').TrayTrack} track
          */
-        this.trackMenu = [];
+        this.track = {};
         this.updateMenu();
         this.ipcListener = (_, type, ...args) => {
             dd('↓ %s %o', type, ...args);
-            if (type === 'track') {
-                this.setTrack(args[0]);
+            switch (type) {
+                case 'mute':
+                    this.muted = args[0];
+                    break;
+                case 'track':
+                    this.track = args[0];
+                    break;
             }
+            this.updateMenu();
         };
         ipcMain.on(IPC_TAG, this.ipcListener);
+    }
+
+    /**
+     * @type {import('electron').MenuItemConstructorOptions[]}
+     */
+    get muteMenu() {
+        return [
+            { label: '静音', click: () => this.emit('mute'), type: 'checkbox', checked: this.muted }
+        ];
+    }
+
+    /**
+     * @type {import('electron').MenuItemConstructorOptions[]}
+     */
+    get trackMenu() {
+        if (!this.track.id) {
+            return [];
+        }
+        return [
+            { type: 'separator' },
+            { label: ellipsisText(this.track.name, 30) },
+            { label: ellipsisText(`🎤 ${this.track.artist}`, 28) },
+            { label: ellipsisText(`💿 ${this.track.album}`, 28) },
+            { type: 'separator' },
+            {
+                label: '喜欢',
+                type: 'checkbox',
+                checked: this.track.favorite,
+                enabled: this.track.canFavorite,
+                click: () => this.emit('favorite', this.track.id)
+            },
+            {
+                label: '不感兴趣',
+                enabled: this.track.canDislike,
+                click: () => this.emit('dislike', this.track.id)
+            }
+        ];
     }
 
     /**
@@ -102,37 +145,8 @@ export class AppTray {
         this.emitter.emit(event, ...args);
     }
 
-    /**
-     * @param {import('../renderer/util/tray').TrayTrack} track 
-     */
-    setTrack(track) {
-        if (!track.id) {
-            this.trackMenu = [];
-            return;
-        }
-        this.trackMenu = [
-            { label: ellipsisText(track.name, 30) },
-            { label: ellipsisText(`🎤 ${track.artist}`, 28) },
-            { label: ellipsisText(`💿 ${track.album}`, 28) },
-            { type: 'separator' },
-            {
-                label: '喜欢',
-                type: 'checkbox',
-                checked: track.favorite,
-                enabled: track.canFavorite,
-                click: () => this.emit('favorite', track.id)
-            },
-            {
-                label: '不感兴趣',
-                enabled: track.canDislike,
-                click: () => this.emit('dislike', track.id)
-            },
-        ];
-        this.updateMenu();
-    }
-
     updateMenu() {
-        const tmpl = this.menuTemplate.concat(this.trackMenu);
+        const tmpl = this.menuTemplate.concat(this.muteMenu, this.trackMenu);
         const menu = Menu.buildFromTemplate(tmpl);
         this.tray.setContextMenu(menu);
     }
