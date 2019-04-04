@@ -9,6 +9,9 @@ const d = debug(TAG);
 const IPC_TAG = `${TAG}:IPC`;
 const dd = debug(IPC_TAG);
 
+/**
+ * @param {string} name
+ */
 function requireIcon(name) {
     let file = `${name}.png`;
     if (process.platform === 'darwin') {
@@ -20,6 +23,10 @@ function requireIcon(name) {
     return join(__dirname, 'icons/', file);
 }
 
+/**
+ * @param {string} str
+ * @param {number} length
+ */
 function ellipsisText(str, length) {
     if (str.length <= length) return str;
     return str.substr(0, length) + '...';
@@ -50,6 +57,9 @@ export class AppTray {
         this.tray.on('click', () => this.emit('raise'));
         // doesn't work on KDE Plasma
         this.tray.setToolTip('Electron NCM');
+        /**
+         * @type {import('electron').MenuItemConstructorOptions[]}
+         */
         this.menuTemplate = [
             { label: '显示主界面', click: () => this.emit('raise') },
             { label: '退出', click: () => this.emit('quit') },
@@ -59,6 +69,9 @@ export class AppTray {
             { label: '⏯ 播放 / 暂停', click: () => this.emit('playpause') },
             { type: 'separator' },
         ];
+        /**
+         * @type {import('electron').MenuItemConstructorOptions[]}
+         */
         this.trackMenu = [];
         this.updateMenu();
         this.ipcListener = (_, type, ...args) => {
@@ -89,6 +102,9 @@ export class AppTray {
         this.emitter.emit(event, ...args);
     }
 
+    /**
+     * @param {import('../renderer/util/tray').TrayTrack} track 
+     */
     setTrack(track) {
         if (!track.id) {
             this.trackMenu = [];

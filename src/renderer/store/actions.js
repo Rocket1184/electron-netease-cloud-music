@@ -3,18 +3,36 @@ import * as types from './mutation-types';
 import { Track, Video } from '@/util/models';
 import { LOOP_MODE } from './modules/playlist';
 
+/**
+ * @typedef {object} ActionContext
+ * @property {import('vuex').Commit} commit
+ * @property {import('vuex').Dispatch} dispatch
+ * @property {import('./getters').Getters} getters
+ * @property {import('./modules/index').State} state
+ */
+
+/**
+ * @param {ActionContext} param0
+ * @param {import('./modules/index').SettingsState} payload
+ */
 export async function updateSettings({ commit, state }, payload) {
     commit(types.UPDATE_SETTINGS, payload);
     sessionStorage.setItem('settings', JSON.stringify(state.settings));
     await Api.writeSettings(state.settings);
 }
 
+/**
+ * @param {ActionContext} param0
+ */
 export async function resetSettings({ commit }) {
     await Api.resetSettings();
     const st = await Api.getCurrentSettings();
     commit(types.UPDATE_SETTINGS, st);
 }
 
+/**
+ * @param {ActionContext} param0
+ */
 export function storeUiState({ state }) {
     let obj = {};
     [
@@ -25,6 +43,9 @@ export function storeUiState({ state }) {
     localStorage.setItem('ui', JSON.stringify(obj));
 }
 
+/**
+ * @param {ActionContext} param0
+ */
 export function restoreUiState({ commit, dispatch }) {
     try {
         const obj = JSON.parse(localStorage.getItem('ui'));
@@ -36,12 +57,18 @@ export function restoreUiState({ commit, dispatch }) {
     dispatch('updateUiLyric');
 }
 
+/**
+ * @param {ActionContext} param0
+ */
 export async function storeUserInfo({ state }) {
     localStorage.setItem('user', JSON.stringify(state.user.info));
     const cookie = await Api.getCookie();
     localStorage.setItem('cookie', JSON.stringify(cookie));
 }
 
+/**
+ * @param {ActionContext} param0
+ */
 export async function restoreUserInfo({ commit, dispatch }) {
     const user = localStorage.getItem('user');
     const cookie = localStorage.getItem('cookie');
@@ -63,6 +90,9 @@ export async function restoreUserInfo({ commit, dispatch }) {
     }
 }
 
+/**
+ * @param {ActionContext} param0
+ */
 export async function updateUserSignStatus({ commit }) {
     commit(types.SET_USER_SIGN_PENDING, true);
     const timestamp = Date.now();
@@ -74,6 +104,9 @@ export async function updateUserSignStatus({ commit }) {
     }
 }
 
+/**
+ * @param {ActionContext} param0
+ */
 export async function signDailyTask({ commit }, { type }) {
     commit(types.SET_USER_SIGN_PENDING, true);
     let resp;
@@ -95,6 +128,9 @@ export async function signDailyTask({ commit }, { type }) {
     return resp;
 }
 
+/**
+ * @param {ActionContext} param0
+ */
 export async function checkin({ state, dispatch }) {
     let points = 0;
     if (!state.user.signStatus.mobileSign) {
@@ -108,12 +144,18 @@ export async function checkin({ state, dispatch }) {
     return points;
 }
 
+/**
+ * @param {ActionContext} param0
+ */
 export async function updateUserPlaylistDetail({ commit }, payload) {
     const listId = typeof payload === 'number' ? payload : payload.id;
     const resp = await Api.getListDetail(listId);
     commit(types.UPDATE_USER_PLAYLIST, resp.playlist);
 }
 
+/**
+ * @param {ActionContext} param0
+ */
 export async function updateUserPlaylist({ state, commit, dispatch }) {
     const { playlist } = await Api.getUserPlaylist(state.user.info.id);
     // TODO: extract action updateUserInfo
@@ -125,6 +167,9 @@ export async function updateUserPlaylist({ state, commit, dispatch }) {
     return playlist;
 }
 
+/**
+ * @param {ActionContext} param0
+ */
 export function setLoginValid({ commit, dispatch }, payload) {
     if (payload === undefined || payload === true) {
         commit(types.SET_LOGIN_VALID, true);
@@ -135,6 +180,9 @@ export function setLoginValid({ commit, dispatch }, payload) {
     }
 }
 
+/**
+ * @param {ActionContext} param0
+ */
 export async function login({ commit, dispatch }, payload) {
     commit(types.SET_LOGIN_PENDING, true);
     const resp = await Api.login(payload.acc, payload.pwd);
@@ -147,6 +195,9 @@ export async function login({ commit, dispatch }, payload) {
     return resp;
 }
 
+/**
+ * @param {ActionContext} param0
+ */
 export async function logout({ commit }) {
     const resp = await Api.logout();
     if (resp == 200) {
@@ -161,6 +212,9 @@ export async function logout({ commit }) {
     }
 }
 
+/**
+ * @param {ActionContext} param0
+ */
 export async function search({ state, commit }, { keyword, type, limit = 20, offset = 0 }) {
     commit(types.SET_SEARCH_PENDING, true);
     if (state.ui.search.type !== type || state.ui.search.keyword !== keyword) {
@@ -203,6 +257,9 @@ export async function search({ state, commit }, { keyword, type, limit = 20, off
     commit(types.SET_SEARCH_PENDING, false);
 }
 
+/**
+ * @param {ActionContext} param0
+ */
 export async function updateUiAudioSrc({ commit, state, getters }, { ignoreCache = false } = {}) {
     const quality = state.settings.bitRate;
     const track = getters.playing;
@@ -214,10 +271,16 @@ export async function updateUiAudioSrc({ commit, state, getters }, { ignoreCache
     }
 }
 
+/**
+ * @param {ActionContext} param0
+ */
 export function setAudioVolume({ commit }, payload) {
     commit(types.SET_AUDIO_VOLUME, payload);
 }
 
+/**
+ * @param {ActionContext} param0
+ */
 export async function updateUiLyric({ commit, getters }, { ignoreCache = false } = {}) {
     const track = getters.playing;
     if (track && track.id) {
@@ -230,14 +293,23 @@ export async function updateUiLyric({ commit, getters }, { ignoreCache = false }
     }
 }
 
+/**
+ * @param {ActionContext} param0
+ */
 export function playAudio({ commit }) {
     commit(types.SET_AUDIO_PAUSED, false);
 }
 
+/**
+ * @param {ActionContext} param0
+ */
 export function pauseAudio({ commit }) {
     commit(types.SET_AUDIO_PAUSED, true);
 }
 
+/**
+ * @param {ActionContext} param0
+ */
 export async function playTrackIndex({ state, commit, dispatch }, index) {
     if (state.ui.radioMode === true) {
         commit(types.SET_RADIO_INDEX, index);
@@ -249,6 +321,9 @@ export async function playTrackIndex({ state, commit, dispatch }, index) {
     dispatch('playAudio');
 }
 
+/**
+ * @param {ActionContext} param0
+ */
 export function playNextTrack({ dispatch, getters }) {
     const { index, list, loopMode } = getters.queue;
     let nextIndex;
@@ -263,6 +338,9 @@ export function playNextTrack({ dispatch, getters }) {
     dispatch('playTrackIndex', nextIndex);
 }
 
+/**
+ * @param {ActionContext} param0
+ */
 export function playPreviousTrack({ dispatch, getters }) {
     const { index, list, loopMode } = getters.queue;
     let nextIndex;
@@ -277,6 +355,9 @@ export function playPreviousTrack({ dispatch, getters }) {
     dispatch('playTrackIndex', nextIndex);
 }
 
+/**
+ * @param {ActionContext} param0
+ */
 export async function playPlaylist({ commit, dispatch, state }, { tracks, source }) {
     const list = tracks.map(t => Object.assign({}, t));
     if (source) {
@@ -293,6 +374,9 @@ export async function playPlaylist({ commit, dispatch, state }, { tracks, source
     dispatch('playTrackIndex', firstIndex);
 }
 
+/**
+ * @param {ActionContext} param0
+ */
 export function clearPlaylist({ state, commit, dispatch }) {
     if (state.ui.radioMode) {
         commit(types.RESTORE_RADIO, { list: [], index: 0 });
@@ -308,6 +392,9 @@ export function storePlaylist({ state }) {
     localStorage.setItem('playlist', JSON.stringify(state.playlist));
 }
 
+/**
+ * @param {ActionContext} param0
+ */
 export function restorePlaylist({ commit }) {
     try {
         const stored = localStorage.getItem('playlist');
@@ -321,6 +408,9 @@ export function restorePlaylist({ commit }) {
     }
 }
 
+/**
+ * @param {ActionContext} param0
+ */
 export function toggleCollectPopup({ commit, state }, payload = {}) {
     const tracks = typeof payload === 'number'
         ? { ids: [payload] }
@@ -337,6 +427,9 @@ export function toggleCollectPopup({ commit, state }, payload = {}) {
     commit(types.SHOW_COLLECT_POPUP);
 }
 
+/**
+ * @param {ActionContext} _
+ */
 export async function collectTrack(_, { playlist, tracks }) {
     const resp = await Api.collectTrack(playlist, ...tracks);
     if (resp.code === 200) {
@@ -345,6 +438,9 @@ export async function collectTrack(_, { playlist, tracks }) {
     throw resp;
 }
 
+/**
+ * @param {ActionContext} _
+ */
 export async function uncollectTrack(_, { playlist, tracks }) {
     const resp = await Api.uncollectTrack(playlist, ...tracks);
     if (resp.code === 200) {
@@ -353,6 +449,9 @@ export async function uncollectTrack(_, { playlist, tracks }) {
     throw resp;
 }
 
+/**
+ * @param {ActionContext} _
+ */
 export async function favoriteTrack(_, { id, favorite = true }) {
     const resp = await Api.likeSongE(id, favorite);
     if (resp.code === 200) {
@@ -361,6 +460,9 @@ export async function favoriteTrack(_, { id, favorite = true }) {
     throw resp;
 }
 
+/**
+ * @param {ActionContext} param0
+ */
 export function nextLoopMode({ commit, state }) {
     const { loopMode } = state.playlist;
     switch (loopMode) {
@@ -376,6 +478,9 @@ export function nextLoopMode({ commit, state }) {
     }
 }
 
+/**
+ * @param {ActionContext} param0
+ */
 export function insertTrackIntoPlaylist({ commit, state }, payload) {
     let tracks = Array.isArray(payload.tracks)
         ? payload.tracks
@@ -387,6 +492,9 @@ export function insertTrackIntoPlaylist({ commit, state }, payload) {
     commit(types.INSERT_TRACK_INTO_PLAYLIST, { tracks, index });
 }
 
+/**
+ * @param {ActionContext} param0
+ */
 export function removeTrackFromPlaylist({ getters, commit, dispatch }, payload) {
     const track1 = getters.playing;
     commit(types.REMOVE_TRACK_FROM_PLAYLIST, payload);
@@ -397,6 +505,9 @@ export function removeTrackFromPlaylist({ getters, commit, dispatch }, payload) 
     }
 }
 
+/**
+ * @param {ActionContext} param0
+ */
 export async function subscribePlaylist({ commit }, payload) {
     const resp = await Api.subscribePlaylist(payload.id);
     if (resp.code === 200) {
@@ -406,6 +517,9 @@ export async function subscribePlaylist({ commit }, payload) {
     throw resp;
 }
 
+/**
+ * @param {ActionContext} param0
+ */
 export async function unsubscribePlaylist({ commit }, payload) {
     const resp = await Api.unsubscribePlaylist(payload.id);
     if (resp.code === 200) {
@@ -415,36 +529,57 @@ export async function unsubscribePlaylist({ commit }, payload) {
     throw resp;
 }
 
+/**
+ * @param {ActionContext} param0
+ */
 export async function updateUserAlbums({ commit }) {
     const resp = await Api.getSubscribedAlumbs(1000);
     commit(types.SET_USER_ALBUMS, resp.data);
 }
 
+/**
+ * @param {ActionContext} param0
+ */
 export async function setUiFavAlbum({ commit }, id) {
     const resp = await Api.getAlbumDetailW(id);
     commit(types.SET_UI_FAV_ALBUM, resp);
 }
 
+/**
+ * @param {ActionContext} param0
+ */
 export async function setUiTempPlaylist({ commit }, id) {
     const resp = await Api.getListDetail(id);
     commit(types.SET_UI_TEMP_PLAYLIST, resp.playlist);
 }
 
+/**
+ * @param {ActionContext} param0
+ */
 export async function setUiRelatedPlaylists({ commit }, id) {
     const resp = await Api.getRelatedPlaylists(id);
     commit(types.SET_UI_TEMP_RELATED_PLAYLISTS, resp.data);
 }
 
+/**
+ * @param {ActionContext} param0
+ */
 export async function updateRecommendSongs({ commit }) {
     const resp = await Api.getRecommendSongs();
     commit(types.SET_RECOMMEND_SONGS, resp.recommend);
 }
 
+/**
+ * @param {ActionContext} param0
+ */
 export async function updateRecommendStatistics({ commit }) {
     const resp = await Api.getRecommendStatistics();
     commit(types.SET_RECOMMEND_STATISTICS, resp.data);
 }
 
+/**
+ * @param {ActionContext} param0
+ */
 export async function dislikeRecommend({ commit }, id) {
     const resp = await Api.dislikeRecommend(id);
     if (resp.code === 200) {
@@ -453,16 +588,25 @@ export async function dislikeRecommend({ commit }, id) {
     return resp;
 }
 
+/**
+ * @param {ActionContext} param0
+ */
 export async function setUiTempAlbum({ commit }, id) {
     const resp = await Api.getAlbumDetailW(id);
     commit(types.SET_UI_TEMP_ALBUM, resp);
 }
 
+/**
+ * @param {ActionContext} param0
+ */
 export async function setUiRelatedAlbums({ commit }, id) {
     const resp = await Api.getRelatedAlbums(id);
     commit(types.SET_UI_TEMP_RELATED_ALBUMS, resp.data);
 }
 
+/**
+ * @param {ActionContext} param0
+ */
 export async function subscribeAlbum({ commit }, payload) {
     const resp = await Api.subscribeAlbum(payload.id);
     if (resp.code === 200 && typeof resp.time === 'number') {
@@ -472,6 +616,9 @@ export async function subscribeAlbum({ commit }, payload) {
     throw resp;
 }
 
+/**
+ * @param {ActionContext} param0
+ */
 export async function unsubscribeAlbum({ commit }, payload) {
     const resp = await Api.unsubscribeAlbum(payload.id);
     if (resp.code === 200 && typeof resp.time === 'number') {
@@ -481,6 +628,9 @@ export async function unsubscribeAlbum({ commit }, payload) {
     throw resp;
 }
 
+/**
+ * @param {ActionContext} param0
+ */
 export async function updateUserArtists({ commit }) {
     const resp = await Api.getSubscribedArtists(1000);
     if (resp.code === 200) {
@@ -488,6 +638,9 @@ export async function updateUserArtists({ commit }) {
     }
 }
 
+/**
+ * @param {ActionContext} param0
+ */
 export async function setUiArtist({ commit }, { mutation, id }) {
     const resp = await Api.getArtistDetailW(id);
     commit(mutation, resp);
@@ -501,6 +654,9 @@ export function setUiTempArtist({ dispatch }, id) {
     return dispatch('setUiArtist', { mutation: types.SET_UI_TEMP_ARTIST, id });
 }
 
+/**
+ * @param {ActionContext} param0
+ */
 export async function followArtist({ commit }, payload) {
     const resp = await Api.followArtist(payload.id);
     if (resp.code === 200) {
@@ -510,6 +666,9 @@ export async function followArtist({ commit }, payload) {
     throw resp;
 }
 
+/**
+ * @param {ActionContext} param0
+ */
 export async function unfollowArtist({ commit }, payload) {
     const resp = await Api.unfollowArtist(payload.id);
     if (resp.code === 200) {
@@ -519,34 +678,46 @@ export async function unfollowArtist({ commit }, payload) {
     throw resp;
 }
 
+/**
+ * @param {ActionContext} param0
+ */
 export async function updateUserVideos({ commit }) {
     const resp = await Api.getFavoriteVideos(1000);
     commit(types.SET_USER_VIDEOS, resp.data);
 }
 
+/**
+ * @param {ActionContext} param0
+ */
 export async function setUiVideo({ commit }, { id, type, mutation }) {
     let resp;
     if (type === 0) {
         resp = await Api.getMVDetail(id);
-        resp.data.type = type;
-        resp.data.subed = resp.subed;
-        commit(mutation, resp.data);
+        commit(mutation, Object.assign(resp.data, { type, subed: resp.subed }));
     } else if (type === 1) {
         resp = await Api.getVideoDetail(id);
-        resp.data.type = type;
-        commit(mutation, resp.data);
+        commit(mutation, Object.assign(resp.data, { type }));
     }
     return resp;
 }
 
+/**
+ * @param {ActionContext} param0
+ */
 export function setUiFavVideo({ dispatch }, { id, type }) {
     return dispatch('setUiVideo', { id, type, mutation: types.SET_UI_FAV_VIDEO });
 }
 
+/**
+ * @param {ActionContext} param0
+ */
 export function setUiTempVideo({ dispatch }, { id, type }) {
     return dispatch('setUiVideo', { id, type, mutation: types.SET_UI_TEMP_VIDEO });
 }
 
+/**
+ * @param {ActionContext} param0
+ */
 export async function subscribeVideo({ commit }, payload) {
     const { id, type } = payload;
     const func = type === 0 ? Api.subscribeMV : Api.subscribeVideo;
@@ -558,6 +729,9 @@ export async function subscribeVideo({ commit }, payload) {
     throw resp;
 }
 
+/**
+ * @param {ActionContext} param0
+ */
 export async function unsubscribeVideo({ commit }, payload) {
     const { id, type } = payload;
     const func = type === 0 ? Api.unsubscribeMV : Api.unsubscribeVideo;
@@ -569,22 +743,34 @@ export async function unsubscribeVideo({ commit }, payload) {
     throw resp;
 }
 
+/**
+ * @param {ActionContext} _
+ */
 export async function likeResource(_, id) {
     const resp = await Api.likeResource(id);
     if (resp.code === 200) return resp;
     throw resp;
 }
 
+/**
+ * @param {ActionContext} _
+ */
 export async function unlikeResource(_, id) {
     const resp = await Api.unlikeResource(id);
     if (resp.code === 200) return resp;
     throw resp;
 }
 
+/**
+ * @param {ActionContext} param0
+ */
 export function storeRadio({ state }) {
     localStorage.setItem('radio', JSON.stringify(state.radio));
 }
 
+/**
+ * @param {ActionContext} param0
+ */
 export function restoreRadio({ commit }) {
     try {
         const stored = localStorage.getItem('radio');
@@ -598,6 +784,9 @@ export function restoreRadio({ commit }) {
     }
 }
 
+/**
+ * @param {ActionContext} param0
+ */
 export async function getRadio({ commit }) {
     const resp = await Api.getRadioE();
     if (resp.code === 200) {
@@ -606,6 +795,9 @@ export async function getRadio({ commit }) {
     }
 }
 
+/**
+ * @param {ActionContext} param0
+ */
 export async function activateRadio({ state, commit, dispatch }, payload) {
     if (payload === true) {
         commit(types.ACTIVATE_RADIO, true);
@@ -619,6 +811,7 @@ export async function activateRadio({ state, commit, dispatch }, payload) {
 
 /**
  * time in ms
+ * @param {ActionContext} _
  */
 export async function likeRadio(_, { id, time, like = true }) {
     const resp = await Api.likeRadioE(id, time, like);
@@ -630,6 +823,7 @@ export async function likeRadio(_, { id, time, like = true }) {
 
 /**
  * time in ms
+ * @param {ActionContext} _
  */
 export async function skipRadio(_, { id, time }) {
     const resp = await Api.skipRadioE(id, time);
@@ -641,6 +835,7 @@ export async function skipRadio(_, { id, time }) {
 
 /**
  * time in ms
+ * @param {ActionContext} _
  */
 export async function trashRadio(_, { id, time }) {
     const resp = await Api.addRadioTrashE(id, time);

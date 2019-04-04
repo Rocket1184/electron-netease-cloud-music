@@ -1,5 +1,4 @@
-declare namespace Models {
-
+namespace Models {
     export class User {
         constructor(o: any);
         id: number;

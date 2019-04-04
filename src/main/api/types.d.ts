@@ -1250,6 +1250,16 @@ namespace Types {
         publishDate: string;
     }
 
+    export interface RecommendStatisticsData {
+        playCnt: number;
+        likeCnt: number;
+        followCnt: number;
+    }
+
+    export interface RecommendStatisticsRes extends ApiRes {
+        data: RecommendStatisticsData;
+    }
+
     export interface RelatedAlbumsRes extends ApiRes {
         data: RelatedAlbum[];
     }

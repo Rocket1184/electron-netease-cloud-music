@@ -13,6 +13,9 @@ const d = debug('MusicServer');
 const fsPromises = fs.promises;
 
 class MusicServer {
+    /**
+     * @param {string|Cache} cacheOrPath
+     */
     constructor(cacheOrPath) {
         switch (typeof cacheOrPath) {
             case 'string':
@@ -31,6 +34,10 @@ class MusicServer {
     }
 
     // credit: https://github.com/obastemur/mediaserver/blob/master/index.js#L38-L62
+    /**
+     * @param {import('http').IncomingMessage} req
+     * @param {number} total
+     */
     static getRange(req, total) {
         // <range-start> - <range-end> / <file-size>
         const range = [0, total, 0];
@@ -74,6 +81,7 @@ class MusicServer {
      * @param {string} quality
      */
     async getMusicUrl(id, quality) {
+        // @ts-ignore
         const res = await getMusicUrlE(id, quality);
         d('res: %o', res);
         if (res.code !== 200 || res.data[0].code !== 200) throw res;
@@ -82,7 +90,7 @@ class MusicServer {
 
     /**
      * MusicServer HTTP request handler
-     * @param {import('http').ClientRequest} req
+     * @param {import('http').IncomingMessage} req
      * @param {import('http').ServerResponse} res
      */
     async serverHandler(req, res) {
@@ -96,9 +104,9 @@ class MusicServer {
             res.end('@see https://tools.ietf.org/html/rfc2324');
             return;
         }
-        const id = params['id'];
-        const quality = params['quality'] || 'l';
-        const ignoreCache = params['ignoreCache'] === 'true';
+        const id = Array.isArray(params.id) ? params.id[0] : params.id;
+        const quality = Array.isArray(params.quality) ? params.quality[0] : params.quality || 'l';
+        const ignoreCache = params.ignoreCache === 'true';
         const fileName = `${id}${quality}`;
         const filePath = this.cache.fullPath(fileName);
         // check cache first
@@ -120,7 +128,7 @@ class MusicServer {
             }
         }
         try {
-            const music = await this.getMusicUrl(id, quality);
+            const music = await this.getMusicUrl(Number.parseInt(id, 10), quality);
             d('Got URL for music id=%d', id);
             const musicRes = await this.cache.fetch(music.url);
             musicRes.body.pipe(fs.createWriteStream(filePath));

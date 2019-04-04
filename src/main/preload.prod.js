@@ -5,6 +5,7 @@ const { EventEmitter } = require('events');
 const platform = require('os').platform();
 const versions = process.versions;
 
+// @ts-ignore
 window.require = function (id) {
     switch (id) {
         case 'electron':

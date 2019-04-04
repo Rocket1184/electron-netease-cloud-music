@@ -9,20 +9,33 @@ import {
     UPDATE_USER_PLAYLIST
 } from '@/store/mutation-types';
 
+/**
+ * @typedef {import('@/store').Store} Store
+ * @typedef {import('@/store').State} State
+ */
+
 const TrayEmitter = new EventEmitter();
 const TAG = 'Tray:IPC';
 const d = debug(TAG);
 
-ipcRenderer.on(TAG, (event, type, ...args) => {
+ipcRenderer.on(TAG, (event, /** @type {string} */ type, ...args) => {
     d('🔻 %s %o', type, args);
     TrayEmitter.emit(type, ...args);
 });
 
+/**
+ * @param {string} type
+ * @param  {...any} args
+ */
 function send(type, ...args) {
     d('🔺 %s %o', type, args);
     ipcRenderer.send(TAG, type, ...args);
 }
 
+/**
+ * @param {State} state
+ * @param {number} trackId
+ */
 function isFavorite(state, trackId) {
     const favoriteList = state.user.playlist[0];
     if (state.user.loginValid
@@ -33,6 +46,11 @@ function isFavorite(state, trackId) {
     return false;
 }
 
+/**
+ * @param {State} state 
+ * @param {Models.Track} track 
+ * @typedef {{id: number, name: string, artist: string, album: string, canFavorite: boolean, favorite: boolean, canDislike: boolean}} TrayTrack
+ */
 function sendTrackMeta(state, track) {
     let payload = { id: 0 };
     if (track && track.id) {
@@ -49,7 +67,11 @@ function sendTrackMeta(state, track) {
     send('track', payload);
 }
 
-// Vuex mutation subscribe handler
+/**
+ * Vuex mutation subscribe handler
+ * @param {import('vuex').MutationPayload} mutation
+ * @param {State} state
+ */
 function subscribeHandler(mutation, state) {
     const queue = state.ui.radioMode === true ? state.radio : state.playlist;
     const track = queue.list[queue.index];
@@ -62,6 +84,9 @@ function subscribeHandler(mutation, state) {
     }
 }
 
+/**
+ * @param {Store} store 
+ */
 export function injectStore(store) {
     store.subscribe(subscribeHandler);
     TrayEmitter.on('playpause', () => {

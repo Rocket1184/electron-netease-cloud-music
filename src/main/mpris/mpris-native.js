@@ -140,6 +140,10 @@ class MediaPlayer2Player {
         this.MaximumRate = 1.0;
     }
 
+    /**
+     * @param {{[key:string]:any}} changedProperties
+     * @param {string[]} invalidatedProperties
+     */
     PropertiesChanged(changedProperties, invalidatedProperties = []) {
         const body = [
             i.name('Player'),
@@ -248,12 +252,19 @@ class MediaPlayer2Player {
         this.emitter.emit('dbus:stop');
     }
 
+    /**
+     * @param {number} Offset offset in microsecond
+     */
     Seek(Offset) {
         d('method: Seek %d', Offset);
         this.emitter.emit('dbus:seek', Offset / 1e6);
         this.timer.offset(Offset / 1e3);
     }
 
+    /**
+     * @param {string} TrackId
+     * @param {number} Position position in microsecond
+     */
     SetPosition(TrackId, Position) {
         d('method: SetPosition %s %d', TrackId, Position);
         this.emitter.emit('dbus:position', TrackId, Position / 1e6);

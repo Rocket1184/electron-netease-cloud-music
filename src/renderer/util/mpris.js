@@ -26,6 +26,9 @@ function senderFn(type, ...args) {
 
 //          ipc                         PropertiesChanged signal
 // Renderer --> Main(emit MPRIS events) -----------------------> DBus
+/**
+ * @type {{[key: string]: Function}}
+ */
 const MPRIS = new Proxy({}, {
     get(_, propName) {
         if (methodMap.has(propName)) {
@@ -76,6 +79,9 @@ function subscribeHandler(mutation, state) {
     }
 }
 
+/**
+ * @param {import('@/store').Store} store 
+ */
 export function injectStore(store) {
     // ensure 'PlaybackStatus' is 'Stopped' when this module loads
     MPRIS.stop();

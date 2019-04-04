@@ -10,6 +10,10 @@ import { encodeWeb, encodeLinux, encodeEApi, decodeEApi } from './codec';
 
 const d = debug('HTTP');
 
+/**
+ * @typedef {{url?: string, headers?: Record<string, string>, data?: any}} RequestConfig
+ */
+
 class HttpClient {
     constructor() {
         this.clientHeaders = {
@@ -57,11 +61,14 @@ class HttpClient {
     getCookie(key) {
         const cookies = this.cookieJar.getCookies(CookieAccessInfo.All);
         if (!key) {
+            /**
+             * @type {Record<string, string>}
+             */
             let result = {};
             cookies.forEach(c => result[c.name] = c.value);
             return result;
         }
-        const c = cookies.find(c => c.name === key) || {};
+        const c = cookies.find(c => c.name === key) || { value: '' };
         return c.value;
     }
 
@@ -114,7 +121,7 @@ class HttpClient {
 
     async get(config) {
         let url = typeof config === 'string' ? config : config.url;
-        /** @type {RequestInit} */
+        /** @type {import('node-fetch').RequestInit} */
         let init = {
             method: 'GET'
         };
@@ -136,11 +143,12 @@ class HttpClient {
     /**
      * wrapper of node-fetch function
      * @param {string} url
-     * @param {RequestInit} init
+     * @param {import('node-fetch').RequestInit} init
      */
     async post(url, init) {
         init.headers = this.mergeHeaders({
             'Content-Type': 'application/x-www-form-urlencoded',
+            // @ts-ignore
             'Content-Length': Buffer.byteLength(init.body)
         }, init.headers);
 
@@ -153,34 +161,39 @@ class HttpClient {
 
     /**
      * weapi request
+     * @param {RequestConfig} config
      */
     postW(config) {
         let url = config.url;
-        /** @type {RequestInit} */
+        /** @type {import('node-fetch').RequestInit} */
         let init = {
             method: 'POST',
-            body: config.data || {}
+            body: ''
         };
+        let body = config.data || {};
         const __csrf = this.getCookie('__csrf');
         if (__csrf) {
             url += `?csrf_token=${__csrf}`;
-            init.body.csrf_token = __csrf;
+            body.csrf_token = __csrf;
         }
-        init.body = qs.stringify(encodeWeb(init.body));
+        init.body = qs.stringify(encodeWeb(body));
         return this.post(url, init);
     }
 
     /**
      * linux/forward api request
+     * only use it when you **HAVE TO**
+     * @param {RequestConfig} config
      */
     postL(config) {
         const url = config.url;
-        /** @type {RequestInit} */
+        /** @type {import('node-fetch').RequestInit} */
         let init = {
             method: 'POST',
-            body: config.data || {},
-            headers: { Cookie: '' }
+            headers: {},
+            body: ''
         };
+        let body = config.data || {};
         let cookie = {
             os: 'pc',
             osver: 'linux',
@@ -190,46 +203,40 @@ class HttpClient {
         // merge cookies
         Object.assign(cookie, config.headers && config.headers.Cookie);
         // put cookie string into RequestInit's header
-        init.headers.Cookie = Object.entries(cookie).map(([k, v]) => `${k}=${v}`).join('; ');
+        init.headers['Cookie'] = Object.entries(cookie).map(([k, v]) => `${k}=${v}`).join('; ');
         // encrypt request payload
-        init.body = qs.stringify(encodeLinux(init.body));
+        init.body = qs.stringify(encodeLinux(body));
         return this.post(url, init);
     }
 
     /**
      * eapi request
+     * @param {RequestConfig} config
      */
     async postE(config) {
         const url = config.url;
-        /** @type {RequestInit} */
+        /** @type {import('node-fetch').RequestInit} */
         let init = {
             method: 'POST',
-            body: {
-                ...config.data,
-                e_r: 'true',
-                header: {}
-            },
-            headers: { Cookie: '' }
+            headers: {},
+            body: ''
         };
+        let body = Object.assign({ e_r: 'true', header: {} }, config.data);
+        // default eapi cookies
         let cookie = {
             os: 'pc',
             osver: 'linux',
             appver: '2.0.3.131777',
             channel: 'netease'
         };
-        // merge cookies
-        Object.assign(cookie, config.headers && config.headers.Cookie);
-        // put cookie k-v pair into body.header
-        init.body.header = cookie;
-        // extract url pathname for encrypt
-        const u = new URL(url);
+        body.header = Object.assign({}, cookie, this.getCookie());
         // encrypt request payload
-        init.body = qs.stringify(encodeEApi(u.pathname, init.body));
+        init.body = qs.stringify(encodeEApi(new URL(url).pathname, body));
         init.headers = this.mergeHeaders({
             'Cookie': Object.entries(cookie).map(([k, v]) => `${k}=${v}`).join('; '),
             'Content-Type': 'application/x-www-form-urlencoded',
             'Content-Length': Buffer.byteLength(init.body)
-        }, init.headers);
+        });
         const res = await fetch(url, init);
         this.handleResponse(res);
         const buf = await res.buffer();

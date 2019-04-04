@@ -13,6 +13,9 @@ import Client from './httpClient';
 import * as Settings from '../settings';
 import MusicServer from './musicServer';
 
+/// <reference path="./types.d.ts" />
+
+// @ts-ignore
 const fsPromises = fs.promises;
 const BaseURL = 'https://music.163.com';
 
@@ -152,7 +155,7 @@ export function dislikeRecommend(id) {
 
 /**
  * 推荐歌单，登录后可用
- * @returns {Types.RecommendPlaylistRes}
+ * @returns {Promise<Types.RecommendPlaylistRes>}
  */
 export function getRecommendPlaylist() {
     return client.postW({
@@ -268,8 +271,8 @@ export function getMusicUrlE(idOrIds, quality) {
  * get musicServer's music url
  * @param {number} id
  * @param {Types.MusicQuality} quality
- * @param {boolean} cache
- * @returns {Types.MusicUrlLocalRes}
+ * @param {boolean} [ignoreCache=false]
+ * @returns {Promise<Types.MusicUrlLocalRes>}
  */
 export async function getMusicUrlLocal(id, quality, ignoreCache = false) {
     return {
@@ -383,7 +386,7 @@ export function addComment(threadId, content) {
  * delete comment from thread
  * @param {string} threadId
  * @param {number} commentId
- * @returns {Types.ApiRes}
+ * @returns {Promise<Types.ApiRes>}
  */
 export function deleteComment(threadId, commentId) {
     return client.postW({
@@ -397,7 +400,7 @@ export function deleteComment(threadId, commentId) {
  * @param {string} threadId
  * @param {number} commentId
  * @param {string} content
- * @returns {Types.AddCommentRes}
+ * @returns {Promise<Types.AddCommentRes>}
  */
 export function replyComment(threadId, commentId, content) {
     return client.postW({
@@ -410,7 +413,7 @@ export function replyComment(threadId, commentId, content) {
  * @param {string} threadId
  * @param {number} commentId
  * @param {string} content
- * @returns {Types.AddCommentRes}
+ * @returns {Promise<Types.AddCommentRes>}
  */
 export function replyCommentE(threadId, commentId, content) {
     const { resType: resourceType } = threadId.match(Comments.threadRegexp).groups;
@@ -482,14 +485,14 @@ export async function getMusicLyric(id) {
  * @returns {Promise<Types.MusicLyricRes>}
  */
 export async function getMusicLyricCached(id, ignoreCache = false) {
-    const hasCache = await lyricCache.has(id);
+    const hasCache = await lyricCache.has(id.toString());
     if (hasCache && !ignoreCache) {
         const pathname = lyricCache.fullPath(id);
         const text = await fsPromises.readFile(pathname, 'utf8');
         return JSON.parse(text);
     } else {
         const lyric = await getMusicLyric(id);
-        lyricCache.save(id, lyric);
+        lyricCache.save(id.toString(), lyric);
         return lyric;
     }
 }
@@ -630,9 +633,12 @@ export async function clearCache(type) {
     return { ok: true };
 }
 
-function execAsync(...args) {
+/**
+ * @param {string} command
+ */
+function execAsync(command) {
     return new Promise((resolve, reject) => {
-        cp.exec(...args, (err, stdout, stderr) => {
+        cp.exec(command, (err, stdout, stderr) => {
             if (err) {
                 reject({ stderr, stack: err.stack });
                 return;
@@ -659,7 +665,7 @@ export async function getVersionName() {
 }
 
 /**
- * @returns {Promise<typeof Settings.defaultSettings>}
+ * @returns {typeof Settings.defaultSettings}
  */
 export function getCurrentSettings() {
     return Settings.get();
@@ -920,6 +926,9 @@ export function getAlbumPrivilege(id) {
 // utils for api `getRelatedPlaylists`
 const RelatedPlaylists = {
     regexp: /<div class="cver u-cover u-cover-3">[\s\S]*?title="(.+)"\ndata-res-id="(\d+)"[\s\S]*?<img src="(.+)"[\s\S]*?<a class="nm nm f-thide s-fc3" href="(.+)" title="(.+)">/g,
+    /**
+     * @param {string} u
+     */
     trimSrc(u) {
         const o = url.parse(u);
         return url.format({
@@ -928,9 +937,13 @@ const RelatedPlaylists = {
             pathname: o.pathname
         });
     },
+    /**
+     * @param {string} u
+     */
     trimId(u) {
         const o = url.parse(u);
-        return qs.parse(o.query).id;
+        const { id } = qs.parse(o.query);
+        return Array.isArray(id) ? id[0] : id;
     }
 };
 
@@ -957,7 +970,7 @@ export async function getRelatedPlaylists(id) {
         }
         return { code: 200, data };
     } catch (e) {
-        return { code: 500, error: e.stack };
+        throw { code: 500, error: e.stack };
     }
 }
 
@@ -965,6 +978,9 @@ const RecommendStatistics = {
     regexp: /你播放了[\s\S]*?(\d+)<\/strong>首音乐[\s\S]*?你喜欢了[\s\S]*?(\d+)<\/strong>首音乐[\s\S]*?你收藏了[\s\S]*?(\d+)<\/strong>位歌手/
 };
 
+/**
+ * @returns {Promise<Types.RecommendStatisticsRes>}
+ */
 export async function getRecommendStatistics() {
     const html = await client.get(`${BaseURL}/discover/recommend/taste`);
     try {
@@ -978,7 +994,7 @@ export async function getRecommendStatistics() {
             }
         };
     } catch (e) {
-        return { code: 500, error: e.stack };
+        throw { code: 500, error: e.stack };
     }
 }
 
@@ -1006,7 +1022,7 @@ export async function getRelatedAlbums(id) {
         }
         return { code: 200, data };
     } catch (e) {
-        return { code: 500, error: e.stack };
+        throw { code: 500, error: e.stack };
     }
 }
 
@@ -1069,8 +1085,11 @@ export function getPersonalizedPlaylists(limit = 10, offset = 0) {
 export function getArtistDetailE(id) {
     return client.postE({
         url: `${BaseURL}/eapi/artist/v3/detail`,
-        data: { id: `${id}`, top: '50' },
-        cache_key: ''
+        data: {
+            id: `${id}`,
+            top: '50',
+            cache_key: ''
+        }
     });
 }
 
@@ -1181,7 +1200,7 @@ export function getMVDetail(id) {
 }
 
 /**
- * @param {string} id
+ * @param {string} mvId
  * @returns {Promise<Types.SubscribeMVRes>}
  */
 export function subscribeMV(mvId) {
@@ -1195,7 +1214,7 @@ export function subscribeMV(mvId) {
 }
 
 /**
- * @param {string} id
+ * @param {string} mvId
  * @returns {Promise<Types.UnsubscribeMVRes>}
  */
 export function unsubscribeMV(mvId) {
@@ -1362,7 +1381,7 @@ export function getRadioE() {
 /**
  * @param {number} songId
  * @param {number} time time in ms
- * @returns {Types.SkipRadioERes}
+ * @returns {Promise<Types.SkipRadioERes>}
  */
 export function skipRadioE(songId, time) {
     return client.postE({
@@ -1379,7 +1398,7 @@ export function skipRadioE(songId, time) {
  * @param {number} trackId
  * @param {number} time time in ms
  * @param {boolean} like should like or not
- * @returns {Types.LikeRadioERes}
+ * @returns {Promise<Types.LikeRadioERes>}
  */
 export function likeRadioE(trackId, time, like = true) {
     return client.postE({
@@ -1396,7 +1415,7 @@ export function likeRadioE(trackId, time, like = true) {
 /**
  * @param {number} songId
  * @param {number} time time in ms
- * @returns {Types.AddRadioTrashERes}
+ * @returns {Promise<Types.AddRadioTrashERes>}
  */
 export function addRadioTrashE(songId, time) {
     return client.postE({
@@ -1412,7 +1431,7 @@ export function addRadioTrashE(songId, time) {
 /**
  * @param {number} limit
  * @param {number} addTime 
- * @returns {Types.RadioTrashERes}
+ * @returns {Promise<Types.RadioTrashERes>}
  */
 export function getRadioTrashE(limit, addTime) {
     return client.postE({
@@ -1423,7 +1442,7 @@ export function getRadioTrashE(limit, addTime) {
 
 /**
  * @param {number} songId
- * @returns {Types.ApiRes}
+ * @returns {Promise<Types.ApiRes>}
  */
 export function removeRadioTrashE(songId) {
     return client.postE({
@@ -1435,7 +1454,7 @@ export function removeRadioTrashE(songId) {
 /**
  * @param {number} trackId
  * @param {boolean} like
- * @returns {Types.LikeSongERes}
+ * @returns {Promise<Types.LikeSongERes>}
  */
 export function likeSongE(trackId, like = true) {
     return client.postE({
@@ -1450,7 +1469,7 @@ export function likeSongE(trackId, like = true) {
 
 /**
  * 首页推荐->最新音乐
- * @returns {Types.NewAlbumsRes}
+ * @returns {Promise<Types.NewAlbumsRes>}
  */
 export function getNewAlbums() {
     return client.postE({
@@ -1462,7 +1481,7 @@ export function getNewAlbums() {
 /**
  * 首页->Banner 横幅
  * @param {"pc" | "web" | "android" | "iphone"} clientType
- * @returns {Types.ApiRes} // TODO: tsd BannersRes
+ * @returns {Promise<Types.ApiRes>} // TODO: tsd BannersRes
  */
 export function getBanners(clientType = 'pc') {
     return client.postE({

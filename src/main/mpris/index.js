@@ -11,7 +11,7 @@ let msgId = 0;
 // DBus ------------> Main --> Renderer
 const dbusEvents = ['raise', 'quit', 'next', 'prev', 'play', 'pause', 'stop', 'seek', 'position'];
 
-ipcMain.on(TAG, (_, type, ...args) => {
+ipcMain.on(TAG, (_, /** @type {string} */ type, ...args) => {
     d('↓ %s', type);
     MPRISEmitter.emit(type, ...args);
 });
@@ -41,6 +41,10 @@ export function bindWebContents(wc) {
         wc.send(TAG, type, msgId, ...args);
         d('↑ %s %d, %o', type, msgId, ...args);
     });
+    /**
+     * @param {import('electron').IpcMessageEvent} _
+     * @param {string} msg
+     */
     const handler = (_, msg) => {
         if (msg === 'renderer-ready') {
             ipcMain.removeListener(TAG, handler);

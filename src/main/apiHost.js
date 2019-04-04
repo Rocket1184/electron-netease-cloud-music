@@ -14,7 +14,7 @@ async function rejectTimeout(timeOut = 60000) {
     });
 }
 
-ipcMain.on(TAG, (event, methodName, invokeId, ...args) => {
+ipcMain.on(TAG, (event, /** @type {string} */ methodName, /** @type {number} */ invokeId, ...args) => {
     d('↓ %s', methodName);
     Promise.race([
         API[methodName](...args),

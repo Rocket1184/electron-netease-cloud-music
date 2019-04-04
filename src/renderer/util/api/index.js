@@ -9,7 +9,7 @@ let resolveId = 0;
 const methodMap = new Map();
 const resolveMap = new Map();
 
-ipcRenderer.on(TAG, (_, id, data) => {
+ipcRenderer.on(TAG, (_, /** @type {number} */ id, data) => {
     d('🔻 %d %o', id, data);
     if (resolveMap.has(id)) {
         resolveMap.get(id).call(null, data);
@@ -17,6 +17,10 @@ ipcRenderer.on(TAG, (_, id, data) => {
     }
 });
 
+/**
+ * @param {string} methodName
+ * @param  {...any} args
+ */
 function senderFn(methodName, ...args) {
     resolveId++;
     return new Promise(resolve => {

@@ -10,9 +10,14 @@ export const LOOP_MODE = {
 const state = {
     index: 0,
     loopMode: LOOP_MODE.LIST,
+    /** @type {Models.Track[]} */
     list: [],
 };
 
+/**
+ * @typedef {typeof state} State
+ * @type {{ [x: string]: (state: State, payload: any) => void }}
+ */
 const mutations = {
     [types.SET_PLAY_LIST](state, payload) {
         state.list = payload;

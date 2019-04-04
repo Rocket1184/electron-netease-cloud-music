@@ -5,6 +5,9 @@ import { Readable } from 'stream';
 import fetch from 'node-fetch';
 
 class Cache {
+    /**
+     * @param {string} path cache directory path
+     */
     constructor(path) {
         if (typeof path === 'string') {
             if (!fs.existsSync(path)) {
@@ -16,7 +19,6 @@ class Cache {
         } else {
             throw new Error('Cache path unvalid');
         }
-        this.headers = {};
     }
 
     fullPath(fileName) {

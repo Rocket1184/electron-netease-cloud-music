@@ -10,7 +10,7 @@ process.env.DEBUG = [
     'Tray',
     'Tray:IPC'
 ].join(',');
-process.env.DEBUG_COLORS = true;
+process.env.DEBUG_COLORS = 'true';
 process.env.NODE_ENV = 'development';
 require('@babel/register')({
     babelrc: false,
@@ -31,7 +31,7 @@ app.on('ready', () => {
     install(VUEJS_DEVTOOLS.id).catch(console.log);
 });
 
-// App version
+// @ts-ignore App version (non-public api)
 app.setVersion(version);
 
 // BrowserWindow URL

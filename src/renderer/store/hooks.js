@@ -9,6 +9,17 @@ import {
 const unSubFns = [];
 let signStatusTimeoutId = -1;
 
+/**
+ * @typedef {import('./modules/index').State} State
+ * @typedef {import('vuex').Store<State>} Store
+ * @typedef {import('vuex').MutationPayload} Mutation
+ */
+
+/**
+ * @this {Store}
+ * @param {Mutation} mutation
+ * @param {State} state
+ */
 function autoUpdateSignStatus(mutation, state) {
     if (mutation.type === SET_USER_SIGN_STATUS) {
         if (signStatusTimeoutId < 0) {
@@ -19,6 +30,7 @@ function autoUpdateSignStatus(mutation, state) {
             }
             nextDue.setUTCHours(16, 0, 5, 0);
             const timeout = nextDue.getTime() - state.user.signStatus.timestamp;
+            // @ts-ignore
             signStatusTimeoutId = setTimeout(() => {
                 signStatusTimeoutId = -1;
                 this.dispatch('updateUserSignStatus');
@@ -27,6 +39,11 @@ function autoUpdateSignStatus(mutation, state) {
     }
 }
 
+/**
+ * @this {typeof import('.').default}
+ * @param {Mutation} mutation
+ * @param {State} state
+ */
 function moreRadioSongs(mutation, state) {
     if (mutation.type === SET_AUDIO_PAUSED && mutation.payload === false) {
         const { list, index } = state.radio;
@@ -46,7 +63,7 @@ export function unsubscribeAll() {
 }
 
 /**
- * @param {import('node_modules/vuex/types/index').Store} store 
+ * @param {Store} store 
  */
 export function installHooks(store) {
     const subFns = [

@@ -10,11 +10,18 @@
 import crypto from 'crypto';
 import Bigint from 'big-integer';
 
+/**
+ * @param {string} text
+ * @param {string} secKey
+ */
 function weapiAesEncrypt(text, secKey) {
     let cipher = crypto.createCipheriv('aes-128-cbc', secKey, '0102030405060708');
     return cipher.update(text, 'utf8', 'base64') + cipher.final('base64');
 }
 
+/**
+ * @param {string} text
+ */
 function weapiRsaEncrypt(text) {
     let textHex = Buffer.from(text.split('').reverse().join(''), 'utf8').toString('hex');
     let tb = Bigint(textHex, 16);
@@ -24,6 +31,9 @@ function weapiRsaEncrypt(text) {
     return rs.padStart(256, '0');
 }
 
+/**
+ * @param {any} payload
+ */
 export function encodeWeb(payload) {
     let json = JSON.stringify(payload);
     let secKey = crypto.randomFillSync(Buffer.alloc(12)).toString('base64');
@@ -38,6 +48,7 @@ export function encodeWeb(payload) {
 
 /**
  * @see https://github.com/surmon-china/simple-netease-cloud-music/blob/7e3beab480e637284f349c06efb4f18d00f2506f/src/netease.js#L288-L298
+ * @param {any} payload
  */
 export function encodeLinux(payload) {
     const json = JSON.stringify(payload);
@@ -59,21 +70,32 @@ export function encodeLinux(payload) {
 
 const EApiKey = 'e82ckenh8dichen8';
 
+/**
+ * @param {string|Buffer} buffer
+ */
 export function decodeEApi(buffer) {
     const dc = crypto.createDecipheriv('aes-128-ecb', EApiKey, null);
     let text;
     if (buffer instanceof Buffer) {
-        text = dc.update(buffer, 'utf8', 'utf8') + dc.final('utf8');
+        text = dc.update(buffer, undefined, 'utf8') + dc.final('utf8');
     } else if (typeof buffer === 'string') {
         text = dc.update(buffer, 'hex', 'utf8') + dc.final('utf8');
     }
     return text;
 }
 
+/**
+ * string hex md5 in lowercase
+ * @param {string} text
+ */
 function md5(text) {
     return crypto.createHash('md5').update(text).digest('hex');
 }
 
+/**
+ * @param {string} uri
+ * @param {any} data
+ */
 export function encodeEApi(uri, data) {
     const prefix = uri.replace(/^\/eapi/, '/api');
     const json = JSON.stringify(data);

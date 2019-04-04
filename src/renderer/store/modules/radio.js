@@ -2,6 +2,7 @@ import * as types from '../mutation-types';
 import { LOOP_MODE } from './playlist';
 
 const state = {
+    /** @type {Models.Track[]} */
     list: [],
     index: 0,
     loopMode: LOOP_MODE.LIST
@@ -9,8 +10,12 @@ const state = {
 
 const trackIdMap = new Map();
 
+/**
+ * @typedef {typeof state} State
+ * @type {{ [x: string]: (state: State, payload: any) => void }}
+ */
 const mutations = {
-    [types.RESTORE_RADIO](state, { list, index }) {
+    [types.RESTORE_RADIO](state, /** @type {{ list: Models.Track[], index: number }} */ { list, index }) {
         state.index = index;
         list.forEach(t => {
             if (!trackIdMap.has(t.id)) {
@@ -19,7 +24,7 @@ const mutations = {
             }
         });
     },
-    [types.APPEND_RADIO](state, { tracks }) {
+    [types.APPEND_RADIO](state, /** @type {{ tracks: Models.Track[] }} */ { tracks }) {
         const toAppend = [];
         tracks.forEach(t => {
             if (!trackIdMap.has(t.id)) {
@@ -35,7 +40,7 @@ const mutations = {
             state.index -= removeCount;
         }
     },
-    [types.REMOVE_RADIO](state, { id }) {
+    [types.REMOVE_RADIO](state, /** @type {{ id: number }} */ { id }) {
         const i = state.list.findIndex(t => t.id === id);
         if (i >= 0) {
             if (i < state.index ||

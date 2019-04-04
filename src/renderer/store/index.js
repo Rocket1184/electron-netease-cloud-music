@@ -9,6 +9,11 @@ import { installHooks } from './hooks';
 
 Vue.use(Vuex);
 
+/**
+ * @typedef {import('./modules/index').State} State
+ * @typedef {import('vuex').Store<State>} Store
+ * @type {Store}
+ */
 const store = new Vuex.Store({
     modules,
     actions,

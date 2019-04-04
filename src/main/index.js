@@ -119,7 +119,7 @@ app.on('activate', () => {
     mainWindow.focus();
 });
 
-ipcMain.on('Settings', (event, type, ...args) => {
+ipcMain.on('Settings', (event, /** @type {string} */ type, ...args) => {
     switch (type) {
         case 'recreateWindow':
             // prevent App quit

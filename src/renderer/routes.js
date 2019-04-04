@@ -12,6 +12,9 @@ import Comment from '@/page/Comment/Comment.vue';
 import Radio from '@/page/Radio/Radio.vue';
 import CenteredTip from '@/components/CenteredTip.vue';
 
+/**
+ * @type {import('vue-router').RouteConfig[]}
+ */
 export default [
     {
         name: 'index',
