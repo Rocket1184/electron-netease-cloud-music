@@ -15,7 +15,7 @@
     "@babel/core": "^7.4.3",
     "@babel/plugin-transform-modules-commonjs": "^7.4.3",
     "@babel/register": "^7.4.0",
-    "@types/node": "^11.13.0",
+    "@types/node": "^11.13.4",
     "babel-loader": "^8.0.5",
     "copy-webpack-plugin": "^5.0.2",
     "css-loader": "^2.1.1",
@@ -28,27 +28,27 @@
     "less": "^3.9.0",
     "less-loader": "^4.1.0",
     "less-plugin-clean-css": "^1.5.1",
-    "mini-css-extract-plugin": "^0.5.0",
+    "mini-css-extract-plugin": "^0.6.0",
     "native-ext-loader": "^2.3.0",
     "style-loader": "^0.23.1",
     "vue-loader": "^15.7.0",
     "vue-template-compiler": "2.6.8",
-    "webpack": "^4.29.6",
-    "webpack-dev-server": "3.2.1"
+    "webpack": "^4.30.0",
+    "webpack-dev-server": "3.3.1"
   },
   "dependencies": {
     "big-integer": "^1.6.43",
     "cookiejar": "^2.1.2",
     "dbus-native": "^0.4.0",
     "debug": "^4.1.1",
-    "electron": "3.1.6",
+    "electron": "4.1.4",
     "lrc-kit": "^0.4.1",
-    "muse-ui": "3.0.2",
+    "muse-ui": "^3.0.2",
     "muse-ui-message": "^0.2.1",
     "muse-ui-toast": "^0.3.0",
     "node-fetch": "^2.3.0",
     "vue": "2.6.8",
-    "vue-router": "^3.0.2",
+    "vue-router": "^3.0.4",
     "vuex": "^3.1.0"
   }
 }
