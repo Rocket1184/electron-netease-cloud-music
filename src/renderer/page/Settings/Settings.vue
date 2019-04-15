@@ -74,30 +74,32 @@
                         <mu-switch :inputValue="settings.showTrayIcon"
                             color="secondary"></mu-switch>
                     </mu-list-item-action>
-                    <mu-list-item slot="nested">
-                        <mu-list-item-title>托盘图标颜色</mu-list-item-title>
-                        <mu-list-item-action>
-                            <mu-select :value="settings.trayIconVariety"
-                                @change="setIPCVariable('trayIconVariety', $event)">
-                                <mu-option label="亮色"
-                                    value="light"></mu-option>
-                                <mu-option label="暗色"
-                                    value="dark"></mu-option>
-                            </mu-select>
-                        </mu-list-item-action>
-                    </mu-list-item>
-                    <mu-list-item slot="nested">
-                        <mu-list-item-title>关闭窗口时</mu-list-item-title>
-                        <mu-list-item-action>
-                            <mu-select :value="settings.exitOnWindowClose"
-                                @change="setIPCVariable('exitOnWindowClose', $event)">
-                                <mu-option label="退出程序"
-                                    :value="true"></mu-option>
-                                <mu-option label="最小化到托盘"
-                                    :value="false"></mu-option>
-                            </mu-select>
-                        </mu-list-item-action>
-                    </mu-list-item>
+                    <template #nested>
+                        <mu-list-item>
+                            <mu-list-item-title>托盘图标颜色</mu-list-item-title>
+                            <mu-list-item-action>
+                                <mu-select :value="settings.trayIconVariety"
+                                    @change="setIPCVariable('trayIconVariety', $event)">
+                                    <mu-option label="亮色"
+                                        value="light"></mu-option>
+                                    <mu-option label="暗色"
+                                        value="dark"></mu-option>
+                                </mu-select>
+                            </mu-list-item-action>
+                        </mu-list-item>
+                        <mu-list-item>
+                            <mu-list-item-title>关闭窗口时</mu-list-item-title>
+                            <mu-list-item-action>
+                                <mu-select :value="settings.exitOnWindowClose"
+                                    @change="setIPCVariable('exitOnWindowClose', $event)">
+                                    <mu-option label="退出程序"
+                                        :value="true"></mu-option>
+                                    <mu-option label="最小化到托盘"
+                                        :value="false"></mu-option>
+                                </mu-select>
+                            </mu-list-item-action>
+                        </mu-list-item>
+                    </template>
                 </mu-list-item>
                 <mu-sub-header>播放</mu-sub-header>
                 <mu-list-item>

@@ -7,18 +7,19 @@
             @click="focusInput">
             <mu-icon value="search"></mu-icon>
         </mu-button>
-        <mu-auto-complete dense
-            solo
-            full-width
-            color="secondary"
-            slot="content"
-            icon="search"
-            ref="textField"
-            placeholder="搜索单曲、歌手、专辑、用户 ..."
-            v-model="searchText"
-            :filter="filterData"
-            @select="handleCompleteSelect">
-        </mu-auto-complete>
+        <template #content>
+            <mu-auto-complete dense
+                solo
+                full-width
+                color="secondary"
+                icon="search"
+                ref="textField"
+                placeholder="搜索单曲、歌手、专辑、用户 ..."
+                v-model="searchText"
+                :filter="filterData"
+                @select="handleCompleteSelect">
+            </mu-auto-complete>
+        </template>
     </mu-menu>
 </template>
 

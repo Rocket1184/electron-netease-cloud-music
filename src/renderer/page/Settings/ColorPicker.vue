@@ -27,10 +27,11 @@
                 :color="color"
                 @click="handleSelect(color)"></mu-button>
         </div>
-        <mu-button slot="actions"
-            flat
-            color="primary"
-            @click="handleClose">关闭</mu-button>
+        <template #actions>
+            <mu-button flat
+                color="primary"
+                @click="handleClose">关闭</mu-button>
+        </template>
     </mu-dialog>
 </template>
 

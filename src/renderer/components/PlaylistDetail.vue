@@ -45,9 +45,11 @@
                                     size="24"
                                     value="keyboard_arrow_down"></mu-icon>
                             </mu-list-item-action>
-                            <mu-list-item-content slot="nested">
-                                <p class="description">{{playlistDesc}}</p>
-                            </mu-list-item-content>
+                            <template #nested>
+                                <mu-list-item-content>
+                                    <p class="description">{{playlistDesc}}</p>
+                                </mu-list-item-content>
+                            </template>
                         </mu-list-item>
                     </mu-list>
                 </div>

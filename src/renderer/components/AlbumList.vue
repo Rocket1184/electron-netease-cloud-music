@@ -7,9 +7,11 @@
             <mu-card-header v-if="showArtist"
                 :title="al.artist.name"
                 :subTitle="al.publishTime | shortDate">
-                <mu-avatar slot="avatar">
-                    <img :src="al | artistAvatarUrl">
-                </mu-avatar>
+                <template #avatar>
+                    <mu-avatar>
+                        <img :src="al | artistAvatarUrl">
+                    </mu-avatar>
+                </template>
             </mu-card-header>
             <mu-card-media :title="al.name"
                 class="pic"

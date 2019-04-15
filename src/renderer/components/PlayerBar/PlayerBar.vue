@@ -33,20 +33,21 @@
                             :inputValue="volumeShown"
                             @wheel="handleVolumeWheel"
                             @auxclick="handleVolumeMute"></mu-checkbox>
-                        <div slot="content"
-                            class="content"
-                            @mouseenter="cancelHideVolume"
-                            @mouseleave="scheduleHideVolume"
-                            @wheel="handleVolumeWheel">
-                            <mu-slider :value="ui.audioVolume"
-                                :min="0"
-                                :max="100"
-                                :step="1"
-                                :disabled="ui.audioMute"
-                                :display-value="false"
-                                @change="handleVolumeChange"></mu-slider>
-                            <span class="value">{{ui.audioVolume}}</span>
-                        </div>
+                        <template #content>
+                            <div class="content"
+                                @mouseenter="cancelHideVolume"
+                                @mouseleave="scheduleHideVolume"
+                                @wheel="handleVolumeWheel">
+                                <mu-slider :value="ui.audioVolume"
+                                    :min="0"
+                                    :max="100"
+                                    :step="1"
+                                    :disabled="ui.audioMute"
+                                    :display-value="false"
+                                    @change="handleVolumeChange"></mu-slider>
+                                <span class="value">{{ui.audioVolume}}</span>
+                            </div>
+                        </template>
                     </mu-menu>
                     <div v-if="ui.radioMode"
                         title="不喜欢">
@@ -66,8 +67,9 @@
                             checked-icon="queue_music"
                             color="secondary"
                             :inputValue="currentListShown"></mu-checkbox>
-                        <CurrentPlaylist slot="content"
-                            @navigate="handleSourceNavigate"></CurrentPlaylist>
+                        <template #content>
+                            <CurrentPlaylist @navigate="handleSourceNavigate"></CurrentPlaylist>
+                        </template>
                     </mu-menu>
                 </div>
             </div>

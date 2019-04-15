@@ -30,12 +30,15 @@
         </template>
         <mu-appbar title="Electron Netease Cloud Music"
             color="primary">
-            <mu-button icon
-                slot="left"
-                @click="drawerOpen = true">
-                <mu-icon value="menu"></mu-icon>
-            </mu-button>
-            <SearchBox slot="right"></SearchBox>
+            <template #left>
+                <mu-button icon
+                    @click="drawerOpen = true">
+                    <mu-icon value="menu"></mu-icon>
+                </mu-button>
+            </template>
+            <template #right>
+                <SearchBox></SearchBox>
+            </template>
         </mu-appbar>
         <mu-drawer :width="300"
             :docked="false"

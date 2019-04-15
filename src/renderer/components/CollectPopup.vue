@@ -13,9 +13,10 @@
                 @click="handleCollect(list.id, index)">
             </AvatarListItem>
         </mu-list>
-        <mu-button slot="actions"
-            flat
-            @click="handleClose">关闭</mu-button>
+        <template #actions>
+            <mu-button flat
+                @click="handleClose">关闭</mu-button>
+        </template>
     </mu-dialog>
 </template>
 

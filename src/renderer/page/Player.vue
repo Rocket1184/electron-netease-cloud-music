@@ -151,10 +151,11 @@
                     :src="shareImgSrc">
                 <div class="share-text">{{ shareText }}</div>
             </div>
-            <mu-button slot="actions"
-                flat
-                color="primary"
-                @click="toggleShare">关闭</mu-button>
+            <template #actions>
+                <mu-button flat
+                    color="primary"
+                    @click="toggleShare">关闭</mu-button>
+            </template>
         </mu-dialog>
     </div>
 </template>
