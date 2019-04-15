@@ -10,7 +10,7 @@ import Favorite from '@/page/Favorite/Favorite.vue';
 import RecommendSongs from '@/page/RecommendSongs/RecommendSongs.vue';
 import Comment from '@/page/Comment/Comment.vue';
 import Radio from '@/page/Radio/Radio.vue';
-import CenteredTip from '@/components/CenteredTip.vue';
+import UnderConstruction from '@/page/UnderConstruction.vue';
 
 /**
  * @type {import('vue-router').RouteConfig[]}
@@ -86,6 +86,6 @@ export default [
     },
     {
         path: '*',
-        component: CenteredTip
+        component: UnderConstruction
     }
 ];
