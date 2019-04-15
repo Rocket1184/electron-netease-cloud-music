@@ -1,31 +1,27 @@
 <template>
-    <ListDetailLayout class="radio ncm-page">
-        <mu-list slot="list">
-            <ListItemBack></ListItemBack>
-        </mu-list>
-        <template slot="detail">
-            <template v-if="user.loginValid">
-                <div class="mu-card-media">
-                    <div class="radio-header"></div>
-                    <div class="mu-card-media-title">
-                        <div class="mu-card-title">
-                            <span>私人 FM</span>
-                            <mu-switch :inputValue="ui.radioMode"
-                                @change="handleActivate"
-                                color="secondary"></mu-switch>
-                        </div>
-                        <div class="mu-card-sub-title">找到只属于你的频率</div>
+    <ListDetailLayout class="radio ncm-page"
+        showBack>
+        <template v-if="user.loginValid">
+            <div class="mu-card-media">
+                <div class="radio-header"></div>
+                <div class="mu-card-media-title">
+                    <div class="mu-card-title">
+                        <span>私人 FM</span>
+                        <mu-switch :inputValue="ui.radioMode"
+                            @change="handleActivate"
+                            color="secondary"></mu-switch>
                     </div>
+                    <div class="mu-card-sub-title">找到只属于你的频率</div>
                 </div>
-                <mu-sub-header>播放记录</mu-sub-header>
-                <mu-divider></mu-divider>
-                <RadioSongList :tracks="radio.list"
-                    :source="trackSource"></RadioSongList>
-            </template>
-            <CenteredTip v-else
-                icon="nature_people"
-                tip="登录后开启私人 FM"></CenteredTip>
+            </div>
+            <mu-sub-header>播放记录</mu-sub-header>
+            <mu-divider></mu-divider>
+            <RadioSongList :tracks="radio.list"
+                :source="trackSource"></RadioSongList>
         </template>
+        <CenteredTip v-else
+            icon="nature_people"
+            tip="登录后开启私人 FM"></CenteredTip>
     </ListDetailLayout>
 </template>
 
@@ -34,7 +30,6 @@ import { mapActions, mapState } from 'vuex';
 
 import RadioSongList from './RadioSongList.vue';
 import CenteredTip from '@/components/CenteredTip.vue';
-import ListItemBack from '@/components/ListItemBack.vue';
 import ListDetailLayout from '@/components/ListDetailLayout.vue';
 
 const trackSource = { name: 'radio' };
@@ -66,7 +61,6 @@ export default {
     components: {
         RadioSongList,
         CenteredTip,
-        ListItemBack,
         ListDetailLayout
     }
 };

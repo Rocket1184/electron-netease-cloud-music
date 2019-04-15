@@ -4,17 +4,18 @@
         :detailLoading="detailLoading"
         tipText="登录后查看收藏的歌手"
         :showTip="!user.loginValid">
-        <mu-list slot="list">
-            <AvatarListItem v-for="ar in user.artists"
-                :key="ar.id"
-                :img="ar.picUrl"
-                :title="ar.name"
-                :subTitle="`专辑：${ar.albumSize}， MV：${ar.mvSize}`"
-                @click="handleClick(ar.id)">
-            </AvatarListItem>
-        </mu-list>
-        <ArtistDetail slot="detail"
-            v-if="ui.fav.artist.detail"
+        <template #list>
+            <mu-list>
+                <AvatarListItem v-for="ar in user.artists"
+                    :key="ar.id"
+                    :img="ar.picUrl"
+                    :title="ar.name"
+                    :subTitle="`专辑：${ar.albumSize}， MV：${ar.mvSize}`"
+                    @click="handleClick(ar.id)">
+                </AvatarListItem>
+            </mu-list>
+        </template>
+        <ArtistDetail v-if="ui.fav.artist.detail"
             :artist="ui.fav.artist"></ArtistDetail>
     </ListDetailLayout>
 </template>
@@ -47,7 +48,7 @@ export default {
             await this.setUiFavArtist(id);
             this.detailLoading = false;
         },
-        async fetchData(){
+        async fetchData() {
             this.listLoading = true;
             await this.updateUserArtists();
             this.listLoading = false;

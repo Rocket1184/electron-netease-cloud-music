@@ -1,14 +1,8 @@
 <template>
     <ListDetailLayout class="ncm-page"
+        showBack
         :detailLoading="detailLoading">
-        <div slot="list">
-            <mu-list>
-                <ListItemBack></ListItemBack>
-            </mu-list>
-        </div>
-        <ArtistDetail slot="detail"
-            v-if="!detailLoading"
-            :artist="ui.temp.artist"></ArtistDetail>
+        <ArtistDetail :artist="ui.temp.artist"></ArtistDetail>
     </ListDetailLayout>
 </template>
 
@@ -16,7 +10,6 @@
 import { mapActions, mapState } from 'vuex';
 
 import ArtistDetail from '@/components/ArtistDetail/ArtistDetail.vue';
-import ListItemBack from '@/components/ListItemBack.vue';
 import ListDetailLayout from '@/components/ListDetailLayout.vue';
 
 export default {
@@ -51,11 +44,7 @@ export default {
     },
     components: {
         ArtistDetail,
-        ListItemBack,
         ListDetailLayout
     }
 };
 </script>
-
-<style lang="less">
-</style>

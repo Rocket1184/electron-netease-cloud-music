@@ -1,21 +1,14 @@
 <template>
     <ListDetailLayout class="ncm-page"
+        showBack
         :detailLoading="detailLoading">
-        <div slot="list">
-            <mu-list>
-                <ListItemBack></ListItemBack>
-            </mu-list>
-        </div>
-        <VideoDetail slot="detail"
-            v-if="!detailLoading"
-            :video="ui.temp.video"></VideoDetail>
+        <VideoDetail :video="ui.temp.video"></VideoDetail>
     </ListDetailLayout>
 </template>
 
 <script>
 import { mapActions, mapState } from 'vuex';
 
-import ListItemBack from '@/components/ListItemBack.vue';
 import ListDetailLayout from '@/components/ListDetailLayout.vue';
 import VideoDetail from '@/components/VideoDetail/VideoDetail.vue';
 
@@ -65,7 +58,6 @@ export default {
         this.loadVideo();
     },
     components: {
-        ListItemBack,
         ListDetailLayout,
         VideoDetail
     }

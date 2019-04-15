@@ -2,6 +2,9 @@
     <div class="ld-layout"
         :class="$props.class">
         <div class="ld-list">
+            <mu-list v-if="showBack">
+                <ListItemBack></ListItemBack>
+            </mu-list>
             <div v-if="showTip"
                 class="tip">
                 <mu-icon :value="tipIcon"
@@ -15,13 +18,14 @@
         </div>
         <div class="ld-detail">
             <CenteredLoading v-if="detailLoading"></CenteredLoading>
-            <slot v-else
-                name="detail"></slot>
+            <!-- default slot -->
+            <slot v-else></slot>
         </div>
     </div>
 </template>
 
 <script>
+import ListItemBack from '@/components/ListItemBack.vue';
 import CenteredLoading from '@/components/CenteredLoading.vue';
 
 export default {
@@ -32,6 +36,11 @@ export default {
             default: false
         },
         detailLoading: {
+            required: false,
+            type: Boolean,
+            default: false
+        },
+        showBack: {
             required: false,
             type: Boolean,
             default: false
@@ -53,6 +62,7 @@ export default {
         }
     },
     components: {
+        ListItemBack,
         CenteredLoading
     }
 };
@@ -68,6 +78,8 @@ export default {
         height: 100%;
         overflow: auto;
         box-shadow: 0 0 6px rgba(0, 0, 0, 0.2);
+        display: flex;
+        flex-direction: column;
         .tip {
             height: 100%;
             color: grey;

@@ -1,9 +1,9 @@
 <template>
     <ListDetailLayout class="ncm-page"
+        showBack
         :detailLoading="loading">
-        <mu-list slot="list">
-            <ListItemBack></ListItemBack>
-            <template v-if="user.loginValid">
+        <template #list>
+            <mu-list v-if="user.loginValid">
                 <mu-list-item>
                     <mu-list-item-content>
                         <mu-list-item-title>个性化推荐如何工作</mu-list-item-title>
@@ -31,23 +31,21 @@
                     </mu-list-item-action>
                     <mu-list-item-title>你收藏了 <span class="recommend-cnt">{{recommend.statistics.followCnt}}</span> 位歌手</mu-list-item-title>
                 </mu-list-item>
-            </template>
-        </mu-list>
-        <template slot="detail">
-            <template v-if="user.loginValid">
-                <mu-card-media title="每日歌曲推荐"
-                    sub-title="根据你的音乐口味生成，每天 6:00 更新">
-                    <div class="recommend-header"></div>
-                </mu-card-media>
-                <PlayTracks :tracks="recommend.songs"
-                    :source="trackSoruce"></PlayTracks>
-                <RecommendSongList :tracks="recommend.songs"
-                    :source="trackSoruce"></RecommendSongList>
-            </template>
-            <CenteredTip v-else
-                icon="nature_people"
-                tip="登录后开启每日推荐"></CenteredTip>
+            </mu-list>
         </template>
+        <template v-if="user.loginValid">
+            <mu-card-media title="每日歌曲推荐"
+                sub-title="根据你的音乐口味生成，每天 6:00 更新">
+                <div class="recommend-header"></div>
+            </mu-card-media>
+            <PlayTracks :tracks="recommend.songs"
+                :source="trackSoruce"></PlayTracks>
+            <RecommendSongList :tracks="recommend.songs"
+                :source="trackSoruce"></RecommendSongList>
+        </template>
+        <CenteredTip v-else
+            icon="nature_people"
+            tip="登录后开启每日推荐"></CenteredTip>
     </ListDetailLayout>
 </template>
 
@@ -56,7 +54,6 @@ import { mapActions, mapState } from 'vuex';
 
 import { SET_LOGIN_VALID } from '@/store/mutation-types';
 import ListDetailLayout from '@/components/ListDetailLayout.vue';
-import ListItemBack from '@/components/ListItemBack.vue';
 import CenteredTip from '@/components/CenteredTip.vue';
 import PlayTracks from '@/components/PlayTracks.vue';
 import RecommendSongList from './RecommendSongList.vue';
@@ -112,7 +109,6 @@ export default {
     },
     components: {
         ListDetailLayout,
-        ListItemBack,
         CenteredTip,
         PlayTracks,
         RecommendSongList

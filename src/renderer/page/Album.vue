@@ -1,33 +1,26 @@
 <template>
-    <ListDetailLayout class="ncm-page"
+    <ListDetailLayout class="ncm-page playlist-detail album-detail"
+        showBack
         :detailLoading="detailLoading">
-        <div slot="list"
-            class="playlist-side">
-            <mu-list>
-                <ListItemBack></ListItemBack>
+        <template #list>
+            <mu-list class="related">
+                <mu-list-item>TA 的其他热门专辑</mu-list-item>
+                <div v-if="relatedLoading"
+                    class="progress-wrapper">
+                    <mu-circular-progress color="secondary"
+                        :size="60"
+                        :stroke-width="5"></mu-circular-progress>
+                </div>
+                <AvatarListItem v-else
+                    v-for="al in ui.temp.relatedAlbums"
+                    :key="al.id"
+                    :img="al.picUrl"
+                    :title="al.name"
+                    :subTitle="al.publishDate"
+                    @click="handleRelatedClick(al.id)"></AvatarListItem>
             </mu-list>
-            <div class="related">
-                <mu-list>
-                    <mu-list-item>TA 的其他热门专辑</mu-list-item>
-                    <div v-if="relatedLoading"
-                        class="progress-wrapper">
-                        <mu-circular-progress color="secondary"
-                            :size="60"
-                            :stroke-width="5"></mu-circular-progress>
-                    </div>
-                    <AvatarListItem v-else
-                        v-for="al in ui.temp.relatedAlbums"
-                        :key="al.id"
-                        :img="al.picUrl"
-                        :title="al.name"
-                        :subTitle="al.publishDate"
-                        @click="handleRelatedClick(al.id)"></AvatarListItem>
-                </mu-list>
-            </div>
-        </div>
-        <AlbumDetail slot="detail"
-            v-if="!detailLoading"
-            :album="ui.temp.album"></AlbumDetail>
+        </template>
+        <AlbumDetail :album="ui.temp.album"></AlbumDetail>
     </ListDetailLayout>
 </template>
 
@@ -35,7 +28,6 @@
 import { mapActions, mapState } from 'vuex';
 
 import AlbumDetail from '@/components/AlbumDetail.vue';
-import ListItemBack from '@/components/ListItemBack.vue';
 import AvatarListItem from '@/components/AvatarListItem.vue';
 import ListDetailLayout from '@/components/ListDetailLayout.vue';
 
@@ -82,7 +74,6 @@ export default {
     },
     components: {
         AlbumDetail,
-        ListItemBack,
         AvatarListItem,
         ListDetailLayout
     }

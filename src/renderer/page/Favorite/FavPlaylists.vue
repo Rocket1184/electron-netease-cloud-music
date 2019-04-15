@@ -4,35 +4,36 @@
         :detailLoading="detailLoading"
         tipText="登录后查看收藏的歌单"
         :showTip="!user.loginValid">
-        <mu-load-more slot="list"
-            @refresh="handleListRefresh"
-            :refreshing="listRefreshing">
-            <mu-list toggle-nested
-                :nested-indent="false">
-                <mu-list-item v-for="group in listGroups"
-                    button
-                    nested
-                    :key="group.name"
-                    :open="group.open"
-                    @click="group.open = !group.open">
-                    <mu-list-item-title>{{group.name}}</mu-list-item-title>
-                    <mu-list-item-action>
-                        <mu-icon class="toggle-icon"
-                            size="24"
-                            value="keyboard_arrow_down"></mu-icon>
-                    </mu-list-item-action>
-                    <AvatarListItem v-for="(list, index) in group.lists"
-                        slot="nested"
-                        :key="index"
-                        @click="handleClick(list.id)"
-                        :img="list.coverImgUrl"
-                        :title="list.name"
-                        :subTitle="`共 ${list.trackCount} 首`"></AvatarListItem>
-                </mu-list-item>
-            </mu-list>
-        </mu-load-more>
-        <PlaylistDetail slot="detail"
-            v-if="playlist"
+        <template #list>
+            <mu-load-more @refresh="handleListRefresh"
+                :refreshing="listRefreshing">
+                <mu-list toggle-nested
+                    :nested-indent="false">
+                    <mu-list-item v-for="group in listGroups"
+                        button
+                        nested
+                        :key="group.name"
+                        :open="group.open"
+                        @click="group.open = !group.open">
+                        <mu-list-item-title>{{group.name}}</mu-list-item-title>
+                        <mu-list-item-action>
+                            <mu-icon class="toggle-icon"
+                                size="24"
+                                value="keyboard_arrow_down"></mu-icon>
+                        </mu-list-item-action>
+                        <template #nested>
+                            <AvatarListItem v-for="(list, index) in group.lists"
+                                :key="index"
+                                @click="handleClick(list.id)"
+                                :img="list.coverImgUrl"
+                                :title="list.name"
+                                :subTitle="`共 ${list.trackCount} 首`"></AvatarListItem>
+                        </template>
+                    </mu-list-item>
+                </mu-list>
+            </mu-load-more>
+        </template>
+        <PlaylistDetail v-if="playlist"
             :playlist="playlist"
             @detail-scroll="scrollContent"></PlaylistDetail>
     </ListDetailLayout>

@@ -4,17 +4,18 @@
         :detailLoading="detailLoading"
         tipText="登录后查看收藏的视频"
         :showTip="!user.loginValid">
-        <mu-list slot="list">
-            <AvatarListItem v-for="v in user.videos"
-                :key="v.id"
-                :img="v.picUrl"
-                :title="v.name"
-                :subTitle="v.creator.map(i => i.name).join(' / ')"
-                @click="handleClick(v.id, v.type)">
-            </AvatarListItem>
-        </mu-list>
-        <VideoDetail slot="detail"
-            v-if="ui.fav.video"
+        <template #list>
+            <mu-list>
+                <AvatarListItem v-for="v in user.videos"
+                    :key="v.id"
+                    :img="v.picUrl"
+                    :title="v.name"
+                    :subTitle="v.creator.map(i => i.name).join(' / ')"
+                    @click="handleClick(v.id, v.type)">
+                </AvatarListItem>
+            </mu-list>
+        </template>
+        <VideoDetail v-if="ui.fav.video"
             :video="ui.fav.video"></VideoDetail>
     </ListDetailLayout>
 </template>

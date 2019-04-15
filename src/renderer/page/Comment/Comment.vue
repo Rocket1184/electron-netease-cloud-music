@@ -1,56 +1,52 @@
 <template>
     <ListDetailLayout class="ncm-page comment"
+        showBack
         :detailLoading="false">
-        <mu-list slot="list">
-            <ListItemBack></ListItemBack>
-        </mu-list>
-        <div slot="detail">
-            <mu-tabs inverse
-                :value.sync="tab">
-                <mu-tab value="hot">热门评论</mu-tab>
-                <mu-tab value="all">全部评论</mu-tab>
+        <mu-tabs inverse
+            :value.sync="tab">
+            <mu-tab value="hot">热门评论</mu-tab>
+            <mu-tab value="all">全部评论</mu-tab>
+            <mu-button flat
+                class="btn-compose"
+                @click="handleCompose">
+                <mu-icon left
+                    value="edit"></mu-icon>
+                <span>写评论</span>
+            </mu-button>
+        </mu-tabs>
+        <div class="list-wrapper">
+            <transition :name="transitionName"
+                mode="out-in">
+                <keep-alive>
+                    <CommentList :key="tab"
+                        :ref="tab"
+                        :pageSize="pageSize"
+                        :getComments="getComments"
+                        :likeComment="likeComment"
+                        :deleteComment="deleteComment"
+                        @reply="handleReply"></CommentList>
+                </keep-alive>
+            </transition>
+        </div>
+        <mu-dialog dialog-class="comment-editor-dlg"
+            :open.sync="editorOpen"
+            title="写评论">
+            <mu-text-field id="comment-textarea"
+                v-model="editorContent"
+                :placeholder="editorPlaceholder"
+                multi-line
+                full-width
+                :rows="3"
+                :rows-max="6"></mu-text-field>
+            <template #actions>
                 <mu-button flat
-                    class="btn-compose"
-                    @click="handleCompose">
-                    <mu-icon left
-                        value="edit"></mu-icon>
-                    <span>写评论</span>
-                </mu-button>
-            </mu-tabs>
-            <div class="list-wrapper">
-                <transition :name="transitionName"
-                    mode="out-in">
-                    <keep-alive>
-                        <CommentList :key="tab"
-                            :ref="tab"
-                            :pageSize="pageSize"
-                            :getComments="getComments"
-                            :likeComment="likeComment"
-                            :deleteComment="deleteComment"
-                            @reply="handleReply"></CommentList>
-                    </keep-alive>
-                </transition>
-            </div>
-            <mu-dialog dialog-class="comment-editor-dlg"
-                :open.sync="editorOpen"
-                title="写评论">
-                <mu-text-field id="comment-textarea"
-                    v-model="editorContent"
-                    :placeholder="editorPlaceholder"
-                    multi-line
-                    full-width
-                    :rows="3"
-                    :rows-max="6"></mu-text-field>
-                <mu-button slot="actions"
-                    flat
                     @click="toggleEditor">取消</mu-button>
-                <mu-button slot="actions"
-                    flat
+                <mu-button flat
                     color="primary"
                     :disabled="posting"
                     @click="postComment">发布</mu-button>
-            </mu-dialog>
-        </div>
+            </template>
+        </mu-dialog>
     </ListDetailLayout>
 </template>
 
@@ -59,7 +55,6 @@ import { mapState } from 'vuex';
 
 import Api from '@/util/api';
 import CommentList from './CommentList.vue';
-import ListItemBack from '@/components/ListItemBack.vue';
 import ListDetailLayout from '@/components/ListDetailLayout.vue';
 
 const ThreadPrefix = {
@@ -167,7 +162,6 @@ export default {
     },
     components: {
         CommentList,
-        ListItemBack,
         ListDetailLayout
     }
 };

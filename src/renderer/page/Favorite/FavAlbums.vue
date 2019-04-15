@@ -4,17 +4,18 @@
         :detailLoading="detailLoading"
         tipText="登录后查看收藏的专辑"
         :showTip="!user.loginValid">
-        <mu-list slot="list">
-            <AvatarListItem v-for="al in user.albums"
-                :key="al.id"
-                :img="al.picUrl"
-                :title="al.name"
-                :subTitle="`${al.artist.name}, ${al.size} 首`"
-                @click="handleClick(al.id)">
-            </AvatarListItem>
-        </mu-list>
-        <AlbumDetail slot="detail"
-            v-if="ui.fav.album"
+        <template #list>
+            <mu-list>
+                <AvatarListItem v-for="al in user.albums"
+                    :key="al.id"
+                    :img="al.picUrl"
+                    :title="al.name"
+                    :subTitle="`${al.artist.name}, ${al.size} 首`"
+                    @click="handleClick(al.id)">
+                </AvatarListItem>
+            </mu-list>
+        </template>
+        <AlbumDetail v-if="ui.fav.album"
             :album="ui.fav.album"></AlbumDetail>
     </ListDetailLayout>
 </template>
