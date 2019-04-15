@@ -534,7 +534,9 @@ export async function unsubscribePlaylist({ commit }, payload) {
  */
 export async function updateUserAlbums({ commit }) {
     const resp = await Api.getSubscribedAlumbs(1000);
-    commit(types.SET_USER_ALBUMS, resp.data);
+    if (resp.code === 200) {
+        commit(types.SET_USER_ALBUMS, resp.data);
+    }
 }
 
 /**
@@ -542,7 +544,9 @@ export async function updateUserAlbums({ commit }) {
  */
 export async function setUiFavAlbum({ commit }, id) {
     const resp = await Api.getAlbumDetailW(id);
-    commit(types.SET_UI_FAV_ALBUM, resp);
+    if (resp.code === 200) {
+        commit(types.SET_UI_FAV_ALBUM, resp);
+    }
 }
 
 /**
@@ -550,7 +554,9 @@ export async function setUiFavAlbum({ commit }, id) {
  */
 export async function setUiTempPlaylist({ commit }, id) {
     const resp = await Api.getListDetail(id);
-    commit(types.SET_UI_TEMP_PLAYLIST, resp.playlist);
+    if (resp.code === 200) {
+        commit(types.SET_UI_TEMP_PLAYLIST, resp.playlist);
+    }
 }
 
 /**
@@ -558,7 +564,9 @@ export async function setUiTempPlaylist({ commit }, id) {
  */
 export async function setUiRelatedPlaylists({ commit }, id) {
     const resp = await Api.getRelatedPlaylists(id);
-    commit(types.SET_UI_TEMP_RELATED_PLAYLISTS, resp.data);
+    if (resp.code === 200) {
+        commit(types.SET_UI_TEMP_RELATED_PLAYLISTS, resp.data);
+    }
 }
 
 /**
@@ -566,7 +574,9 @@ export async function setUiRelatedPlaylists({ commit }, id) {
  */
 export async function updateRecommendSongs({ commit }) {
     const resp = await Api.getRecommendSongs();
-    commit(types.SET_RECOMMEND_SONGS, resp.recommend);
+    if (resp.code === 200) {
+        commit(types.SET_RECOMMEND_SONGS, resp.recommend);
+    }
 }
 
 /**
@@ -574,7 +584,9 @@ export async function updateRecommendSongs({ commit }) {
  */
 export async function updateRecommendStatistics({ commit }) {
     const resp = await Api.getRecommendStatistics();
-    commit(types.SET_RECOMMEND_STATISTICS, resp.data);
+    if (resp.code === 200) {
+        commit(types.SET_RECOMMEND_STATISTICS, resp.data);
+    }
 }
 
 /**
@@ -593,7 +605,9 @@ export async function dislikeRecommend({ commit }, id) {
  */
 export async function setUiTempAlbum({ commit }, id) {
     const resp = await Api.getAlbumDetailW(id);
-    commit(types.SET_UI_TEMP_ALBUM, resp);
+    if (resp.code === 200) {
+        commit(types.SET_UI_TEMP_ALBUM, resp);
+    }
 }
 
 /**
@@ -601,7 +615,9 @@ export async function setUiTempAlbum({ commit }, id) {
  */
 export async function setUiRelatedAlbums({ commit }, id) {
     const resp = await Api.getRelatedAlbums(id);
-    commit(types.SET_UI_TEMP_RELATED_ALBUMS, resp.data);
+    if (resp.code === 200) {
+        commit(types.SET_UI_TEMP_RELATED_ALBUMS, resp.data);
+    }
 }
 
 /**
@@ -643,7 +659,9 @@ export async function updateUserArtists({ commit }) {
  */
 export async function setUiArtist({ commit }, { mutation, id }) {
     const resp = await Api.getArtistDetailW(id);
-    commit(mutation, resp);
+    if (resp.code === 200) {
+        commit(mutation, resp);
+    }
 }
 
 export function setUiFavArtist({ dispatch }, id) {
