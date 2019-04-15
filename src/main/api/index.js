@@ -953,9 +953,9 @@ const RelatedPlaylists = {
  * @returns {Promise<Types.RelatedPlaylistsRes>}
  */
 export async function getRelatedPlaylists(id) {
-    const html = await client.get(`${BaseURL}/playlist?id=${id}`);
-    const data = [];
     try {
+        const html = await client.get(`${BaseURL}/playlist?id=${id}`);
+        const data = [];
         let match;
         while (match = RelatedPlaylists.regexp.exec(html)) { // eslint-disable-line no-cond-assign
             data.push({
@@ -982,8 +982,8 @@ const RecommendStatistics = {
  * @returns {Promise<Types.RecommendStatisticsRes>}
  */
 export async function getRecommendStatistics() {
-    const html = await client.get(`${BaseURL}/discover/recommend/taste`);
     try {
+        const html = await client.get(`${BaseURL}/discover/recommend/taste`);
         const match = RecommendStatistics.regexp.exec(html);
         return {
             code: 200,
@@ -1008,9 +1008,9 @@ const RelatedAlbums = {
  * @returns {Promise<Types.RelatedAlbumsRes>}
  */
 export async function getRelatedAlbums(id) {
-    const html = await client.get(`${BaseURL}/album?id=${id}`);
-    const data = [];
     try {
+        const html = await client.get(`${BaseURL}/album?id=${id}`);
+        const data = [];
         let match;
         while (match = RelatedAlbums.regexp.exec(html)) { // eslint-disable-line no-cond-assign
             data.push({
