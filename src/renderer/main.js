@@ -4,6 +4,7 @@ import MuseUI from 'muse-ui';
 import 'muse-ui/dist/muse-ui.css';
 import Toast from 'muse-ui-toast';
 import Message from 'muse-ui-message';
+import { RecycleScroller } from 'vue-virtual-scroller';
 
 import App from './App.vue';
 import store from './store';
@@ -12,6 +13,7 @@ import { initTheme } from './util/theme';
 import DblclickRipple from './util/dblclick-ripple';
 import './style.css';
 import './transition.css';
+import 'vue-virtual-scroller/dist/vue-virtual-scroller.css';
 
 try {
     const settings = JSON.parse(sessionStorage.getItem('settings'));
@@ -26,6 +28,7 @@ Vue.use(MuseUI);
 Vue.use(Toast);
 Vue.use(Message);
 Vue.use(DblclickRipple);
+Vue.component('RecycleScroller', RecycleScroller);
 
 const el = document.createElement('div');
 document.body.appendChild(el);
