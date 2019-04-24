@@ -60,13 +60,19 @@ export class AppTray {
         /**
          * @type {import('electron').MenuItemConstructorOptions[]}
          */
-        this.menuTemplate = [
-            { label: '显示主界面', click: () => this.emit('raise') },
-            { label: '退出', click: () => this.emit('quit') },
+        this.controlMenu = [
             { type: 'separator' },
             { label: '⏮ 上一首', click: () => this.emit('prev') },
             { label: '⏭ 下一首', click: () => this.emit('next') },
             { label: '⏯ 播放 / 暂停', click: () => this.emit('playpause') }
+        ];
+        /**
+         * @type {import('electron').MenuItemConstructorOptions[]}
+         */
+        this.exitMenu = [
+            { type: 'separator' },
+            { label: '显示主界面', click: () => this.emit('raise') },
+            { label: '退出', click: () => this.emit('quit') }
         ];
         this.muted = false;
         /**
@@ -101,15 +107,11 @@ export class AppTray {
     /**
      * @type {import('electron').MenuItemConstructorOptions[]}
      */
-    get trackMenu() {
+    get likeMenu() {
         if (!this.track.id) {
             return [];
         }
         return [
-            { type: 'separator' },
-            { label: ellipsisText(this.track.name, 30) },
-            { label: ellipsisText(`🎤 ${this.track.artist}`, 28) },
-            { label: ellipsisText(`💿 ${this.track.album}`, 28) },
             { type: 'separator' },
             {
                 label: '喜欢',
@@ -122,7 +124,23 @@ export class AppTray {
                 label: '不感兴趣',
                 enabled: this.track.canDislike,
                 click: () => this.emit('dislike', this.track.id)
-            }
+            },
+        ];
+    }
+
+    /**
+     * @type {import('electron').MenuItemConstructorOptions[]}
+     */
+    get trackMenu() {
+        if (!this.track.id) {
+            return [];
+        }
+        return [
+            { type: 'separator' },
+            { label: ellipsisText(this.track.name, 30) },
+            { label: ellipsisText(`🎤 ${this.track.artist}`, 28) },
+            { label: ellipsisText(`💿 ${this.track.album}`, 28) },
+            { type: 'separator' },
         ];
     }
 
@@ -146,7 +164,7 @@ export class AppTray {
     }
 
     updateMenu() {
-        const tmpl = this.menuTemplate.concat(this.muteMenu, this.trackMenu);
+        const tmpl = this.likeMenu.concat(this.controlMenu, this.muteMenu, this.trackMenu, this.exitMenu);
         const menu = Menu.buildFromTemplate(tmpl);
         this.tray.setContextMenu(menu);
     }
