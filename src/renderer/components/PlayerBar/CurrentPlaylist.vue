@@ -21,8 +21,7 @@
                     <span>清空列表</span>
                 </mu-button>
             </div>
-            <mu-list dense
-                class="list">
+            <mu-list dense>
                 <mu-list-item v-for="(track, index) in queue.list"
                     button
                     :key="track.id"
@@ -104,6 +103,10 @@ export default {
             'toggleCollectPopup',
             'removeTrackFromPlaylist'
         ]),
+        scrollTo(index) {
+            const el = document.getElementById(`cur-list-${index}`);
+            if (el) el.scrollIntoViewIfNeeded();
+        },
         handleCollectAll() {
             const ids = this.queue.list.map(t => t.id);
             this.toggleCollectPopup(ids);
@@ -165,15 +168,15 @@ export default {
             flex-grow: 1;
         }
     }
-    .list {
+    .mu-list {
         padding: 0;
         height: calc(~'100% - 36px');
         .mu-item {
-            padding-right: 4px;
+            padding: 0 4px;
             .mu-item-action {
                 z-index: 1;
-                width: 36px;
-                min-width: 0;
+                min-width: 36px;
+                justify-content: center;
             }
             .track-artist {
                 font-size: 11px;

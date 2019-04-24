@@ -68,7 +68,7 @@
                             color="secondary"
                             :inputValue="currentListShown"></mu-checkbox>
                         <template #content>
-                            <CurrentPlaylist @navigate="handleSourceNavigate"></CurrentPlaylist>
+                            <CurrentPlaylist ref="list" @navigate="handleSourceNavigate"></CurrentPlaylist>
                         </template>
                     </mu-menu>
                 </div>
@@ -336,8 +336,7 @@ export default {
             // scroll current playlist to playing item when open
             if (val === true) {
                 setTimeout(() => {
-                    const el = document.getElementById(`cur-list-${this.queue.index}`);
-                    if (el) el.scrollIntoViewIfNeeded();
+                    this.$refs.list.scrollTo(this.queue.index);
                 }, 100);
             }
         }
