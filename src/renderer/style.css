@@ -1,14 +1,15 @@
 /* scroll bar */
 
-*::-webkit-scrollbar {
-    width: 10px;
+::-webkit-scrollbar {
+    width: 8px;
+    height: 8px;
 }
 
-*::-webkit-scrollbar-thumb {
+::-webkit-scrollbar-thumb {
     background-color: darkgrey;
 }
 
-*::-webkit-scrollbar-thumb:hover {
+::-webkit-scrollbar-thumb:hover {
     background-color: grey;
 }
 

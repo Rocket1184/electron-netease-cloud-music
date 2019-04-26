@@ -1,7 +1,7 @@
 <template>
     <div class="index ncm-page">
-        <div class="index-wrapper">
-            <div class="index-actions">
+        <div class="wrapper">
+            <div class="actions">
                 <ActionItem v-for="a in action"
                     :key="a.title"
                     :to="a.to"
@@ -9,9 +9,9 @@
                     :title="a.title">
                 </ActionItem>
             </div>
-            <mu-card class="index-card">
-                <div class="card-title">推荐歌单</div>
-                <div class="card-scroller">
+            <mu-card class="card">
+                <div class="heading">推荐歌单</div>
+                <div class="scroller">
                     <ScrollerItem v-for="p in playlist"
                         :key="p.id"
                         :to="{ name: 'playlist', params: { id: p.id } }"
@@ -22,9 +22,9 @@
                         :itemTitle="p.name"></ScrollerItem>
                 </div>
             </mu-card>
-            <mu-card class="index-card">
-                <div class="card-title">最新音乐</div>
-                <div class="card-scroller">
+            <mu-card class="card">
+                <div class="heading">最新音乐</div>
+                <div class="scroller">
                     <ScrollerItem v-for="al in album"
                         :key="al.id"
                         :to="{ name: 'album', params: { id: al.id } }"
@@ -67,6 +67,21 @@ export default {
         humanCount
     },
     mounted() {
+        /** @type {HTMLDivElement[]} */
+        const scrollers = Array.from(document.getElementsByClassName('scroller'));
+        scrollers.forEach(s => {
+            s.addEventListener('wheel', function (ev) {
+                if (ev.deltaX !== 0) {
+                    // horizontal scroll with touchpad
+                    return;
+                }
+                if (ev.deltaY !== 0 && Number.isInteger(ev.deltaY)) {
+                    // `ev.deltaY` is integer, (likely) vertical scroll with mouse wheel
+                    ev.preventDefault();
+                    this.scrollBy({ top: 0, left: ev.deltaY, behavior: 'instant' });
+                }
+            });
+        });
         if (this.user.loginPending || this.user.loginValid) {
             Api.getRecommendPlaylist().then(res => this.playlist = res.recommend);
         } else {
@@ -92,33 +107,27 @@ export default {
 </script>
 
 <style lang="less">
-.index-wrapper {
+.wrapper {
     user-select: none;
     min-height: 100vh;
     max-width: 800px;
     margin: auto;
-    .index-actions {
+    .actions {
         margin: 36px 0;
         display: flex;
         align-items: center;
         justify-content: space-evenly;
     }
-    .index-card {
+    .card {
         margin: 24px 0;
-        height: 278px;
-        .card-title {
+        .heading {
             font-size: 24px;
             font-weight: bold;
             padding: 12px;
             opacity: 0.62;
         }
-        .card-scroller {
-            direction: rtl;
-            height: calc(100vw - 10px);
-            max-height: 800px;
-            width: 218px;
-            transform: rotate(-90deg) translateX(-100%);
-            transform-origin: 0 0;
+        .scroller {
+            display: flex;
             overflow: auto;
         }
     }

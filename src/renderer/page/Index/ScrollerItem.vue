@@ -2,23 +2,23 @@
     <router-link :to="to"
         :title="title"
         tag="div"
-        class="s-item">
-        <div class="i-pic"
+        class="scroll-item">
+        <div class="pic"
             :style="bkgImgStyle(img)">
             <div v-if="maskIcon"
-                class="p-mask">
+                class="mask">
                 <mu-icon :value="maskIcon"
                     :size="16"></mu-icon>
-                <span class="m-text">{{maskText}}</span>
+                <span class="text">{{maskText}}</span>
             </div>
         </div>
         <div v-if="itemSubTitle"
-            class="i-title-2-lines">
-            <div class="i-title-div">{{itemTitle}}</div>
-            <div class="i-title-div i-title-sub">{{itemSubTitle}}</div>
+            class="title">
+            <div class="nowrap ellipsis">{{itemTitle}}</div>
+            <div class="nowrap ellipsis sub">{{itemSubTitle}}</div>
         </div>
         <div v-else
-            class="i-title-1-line">{{itemTitle}}</div>
+            class="title ellipsis">{{itemTitle}}</div>
     </router-link>
 </template>
 
@@ -64,28 +64,28 @@ export default {
 </script>
 
 <style lang="less">
-.s-item {
-    direction: ltr;
-    transform-origin: 100% 0;
-    transform: rotate(90deg) translateX(100%);
+.scroll-item {
     width: 160px;
-    height: 160px;
-    margin: 12px 0;
+    min-width: 160px;
+    height: 210px;
+    margin-left: 12px;
     overflow: visible;
     cursor: pointer;
-    position: relative;
-    .i-pic {
+    &:last-child {
+        padding-right: 12px;
+    }
+    .pic {
         height: 160px;
         background-size: cover;
         display: flex;
         flex-direction: column-reverse;
-        .p-mask {
+        .mask {
             color: #e5e2e5;
             padding: 0.4em 0.8em;
             background-color: rgba(0, 0, 0, 0.54);
             display: flex;
             align-items: center;
-            .m-text {
+            .text {
                 margin-left: 4px;
                 flex-grow: 1;
             }
@@ -94,26 +94,21 @@ export default {
             color: #e5e2e5;
         }
     }
-    .i-title-1-line {
+    .title {
         display: -webkit-box;
         -webkit-line-clamp: 2;
         -webkit-box-orient: vertical;
-    }
-    .i-title-1-line,
-    .i-title-2-lines,
-    .i-title-div {
-        overflow: hidden;
-        text-overflow: ellipsis;
-    }
-    .i-title-1-line,
-    .i-title-2-lines {
         height: 42px;
-    }
-    .i-title-div {
-        white-space: nowrap;
-    }
-    .i-title-sub {
-        opacity: 0.62;
+        .ellipsis {
+            overflow: hidden;
+            text-overflow: ellipsis;
+        }
+        .nowrap {
+            white-space: nowrap;
+        }
+        .sub {
+            opacity: 0.62;
+        }
     }
 }
 </style>
