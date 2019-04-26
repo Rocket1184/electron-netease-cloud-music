@@ -53,7 +53,7 @@ export default {
                 if (volume > 1) volume = 1;
             }
             vid.volume = volume;
-        });
+        }, { passive: true });
         document.addEventListener('keydown', this.handlePlayPause);
     },
     activated() {

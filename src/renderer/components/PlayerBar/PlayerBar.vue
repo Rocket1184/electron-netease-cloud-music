@@ -31,13 +31,13 @@
                             :checked-icon="iconVolume"
                             color="secondary"
                             :inputValue="volumeShown"
-                            @wheel="handleVolumeWheel"
+                            @wheel.passive="handleVolumeWheel"
                             @auxclick="handleVolumeMute"></mu-checkbox>
                         <template #content>
                             <div class="content"
                                 @mouseenter="cancelHideVolume"
                                 @mouseleave="scheduleHideVolume"
-                                @wheel="handleVolumeWheel">
+                                @wheel.passive="handleVolumeWheel">
                                 <mu-slider :value="ui.audioVolume"
                                     :min="0"
                                     :max="100"
