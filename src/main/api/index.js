@@ -183,16 +183,40 @@ export function dislikePlaylist(id, alg) {
 /**
  * 包含歌曲列表的歌单详情，最多能获取前 1000 首，不能分页
  * @param {number} id
+ * @param {number} [n=1000] 歌曲详情的数量，默认为 `1000`
  * @returns {Promise<Types.ListDetailRes>}
  */
-export function getListDetail(id) {
+export function getListDetail(id, n = 1000) {
     return client.postW({
         url: `${BaseURL}/weapi/v3/playlist/detail`,
+        data: { id, n }
+    });
+}
+
+/**
+ * 包含歌曲列表的歌单详情，最多能获取前 1000 首，不能分页
+ * @param {number} id
+ * @param {number} [n=1000] 歌曲详情的数量，默认为 `1000`
+ * @returns {Promise<Types.ListDetailRes>}
+ */
+export function getListDetailE(id, n = 1000) {
+    return client.postE({
+        url: `${BaseURL}/eapi/v3/playlist/detail`,
+        data: { id, n }
+    });
+}
+
+/**
+ * 批量查询歌曲详情, 最多 1000 首
+ * @param {number[]} ids
+ * @returns {Promise<Types.SongDetailRes>}
+ */
+export function getSongDetail(ids) {
+    return client.postW({
+        url: `${BaseURL}/weapi/v3/song/detail`,
         data: {
-            id,
-            s: 0,
-            t: 0,
-            n: 1000
+            c: `[${ids.map(id => JSON.stringify({ id }))}]`,
+            // ids: `[${ ids }]`
         }
     });
 }
@@ -1481,7 +1505,7 @@ export function getNewAlbums() {
 /**
  * 首页->Banner 横幅
  * @param {"pc" | "web" | "android" | "iphone"} clientType
- * @returns {Promise<Types.ApiRes>} // TODO: tsd BannersRes
+ * @returns {Promise<Types.BannerRes>}
  */
 export function getBanners(clientType = 'pc') {
     return client.postE({
@@ -1489,5 +1513,83 @@ export function getBanners(clientType = 'pc') {
         data: {
             clientType
         }
+    });
+}
+
+/**
+ * 订阅电台
+ * @param {number} id
+ * @returns {Promise<Types.ApiRes>}
+ */
+export function subscribeDj(id) {
+    return client.postE({
+        url: `${BaseURL}/eapi/djradio/sub`,
+        data: { id }
+    });
+}
+
+/**
+ * 取消订阅电台
+ * @param {number} id
+ * @returns {Promise<Types.ApiRes>}
+ */
+export function unsubscribeDj(id) {
+    return client.postE({
+        url: `${BaseURL}/eapi/djradio/unsub`,
+        data: { id }
+    });
+}
+
+/**
+ * 订阅的电台列表
+ * @param {number} limit
+ * @param {number} time
+ * @param {boolean} needFee
+ * @returns {Promise<Types.SubscribedDjRes>}
+ */
+export function getSubscribedDj(limit = 100, time = 0, needFee = false) {
+    return client.postE({
+        url: `${BaseURL}/eapi/djradio/subed/v1`,
+        data: {limit, time, needFee}
+    });
+}
+
+/**
+ * 电台详情
+ * @param {number} id
+ * @returns {Promise<Types.DjDetailRes>}
+ */
+export function getDjDetail(id) {
+    return client.postE({
+        url: `${BaseURL}/eapi/djradio/v2/get`,
+        data: { id }
+    });
+}
+
+/**
+ * 电台节目列表
+ * @param {number} radioId
+ * @param {number} limit
+ * @param {number} offset
+ * @param {boolean} asc
+ * @param {boolean} filterlikeplay
+ * @returns {Promise<Types.DjProgramRes>}
+ */
+export function getDjProgram(radioId, limit = 100, offset = 0, asc = false, filterlikeplay = true) {
+    return client.postE({
+        url: `${BaseURL}/eapi/v1/dj/program/byradio`,
+        data: { radioId, limit, offset, asc, filterlikeplay }
+    });
+}
+
+/**
+ * 电台节目详情
+ * @param {number} id
+ * @returns {Promise<Types.DjProgramDetailRes>}
+ */
+export function getDjProgramDetail(id) {
+    return client.postE({
+        url: `${BaseURL}/eapi/dj/program/detail`,
+        data: { id }
     });
 }

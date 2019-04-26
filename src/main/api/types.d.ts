@@ -55,6 +55,10 @@ namespace Types {
         eventCount: number;
         playlistCount: number;
         playlistBeSubscribedCount: number;
+        // 以下只有电台主播才有？
+        brand?: string;
+        canReward?: boolean;
+        rewardCount?: number;
     }
 
     export interface Binding {
@@ -97,7 +101,7 @@ namespace Types {
         authority: number;
         mutual: boolean;
         expertTags: string[];
-        experts: string[];
+        experts: string[]; // maybe `Record<number, string>`
         djStatus: number;
         vipType: number;
         remarkName?: string;
@@ -620,6 +624,11 @@ namespace Types {
     export interface ListDetailRes extends ApiRes {
         playlist: PlaylistDetail;
         privileges: Privilege[];
+    }
+
+    export interface SongDetailRes extends ApiRes {
+        privileges: Privilege[];
+        songs: TrackDetail[];
     }
 
     export interface MusicUrlRes extends ApiRes {
@@ -1284,49 +1293,6 @@ namespace Types {
         time?: number;
     }
 
-    export interface RecommendPlaylistCreator {
-        accountStatus: number;
-        authStatus: number;
-        authority: number;
-        avatarImgId: any;
-        avatarImgIdStr: string;
-        avatarUrl: string;
-        backgroundImgId: any;
-        backgroundImgIdStr: string;
-        backgroundUrl: string;
-        birthday: any;
-        city: number;
-        defaultAvatar: boolean;
-        description: string;
-        detailDescription: string;
-        djStatus: number;
-        expertTags: string[];
-        followed: boolean;
-        gender: number;
-        mutual: boolean;
-        nickname: string;
-        province: number;
-        remarkName?: any;
-        signature: string;
-        userId: number;
-        userType: number;
-        vipType: number;
-    }
-
-    export interface RecommendPlaylist {
-        alg: string;
-        copywriter: string;
-        createTime: any;
-        creator: RecommendPlaylistCreator
-        id: number;
-        name: string;
-        picUrl: string;
-        playcount: number;
-        trackCount: number;
-        type: number;
-        userId: number;
-    }
-
     export interface RecommendMVResult {
         alg: string;
         artistId: number;
@@ -1930,6 +1896,195 @@ namespace Types {
         type: number;
     }
 
+    export interface Banner {
+        adLocation: any;
+        adSource: any;
+        adid: any;
+        /** web banner only */
+        backgroundImageUrl?: string;
+        encodeId: string;
+        /** client banner only */
+        event?: any;
+        exclusive: boolean;
+        extMonitor: any;
+        extMonitorInfo: any;
+        imageUrl: string;
+        monitorBlackList: any;
+        monitorClick: any;
+        monitorClickList: any;
+        monitorImpress: any;
+        monitorImpressList: any;
+        monitorType: any;
+        program: any;
+        scm: string;
+        /** client banner only */
+        song: TrackDetail;
+        targetId: number;
+        targetType: number;
+        titleColor: string;
+        typeTitle: string;
+        url?: string;
+        video?: any;
+    }
+
+    export interface BannerRes extends ApiRes {
+        banners: Banner[]
+    }
+
+    export interface SubscribedDjRadio {
+        dj: PlaylistCreator;
+        category: string;
+        buyed: boolean;
+        price: number;
+        originalPrice: number;
+        discountPrice: null;
+        purchaseCount: number;
+        lastProgramName: string;
+        videos: null;
+        finished: boolean;
+        underShelf: boolean;
+        subCount: number;
+        picId: number;
+        createTime: number;
+        radioFeeType: number;
+        picUrl: string;
+        categoryId: number;
+        desc: string;
+        feeScope: number;
+        lastProgramCreateTime: number;
+        programCount: number;
+        lastProgramId: number;
+        name: string;
+        id: number;
+        rcmdtext: null;
+        newProgramCount: number;
+    }
+
+    export interface SubscribedDjRes extends ApiRes {
+        count: number;
+        djRadios: SubscribedDjRadio[];
+        time: number;
+        hasMore: boolean;
+    }
+
+    export interface DjComment {
+        userProfile: Profile;
+        content: string;
+        programName: string;
+        programId: number;
+        commentId: number;
+    }
+
+    export interface DjDetailData {
+        id: number;
+        name: string;
+        dj: Profile;
+        picId: number;
+        picUrl: string;
+        desc: string;
+        subCount: number;
+        shareCount: number;
+        likedCount: number;
+        programCount: number;
+        commentCount: number;
+        createTime: number;
+        categoryId: number;
+        category: string;
+        radioFeeType: number;
+        feeScope: number;
+        lastProgramCreateTime: number;
+        lastProgramId: number;
+        rcmdText: null;
+        subed: boolean;
+        commentDatas: DjComment[];
+        feeInfo: null;
+    }
+
+    export interface DjDetailRes {
+        code: number;
+        msg: null;
+        data: DjDetailData;
+    }
+
+    export interface DjProgramRadio {
+        dj: null;
+        category: string[];
+        buyed: boolean;
+        price: number;
+        originalPrice: number;
+        discountPrice: null;
+        purchaseCount: number;
+        lastProgramName: null;
+        videos: null;
+        finished: boolean;
+        underShelf: boolean;
+        picUrl: string;
+        radioFeeType: number;
+        lastProgramCreateTime: number;
+        categoryId: number;
+        createTime: number;
+        lastProgramId: number;
+        feeScope: number;
+        programCount: number;
+        subCount: number;
+        picId: number;
+        desc: string;
+        name: Brand;
+        id: number;
+        subed: boolean;
+    }
+
+    export interface DjProgram {
+        mainSong: RadioSong;
+        songs: null;
+        dj: Profile;
+        blurCoverUrl: string;
+        radio: DjProgramRadio;
+        duration: number;
+        buyed: boolean;
+        programDesc: null;
+        h5Links: null;
+        canReward: boolean;
+        auditStatus: number;
+        videoInfo: null;
+        score: number;
+        mainTrackId: number;
+        programFeeType: number;
+        titbits: null;
+        smallLanguageAuditStatus: number;
+        commentThreadId: string;
+        trackCount: number;
+        titbitImages: null;
+        isPublish: boolean;
+        serialNum: number;
+        coverUrl: string;
+        listenerCount: number;
+        subscribedCount: number;
+        createTime: number;
+        reward: boolean;
+        channels: any[];
+        feeScope: number;
+        pubStatus: number;
+        bdAuditStatus: number;
+        description: string;
+        name: string;
+        id: number;
+        subscribed: boolean;
+        shareCount: number;
+        likedCount: number;
+        commentCount: number;
+    }
+
+    export interface DjProgramRes extends ApiRes {
+        asc: boolean;
+        count: number;
+        programs: DjProgram[];
+        more: boolean;
+    }
+
+    export interface DjProgramDetailRes extends ApiRes {
+        program: Program;
+    }
 }
 
 export as namespace Types;
