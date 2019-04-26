@@ -11,6 +11,7 @@ app.commandLine.appendSwitch('autoplay-policy', 'no-user-gesture-required');
 const isDev = process.env.NODE_ENV === 'development';
 
 let shouldAppQuit = true;
+/** @type {(ev: import('electron').Event) => any} */
 const preventQuitHandler = ev => {
     ev.preventDefault();
     mainWindow.hide();
