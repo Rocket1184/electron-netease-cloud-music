@@ -2085,6 +2085,21 @@ namespace Types {
     export interface DjProgramDetailRes extends ApiRes {
         program: Program;
     }
+
+    export interface DjProgramMusicsRes extends ApiRes {
+        programs: {
+            id: number;
+            musics: {
+                size: number;
+                bitrate: number;
+            }[];
+        }[];
+    }
+
+    export interface DjCreatedByRes extends ApiRes {
+        djRadios: SubscribedDjRadio[];
+        hasMore: boolean;
+    }
 }
 
 export as namespace Types;
