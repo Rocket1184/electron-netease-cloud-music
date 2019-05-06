@@ -1,9 +1,6 @@
-// import Types from '../main/api/types';
-
 declare module '*.vue' {
-    import Vue, { VueConstructor } from 'vue';
-    declare const component: VueConstructor<Vue>;
-    export default component;
+    import Vue from 'vue';
+    export default Vue;
 }
 
 declare module 'muse-ui-toast' {
