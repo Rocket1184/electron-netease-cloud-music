@@ -13,12 +13,8 @@ import Client from './httpClient';
 import * as Settings from '../settings';
 import MusicServer from './musicServer';
 
-/// <reference path="./types.d.ts" />
-
-// @ts-ignore
 const fsPromises = fs.promises;
 const BaseURL = 'https://music.163.com';
-
 const client = new Client();
 
 const dataPath = app.getPath('userData');
@@ -62,27 +58,18 @@ export function login(acc, pwd) {
         rememberLogin: true,
     };
     if (/^1\d{10}$/.test(acc)) {
-        return client.postW({
-            url: `${BaseURL}/weapi/login/cellphone`,
-            data: { phone: acc, ...postBody }
-        });
+        return client.postW('/login/cellphone', { phone: acc, ...postBody });
     } else {
-        return client.postW({
-            url: `${BaseURL}/weapi/login`,
-            data: { username: acc, ...postBody }
-        });
+        return client.postW('/login', { username: acc, ...postBody });
     }
 }
 
 export function refreshLogin() {
-    return client.postW({
-        url: `${BaseURL}/weapi/login/token/refresh`,
-        data: {}
-    });
+    return client.postW('/login/token/refresh');
 }
 
 export async function logout() {
-    const resp = await client.postW({ url: `${BaseURL}/logout` });
+    const resp = await client.postW('/logout');
     if (resp.code === 200) {
         client.updateCookie();
     }
@@ -94,13 +81,10 @@ export async function logout() {
  * @returns {Promise<Types.UserPlaylistRes>}
  */
 export function getUserPlaylist(uid) {
-    return client.postW({
-        url: `${BaseURL}/weapi/user/playlist`,
-        data: {
-            uid,
-            offset: 0,
-            limit: 1000,
-        }
+    return client.postW('/user/playlist', {
+        uid,
+        offset: 0,
+        limit: 1000,
     });
 }
 
@@ -110,15 +94,12 @@ export function getUserPlaylist(uid) {
  * @param {0|1} type `0`: 所有时间, `1`: 最近一周
  */
 export function getMusicRecord(uid, type = 0) {
-    return client.postW({
-        url: `${BaseURL}/weapi/v1/play/record`,
-        data: {
-            limit: 1000,
-            offset: 0,
-            total: true,
-            type,
-            uid,
-        }
+    return client.postW('/v1/play/record', {
+        limit: 1000,
+        offset: 0,
+        total: true,
+        type,
+        uid,
     });
 }
 
@@ -127,13 +108,10 @@ export function getMusicRecord(uid, type = 0) {
  * @returns {Promise<Types.RecommendSongsRes>}
  */
 export function getRecommendSongs() {
-    return client.postW({
-        url: `${BaseURL}/weapi/v2/discovery/recommend/songs`,
-        data: {
-            limit: 20,
-            offset: 0,
-            total: true
-        }
+    return client.postW('/v2/discovery/recommend/songs', {
+        limit: 20,
+        offset: 0,
+        total: true
     });
 }
 
@@ -143,13 +121,10 @@ export function getRecommendSongs() {
  * @returns {Promise<Types.DislikeRecommendRes>}
  */
 export function dislikeRecommend(id) {
-    return client.postW({
-        url: `${BaseURL}/weapi/v2/discovery/recommend/dislike`,
-        data: {
-            resId: id,
-            resType: 4,
-            sceneType: 1
-        }
+    return client.postW('/v2/discovery/recommend/dislike', {
+        resId: id,
+        resType: 4,
+        sceneType: 1
     });
 }
 
@@ -158,10 +133,7 @@ export function dislikeRecommend(id) {
  * @returns {Promise<Types.RecommendPlaylistRes>}
  */
 export function getRecommendPlaylist() {
-    return client.postW({
-        url: `${BaseURL}/weapi/v1/discovery/recommend/resource`,
-        data: {}
-    });
+    return client.postW('/v1/discovery/recommend/resource');
 }
 
 /**
@@ -170,13 +142,10 @@ export function getRecommendPlaylist() {
  * @param {'bysong_rt'|'hotbased'} alg `bysong_rt`: 根据收藏的单曲推荐, `hotbased`: 热门推荐
  */
 export function dislikePlaylist(id, alg) {
-    return client.postW({
-        url: `${BaseURL}/weapi/v2/discovery/recommend/dislike`,
-        data: {
-            resId: id,
-            resType: 1,
-            type: alg
-        }
+    return client.postW('/v2/discovery/recommend/dislike', {
+        resId: id,
+        resType: 1,
+        type: alg
     });
 }
 
@@ -187,10 +156,7 @@ export function dislikePlaylist(id, alg) {
  * @returns {Promise<Types.ListDetailRes>}
  */
 export function getListDetail(id, n = 1000) {
-    return client.postW({
-        url: `${BaseURL}/weapi/v3/playlist/detail`,
-        data: { id, n }
-    });
+    return client.postW('/v3/playlist/detail', { id, n });
 }
 
 /**
@@ -200,10 +166,7 @@ export function getListDetail(id, n = 1000) {
  * @returns {Promise<Types.ListDetailRes>}
  */
 export function getListDetailE(id, n = 1000) {
-    return client.postE({
-        url: `${BaseURL}/eapi/v3/playlist/detail`,
-        data: { id, n }
-    });
+    return client.postE('/v3/playlist/detail', { id, n });
 }
 
 /**
@@ -212,12 +175,9 @@ export function getListDetailE(id, n = 1000) {
  * @returns {Promise<Types.SongDetailRes>}
  */
 export function getSongDetail(ids) {
-    return client.postW({
-        url: `${BaseURL}/weapi/v3/song/detail`,
-        data: {
-            c: `[${ids.map(id => JSON.stringify({ id }))}]`,
-            // ids: `[${ ids }]`
-        }
+    return client.postW('/v3/song/detail', {
+        c: `[${ids.map(id => JSON.stringify({ id }))}]`,
+        // ids: `[${ ids }]`
     });
 }
 
@@ -238,12 +198,9 @@ export function getMusicUrlW(idOrIds, quality) {
     let ids;
     if (Array.isArray(idOrIds)) ids = idOrIds;
     else ids = [idOrIds];
-    return client.postW({
-        url: `${BaseURL}/weapi/song/enhance/player/url`,
-        data: {
-            ids,
-            br: QualityMap[quality],
-        }
+    return client.postW('/song/enhance/player/url', {
+        ids,
+        br: QualityMap[quality],
     });
 }
 
@@ -258,16 +215,9 @@ export function getMusicUrlL(idOrIds, quality) {
     let ids;
     if (Array.isArray(idOrIds)) ids = idOrIds;
     else ids = [idOrIds];
-    return client.postL({
-        url: `${BaseURL}/api/linux/forward`,
-        data: {
-            method: 'POST',
-            url: 'http://music.163.com/api/song/enhance/player/url',
-            params: {
-                ids,
-                br: QualityMap[quality],
-            }
-        }
+    return client.postL('/api/song/enhance/player/url', {
+        ids,
+        br: QualityMap[quality],
     });
 }
 
@@ -282,12 +232,9 @@ export function getMusicUrlE(idOrIds, quality) {
     let ids;
     if (Array.isArray(idOrIds)) ids = idOrIds;
     else ids = [idOrIds];
-    return client.postE({
-        url: `${BaseURL}/eapi/song/enhance/player/url`,
-        data: {
-            ids,
-            br: QualityMap[quality],
-        }
+    return client.postE('/song/enhance/player/url', {
+        ids,
+        br: QualityMap[quality],
     });
 }
 
@@ -323,10 +270,7 @@ const Comments = {
  */
 export function getComments(thread, limit = 20, offset = 0) {
     const { rid } = thread.match(Comments.threadRegexp).groups;
-    return client.postW({
-        url: `${BaseURL}/weapi/v1/resource/comments/${thread}`,
-        data: { rid, offset, limit }
-    });
+    return client.postW(`/v1/resource/comments/${thread}`, { rid, offset, limit });
 }
 
 /**
@@ -338,10 +282,7 @@ export function getComments(thread, limit = 20, offset = 0) {
  */
 export function getHotComments(thread, limit = 20, offset = 0) {
     const { rid } = thread.match(Comments.threadRegexp).groups;
-    return client.postW({
-        url: `${BaseURL}/weapi/v1/resource/hotcomments/${thread}`,
-        data: { rid, offset, limit }
-    });
+    return client.postW(`/v1/resource/hotcomments/${thread}`, { rid, offset, limit });
 }
 
 /**
@@ -351,10 +292,7 @@ export function getHotComments(thread, limit = 20, offset = 0) {
  * @returns {Promise<Types.LikeCommentRes>}
  */
 export function likeComment(threadId, commentId) {
-    return client.postW({
-        url: `${BaseURL}/weapi/v1/comment/like`,
-        data: { threadId, commentId }
-    });
+    return client.postW('/v1/comment/like', { threadId, commentId });
 }
 
 /**
@@ -363,10 +301,7 @@ export function likeComment(threadId, commentId) {
  * @returns {Promise<Types.ApiRes>}
  */
 export function unlikeComment(threadId, commentId) {
-    return client.postW({
-        url: `${BaseURL}/weapi/v1/comment/unlike`,
-        data: { threadId, commentId }
-    });
+    return client.postW('/v1/comment/unlike', { threadId, commentId });
 }
 
 /**
@@ -375,10 +310,7 @@ export function unlikeComment(threadId, commentId) {
  * @returns {Promise<Types.ApiRes>}
  */
 export function likeCommentE(threadId, commentId) {
-    return client.postE({
-        url: `${BaseURL}/eapi/v1/comment/like`,
-        data: { threadId, commentId }
-    });
+    return client.postE('/v1/comment/like', { threadId, commentId });
 }
 
 /**
@@ -387,10 +319,7 @@ export function likeCommentE(threadId, commentId) {
  * @returns {Promise<Types.ApiRes>}
  */
 export function unlikeCommentE(threadId, commentId) {
-    return client.postE({
-        url: `${BaseURL}/eapi/v1/comment/unlike`,
-        data: { threadId, commentId }
-    });
+    return client.postE('/v1/comment/unlike', { threadId, commentId });
 }
 
 /**
@@ -400,10 +329,7 @@ export function unlikeCommentE(threadId, commentId) {
  * @returns {Promise<Types.AddCommentRes>}
  */
 export function addComment(threadId, content) {
-    return client.postW({
-        url: `${BaseURL}/weapi/resource/comments/add`,
-        data: { threadId, content }
-    });
+    return client.postW('/resource/comments/add', { threadId, content });
 }
 
 /**
@@ -413,24 +339,7 @@ export function addComment(threadId, content) {
  * @returns {Promise<Types.ApiRes>}
  */
 export function deleteComment(threadId, commentId) {
-    return client.postW({
-        url: `${BaseURL}/weapi/resource/comments/delete`,
-        data: { threadId, commentId }
-    });
-}
-
-/**
- * **DO NOT USE**
- * @param {string} threadId
- * @param {number} commentId
- * @param {string} content
- * @returns {Promise<Types.AddCommentRes>}
- */
-export function replyComment(threadId, commentId, content) {
-    return client.postW({
-        url: `${BaseURL}/api/v1/resource/comments/reply`,
-        data: { threadId, commentId, content /* checkToken */ }
-    });
+    return client.postW('/resource/comments/delete', { threadId, commentId });
 }
 
 /**
@@ -441,10 +350,7 @@ export function replyComment(threadId, commentId, content) {
  */
 export function replyCommentE(threadId, commentId, content) {
     const { resType: resourceType } = threadId.match(Comments.threadRegexp).groups;
-    return client.postE({
-        url: `${BaseURL}/eapi/v1/resource/comments/reply`,
-        data: { threadId, commentId, content, resourceType }
-    });
+    return client.postE('/v1/resource/comments/reply', { threadId, commentId, content, resourceType });
 }
 
 const MusicLyric = {
@@ -458,14 +364,7 @@ const MusicLyric = {
  * @returns {Promise<Types.MusicLyricRes>}
  */
 export async function getMusicLyric(id) {
-    const tmp = await client.postW({
-        url: `${BaseURL}/weapi/song/lyric`,
-        data: {
-            id,
-            lv: -1,
-            tv: -1
-        }
-    });
+    const tmp = await client.postE('/song/lyric', { id, lv: 0, tv: 0, kv: 0 });
     let result = {};
     if (tmp.lrc && tmp.lrc.lyric) {
         const lrc = Lrc.parse(tmp.lrc.lyric);
@@ -525,12 +424,9 @@ export async function getMusicLyricCached(id, ignoreCache = false) {
  * this maybe have been removed, use `sumbitFeedback` instead
  */
 export function submitWebLog(action, json) {
-    return client.postW({
-        url: `${BaseURL}/weapi/log/web`,
-        data: {
-            action,
-            json: JSON.stringify(json),
-        }
+    return client.postW('/log/web', {
+        action,
+        json: JSON.stringify(json),
     });
 }
 
@@ -539,19 +435,13 @@ export function submitWebLog(action, json) {
  * @returns {Promise<Types.ApiRes>}
  */
 export function sumbitFeedback(logs) {
-    return client.postW({
-        url: `${BaseURL}/weapi/feedback/weblog`,
-        data: {
-            logs: JSON.stringify(logs),
-        }
+    return client.postW('/feedback/weblog', {
+        logs: JSON.stringify(logs),
     });
 }
 
 export function submitCount() {
-    return client.postW({
-        url: `${BaseURL}/weapi/pl/count`,
-        data: {}
-    });
+    return client.postW('/pl/count');
 }
 
 /**
@@ -577,10 +467,7 @@ export function submitListened(id, time, source) {
 }
 
 export function getVipInfo() {
-    return client.postW({
-        url: `${BaseURL}/weapi/music-vip-membership/front/vip/info`,
-        data: {}
-    });
+    return client.postW('/music-vip-membership/front/vip/info');
 }
 
 /**
@@ -713,10 +600,7 @@ export function resetSettings() {
  * @returns {Promise<Types.DailyTaskRes>}
  */
 export function postDailyTask(type) {
-    return client.postW({
-        url: `${BaseURL}/weapi/point/dailyTask`,
-        data: { type }
-    });
+    return client.postW('/point/dailyTask', { type });
 }
 
 /**
@@ -726,10 +610,7 @@ export function postDailyTask(type) {
  * @returns {Promise<Types.DailyTaskRes>}
  */
 export function postDailyTaskE(type, adid = 0) {
-    return client.postE({
-        url: `${BaseURL}/eapi/point/dailyTask`,
-        data: { type, adid }
-    });
+    return client.postE('/point/dailyTask', { type, adid });
 }
 
 /**
@@ -737,9 +618,7 @@ export function postDailyTaskE(type, adid = 0) {
  * @returns {Promise<Types.GetDailyTaskRes>}
  */
 export function getDailyTask() {
-    return client.postW({
-        url: `${BaseURL}/weapi/point/getDailyTask`
-    });
+    return client.postW('/point/getDailyTask');
 }
 
 /**
@@ -749,14 +628,11 @@ export function getDailyTask() {
  * @param {number[]} tracks track id
  */
 export function manipulatePlaylistTracks(op, pid, tracks) {
-    return client.postW({
-        url: `${BaseURL}/weapi/playlist/manipulate/tracks`,
-        data: {
-            op,
-            pid,
-            // tracks,
-            trackIds: JSON.stringify(tracks),
-        }
+    return client.postW('/playlist/manipulate/tracks', {
+        op,
+        pid,
+        // tracks,
+        trackIds: JSON.stringify(tracks),
     });
 }
 
@@ -785,10 +661,7 @@ export function uncollectTrack(pid, ...tracks) {
  * @returns {Promise<Types.SearchSuggestRes>}
  */
 export function getSearchSuggest(s) {
-    return client.postW({
-        url: `${BaseURL}/weapi/search/suggest/web`,
-        data: { s }
-    });
+    return client.postW('/search/suggest/web', { s });
 }
 
 const searchTypeMap = {
@@ -812,32 +685,23 @@ const searchTypeMap = {
  * @returns {Promise<Types.SearchRes>}
  */
 export function search(s, type, limit = 20, offset = 0) {
-    return client.postW({
-        url: `${BaseURL}/weapi/cloudsearch/get/web`,
-        data: {
-            hlposttag: '</span>',
-            hlpretag: '<span class="s-fc7">',
-            limit,
-            offset,
-            s,
-            total: true,
-            type: searchTypeMap[type],
-        }
+    return client.postW('/cloudsearch/get/web', {
+        hlposttag: '</span>',
+        hlpretag: '<span class="s-fc7">',
+        limit,
+        offset,
+        s,
+        total: true,
+        type: searchTypeMap[type],
     });
 }
 
 export function subscribePlaylist(id) {
-    return client.postW({
-        url: `${BaseURL}/weapi/playlist/subscribe`,
-        data: { id }
-    });
+    return client.postW('/playlist/subscribe', { id });
 }
 
 export function unsubscribePlaylist(id) {
-    return client.postW({
-        url: `${BaseURL}/weapi/playlist/unsubscribe`,
-        data: { id }
-    });
+    return client.postW('/playlist/unsubscribe', { id });
 }
 
 /**
@@ -846,12 +710,9 @@ export function unsubscribePlaylist(id) {
  * @returns {Promise<Types.SubscribedArtistRes>}
  */
 export function getSubscribedArtists(limit = 25, offset = 0) {
-    return client.postW({
-        url: `${BaseURL}/weapi/artist/sublist`,
-        data: {
-            limit,
-            offset
-        }
+    return client.postW('/artist/sublist', {
+        limit,
+        offset
     });
 }
 
@@ -861,12 +722,9 @@ export function getSubscribedArtists(limit = 25, offset = 0) {
  * @returns {Promise<Types.FavoriteVideoRes>}
  */
 export function getFavoriteVideos(limit = 25, offset = 0) {
-    return client.postW({
-        url: `${BaseURL}/weapi/cloudvideo/allvideo/sublist`,
-        data: {
-            limit,
-            offset
-        }
+    return client.postW('/cloudvideo/allvideo/sublist', {
+        limit,
+        offset
     });
 }
 
@@ -876,12 +734,9 @@ export function getFavoriteVideos(limit = 25, offset = 0) {
  * @returns {Promise<Types.SubscribedAlbumRes>}
  */
 export function getSubscribedAlumbs(limit = 25, offset = 0) {
-    return client.postE({
-        url: `${BaseURL}/eapi/album/sublist`,
-        data: {
-            limit,
-            offset
-        }
+    return client.postE('/album/sublist', {
+        limit,
+        offset
     });
 }
 
@@ -891,16 +746,13 @@ export function getSubscribedAlumbs(limit = 25, offset = 0) {
  * @returns {Promise<Types.AlbumDetailWRes>}
  */
 export function getAlbumDetailW(id) {
-    return client.postW({
-        url: `${BaseURL}/api/v1/album/${id}`,
-        data: {
-            total: true,
-            offset: 0,
-            id: id,
-            limit: 1000,
-            ext: true,
-            private_cloud: true
-        }
+    return client.postW(`/v1/album/${id}`, {
+        total: true,
+        offset: 0,
+        id: id,
+        limit: 1000,
+        ext: true,
+        private_cloud: true
     });
 }
 
@@ -910,13 +762,10 @@ export function getAlbumDetailW(id) {
  * @returns {Promise<Types.AlbumDetailRes>}
  */
 export function getAlbumDetailE(id) {
-    return client.postE({
-        url: `${BaseURL}/eapi/album/v3/detail`,
-        data: {
-            id: `${id}`,
-            // TODO: find out what is this `cache_key`
-            cache_key: crypto.randomFillSync(Buffer.alloc(32)).toString('base64')
-        }
+    return client.postE('/album/v3/detail', {
+        id,
+        // TODO: find out what is this `cache_key`
+        cache_key: crypto.randomFillSync(Buffer.alloc(32)).toString('base64')
     });
     /**
      * it seems that `cache_key` is only related to album id
@@ -930,10 +779,7 @@ export function getAlbumDetailE(id) {
  * @returns {Promise<Types.AlbumDynamicDetailRes>}
  */
 export function getAlbumDynamicDetail(id) {
-    return client.postE({
-        url: `${BaseURL}/eapi/album/detail/dynamic?id=${id}`,
-        data: { id: `${id}` }
-    });
+    return client.postE('/album/detail/dynamic', { id });
 }
 
 /**
@@ -941,10 +787,7 @@ export function getAlbumDynamicDetail(id) {
  * @returns {Promise<Types.AlbumPrivilegeRes>}
  */
 export function getAlbumPrivilege(id) {
-    return client.postE({
-        url: `${BaseURL}/eapi/album/privilege?id=${id}`,
-        data: { id: `${id}` }
-    });
+    return client.postE('/album/privilege', { id });
 }
 
 // utils for api `getRelatedPlaylists`
@@ -1055,10 +898,7 @@ export async function getRelatedAlbums(id) {
  * @returns {Promise<Types.SubscribeAlbumRes>}
  */
 export function subscribeAlbum(id) {
-    return client.postE({
-        url: `${BaseURL}/eapi/album/sub`,
-        data: { id: `${id}` }
-    });
+    return client.postE('/album/sub', { id });
 }
 
 /**
@@ -1066,10 +906,7 @@ export function subscribeAlbum(id) {
  * @returns {Promise<Types.UnsubscribeAlbumRes>}
  */
 export function unsubscribeAlbum(id) {
-    return client.postE({
-        url: `${BaseURL}/eapi/album/unsub`,
-        data: { id: `${id}` }
-    });
+    return client.postE('/album/unsub', { id });
 }
 
 /**
@@ -1077,10 +914,7 @@ export function unsubscribeAlbum(id) {
  * @returns {Promise<Types.RecommendMVRes>}
  */
 export function getRecommendMVs() {
-    return client.postW({
-        url: `${BaseURL}/weapi/personalized/mv`,
-        data: {}
-    });
+    return client.postW('/personalized/mv');
 }
 
 /**
@@ -1090,14 +924,11 @@ export function getRecommendMVs() {
  * @returns {Promise<Types.PersonalizedPlaylistRes>}
  */
 export function getPersonalizedPlaylists(limit = 10, offset = 0) {
-    return client.postW({
-        url: `${BaseURL}/weapi/personalized/playlist`,
-        data: {
-            limit,
-            offset,
-            total: true,
-            n: 1000
-        }
+    return client.postW('/personalized/playlist', {
+        limit,
+        offset,
+        total: true,
+        n: 1000
     });
 }
 
@@ -1107,13 +938,10 @@ export function getPersonalizedPlaylists(limit = 10, offset = 0) {
  * @returns {Promise<Types.ArtistDetailERes>}
  */
 export function getArtistDetailE(id) {
-    return client.postE({
-        url: `${BaseURL}/eapi/artist/v3/detail`,
-        data: {
-            id: `${id}`,
-            top: '50',
-            cache_key: ''
-        }
+    return client.postE('/artist/v3/detail', {
+        id,
+        top: '50',
+        cache_key: ''
     });
 }
 
@@ -1122,9 +950,7 @@ export function getArtistDetailE(id) {
  * @returns {Promise<Types.ArtistDetailWRes>}
  */
 export function getArtistDetailW(id) {
-    return client.postW({
-        url: `${BaseURL}/weapi/artist/${id}`
-    });
+    return client.postW(`/artist/${id}`);
 }
 
 /**
@@ -1132,10 +958,7 @@ export function getArtistDetailW(id) {
  * @returns {Promise<Types.ArtistDynamicDetailRes>}
  */
 export function getArtistDynamicDetail(id) {
-    return client.postE({
-        url: `${BaseURL}/eapi/artist/detail/dynamic`,
-        data: { id: `${id}` }
-    });
+    return client.postE('/artist/detail/dynamic', { id });
 }
 
 /**
@@ -1143,12 +966,9 @@ export function getArtistDynamicDetail(id) {
  * @returns {Promise<Types.ApiRes>}
  */
 export function followArtist(artistId) {
-    return client.postW({
-        url: `${BaseURL}/weapi/artist/sub`,
-        data: {
-            artistId,
-            artistIds: `[${artistId}]`
-        }
+    return client.postW('/artist/sub', {
+        artistId,
+        artistIds: `[${artistId}]`
     });
 }
 
@@ -1157,12 +977,9 @@ export function followArtist(artistId) {
  * @returns {Promise<Types.ApiRes>}
  */
 export function unfollowArtist(artistId) {
-    return client.postW({
-        url: `${BaseURL}/weapi/artist/unsub`,
-        data: {
-            artistId,
-            artistIds: `[${artistId}]`
-        }
+    return client.postW('/artist/unsub', {
+        artistId,
+        artistIds: `[${artistId}]`
     });
 }
 
@@ -1173,13 +990,10 @@ export function unfollowArtist(artistId) {
  * @returns {Promise<Types.ArtistAlbumsRes>}
  */
 export function getArtistAlbums(id, offset = 0, limit = 30) {
-    return client.postW({
-        url: `${BaseURL}/weapi/artist/albums/${id}`,
-        data: {
-            offset,
-            limit,
-            total: true
-        }
+    return client.postW(`/artist/albums/${id}`, {
+        offset,
+        limit,
+        total: true
     });
 }
 
@@ -1190,14 +1004,11 @@ export function getArtistAlbums(id, offset = 0, limit = 30) {
  * @returns {Promise<Types.ArtistMVsRes>}
  */
 export function getArtistMVs(artistId, offset = 0, limit = 30) {
-    return client.postW({
-        url: `${BaseURL}/weapi/artist/mvs`,
-        data: {
-            artistId,
-            offset,
-            limit,
-            total: true
-        }
+    return client.postW('/artist/mvs', {
+        artistId,
+        offset,
+        limit,
+        total: true
     });
 }
 
@@ -1206,10 +1017,7 @@ export function getArtistMVs(artistId, offset = 0, limit = 30) {
  * @returns {Promise<Types.ArtistIntroRes>}
  */
 export function getArtistIntro(id) {
-    return client.postW({
-        url: `${BaseURL}/weapi/artist/introduction`,
-        data: { id }
-    });
+    return client.postW('/artist/introduction', { id });
 }
 
 /**
@@ -1217,10 +1025,7 @@ export function getArtistIntro(id) {
  * @returns {Promise<Types.MVDetailRes>}
  */
 export function getMVDetail(id) {
-    return client.postW({
-        url: `${BaseURL}/weapi/mv/detail`,
-        data: { id }
-    });
+    return client.postW('/mv/detail', { id });
 }
 
 /**
@@ -1228,12 +1033,9 @@ export function getMVDetail(id) {
  * @returns {Promise<Types.SubscribeMVRes>}
  */
 export function subscribeMV(mvId) {
-    return client.postW({
-        url: `${BaseURL}/weapi/mv/sub`,
-        data: {
-            mvId,
-            mvIds: `[${mvId}]`
-        }
+    return client.postW('/mv/sub', {
+        mvId,
+        mvIds: `[${mvId}]`
     });
 }
 
@@ -1242,12 +1044,9 @@ export function subscribeMV(mvId) {
  * @returns {Promise<Types.UnsubscribeMVRes>}
  */
 export function unsubscribeMV(mvId) {
-    return client.postW({
-        url: `${BaseURL}/weapi/mv/unsub`,
-        data: {
-            mvId,
-            mvIds: `[${mvId}]`
-        }
+    return client.postW('/mv/unsub', {
+        mvId,
+        mvIds: `[${mvId}]`
     });
 }
 
@@ -1256,10 +1055,7 @@ export function unsubscribeMV(mvId) {
  * @returns {Promise<Types.VideoDetailRes>}
  */
 export function getVideoDetail(id) {
-    return client.postW({
-        url: `${BaseURL}/weapi/cloudvideo/v1/video/detail`,
-        data: { id }
-    });
+    return client.postW('/cloudvideo/v1/video/detail', { id });
 }
 
 /**
@@ -1267,10 +1063,7 @@ export function getVideoDetail(id) {
  * @returns {Promise<Types.SubscribeVideoRes>}
  */
 export function subscribeVideo(id) {
-    return client.postW({
-        url: `${BaseURL}/weapi/cloudvideo/video/sub`,
-        data: { id }
-    });
+    return client.postW('/cloudvideo/video/sub', { id });
 }
 
 /**
@@ -1278,10 +1071,7 @@ export function subscribeVideo(id) {
  * @returns {Promise<Types.UnsubscribeVideoRes>}
  */
 export function unsubscribeVideo(id) {
-    return client.postW({
-        url: `${BaseURL}/weapi/cloudvideo/video/unsub`,
-        data: { id }
-    });
+    return client.postW('/cloudvideo/video/unsub', { id });
 }
 
 /**
@@ -1289,10 +1079,7 @@ export function unsubscribeVideo(id) {
  * @returns {Promise<Types.VideoStatisticRes>}
  */
 export function getVideoStatistic(id) {
-    return client.postW({
-        url: `${BaseURL}/weapi/cloudvideo/v1/video/statistic`,
-        data: { id }
-    });
+    return client.postW('/cloudvideo/v1/video/statistic', { id });
 }
 
 /**
@@ -1301,12 +1088,9 @@ export function getVideoStatistic(id) {
  * @returns {Promise<Types.VideoURLRes>}
  */
 export function getVideoURL(id, resolution = 1080) {
-    return client.postW({
-        url: `${BaseURL}/weapi/cloudvideo/playurl`,
-        data: {
-            ids: `["${id}"]`,
-            resolution
-        }
+    return client.postW('/cloudvideo/playurl', {
+        ids: `["${id}"]`,
+        resolution
     });
 }
 
@@ -1316,12 +1100,9 @@ export function getVideoURL(id, resolution = 1080) {
  * @returns {Promise<Types.CommentThreadInfoERes>}
  */
 export function getCommentThreadInfoE(threadid) {
-    return client.postE({
-        url: `${BaseURL}/eapi/comment/commentthread/info`,
-        data: {
-            threadid,
-            composeliked: 'true'
-        }
+    return client.postE('/comment/commentthread/info', {
+        threadid,
+        composeliked: 'true'
     });
 }
 
@@ -1330,10 +1111,7 @@ export function getCommentThreadInfoE(threadid) {
  * @returns {Promise<Types.ApiRes>}
  */
 export function likeResourceE(threadId) {
-    return client.postE({
-        url: `${BaseURL}/eapi/resource/like`,
-        data: { threadId }
-    });
+    return client.postE('/resource/like', { threadId });
 }
 
 /**
@@ -1341,10 +1119,7 @@ export function likeResourceE(threadId) {
  * @returns {Promise<Types.ApiRes>}
  */
 export function unlikeResourceE(threadId) {
-    return client.postE({
-        url: `${BaseURL}/eapi/resource/unlike`,
-        data: { threadId }
-    });
+    return client.postE('/resource/unlike', { threadId });
 }
 
 /**
@@ -1352,10 +1127,7 @@ export function unlikeResourceE(threadId) {
  * @returns {Promise<Types.ApiRes>}
  */
 export function likeResource(threadId) {
-    return client.postW({
-        url: `${BaseURL}/weapi/resource/like`,
-        data: { threadId }
-    });
+    return client.postW('/resource/like', { threadId });
 }
 
 /**
@@ -1363,20 +1135,14 @@ export function likeResource(threadId) {
  * @returns {Promise<Types.ApiRes>}
  */
 export function unlikeResource(threadId) {
-    return client.postW({
-        url: `${BaseURL}/weapi/resource/unlike`,
-        data: { threadId }
-    });
+    return client.postW('/resource/unlike', { threadId });
 }
 
 /**
  * @returns {Promise<Types.RadioRes>}
  */
 export function getRadio() {
-    return client.postW({
-        url: `${BaseURL}/weapi/v1/radio/get`,
-        data: {}
-    });
+    return client.postW('/v1/radio/get');
 }
 
 /**
@@ -1386,20 +1152,14 @@ export function getRadio() {
  */
 export function dislikeRadioSong(songId, time) {
     const query = qs.stringify({ alg: 'RT', songId, time });
-    return client.postW({
-        url: `${BaseURL}/weapi/radio/trash/add?${query}`,
-        data: { songId }
-    });
+    return client.postW(`/radio/trash/add?${query}`, { songId });
 }
 
 /**
  * @returns {Promise<Types.RadioRes>}
  */
 export function getRadioE() {
-    return client.postE({
-        url: `${BaseURL}/eapi/v1/radio/get`,
-        data: {}
-    });
+    return client.postE('/v1/radio/get');
 }
 
 /**
@@ -1408,13 +1168,10 @@ export function getRadioE() {
  * @returns {Promise<Types.SkipRadioERes>}
  */
 export function skipRadioE(songId, time) {
-    return client.postE({
-        url: `${BaseURL}/eapi/v1/radio/skip`,
-        data: {
-            songId,
-            time,
-            alg: 'itembased'
-        }
+    return client.postE('/v1/radio/skip', {
+        songId,
+        time,
+        alg: 'itembased'
     });
 }
 
@@ -1425,14 +1182,11 @@ export function skipRadioE(songId, time) {
  * @returns {Promise<Types.LikeRadioERes>}
  */
 export function likeRadioE(trackId, time, like = true) {
-    return client.postE({
-        url: `${BaseURL}/eapi/v1/radio/like`,
-        data: {
-            trackId,
-            time,
-            alg: 'itembased',
-            like
-        }
+    return client.postE('/v1/radio/like', {
+        trackId,
+        time,
+        alg: 'itembased',
+        like
     });
 }
 
@@ -1442,13 +1196,10 @@ export function likeRadioE(trackId, time, like = true) {
  * @returns {Promise<Types.AddRadioTrashERes>}
  */
 export function addRadioTrashE(songId, time) {
-    return client.postE({
-        url: `${BaseURL}/eapi/v1/radio/trash/add`,
-        data: {
-            songId,
-            time,
-            alg: 'alg_fm_rt_bysong'
-        }
+    return client.postE('/v1/radio/trash/add', {
+        songId,
+        time,
+        alg: 'alg_fm_rt_bysong'
     });
 }
 
@@ -1458,10 +1209,7 @@ export function addRadioTrashE(songId, time) {
  * @returns {Promise<Types.RadioTrashERes>}
  */
 export function getRadioTrashE(limit, addTime) {
-    return client.postE({
-        url: `${BaseURL}/eapi/v2/radio/trash/get`,
-        data: { limit, addTime }
-    });
+    return client.postE('/v2/radio/trash/get', { limit, addTime });
 }
 
 /**
@@ -1469,10 +1217,7 @@ export function getRadioTrashE(limit, addTime) {
  * @returns {Promise<Types.ApiRes>}
  */
 export function removeRadioTrashE(songId) {
-    return client.postE({
-        url: `${BaseURL}/eapi/radio/trash/del`,
-        data: { songId }
-    });
+    return client.postE('/radio/trash/del', { songId });
 }
 
 /**
@@ -1481,14 +1226,7 @@ export function removeRadioTrashE(songId) {
  * @returns {Promise<Types.LikeSongERes>}
  */
 export function likeSongE(trackId, like = true) {
-    return client.postE({
-        url: `${BaseURL}/eapi/song/like`,
-        data: {
-            trackId,
-            like,
-            userid: 0
-        }
-    });
+    return client.postE('/song/like', { trackId, like, userid: 0 });
 }
 
 /**
@@ -1496,10 +1234,7 @@ export function likeSongE(trackId, like = true) {
  * @returns {Promise<Types.NewAlbumsRes>}
  */
 export function getNewAlbums() {
-    return client.postE({
-        url: `${BaseURL}/eapi/personalized/newalbum`,
-        data: {}
-    });
+    return client.postE('/personalized/newalbum');
 }
 
 /**
@@ -1508,12 +1243,7 @@ export function getNewAlbums() {
  * @returns {Promise<Types.BannerRes>}
  */
 export function getBanners(clientType = 'pc') {
-    return client.postE({
-        url: `${BaseURL}/eapi/banner/get/v3`,
-        data: {
-            clientType
-        }
-    });
+    return client.postE('/banner/get/v3', { clientType });
 }
 
 /**
@@ -1522,10 +1252,7 @@ export function getBanners(clientType = 'pc') {
  * @returns {Promise<Types.ApiRes>}
  */
 export function subscribeDj(id) {
-    return client.postE({
-        url: `${BaseURL}/eapi/djradio/sub`,
-        data: { id }
-    });
+    return client.postE('/djradio/sub', { id });
 }
 
 /**
@@ -1534,10 +1261,7 @@ export function subscribeDj(id) {
  * @returns {Promise<Types.ApiRes>}
  */
 export function unsubscribeDj(id) {
-    return client.postE({
-        url: `${BaseURL}/eapi/djradio/unsub`,
-        data: { id }
-    });
+    return client.postE('/djradio/unsub', { id });
 }
 
 /**
@@ -1548,10 +1272,7 @@ export function unsubscribeDj(id) {
  * @returns {Promise<Types.SubscribedDjRes>}
  */
 export function getSubscribedDj(limit = 100, time = 0, needFee = false) {
-    return client.postE({
-        url: `${BaseURL}/eapi/djradio/subed/v1`,
-        data: {limit, time, needFee}
-    });
+    return client.postE('/djradio/subed/v1', { limit, time, needFee });
 }
 
 /**
@@ -1560,10 +1281,7 @@ export function getSubscribedDj(limit = 100, time = 0, needFee = false) {
  * @returns {Promise<Types.DjDetailRes>}
  */
 export function getDjDetail(id) {
-    return client.postE({
-        url: `${BaseURL}/eapi/djradio/v2/get`,
-        data: { id }
-    });
+    return client.postE('/djradio/v2/get', { id });
 }
 
 /**
@@ -1576,10 +1294,7 @@ export function getDjDetail(id) {
  * @returns {Promise<Types.DjProgramRes>}
  */
 export function getDjProgram(radioId, limit = 100, offset = 0, asc = false, filterlikeplay = true) {
-    return client.postE({
-        url: `${BaseURL}/eapi/v1/dj/program/byradio`,
-        data: { radioId, limit, offset, asc, filterlikeplay }
-    });
+    return client.postE('/v1/dj/program/byradio', { radioId, limit, offset, asc, filterlikeplay });
 }
 
 /**
@@ -1588,8 +1303,26 @@ export function getDjProgram(radioId, limit = 100, offset = 0, asc = false, filt
  * @returns {Promise<Types.DjProgramDetailRes>}
  */
 export function getDjProgramDetail(id) {
-    return client.postE({
-        url: `${BaseURL}/eapi/dj/program/detail`,
-        data: { id }
-    });
+    return client.postE('/dj/program/detail', { id });
+}
+
+/**
+ * 批量查询电台节目可用音质与文件大小
+ * @param {number|number[]} idOrIds
+ * @returns {Promise<Types.DjProgramMusicsRes>}
+ */
+export function getDjProgramMusics(idOrIds) {
+    const ids = `[${idOrIds}]`;
+    return client.postE('/dj/program/song/musics', { ids });
+}
+
+/**
+ * 用户创建的电台
+ * @param {number} userId
+ * @param {number} limit
+ * @param {number} offset
+ * @returns {Promise<Types.DjCreatedByRes>}
+ */
+export function getDjCreatedBy(userId, limit = 1000, offset = 0) {
+    return client.postE('/djradio/get/byuser', { userId, limit, offset });
 }

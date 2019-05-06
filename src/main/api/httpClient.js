@@ -10,10 +10,6 @@ import { encodeWeb, encodeLinux, encodeEApi, decodeEApi } from './codec';
 
 const d = debug('HTTP');
 
-/**
- * @typedef {{url?: string, headers?: Record<string, string>, data?: any}} RequestConfig
- */
-
 class HttpClient {
     constructor() {
         this.clientHeaders = {
@@ -161,16 +157,17 @@ class HttpClient {
 
     /**
      * weapi request
-     * @param {RequestConfig} config
+     * @param {string} url
+     * @param {object} data
      */
-    postW(config) {
-        let url = config.url;
+    postW(url, data = {}) {
+        url = `https://music.163.com/weapi${url}`;
         /** @type {import('node-fetch').RequestInit} */
         let init = {
             method: 'POST',
             body: ''
         };
-        let body = config.data || {};
+        let body = data;
         const __csrf = this.getCookie('__csrf');
         if (__csrf) {
             url += `?csrf_token=${__csrf}`;
@@ -183,66 +180,60 @@ class HttpClient {
     /**
      * linux/forward api request
      * only use it when you **HAVE TO**
-     * @param {RequestConfig} config
+     * @param {string} url
+     * @param {object} data
      */
-    postL(config) {
-        const url = config.url;
+    postL(url, data = {}) {
+        let body = {
+            method: 'POST',
+            url: `http://music.163.com/api${url}`,
+            params: data
+        };
         /** @type {import('node-fetch').RequestInit} */
         let init = {
             method: 'POST',
-            headers: {},
-            body: ''
+            headers: {
+                Cookie: 'os=pc; osver=linux; appver=2.0.3.131777; channel=netease'
+            },
+            body: qs.stringify(encodeLinux(body))
         };
-        let body = config.data || {};
-        let cookie = {
-            os: 'pc',
-            osver: 'linux',
-            appver: '2.0.3.131777',
-            channel: 'netease'
-        };
-        // merge cookies
-        Object.assign(cookie, config.headers && config.headers.Cookie);
-        // put cookie string into RequestInit's header
-        init.headers['Cookie'] = Object.entries(cookie).map(([k, v]) => `${k}=${v}`).join('; ');
-        // encrypt request payload
-        init.body = qs.stringify(encodeLinux(body));
-        return this.post(url, init);
+        return this.post('https://music.163.com/linux/forward', init);
     }
 
     /**
      * eapi request
-     * @param {RequestConfig} config
+     * @param {string} url
+     * @param {object} data
      */
-    async postE(config) {
-        const url = config.url;
+    async postE(url, data = {}) {
+        url = `https://music.163.com/eapi${url}`;
+        let body = Object.assign({ e_r: 'true' }, data);
+        // default eapi cookies
+        body.header = Object.assign({
+            os: 'pc',
+            osver: 'linux',
+            appver: '2.0.3.131777',
+            channel: 'netease'
+        }, this.getCookie());
         /** @type {import('node-fetch').RequestInit} */
         let init = {
             method: 'POST',
             headers: {},
             body: ''
         };
-        let body = Object.assign({ e_r: 'true', header: {} }, config.data);
-        // default eapi cookies
-        let cookie = {
-            os: 'pc',
-            osver: 'linux',
-            appver: '2.0.3.131777',
-            channel: 'netease'
-        };
-        body.header = Object.assign({}, cookie, this.getCookie());
         // encrypt request payload
         init.body = qs.stringify(encodeEApi(new URL(url).pathname, body));
         init.headers = this.mergeHeaders({
-            'Cookie': Object.entries(cookie).map(([k, v]) => `${k}=${v}`).join('; '),
+            'Cookie': 'os=pc; osver=linux; appver=2.0.3.131777; channel=netease',
             'Content-Type': 'application/x-www-form-urlencoded',
             'Content-Length': Buffer.byteLength(init.body)
         });
         const res = await fetch(url, init);
         this.handleResponse(res);
         const buf = await res.buffer();
-        const data = JSON.parse(decodeEApi(buf));
-        this.logResponse(url, 'POST', res.status, data);
-        return data;
+        const json = JSON.parse(decodeEApi(buf));
+        this.logResponse(url, 'POST', res.status, json);
+        return json;
     }
 }
 
