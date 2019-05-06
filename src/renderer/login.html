@@ -40,8 +40,8 @@
                 console.error('Debugger detached due to', reason);
             });
             wc.debugger.on('message', (event, method, params) => {
-                if (method === "Network.responseReceived"  
-                    && params 
+                if (method === "Network.responseReceived"
+                    && params
                     && params.response
                     && params.response.url.includes('/weapi/')
                     && !params.response.url.includes('/weblog')
@@ -50,14 +50,14 @@
                     wc.debugger.sendCommand('Network.getResponseBody', {
                         requestId: params.requestId
                     }, (err, resp) => {
-                        if(!err.code && params.response.url.includes('/login')) {
+                        if (!err && params.response.url.includes('/login')) {
                             const userObj = JSON.parse(resp.body);
-                            if(userObj.code === 200){
+                            if (userObj.code === 200) {
                                 localStorage.setItem('user', resp.body);
                                 wc.debugger.sendCommand('Network.getCookies', {
                                     urls: ['https://music.163.com']
                                 }, (err, resp) => {
-                                    if(!err.code){
+                                    if (!err) {
                                         let cks = {};
                                         resp.cookies.forEach(ck => cks[ck.name] = ck.value);
                                         localStorage.setItem('cookie', JSON.stringify(cks));
