@@ -69,7 +69,7 @@ function subscribeHandler(mutation, state) {
             if (track) {
                 MPRIS.metadata(track);
             } else {
-                MPRIS.metadata({});
+                MPRIS.metadata(null);
                 MPRIS.stop();
             }
             break;

@@ -173,7 +173,7 @@ class MediaPlayer2Player {
     }
 
     setMetadata(value) {
-        if (typeof value.id === 'number') {
+        if (value) {
             this.setCanControl(true);
             this.Metadata = [
                 ['mpris:trackid', ['s', i.path(value.id)]],
