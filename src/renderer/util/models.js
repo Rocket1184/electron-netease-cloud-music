@@ -26,7 +26,8 @@ export class Track {
         this.no = o.no;
         this.artists = o.ar || o.artists;
         this.artistName = this.artists.map(a => a.name).join(' / ');
-        this.duration = o.dt || o.duration;
+        // #38 track.dt may be `0`
+        this.duration = o.dt || o.duration || 0;
         this.commentThreadId = o.commentThreadId;
         this.source = o.source || source;
         this.mv = o.mv;
