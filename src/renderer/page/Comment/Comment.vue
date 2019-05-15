@@ -20,10 +20,8 @@
                 <keep-alive>
                     <CommentList :key="tab"
                         :ref="tab"
-                        :pageSize="pageSize"
-                        :getComments="getComments"
-                        :likeComment="likeComment"
-                        :deleteComment="deleteComment"
+                        :type="tab"
+                        :thread="thread"
                         @reply="handleReply"></CommentList>
                 </keep-alive>
             </transition>
@@ -69,44 +67,26 @@ const ThreadPrefix = {
 export default {
     data() {
         return {
-            thread: '',
             tab: 'hot',
             replyTo: -1,
             editorOpen: false,
             editorPlaceholder: '请输入评论内容 ヽ( ^∀^)ﾉ',
             editorContent: '',
-            posting: false,
-            pageSize: 30
+            posting: false
         };
     },
     computed: {
         ...mapState(['user']),
+        thread() {
+            const { id, type } = this.$route.params;
+            return `${ThreadPrefix[type]}${id}`;
+        },
         transitionName() {
             if (this.tab === 'hot') return 'slide-right';
             return 'slide-left';
-        },
-        getComments() {
-            if (this.tab === 'hot') return this.getHotComments;
-            return this.getAllComments;
         }
     },
     methods: {
-        getHotComments(limit = 30, offset = 0) {
-            return Api.getHotComments(this.thread, limit, offset);
-        },
-        getAllComments(limit = 30, offset = 0) {
-            return Api.getComments(this.thread, limit, offset);
-        },
-        likeComment(commentId, liked) {
-            if (liked === true) {
-                return Api.unlikeCommentE(this.thread, commentId);
-            } else {
-                return Api.likeCommentE(this.thread, commentId);
-            }
-        },
-        deleteComment(commentId) {
-            return Api.deleteComment(this.thread, commentId);
-        },
         toggleEditor() {
             this.editorOpen = !this.editorOpen;
             if (this.editorOpen === true) {
@@ -155,10 +135,6 @@ export default {
                 this.$toast.message(`发布评论失败 ...  ${resp.code}: ${resp.msg}`);
             }
         }
-    },
-    created() {
-        const { id, type } = this.$route.params;
-        this.thread = `${ThreadPrefix[type]}${id}`;
     },
     components: {
         CommentList,

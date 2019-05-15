@@ -26,28 +26,27 @@
 </template>
 
 <script>
+import Api from '@/util/api';
+
 import CommentItem from './CommentItem.vue';
 import CenteredTip from '@/components/CenteredTip.vue';
 import CenteredLoading from '@/components/CenteredLoading.vue';
 
 export default {
     props: {
+        type: {
+            type: String,
+            required: false,
+            default: 'all'
+        },
+        thread: {
+            type: String,
+            required: true
+        },
         pageSize: {
             type: Number,
             required: false,
             default: 30
-        },
-        getComments: {
-            type: Function,
-            required: true
-        },
-        likeComment: {
-            type: Function,
-            required: true
-        },
-        deleteComment: {
-            type: Function,
-            required: true
         }
     },
     data() {
@@ -62,6 +61,23 @@ export default {
         offset() { return (this.page - 1) * this.pageSize; }
     },
     methods: {
+        getComments(limit, offset) {
+            if (this.type === 'hot') {
+                return Api.getHotComments(this.thread, limit, offset);
+            } else if (this.type === 'all') {
+                return Api.getComments(this.thread, limit, offset);
+            }
+        },
+        likeComment(commentId, liked) {
+            if (liked === true) {
+                return Api.unlikeCommentE(this.thread, commentId);
+            } else {
+                return Api.likeCommentE(this.thread, commentId);
+            }
+        },
+        deleteComment(commentId) {
+            return Api.deleteComment(this.thread, commentId);
+        },
         async loadComments() {
             this.loading = true;
             const resp = await this.getComments(this.pageSize, this.offset);
@@ -98,7 +114,13 @@ export default {
             this.loadComments();
         }
     },
-    mounted() {
+    watch: {
+        thread() {
+            this.total = 0;
+            this.loadComments();
+        }
+    },
+    created() {
         this.loadComments();
     },
     components: {
