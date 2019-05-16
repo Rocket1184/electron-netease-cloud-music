@@ -18,12 +18,13 @@ export function upsert(tracks) {
 
 /**
  * @param {number[]} ids
+ * @param {boolean} [ignoreMissing=false] should throw error when database miss
  * @returns {Promise<Types.TrackDetail[]>} raw track detail
  * @throws {number[]} database missed track ids
  */
-export async function get(ids) {
+export async function get(ids, ignoreMissing = false) {
     const res = await trackTable.where('id').anyOf(ids).toArray();
-    if (res.length < ids.length) {
+    if (!ignoreMissing && res.length < ids.length) {
         const missed = diff(ids, res.map(t => t.id));
         throw missed;
     }
