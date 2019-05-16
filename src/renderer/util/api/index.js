@@ -63,7 +63,8 @@ export async function bulkTrackDetail(ids) {
             tasks.push(promise);
         }
         await Promise.all(tasks);
-        return bulkTrackDetail(ids);
+        // some tracks may 404 and we got empty response. ignore missing tracks here
+        return track.get(ids, true);
     }
 }
 
