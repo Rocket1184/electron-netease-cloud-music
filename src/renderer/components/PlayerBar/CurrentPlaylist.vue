@@ -87,10 +87,6 @@ export default {
         queueEmpty() {
             return this.queue.list.length === 0;
         },
-        list() {
-            if (this.ui.radioMode) return this.radio.list;
-            return this.playlist.list;
-        },
         titleText() {
             if (this.ui.radioMode) return '私人 FM';
             return `共 ${this.queue.list.length} 首`;
@@ -158,14 +154,16 @@ export default {
     height: 100%;
     .actions {
         height: 36px;
-        padding: 0 8px;
+        padding: 0 4px 0 12px;
         display: flex;
         align-items: center;
         opacity: 0.75;
         box-shadow: 0 1px 3px rgba(0, 0, 0, 0.2);
         .count {
-            margin-left: 8px;
-            flex-grow: 1;
+            margin-right: auto;
+        }
+        .mu-button-small {
+            min-width: unset;
         }
     }
     .mu-list {
