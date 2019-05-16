@@ -68,6 +68,6 @@ export async function bulkTrackDetail(ids) {
     }
 }
 
-methodMap.set(bulkTrackDetail.name, bulkTrackDetail);
+methodMap.set('bulkTrackDetail', bulkTrackDetail);
 
 export default Api;
