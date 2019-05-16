@@ -56,6 +56,7 @@ export default {
         async updateTrackDetails() {
             this.loading = true;
             this.trackDetails = await this.getTrackDetail({ ids: this.trackIds });
+            this.$emit('load', this.trackDetails);
             this.loading = false;
         }
     },
