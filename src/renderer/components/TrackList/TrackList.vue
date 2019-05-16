@@ -136,7 +136,8 @@ export default {
 .tracklist {
     width: 100%;
     user-select: none;
-    .centered-tip {
+    .centered-tip,
+    .centered-loading {
         height: 220px;
     }
 }
