@@ -70,6 +70,10 @@ namespace Models {
         subscribedCount: number;
         commentCount: number;
         tracks: Track[];
+        trackIds: {
+            id: number;
+            v: number;
+        }[]
     }
 
     export class Artist {

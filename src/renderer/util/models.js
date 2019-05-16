@@ -52,6 +52,7 @@ export class PlayList {
         this.commentCount = o.commentCount;
         const tracks = o.tracks || o.recommend || [];
         this.tracks = tracks.map(t => new Track(t));
+        this.trackIds = o.trackIds || [];
     }
 }
 
