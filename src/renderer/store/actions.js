@@ -145,12 +145,25 @@ export async function checkin({ state, dispatch }) {
 }
 
 /**
+ * @param {ActionContext} _ 
+ * @param {{ids: {id: number; v: number}[]}} payload
+ */
+export async function getTrackDetail(_, { ids }) {
+    const tracks = await Api.bulkTrackDetail(ids.map(i => i.id));
+    return tracks.map(t => new Track(t));
+}
+
+/**
  * @param {ActionContext} param0
  */
-export async function updateUserPlaylistDetail({ commit }, payload) {
+export async function updateUserPlaylistDetail({ commit, dispatch }, payload) {
     const listId = typeof payload === 'number' ? payload : payload.id;
-    const resp = await Api.getListDetail(listId);
-    commit(types.UPDATE_USER_PLAYLIST, resp.playlist);
+    const resp = await Api.getListDetail(listId, 0);
+    if (resp.code === 200) {
+        // TODO: only user's favorite list's track should be stored
+        resp.playlist.tracks = await dispatch('getTrackDetail', { ids: resp.playlist.trackIds });
+        commit(types.UPDATE_USER_PLAYLIST, resp.playlist);
+    }
 }
 
 /**
@@ -553,7 +566,7 @@ export async function setUiFavAlbum({ commit }, id) {
  * @param {ActionContext} param0
  */
 export async function setUiTempPlaylist({ commit }, id) {
-    const resp = await Api.getListDetail(id);
+    const resp = await Api.getListDetail(id, 0);
     if (resp.code === 200) {
         commit(types.SET_UI_TEMP_PLAYLIST, resp.playlist);
     }
