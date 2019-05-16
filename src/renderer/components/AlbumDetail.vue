@@ -19,7 +19,11 @@
                     </div>
                 </div>
                 <div class="actions">
+                    <PlayTracksButton small
+                        :source="trackSource"
+                        :tracks="album.songs"></PlayTracksButton>
                     <mu-button flat
+                        small
                         @click="handleSubscribe">
                         <mu-icon left
                             :color="dynamicDetail.isSub ? 'amber' : ''"
@@ -27,6 +31,7 @@
                         <span>{{btnSubscribeText}}</span>
                     </mu-button>
                     <mu-button flat
+                        small
                         :to="{ name: 'comment', params: { type: 'album', id: album.id } }">
                         <mu-icon left
                             value="comment"></mu-icon>
@@ -56,11 +61,10 @@
             </div>
         </div>
         <div class="tracks">
-            <PlayTracks :source="trackSource"
-                :tracks="album.songs"></PlayTracks>
             <div v-for="(tracks, name) in tracksToShow"
                 :key="name">
                 <mu-sub-header>Disk {{name}}</mu-sub-header>
+                <mu-divider></mu-divider>
                 <TrackList :source="trackSource"
                     :tracks="tracks"></TrackList>
             </div>
@@ -73,7 +77,7 @@ import { mapActions, mapState } from 'vuex';
 
 import Api from '@/util/api';
 import TrackList from './TrackList/TrackList.vue';
-import PlayTracks from './PlayTracks.vue';
+import PlayTracksButton from './PlayTracksButton.vue';
 import { shortDate } from '@/util/formatter';
 import { sizeImg, HiDpiPx } from '@/util/image';
 
@@ -172,7 +176,7 @@ export default {
         this.updateDynamicDetail();
     },
     components: {
-        PlayTracks,
+        PlayTracksButton,
         TrackList
     }
 };
@@ -217,6 +221,7 @@ export default {
             }
             .actions {
                 display: flex;
+                margin: 4px 0 4px 8px;
             }
             .intro {
                 .mu-list {
@@ -228,6 +233,9 @@ export default {
                 }
             }
         }
+    }
+    .mu-sub-header {
+        user-select: none;
     }
 }
 </style>
