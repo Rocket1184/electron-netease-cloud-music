@@ -51,6 +51,7 @@ function createMainWindow(settings, url = mainURL) {
             zoomFactor: settings.windowZoom || 1,
             preload: join(__dirname, 'preload.js'),
             nodeIntegration: isDev,
+            nodeIntegrationInWorker: isDev,
             contextIsolation: false,
             additionalArguments: [`--initial-settings=${JSON.stringify(settings)}`]
         }
