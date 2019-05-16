@@ -34,8 +34,7 @@
             </mu-load-more>
         </template>
         <PlaylistDetail v-if="playlist"
-            :playlist="playlist"
-            @detail-scroll="scrollContent"></PlaylistDetail>
+            :playlist="playlist"></PlaylistDetail>
     </ListDetailLayout>
 </template>
 
@@ -127,3 +126,11 @@ export default {
     }
 };
 </script>
+
+<style lang="less">
+.fav-playlist {
+    .mu-load-more {
+        overflow: auto;
+    }
+}
+</style>

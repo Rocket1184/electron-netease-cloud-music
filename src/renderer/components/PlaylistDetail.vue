@@ -17,7 +17,13 @@
                     </div>
                 </div>
                 <div class="actions">
+                    <PlayTracksButton small
+                        :total="playlist.trackCount"
+                        :source="trackSource"
+                        :tracks="tracks"
+                        :disabled="!tracksLoaded"></PlayTracksButton>
                     <mu-button flat
+                        small
                         :disabled="playlist.creator.id === user.info.id"
                         @click="handleSubscribe">
                         <mu-icon left
@@ -26,6 +32,7 @@
                         <span>{{btnSubscribeText}}</span>
                     </mu-button>
                     <mu-button flat
+                        small
                         :to="{ name: 'comment', params: { type: 'playlist', id: playlist.id } }">
                         <mu-icon left
                             value="comment"></mu-icon>
@@ -57,19 +64,10 @@
         </div>
         <div class="tracks">
             <mu-sub-header>曲目列表</mu-sub-header>
-            <PlayTracks :source="trackSource"
-                :tracks="playlist.tracks"></PlayTracks>
-            <TrackList :source="trackSource"
-                :tracks="tracksToShow"
-                :indexOffset="tracksOffset"></TrackList>
-            <div class="pagination"
-                v-if="playlist.tracks.length > 50">
-                <mu-pagination :total="playlist.tracks.length"
-                    :current="currentPage"
-                    :page-size="pageSize"
-                    @change="handlePageChange">
-                </mu-pagination>
-            </div>
+            <mu-divider></mu-divider>
+            <VirtualTrackList :source="trackSource"
+                :trackIds="playlist.trackIds"
+                @load="handleTracksLoad"></VirtualTrackList>
         </div>
     </div>
 </template>
@@ -77,8 +75,8 @@
 <script>
 import { mapActions, mapState } from 'vuex';
 
-import TrackList from './TrackList/TrackList.vue';
-import PlayTracks from './PlayTracks.vue';
+import VirtualTrackList from './TrackList/VirtualTrackList.vue';
+import PlayTracksButton from './PlayTracksButton.vue';
 import { shortDate } from '@/util/formatter';
 import { sizeImg, HiDpiPx } from '@/util/image';
 
@@ -93,9 +91,8 @@ export default {
             shouldSubscribed: null,
             subsCntOffset: 0,
             descOpen: false,
-            scrollHeight: 200,
-            currentPage: 1,
-            pageSize: 50
+            tracksLoaded: false,
+            tracks: []
         };
     },
     computed: {
@@ -128,12 +125,6 @@ export default {
                 name: 'list',
                 id: this.playlist.id
             };
-        },
-        tracksOffset() {
-            return (this.currentPage - 1) * this.pageSize;
-        },
-        tracksToShow() {
-            return this.playlist.tracks.slice(this.tracksOffset, this.tracksOffset + this.pageSize);
         }
     },
     methods: {
@@ -141,9 +132,9 @@ export default {
             'subscribePlaylist',
             'unsubscribePlaylist'
         ]),
-        handlePageChange(newIndex) {
-            this.$emit('detail-scroll', this.scrollHeight);
-            this.currentPage = newIndex;
+        handleTracksLoad(tracks) {
+            this.tracksLoaded = true;
+            this.tracks = tracks;
         },
         async handleSubscribe() {
             if (!this.user.loginValid) {
@@ -173,8 +164,8 @@ export default {
         this.shouldSubscribed = this.playlist.subscribed;
     },
     components: {
-        PlayTracks,
-        TrackList
+        PlayTracksButton,
+        VirtualTrackList
     }
 };
 </script>

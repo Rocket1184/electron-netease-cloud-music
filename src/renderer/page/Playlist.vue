@@ -20,8 +20,7 @@
                     @click="handleRelatedClick(list.id)"></AvatarListItem>
             </mu-list>
         </template>
-        <PlaylistDetail :playlist="ui.temp.playlist"
-            @detail-scroll="scrollContent"></PlaylistDetail>
+        <PlaylistDetail :playlist="ui.temp.playlist"></PlaylistDetail>
     </ListDetailLayout>
 </template>
 
