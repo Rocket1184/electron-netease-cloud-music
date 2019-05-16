@@ -14,9 +14,15 @@ import PlayTracks from '@/components/PlayTracks.vue';
 export default {
     extends: PlayTracks,
     inheritAttrs: false,
+    props: {
+        total: {
+            type: Number,
+            required: false
+        }
+    },
     computed: {
         btnPlayText() {
-            return `播放全部 (${this.tracks.length})`;
+            return `播放全部 (${this.tracks.length || this.total})`;
         }
     }
 };
