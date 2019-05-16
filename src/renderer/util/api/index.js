@@ -1,6 +1,8 @@
 import debug from 'debug';
 import { ipcRenderer } from 'electron';
 
+import * as track from './database/track';
+
 const TAG = 'API';
 const d = debug(TAG);
 
@@ -30,7 +32,9 @@ function senderFn(methodName, ...args) {
     });
 }
 
-export default new Proxy({}, {
+/** @type {import('./index').default} */
+// @ts-ignore
+const Api = new Proxy({}, {
     get(_, propName) {
         if (methodMap.has(propName)) {
             return methodMap.get(propName);
@@ -40,3 +44,29 @@ export default new Proxy({}, {
         return fn;
     }
 });
+
+/**
+ * @param {number[]} ids
+ */
+export async function bulkTrackDetail(ids) {
+    try {
+        return await track.get(ids);
+    } catch (missed) {
+        const tasks = [];
+        for (let i = 0; i < missed.length; i += 1000) {
+            const ids = missed.slice(i, i + 1000);
+            const promise = Api.getSongDetail(ids).then(resp => {
+                if (resp.code === 200) {
+                    track.insert(resp.songs);
+                }
+            });
+            tasks.push(promise);
+        }
+        await Promise.all(tasks);
+        return bulkTrackDetail(ids);
+    }
+}
+
+methodMap.set(bulkTrackDetail.name, bulkTrackDetail);
+
+export default Api;

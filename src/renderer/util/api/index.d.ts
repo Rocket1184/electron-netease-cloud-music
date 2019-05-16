@@ -9,6 +9,8 @@ type Promisfy<T> = T extends ((...args: any[]) => any)
 
 type AllPromisfy<T> = { [P in keyof T]: Promisfy<T[P]> }
 
-declare const Api: AllPromisfy<typeof ApiFunc>;
+declare const Api: AllPromisfy<typeof ApiFunc> & {
+    bulkTrackDetail(ids: number[]): Promise<Types.TrackDetail[]>
+};
 
 export default Api;
