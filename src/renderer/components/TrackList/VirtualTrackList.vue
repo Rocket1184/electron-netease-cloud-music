@@ -46,8 +46,13 @@ export default {
     data() {
         return {
             loading: false,
-            trackDetails: []
+            details: []
         };
+    },
+    computed: {
+        trackDetails() {
+            return this.details;
+        }
     },
     methods: {
         ...mapActions([
@@ -55,14 +60,14 @@ export default {
         ]),
         async updateTrackDetails() {
             this.loading = true;
-            this.trackDetails = await this.getTrackDetail({ ids: this.trackIds });
-            this.$emit('load', this.trackDetails);
+            this.details = await this.getTrackDetail({ ids: this.trackIds });
+            this.$emit('load', this.details);
             this.loading = false;
         }
     },
     created() {
         if (this.tracks) {
-            this.trackDetails = this.tracks;
+            this.details = this.tracks;
         } else {
             this.updateTrackDetails();
         }
@@ -70,7 +75,7 @@ export default {
     watch: {
         tracks(val) {
             if (val) {
-                this.trackDetails = val;
+                this.details = val;
             }
         },
         trackIds(val) {

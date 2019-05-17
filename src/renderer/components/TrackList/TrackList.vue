@@ -57,6 +57,9 @@ export default {
         ...mapGetters(['queue']),
         shortcuts() {
             return shortcuts;
+        },
+        trackDetails() {
+            return this.tracks;
         }
     },
     methods: {
@@ -75,11 +78,11 @@ export default {
         },
         /**
          * find track specified by given index in current playlist 
-         * @param {number} index track index in `this.tracks`
+         * @param {number} index track index in `this.trackDetails`
          * @returns {number}
          */
         findTrackInPlaylist(index) {
-            const track = this.tracks[index];
+            const track = this.trackDetails[index];
             return this.playlist.list.findIndex(t => t.id === track.id);
         },
         queueTrack(index) {
@@ -89,7 +92,7 @@ export default {
                 return;
             }
             this.insertTrackIntoPlaylist({
-                tracks: [this.tracks[index]],
+                tracks: [this.trackDetails[index]],
                 source: this.source,
                 index: this.playlist.list.length
             });
@@ -110,7 +113,7 @@ export default {
                 return;
             }
             this.insertTrackIntoPlaylist({
-                tracks: [this.tracks[index]],
+                tracks: [this.trackDetails[index]],
                 source: this.source,
                 index: this.playlist.index
             });
