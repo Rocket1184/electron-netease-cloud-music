@@ -6,8 +6,7 @@
         <template v-else>
             <div class="actions">
                 <span class="count">{{titleText}}</span>
-                <div class="input"
-                    v-show="showFindInput">
+                <div v-show="showFindInput">
                     <mu-text-field ref="findInput"
                         v-model="findInput"
                         action-icon="close"
@@ -81,12 +80,30 @@
 </template>
 
 <script>
-import { workerExecute } from '@/worker/message';
+import { mapActions, mapGetters, mapState } from 'vuex';
 
-import CurrentPlaylist from './CurrentPlaylist.vue';
+import { workerExecute } from '@/worker/message';
+import CenteredTip from '@/components/CenteredTip.vue';
+
+const SourceName = {
+    list: '歌单',
+    album: '专辑',
+    artist: '歌手',
+    search: '搜索',
+    radio: '私人 FM',
+    recommend: '每日歌曲推荐'
+};
+
+const RouteName = {
+    list: 'playlist',
+    album: 'album',
+    artist: 'artist',
+    search: 'search',
+    radio: 'radio',
+    recommend: 'recommend'
+};
 
 export default {
-    extends: CurrentPlaylist,
     data() {
         return {
             filteredList: [],
@@ -96,6 +113,11 @@ export default {
         };
     },
     computed: {
+        ...mapState(['ui']),
+        ...mapGetters(['playing', 'queue']),
+        queueEmpty() {
+            return this.queue.list.length === 0;
+        },
         listToShow() {
             if (this.showFindInput === true && this.findInput.length > 0) {
                 return this.filteredList;
@@ -109,6 +131,12 @@ export default {
         }
     },
     methods: {
+        ...mapActions([
+            'clearPlaylist',
+            'playTrackIndex',
+            'toggleCollectPopup',
+            'removeTrackFromPlaylist'
+        ]),
         toggleFindInput() {
             this.showFindInput = !this.showFindInput;
             if (this.showFindInput === true) {
@@ -120,16 +148,45 @@ export default {
                 this.findInput = '';
             }
         },
-        handleListClick(index) {
-            let i = index;
-            if (this.indexMap.size > 0) {
-                i = this.indexMap.get(index);
-            }
-            CurrentPlaylist.methods.handleListClick.call(this, i);
-        },
         handleCollectAll() {
             const ids = this.listToShow.map(t => t.id);
             this.toggleCollectPopup(ids);
+        },
+        async handleClearPlaylist() {
+            const msg = await this.$confirm('真的要清空播放列表吗？', '提示');
+            if (msg.result === true) {
+                this.clearPlaylist();
+            }
+        },
+        handleListClick(index) {
+            let i = this.indexMap.size > 0 ? this.indexMap.get(index) : index;
+            this.playTrackIndex(i);
+        },
+        sourceTipText(track) {
+            return `来自${SourceName[track.source.name]}`;
+        },
+        handleSourceClick(source) {
+            const name = RouteName[source.name];
+            switch (source.name) {
+                case 'list':
+                case 'album':
+                case 'artist':
+                    this.$router.push({ name, params: { id: source.id } });
+                    break;
+                case 'search':
+                    this.$router.push({ name, query: { keyword: source.id, type: 'song' } });
+                    break;
+                case 'radio':
+                case 'recommend':
+                    this.$router.push({ name });
+                    break;
+                default:
+                    break;
+            }
+            this.$emit('navigate');
+        },
+        handleRemove(index) {
+            this.removeTrackFromPlaylist({ start: index, count: 1 });
         },
         scrollTo(index) {
             const top = this.$refs.scroller.$el.scrollTop;
@@ -152,15 +209,25 @@ export default {
             }
         }
     },
-    created() {
-        this.list = this.queue.list;
+    components: {
+        CenteredTip
     }
 };
 </script>
 
 <style lang="less">
-.current-list--virtual {
+.current-list {
+    height: 100%;
     .actions {
+        height: 36px;
+        padding: 0 4px 0 12px;
+        display: flex;
+        align-items: center;
+        opacity: 0.75;
+        box-shadow: 0 1px 3px rgba(0, 0, 0, 0.2);
+        .count {
+            margin-right: auto;
+        }
         .mu-input {
             font-size: 14px;
             margin: 0;
@@ -174,11 +241,35 @@ export default {
                 padding-right: 0;
             }
         }
+        .mu-button-small {
+            min-width: unset;
+        }
     }
-    .vue-recycle-scroller__item-view.hover {
-        background-color: rgba(0, 0, 0, 0.1);
-        .current-list-after {
-            opacity: 0.6;
+    .mu-list {
+        padding: 0;
+        height: calc(~'100% - 36px');
+        .mu-item {
+            padding: 0 4px;
+            .mu-item-action {
+                z-index: 1;
+                min-width: 36px;
+                justify-content: center;
+            }
+            .track-artist {
+                font-size: 11px;
+            }
+            .current-list-after {
+                opacity: 0;
+                min-width: 50px;
+                flex-direction: row;
+                justify-content: flex-end;
+            }
+        }
+        .vue-recycle-scroller__item-view.hover {
+            background-color: rgba(0, 0, 0, 0.1);
+            .current-list-after {
+                opacity: 0.6;
+            }
         }
     }
 }
