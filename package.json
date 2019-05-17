@@ -16,7 +16,6 @@
     "@babel/plugin-transform-modules-commonjs": "^7.4.4",
     "@babel/register": "^7.4.4",
     "@types/node": "10.11.7",
-    "babel-loader": "^8.0.6",
     "copy-webpack-plugin": "^5.0.3",
     "css-loader": "^2.1.1",
     "electron-devtools-installer": "^2.2.4",
@@ -29,12 +28,11 @@
     "less-loader": "^5.0.0",
     "less-plugin-clean-css": "^1.5.1",
     "mini-css-extract-plugin": "^0.6.0",
-    "native-ext-loader": "^2.3.0",
     "style-loader": "^0.23.1",
     "vue-loader": "^15.7.0",
     "vue-template-compiler": "2.6.8",
     "webpack": "^4.31.0",
-    "webpack-dev-server": "3.3.1"
+    "webpack-dev-server": "3.4.0"
   },
   "dependencies": {
     "big-integer": "^1.6.43",
