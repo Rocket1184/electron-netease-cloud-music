@@ -97,7 +97,7 @@ export default {
         },
         handleCompose() {
             if (!this.user.loginValid) {
-                this.$toast('登录后才能发布评论呢 (,,Ծ‸Ծ,,)');
+                this.$toast.message('登录后才能发布评论呢 (,,Ծ‸Ծ,,)');
                 return;
             }
             this.replyTo = -1;
@@ -107,7 +107,7 @@ export default {
         },
         handleReply(comment) {
             if (!this.user.loginValid) {
-                this.$toast('登录后才能回复评论呢 └(￣^￣ )┐');
+                this.$toast.message('登录后才能回复评论呢 └(￣^￣ )┐');
                 return;
             }
             this.replyTo = comment.commentId;
