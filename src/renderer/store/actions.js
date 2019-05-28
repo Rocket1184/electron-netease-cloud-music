@@ -217,9 +217,6 @@ export async function logout({ commit }) {
         commit(types.SET_USER_INFO, {});
         commit(types.SET_USER_PLAYLISTS, []);
         commit(types.SET_LOGIN_VALID, false);
-        commit(types.SET_UI_FAV_ALBUM, null);
-        commit(types.SET_UI_FAV_VIDEO, null);
-        commit(types.SET_UI_FAV_ARTIST, null);
         commit(types.SET_USER_SIGN_STATUS, null);
         ['user', 'cookie'].forEach(k => localStorage.removeItem(k));
     }
@@ -571,36 +568,6 @@ export async function updateUserAlbums({ commit }) {
 /**
  * @param {ActionContext} param0
  */
-export async function setUiFavAlbum({ commit }, id) {
-    const resp = await Api.getAlbumDetailW(id);
-    if (resp.code === 200) {
-        commit(types.SET_UI_FAV_ALBUM, resp);
-    }
-}
-
-/**
- * @param {ActionContext} param0
- */
-export async function setUiTempPlaylist({ commit }, id) {
-    const resp = await Api.getListDetail(id, 0);
-    if (resp.code === 200) {
-        commit(types.SET_UI_TEMP_PLAYLIST, resp.playlist);
-    }
-}
-
-/**
- * @param {ActionContext} param0
- */
-export async function setUiRelatedPlaylists({ commit }, id) {
-    const resp = await Api.getRelatedPlaylists(id);
-    if (resp.code === 200) {
-        commit(types.SET_UI_TEMP_RELATED_PLAYLISTS, resp.data);
-    }
-}
-
-/**
- * @param {ActionContext} param0
- */
 export async function updateRecommendSongs({ commit }) {
     const resp = await Api.getRecommendSongs();
     if (resp.code === 200) {
@@ -627,26 +594,6 @@ export async function dislikeRecommend({ commit }, id) {
         commit(types.REPLACE_RECOMMEND_SONG, { id, track: resp.data });
     }
     return resp;
-}
-
-/**
- * @param {ActionContext} param0
- */
-export async function setUiTempAlbum({ commit }, id) {
-    const resp = await Api.getAlbumDetailW(id);
-    if (resp.code === 200) {
-        commit(types.SET_UI_TEMP_ALBUM, resp);
-    }
-}
-
-/**
- * @param {ActionContext} param0
- */
-export async function setUiRelatedAlbums({ commit }, id) {
-    const resp = await Api.getRelatedAlbums(id);
-    if (resp.code === 200) {
-        commit(types.SET_UI_TEMP_RELATED_ALBUMS, resp.data);
-    }
 }
 
 /**
@@ -686,24 +633,6 @@ export async function updateUserArtists({ commit }) {
 /**
  * @param {ActionContext} param0
  */
-export async function setUiArtist({ commit }, { mutation, id }) {
-    const resp = await Api.getArtistDetailW(id);
-    if (resp.code === 200) {
-        commit(mutation, resp);
-    }
-}
-
-export function setUiFavArtist({ dispatch }, id) {
-    return dispatch('setUiArtist', { mutation: types.SET_UI_FAV_ARTIST, id });
-}
-
-export function setUiTempArtist({ dispatch }, id) {
-    return dispatch('setUiArtist', { mutation: types.SET_UI_TEMP_ARTIST, id });
-}
-
-/**
- * @param {ActionContext} param0
- */
 export async function followArtist({ commit }, payload) {
     const resp = await Api.followArtist(payload.id);
     if (resp.code === 200) {
@@ -731,35 +660,6 @@ export async function unfollowArtist({ commit }, payload) {
 export async function updateUserVideos({ commit }) {
     const resp = await Api.getFavoriteVideos(1000);
     commit(types.SET_USER_VIDEOS, resp.data);
-}
-
-/**
- * @param {ActionContext} param0
- */
-export async function setUiVideo({ commit }, { id, type, mutation }) {
-    let resp;
-    if (type === 0) {
-        resp = await Api.getMVDetail(id);
-        commit(mutation, Object.assign(resp.data, { type, subed: resp.subed }));
-    } else if (type === 1) {
-        resp = await Api.getVideoDetail(id);
-        commit(mutation, Object.assign(resp.data, { type }));
-    }
-    return resp;
-}
-
-/**
- * @param {ActionContext} param0
- */
-export function setUiFavVideo({ dispatch }, { id, type }) {
-    return dispatch('setUiVideo', { id, type, mutation: types.SET_UI_FAV_VIDEO });
-}
-
-/**
- * @param {ActionContext} param0
- */
-export function setUiTempVideo({ dispatch }, { id, type }) {
-    return dispatch('setUiVideo', { id, type, mutation: types.SET_UI_TEMP_VIDEO });
 }
 
 /**
