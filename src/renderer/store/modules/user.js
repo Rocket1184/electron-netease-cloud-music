@@ -10,6 +10,8 @@ const state = {
         pcSign: false,
         mobileSign: false
     },
+    /** @type {number[]} */
+    favTrackIds: [],
     /** @type {Models.PlayList[]} */
     playlist: [],
     /** @type {Models.User} */
@@ -52,6 +54,9 @@ const mutations = {
             return;
         }
         Object.entries(payload).forEach(([key, val]) => state.signStatus[key] = val);
+    },
+    [types.SET_USER_FAVOR_TRACKS](state, /** @type {number[]} */ payload) {
+        state.favTrackIds = payload;
     },
     [types.SET_USER_PLAYLISTS](state, /** @type {Types.PlaylistDetail[]} */ payload) {
         state.playlist = payload.map(l => new PlayList(l));

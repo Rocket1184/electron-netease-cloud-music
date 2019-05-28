@@ -1,4 +1,5 @@
-import Api from '@/util/api/index';
+import Api from '@/api/ipc';
+import * as ApiTyped from '@/api/typed';
 import * as types from './mutation-types';
 import { Track, Video } from '@/util/models';
 import { LOOP_MODE } from './modules/playlist';
@@ -145,39 +146,23 @@ export async function checkin({ state, dispatch }) {
 }
 
 /**
- * @param {ActionContext} _ 
- * @param {{ids: {id: number; v: number}[]}} payload
- */
-export async function getTrackDetail(_, { ids }) {
-    const tracks = await Api.bulkTrackDetail(ids.map(i => i.id));
-    return tracks.map(t => new Track(t));
-}
-
-/**
  * @param {ActionContext} param0
  */
-export async function updateUserPlaylistDetail({ commit, dispatch }, payload) {
-    const listId = typeof payload === 'number' ? payload : payload.id;
-    const resp = await Api.getListDetail(listId, 0);
-    if (resp.code === 200) {
-        // TODO: only user's favorite list's track should be stored
-        resp.playlist.tracks = await dispatch('getTrackDetail', { ids: resp.playlist.trackIds });
-        commit(types.UPDATE_USER_PLAYLIST, resp.playlist);
-    }
-}
-
-/**
- * @param {ActionContext} param0
- */
-export async function updateUserPlaylist({ state, commit, dispatch }) {
+export async function updateUserPlaylist({ state, commit }) {
     const { playlist } = await Api.getUserPlaylist(state.user.info.id);
-    // TODO: extract action updateUserInfo
     commit(types.UPDATE_USER_INFO, playlist[0].creator);
     commit(types.SET_USER_PLAYLISTS, playlist);
-    if (playlist[0].name.endsWith('喜欢的音乐')) {
-        dispatch('updateUserPlaylistDetail', playlist[0].id);
-    }
     return playlist;
+}
+
+/**
+ * @param {ActionContext} param0
+ */
+export async function updateFavoriteTrackIds({ state, commit }) {
+    const { id, name } = state.user.playlist[0];
+    if (!name.endsWith('喜欢的音乐')) return;
+    const list = await ApiTyped.getPlaylistDetail(id);
+    commit(types.SET_USER_FAVOR_TRACKS, list.trackIds.map(i => i.id));
 }
 
 /**
@@ -187,7 +172,9 @@ export function setLoginValid({ commit, dispatch }, payload) {
     if (payload === undefined || payload === true) {
         commit(types.SET_LOGIN_VALID, true);
         dispatch('updateUserSignStatus');
-        dispatch('updateUserPlaylist');
+        dispatch('updateUserPlaylist').then(() => {
+            dispatch('updateFavoriteTrackIds');
+        });
     } else {
         commit(types.SET_LOGIN_VALID, false);
     }
