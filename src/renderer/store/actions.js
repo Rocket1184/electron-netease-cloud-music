@@ -236,32 +236,48 @@ export async function search({ state, commit }, { keyword, type, limit = 20, off
     commit(types.SET_SEARCH_PARAM, { keyword, type, offset });
     const resp = await Api.search(keyword, type, limit, offset);
     if (state.ui.search.type !== type) return;
+    if (!resp.result) resp.result = {};
     if (resp.code === 200) {
         let result = {
             total: 0,
-            items: null
+            items: []
         };
         switch (type) {
             case 'song':
-                result.total = resp.result.songCount;
-                result.items = resp.result.songs.map(i => new Track(i));
+                result.total = resp.result.songCount || 0;
+                if (result.total > 0) {
+                    result.items = resp.result.songs.map(i => new Track(i));
+                }
                 break;
             case 'artist':
-                result.total = resp.result.artistCount;
-                result.items = resp.result.artists;
+                result.total = resp.result.artistCount || 0;
+                if (result.total > 0) {
+                    result.items = resp.result.artists;
+                }
                 break;
             case 'album':
-                result.total = resp.result.albumCount;
-                result.items = resp.result.albums;
+                result.total = resp.result.albumCount || 0;
+                if (result.total > 0) {
+                    result.items = resp.result.albums;
+                }
                 break;
             case 'playlist':
-                result.total = resp.result.playlistCount;
-                result.items = resp.result.playlists;
+                result.total = resp.result.playlistCount || 0;
+                if (result.total > 0) {
+                    result.items = resp.result.playlists;
+                }
                 break;
             case 'video':
-                result.total = resp.result.videoCount;
-                result.items = resp.result.videos.map(v => new Video(v));
+                result.total = resp.result.videoCount || 0;
+                if (result.total > 0) {
+                    result.items = resp.result.videos.map(v => new Video(v));
+                }
                 break;
+            case 'user':
+                result.total = resp.result.userprofileCount || 0;
+                if (result.total > 0) {
+                    result.items = resp.result.userprofiles;
+                }
         }
         commit(types.SET_SEARCH_RESULT, result);
     } else {
