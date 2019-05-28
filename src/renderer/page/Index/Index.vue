@@ -41,7 +41,7 @@
 <script>
 import { mapState } from 'vuex';
 
-import Api from '@/util/api';
+import Api from '@/api/ipc';
 import ActionItem from './ActionItem.vue';
 import ScrollerItem from './ScrollerItem.vue';
 import { humanCount } from '@/util/formatter';

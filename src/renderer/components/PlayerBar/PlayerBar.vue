@@ -107,7 +107,7 @@
 import { platform } from 'os';
 import { mapActions, mapGetters, mapState } from 'vuex';
 
-import Api from '@/util/api';
+import Api from '@/api/ipc';
 import CurrentPlaylist from './VirtualCurrentPlaylist.vue';
 import {
     UPDATE_PLAYING_URL,

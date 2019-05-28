@@ -24,7 +24,7 @@
 </template>
 
 <script>
-import Api from '@/util/api';
+import Api from '@/api/ipc';
 
 export default {
     data() {

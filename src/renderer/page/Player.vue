@@ -163,7 +163,7 @@
 <script>
 import { mapActions, mapGetters, mapState } from 'vuex';
 
-import Api from '@/util/api';
+import Api from '@/api/ipc';
 import {
     SET_CURRENT_INDEX,
     SET_RADIO_INDEX,

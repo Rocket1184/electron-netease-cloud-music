@@ -6,7 +6,7 @@ import { trackTable } from './db';
  * @param {Types.TrackDetail[]} tracks 
  */
 export function insert(tracks) {
-    return trackTable.bulkAdd(tracks);
+    return trackTable.bulkAdd(tracks).catch(() => { /* noop */ });
 }
 
 /**

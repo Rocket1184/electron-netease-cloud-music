@@ -45,7 +45,7 @@
 <script>
 import { mapActions, mapState } from 'vuex';
 
-import Api from '@/util/api';
+import Api from '@/api/ipc';
 import { sizeImg, HiDpiPx } from '@/util/image';
 
 export default {

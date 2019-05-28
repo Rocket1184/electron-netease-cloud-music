@@ -197,7 +197,7 @@ import { platform } from 'os';
 import { ipcRenderer, remote, shell } from 'electron';
 import { mapState, mapActions } from 'vuex';
 
-import Api from '@/util/api';
+import Api from '@/api/ipc';
 import { setTheme } from '@/util/theme';
 import ColorPicker from './ColorPicker.vue';
 import { humanSize } from '@/util/formatter';

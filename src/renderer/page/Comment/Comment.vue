@@ -51,7 +51,7 @@
 <script>
 import { mapState } from 'vuex';
 
-import Api from '@/util/api';
+import Api from '@/api/ipc';
 import CommentList from './CommentList.vue';
 import ListDetailLayout from '@/components/ListDetailLayout.vue';
 

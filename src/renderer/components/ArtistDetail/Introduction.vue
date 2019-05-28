@@ -18,7 +18,7 @@
 </template>
 
 <script>
-import Api from '@/util/api';
+import Api from '@/api/ipc';
 import CenteredTip from '@/components/CenteredTip.vue';
 import CenteredLoading from '@/components/CenteredLoading.vue';
 

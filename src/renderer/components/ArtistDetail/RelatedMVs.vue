@@ -15,7 +15,7 @@
 </template>
 
 <script>
-import Api from '@/util/api';
+import Api from '@/api/ipc';
 import { Video } from '@/util/models';
 import VideoList from '@/components/VideoList.vue';
 import CenteredLoading from '@/components/CenteredLoading.vue';

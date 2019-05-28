@@ -15,7 +15,7 @@
 </template>
 
 <script>
-import Api from '@/util/api';
+import Api from '@/api/ipc';
 import AlbumList from '@/components/AlbumList.vue';
 import CenteredLoading from '@/components/CenteredLoading.vue';
 

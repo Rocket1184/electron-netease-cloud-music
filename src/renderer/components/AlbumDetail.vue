@@ -75,7 +75,7 @@
 <script>
 import { mapActions, mapState } from 'vuex';
 
-import Api from '@/util/api';
+import Api from '@/api/ipc';
 import TrackList from './TrackList/TrackList.vue';
 import PlayTracksButton from './PlayTracksButton.vue';
 import { shortDate } from '@/util/formatter';

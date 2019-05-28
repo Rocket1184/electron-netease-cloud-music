@@ -1,4 +1,4 @@
-import * as ApiFunc from '../../../main/api/index';
+import * as ApiFunc from '../../main/api/index';
 
  // TypeScript is MAGIC!
 type Promisfy<T> = T extends ((...args: any[]) => any)
@@ -14,3 +14,5 @@ declare const Api: AllPromisfy<typeof ApiFunc> & {
 };
 
 export default Api;
+
+export declare function senderFn(methodName: string, ...args: any[]): Promise<any>

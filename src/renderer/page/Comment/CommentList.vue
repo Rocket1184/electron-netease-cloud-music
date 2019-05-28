@@ -26,7 +26,7 @@
 </template>
 
 <script>
-import Api from '@/util/api';
+import Api from '@/api/ipc';
 
 import CommentItem from './CommentItem.vue';
 import CenteredTip from '@/components/CenteredTip.vue';

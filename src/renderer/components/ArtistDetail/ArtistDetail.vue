@@ -44,7 +44,7 @@
 <script>
 import { mapActions, mapState } from 'vuex';
 
-import Api from '@/util/api';
+import Api from '@/api/ipc';
 import { bkgImg, sizeImg } from '@/util/image';
 import HotSongs from './HotSongs.vue';
 import AllAlbums from './AllAlbums.vue';

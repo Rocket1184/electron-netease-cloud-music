@@ -1,8 +1,6 @@
 import debug from 'debug';
 import { ipcRenderer } from 'electron';
 
-import * as track from './database/track';
-
 const TAG = 'API';
 const d = debug(TAG);
 
@@ -23,7 +21,7 @@ ipcRenderer.on(TAG, (_, /** @type {number} */ id, data) => {
  * @param {string} methodName
  * @param  {...any} args
  */
-function senderFn(methodName, ...args) {
+export function senderFn(methodName, ...args) {
     resolveId++;
     return new Promise(resolve => {
         resolveMap.set(resolveId, resolve);
@@ -32,8 +30,6 @@ function senderFn(methodName, ...args) {
     });
 }
 
-/** @type {import('./index').default} */
-// @ts-ignore
 const Api = new Proxy({}, {
     get(_, propName) {
         if (methodMap.has(propName)) {
@@ -44,30 +40,5 @@ const Api = new Proxy({}, {
         return fn;
     }
 });
-
-/**
- * @param {number[]} ids
- */
-export async function bulkTrackDetail(ids) {
-    try {
-        return await track.get(ids);
-    } catch (missed) {
-        const tasks = [];
-        for (let i = 0; i < missed.length; i += 1000) {
-            const ids = missed.slice(i, i + 1000);
-            const promise = Api.getSongDetail(ids).then(resp => {
-                if (resp.code === 200) {
-                    track.insert(resp.songs);
-                }
-            });
-            tasks.push(promise);
-        }
-        await Promise.all(tasks);
-        // some tracks may 404 and we got empty response. ignore missing tracks here
-        return track.get(ids, true);
-    }
-}
-
-methodMap.set('bulkTrackDetail', bulkTrackDetail);
 
 export default Api;
