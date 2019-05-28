@@ -40,6 +40,7 @@
 
 <script>
 import { mapActions, mapState } from 'vuex';
+import { getPlaylistDetail } from '@/api/typed';
 
 import { SET_USER_PLAYLISTS } from '@/store/mutation-types';
 import ListDetailLayout from '@/components/ListDetailLayout.vue';
@@ -49,7 +50,7 @@ import PlaylistDetail from '@/components/PlaylistDetail.vue';
 export default {
     data() {
         return {
-            playlistId: null,
+            playlist: null,
             detailLoading: false,
             listRefreshing: false
         };
@@ -70,41 +71,26 @@ export default {
                     lists: this.user.playlist.filter(e => e.creator.id != this.user.info.id)
                 }
             ];
-        },
-        playlist() {
-            if (!this.user.loginValid) return null;
-            if (!this.playlistId) return null;
-            return this.user.playlist.find(p => p.id === this.playlistId);
         }
     },
     methods: {
         ...mapActions([
-            'updateUserPlaylist',
-            'updateUserPlaylistDetail'
+            'updateUserPlaylist'
         ]),
         async handleListRefresh() {
             this.listRefreshing = true;
             await this.updateUserPlaylist();
             this.listRefreshing = false;
-            this.loadPlaylist(this.playlistId);
         },
         async loadPlaylist(id) {
             this.detailLoading = true;
-            await this.updateUserPlaylistDetail(id);
             this.playlistId = id;
+            this.playlist = await getPlaylistDetail(id);
             this.detailLoading = false;
         },
         handleClick(id) {
-            if (this.playlistId === id) return;
             this.loadPlaylist(id);
-        },
-        /**
-         * @param {number} top
-         * @param {ScrollBehavior} behavior
-         */
-        scrollContent(top, behavior = 'smooth') {
-            document.querySelector('.ld-detail').scrollTo({ top, behavior });
-        },
+        }
     },
     mounted() {
         if (this.user.loginValid) {

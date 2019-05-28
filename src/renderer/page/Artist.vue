@@ -2,12 +2,12 @@
     <ListDetailLayout class="ncm-page"
         showBack
         :detailLoading="detailLoading">
-        <ArtistDetail :artist="ui.temp.artist"></ArtistDetail>
+        <ArtistDetail :artist="artist"></ArtistDetail>
     </ListDetailLayout>
 </template>
 
 <script>
-import { mapActions, mapState } from 'vuex';
+import { getArtistDetail } from '@/api/typed';
 
 import ArtistDetail from '@/components/ArtistDetail/ArtistDetail.vue';
 import ListDetailLayout from '@/components/ListDetailLayout.vue';
@@ -15,22 +15,14 @@ import ListDetailLayout from '@/components/ListDetailLayout.vue';
 export default {
     data() {
         return {
+            artist: null,
             detailLoading: true
         };
     },
-    computed: {
-        ...mapState(['ui'])
-    },
     methods: {
-        ...mapActions([
-            'setUiTempArtist'
-        ]),
         async loadArtist() {
             const id = this.$route.params.id;
-            if (!this.ui.temp.artist.detail || this.ui.temp.artist.detail.id != id) {
-                this.detailLoading = true;
-                await this.setUiTempArtist(id);
-            }
+            this.artist = await getArtistDetail(id);
             this.detailLoading = false;
         }
     },

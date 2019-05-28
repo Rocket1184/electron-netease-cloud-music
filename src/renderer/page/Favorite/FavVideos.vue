@@ -15,13 +15,13 @@
                 </AvatarListItem>
             </mu-list>
         </template>
-        <VideoDetail v-if="ui.fav.video"
-            :video="ui.fav.video"></VideoDetail>
+        <VideoDetail :video="video"></VideoDetail>
     </ListDetailLayout>
 </template>
 
 <script>
 import { mapActions, mapState } from 'vuex';
+import { getVideoDetail } from '@/api/typed';
 
 import { SET_LOGIN_VALID } from '@/store/mutation-types';
 import VideoDetail from '@/components/VideoDetail/VideoDetail.vue';
@@ -31,8 +31,9 @@ import ListDetailLayout from '@/components/ListDetailLayout.vue';
 export default {
     data() {
         return {
-            listLoading: false,
-            detailLoading: false,
+            video: null,
+            listLoading: true,
+            detailLoading: true,
             pausedWhenEnter: null
         };
     },
@@ -42,13 +43,12 @@ export default {
     methods: {
         ...mapActions([
             'updateUserVideos',
-            'setUiFavVideo',
             'pauseAudio',
             'playAudio'
         ]),
         async loadVideo(id, type) {
             this.detailLoading = true;
-            await this.setUiFavVideo({ id, type });
+            this.video = await getVideoDetail(id, type);
             this.detailLoading = false;
             this.$nextTick(() => {
                 const vid = this.$el.querySelector('video');
@@ -69,7 +69,6 @@ export default {
             }
         },
         handleClick(id, type) {
-            if (this.ui.fav.video && this.ui.fav.video.id == id) return;
             this.loadVideo(id, type);
         }
     },

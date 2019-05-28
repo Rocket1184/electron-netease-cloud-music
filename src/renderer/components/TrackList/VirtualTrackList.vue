@@ -24,7 +24,7 @@
 </template>
 
 <script>
-import { mapActions } from 'vuex';
+import { getSongDetail } from '@/api/typed';
 
 import TrackList from './TrackList.vue';
 import TrackItem from './TrackItem.vue';
@@ -55,12 +55,9 @@ export default {
         }
     },
     methods: {
-        ...mapActions([
-            'getTrackDetail'
-        ]),
         async updateTrackDetails() {
             this.loading = true;
-            this.details = await this.getTrackDetail({ ids: this.trackIds });
+            this.details = await getSongDetail(this.trackIds.map(i => i.id));
             this.$emit('load', this.details);
             this.loading = false;
         }

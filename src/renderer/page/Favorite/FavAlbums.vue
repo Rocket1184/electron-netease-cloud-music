@@ -15,13 +15,13 @@
                 </AvatarListItem>
             </mu-list>
         </template>
-        <AlbumDetail v-if="ui.fav.album"
-            :album="ui.fav.album"></AlbumDetail>
+        <AlbumDetail :album="album"></AlbumDetail>
     </ListDetailLayout>
 </template>
 
 <script>
 import { mapActions, mapState } from 'vuex';
+import {getAlbumDetail} from '@/api/typed';
 
 import { SET_LOGIN_VALID } from '@/store/mutation-types';
 import AlbumDetail from '@/components/AlbumDetail.vue';
@@ -31,21 +31,21 @@ import ListDetailLayout from '@/components/ListDetailLayout.vue';
 export default {
     data() {
         return {
-            listLoading: false,
-            detailLoading: false
+            album: null,
+            listLoading: true,
+            detailLoading: true
         };
     },
     computed: {
-        ...mapState(['ui', 'user']),
+        ...mapState(['user']),
     },
     methods: {
         ...mapActions([
-            'updateUserAlbums',
-            'setUiFavAlbum'
+            'updateUserAlbums'
         ]),
         async loadAlbum(id) {
             this.detailLoading = true;
-            await this.setUiFavAlbum(id);
+            this.album = await getAlbumDetail(id);
             this.detailLoading = false;
         },
         async fetchData() {
@@ -58,7 +58,6 @@ export default {
             }
         },
         handleClick(id) {
-            if (this.ui.fav.album && this.ui.fav.album.id === id) return;
             this.loadAlbum(id);
         }
     },

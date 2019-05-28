@@ -147,7 +147,7 @@ export default {
             'setAudioVolume',
             'playNextTrack',
             'playPreviousTrack',
-            'updateUserPlaylistDetail',
+            'updateFavoriteTrackIds',
             'favoriteTrack',
             'nextLoopMode',
             'likeRadio',
@@ -192,20 +192,19 @@ export default {
             if (this.shouldFavorite !== null) return;
             this.shouldFavorite = !this.isFavorite;
             try {
-                let resp;
                 if (this.ui.radioMode) {
-                    resp = await this.likeRadio({
+                    await this.likeRadio({
                         id: this.playing.id,
                         time: Math.trunc(this.audioEl.currentTime * 1000),
                         like: this.shouldFavorite
                     });
                 } else {
-                    resp = await this.favoriteTrack({ id: this.playing.id, favorite: this.shouldFavorite });
+                    this.favoriteTrack({ id: this.playing.id, favorite: this.shouldFavorite });
                 }
                 // it would take some time for NetEase to update playlist cover
                 // img, so we just wait 200 ms
                 await new Promise(_ => setTimeout(() => _(), 200));
-                await this.updateUserPlaylistDetail(resp.playlistId);
+                await this.updateFavoriteTrackIds();
             } finally {
                 this.shouldFavorite = null;
             }
@@ -300,12 +299,7 @@ export default {
             if (this.shouldFavorite !== null) {
                 return this.shouldFavorite;
             }
-            /** @type {Models.PlayList} */
-            const favoriteList = this.user.playlist[0];
-            if (favoriteList) {
-                return favoriteList.tracks.findIndex(t => t.id === this.playing.id) > -1;
-            }
-            return false;
+            return this.user.favTrackIds.includes(this.playing.id);
         },
         iconVolume() {
             if (this.ui.audioMute === true || this.ui.audioVolume <= 0) return VolumeIcon[0];

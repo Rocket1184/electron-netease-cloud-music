@@ -2,38 +2,36 @@
     <ListDetailLayout class="ncm-page"
         showBack
         :detailLoading="detailLoading">
-        <VideoDetail :video="ui.temp.video"></VideoDetail>
+        <VideoDetail :video="video"></VideoDetail>
     </ListDetailLayout>
 </template>
 
 <script>
 import { mapActions, mapState } from 'vuex';
+import { getVideoDetail } from '@/api/typed';
 
 import ListDetailLayout from '@/components/ListDetailLayout.vue';
 import VideoDetail from '@/components/VideoDetail/VideoDetail.vue';
 
 export default {
-    computed: {
-        ...mapState(['ui'])
-    },
     data() {
         return {
+            video: null,
             detailLoading: true,
             pausedWhenEnter: null
         };
     },
+    computed: {
+        ...mapState(['ui'])
+    },
     methods: {
         ...mapActions([
-            'setUiTempVideo',
             'pauseAudio',
             'playAudio'
         ]),
         async loadVideo() {
             const id = this.$route.params.id;
-            if (!this.ui.temp.video || this.ui.temp.video.id != id) {
-                this.detailLoading = true;
-                await this.setUiTempVideo({ id, type: Number(id.length >= 30) });
-            }
+            this.video = await getVideoDetail(id, Number(id.length >= 30));
             this.detailLoading = false;
             this.$nextTick(() => {
                 this.$el.querySelector('video').onplay = () => {

@@ -12,7 +12,7 @@
                         :stroke-width="5"></mu-circular-progress>
                 </div>
                 <AvatarListItem v-else
-                    v-for="list in ui.temp.relatedPlaylists"
+                    v-for="list in related"
                     :key="list.id"
                     :img="list.picUrl"
                     :title="list.name"
@@ -20,12 +20,13 @@
                     @click="handleRelatedClick(list.id)"></AvatarListItem>
             </mu-list>
         </template>
-        <PlaylistDetail :playlist="ui.temp.playlist"></PlaylistDetail>
+        <PlaylistDetail :playlist="playlist"></PlaylistDetail>
     </ListDetailLayout>
 </template>
 
 <script>
-import { mapActions, mapState } from 'vuex';
+import Api from '@/api/ipc';
+import { getPlaylistDetail } from '@/api/typed';
 
 import ListDetailLayout from '@/components/ListDetailLayout.vue';
 import PlaylistDetail from '@/components/PlaylistDetail.vue';
@@ -34,38 +35,27 @@ import AvatarListItem from '@/components/AvatarListItem.vue';
 export default {
     data() {
         return {
+            playlist: null,
+            related: [],
             detailLoading: true,
             relatedLoading: true
         };
     },
-    computed: {
-        ...mapState(['ui'])
-    },
     methods: {
-        ...mapActions([
-            'setUiTempPlaylist',
-            'setUiRelatedPlaylists'
-        ]),
         loadPlaylist() {
             const id = this.$route.params.id;
-            if (this.ui.temp.playlist && id == this.ui.temp.playlist.id) {
-                this.detailLoading = false;
-                this.relatedLoading = false;
-                return;
-            }
             this.detailLoading = true;
             this.relatedLoading = true;
-            this.setUiTempPlaylist(id)
-                .then(() => this.detailLoading = false);
-            this.setUiRelatedPlaylists(id)
-                .then(() => this.relatedLoading = false);
-        },
-        /**
-         * @param {number} top
-         * @param {ScrollBehavior} behavior
-         */
-        scrollContent(top, behavior = 'smooth') {
-            document.querySelector('.ld-detail').scrollTo({ top, behavior });
+            getPlaylistDetail(id).then(playlist => {
+                this.playlist = playlist;
+                this.detailLoading = false;
+            });
+            Api.getRelatedPlaylists(id).then(resp => {
+                if (resp.code === 200) {
+                    this.related = resp.data;
+                }
+                this.relatedLoading = false;
+            });
         },
         handleRelatedClick(id) {
             this.$router.push({ name: 'playlist', params: { id } });

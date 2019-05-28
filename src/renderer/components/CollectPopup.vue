@@ -36,7 +36,7 @@ export default {
         ...mapActions([
             'collectTrack',
             'toggleCollectPopup',
-            'updateUserPlaylistDetail'
+            'updateFavoriteTrackIds'
         ]),
         handleClose() {
             this.toggleCollectPopup();
@@ -50,7 +50,9 @@ export default {
             try {
                 await this.collectTrack({ playlist, tracks: this.ui.collectTrackIds });
                 this.$toast.message('成功添加到歌单     (๑•̀ㅂ•́)و✧');
-                setTimeout(() => this.updateUserPlaylistDetail(playlist), 200);
+                if (playlist.name.endsWith('喜欢的音乐')) {
+                    this.updateFavoriteTrackIds();
+                }
             } catch (resp) {
                 if (resp.code === 502) {
                     this.$toast.message('歌曲已存在        ¯\\_(ツ)_/¯');
