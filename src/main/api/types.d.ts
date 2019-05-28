@@ -1042,6 +1042,8 @@ namespace Types {
             songs?: SearchSong[];
             mvCount?: number;
             mvs?: SearchMV[];
+            userprofileCount?: number;
+            userprofiles?: Profile[];
         }
     }
 
