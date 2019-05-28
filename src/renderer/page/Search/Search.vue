@@ -104,8 +104,9 @@ export default {
             this.handleSearch();
         },
         async handleSearch() {
-            const { keyword, type = this.tab } = this.$route.query;
+            const { keyword, type } = this.$route.query;
             if (!keyword) return;
+            this.tab = type;
             const offset = this.searchOffset;
             if (keyword === this.ui.search.keyword &&
                 type === this.ui.search.type &&
