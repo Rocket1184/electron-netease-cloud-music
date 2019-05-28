@@ -118,7 +118,7 @@ export class AppTray {
                 type: 'checkbox',
                 checked: this.track.favorite,
                 enabled: this.track.canFavorite,
-                click: () => this.emit('favorite', this.track.id)
+                click: () => this.emit('favorite', this.track.id, !this.track.favorite)
             },
             {
                 label: '不感兴趣',
