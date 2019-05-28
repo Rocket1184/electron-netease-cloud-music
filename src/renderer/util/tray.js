@@ -35,20 +35,6 @@ function send(type, ...args) {
 }
 
 /**
- * @param {State} state
- * @param {number} trackId
- */
-function isFavorite(state, trackId) {
-    const favoriteList = state.user.playlist[0];
-    if (state.user.loginValid
-        && favoriteList
-        && favoriteList.tracks.find(t => t.id === trackId)) {
-        return true;
-    }
-    return false;
-}
-
-/**
  * @param {State} state 
  * @param {Models.Track} track 
  * @typedef {{id: number, name: string, artist: string, album: string, canFavorite: boolean, favorite: boolean, canDislike: boolean}} TrayTrack
@@ -62,7 +48,7 @@ function sendTrackMeta(state, track) {
             artist: track.artistName,
             album: track.album.name,
             canFavorite: state.user.loginValid,
-            favorite: isFavorite(state, track.id),
+            favorite: state.user.favTrackIds.includes(track.id),
             canDislike: state.ui.radioMode
         };
     }
@@ -107,17 +93,15 @@ export function injectStore(store) {
         }
     });
     TrayEmitter.on('prev', () => store.dispatch('playPreviousTrack'));
-    TrayEmitter.on('favorite', async id => {
-        const shouldFav = !isFavorite(store.state, id);
+    TrayEmitter.on('favorite', async (id, shouldFav) => {
         try {
-            let resp;
             if (store.state.ui.radioMode === true) {
                 const time = Math.trunc(document.querySelector('audio').currentTime * 1000);
-                resp = await store.dispatch('likeRadio', { id, like: shouldFav, time });
+                await store.dispatch('likeRadio', { id, like: shouldFav, time });
             } else {
-                resp = await store.dispatch('favoriteTrack', { id, favorite: shouldFav });
+                await store.dispatch('favoriteTrack', { id, favorite: shouldFav });
             }
-            store.dispatch('updateUserPlaylistDetail', resp.playlistId);
+            store.dispatch('updateFavoriteTrackIds');
         } catch (e) { /* that's embarrassing */ }
     });
     TrayEmitter.on('dislike', id => {
