@@ -63,6 +63,7 @@ let cfg = {
     ],
     resolve: {
         alias: {
+            'muse-ui': '@rocka/muse-ui',
             'assets': absPath('assets'),
             '@': absPath('src/renderer')
         }
@@ -85,6 +86,7 @@ let cfgWorker = {
     },
     resolve: {
         alias: {
+            'muse-ui': '@rocka/muse-ui',
             'assets': absPath('assets'),
             '@': absPath('src/renderer')
         }

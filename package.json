@@ -30,11 +30,12 @@
     "mini-css-extract-plugin": "^0.7.0",
     "style-loader": "^0.23.1",
     "vue-loader": "^15.7.0",
-    "vue-template-compiler": "2.6.8",
+    "vue-template-compiler": "2.6.10",
     "webpack": "^4.32.2",
     "webpack-dev-server": "3.4.1"
   },
   "dependencies": {
+    "@rocka/muse-ui": "^3.0.3",
     "big-integer": "^1.6.43",
     "cookiejar": "^2.1.2",
     "dbus-native": "^0.4.0",
@@ -43,11 +44,10 @@
     "electron": "4.1.4",
     "lodash.difference": "^4.5.0",
     "lrc-kit": "^1.0.0",
-    "muse-ui": "^3.0.2",
     "muse-ui-message": "^0.2.1",
     "muse-ui-toast": "^0.3.0",
     "node-fetch": "^2.6.0",
-    "vue": "2.6.8",
+    "vue": "2.6.10",
     "vue-router": "^3.0.6",
     "vue-virtual-scroller": "^1.0.0-rc.2",
     "vuex": "^3.1.1"
