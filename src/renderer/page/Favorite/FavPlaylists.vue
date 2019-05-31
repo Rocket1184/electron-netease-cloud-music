@@ -84,7 +84,6 @@ export default {
         },
         async loadPlaylist(id) {
             this.detailLoading = true;
-            this.playlistId = id;
             this.playlist = await getPlaylistDetail(id);
             this.detailLoading = false;
         },
