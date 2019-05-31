@@ -1,23 +1,36 @@
+/**
+ * format timestamp to `yyyy/mm/dd`
+ * @param {number} timeStamp
+ */
 export function shortDate(timeStamp) {
     const dt = new Date(timeStamp);
-    const y = dt.getFullYear();
-    const m = dt.getMonth() + 1;
-    const d = dt.getDate();
-    return `${y}-${m}-${d}`;
+    return dt.toLocaleDateString('zh', {
+        year: 'numeric',
+        month: '2-digit',
+        day: '2-digit'
+    }).replace(/\//g, '-');
 }
 
-export function shortTime(seconds) {
-    const dt = new Date(seconds * 1000);
-    const h = dt.getUTCHours();
-    const m = dt.getMinutes();
-    const s = dt.getSeconds();
-    let res = '';
-    h && (res += `${h}:`);
-    res += m < 10 ? `0${m}:` : `${m}:`;
-    res += s < 10 ? `0${s}` : `${s}`;
-    return res;
+/**
+ * format millisecond to `(h:)mm:ss`
+ * @param {number} ms
+ */
+export function shortTime(ms) {
+    if (typeof ms !== 'number') return '00:00';
+    const dt = new Date(ms);
+    return dt.toLocaleTimeString('zh', {
+        hour12: false,
+        timeZone: 'utc',
+        hour: ms > 3600000 ? 'numeric' : undefined,
+        minute: '2-digit',
+        second: '2-digit'
+    });
 }
 
+/**
+ * format byte size to `aa.bb KB/MB/GB/TB`
+ * @param {number} val
+ */
 export function humanSize(val) {
     let i;
     const unit = ['', 'K', 'M', 'G', 'T'];
@@ -28,6 +41,10 @@ export function humanSize(val) {
     return `${val.toFixed(1)} ${unit[i]}B`;
 }
 
+/**
+ * format count to `几万`
+ * @param {number} val
+ */
 export function humanCount(val) {
     if (val < 100000) return Math.trunc(val).toString();
     return `${Math.trunc(val / 10000)}万`;

@@ -13,7 +13,7 @@
                         :size="16"></mu-icon>
                 </div>
                 <div class="duration">
-                    <span>{{(v.duration / 1000) | shortTime}}</span>
+                    <span>{{v.duration | shortTime}}</span>
                 </div>
             </div>
             <span class="name">

@@ -17,7 +17,7 @@
                     :key="'ar' + index">{{ar.name}}</span>
             </template>
         </div>
-        <div class="track-col duration">{{track.duration / 1000 | shortTime}}</div>
+        <div class="track-col duration">{{track.duration | shortTime}}</div>
         <div class="track-col buttons">
             <mu-button v-for="act in shortcuts"
                 :key="act.event"

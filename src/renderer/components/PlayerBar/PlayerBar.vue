@@ -78,7 +78,7 @@
                     :display-value="false"
                     :value="songProgress"
                     @change="handleProgressDrag"></mu-slider>
-                <span class="time">{{ timeCurrent | time }} / {{ timeTotal | time }}</span>
+                <span class="time">{{ timeCurrent | shortTime }} / {{ timeTotal | shortTime }}</span>
             </div>
         </div>
         <div class="control">
@@ -323,7 +323,7 @@ export default {
         }
     },
     filters: {
-        time: shortTime
+        shortTime
     },
     watch: {
         currentListShown(val) {
@@ -347,7 +347,7 @@ export default {
             _audioEl.volume = this.ui.audioVolume / 100;
         }
 
-        const _updateTime = () => this.timeCurrent = this.audioEl.currentTime;
+        const _updateTime = () => this.timeCurrent = this.audioEl.currentTime * 1000;
         const _setUpdateTimeInterval = () => {
             if (_playingIntervalId) {
                 clearInterval(_playingIntervalId);
@@ -358,7 +358,7 @@ export default {
 
         _audioEl.addEventListener('loadedmetadata', () => {
             _unsetUpdateTimeInterval();
-            this.timeTotal = _audioEl.duration;
+            this.timeTotal = _audioEl.duration * 1000;
             this.timeCurrent = _audioEl.currentTime;
             if (this.ui.paused === false && _audioEl.paused) {
                 _audioEl.play();
@@ -368,8 +368,8 @@ export default {
         // keep audio progress when HMR
         if (process.env.NODE_ENV === 'development') {
             if (_audioEl.readyState >= HTMLMediaElement.HAVE_METADATA) {
-                this.timeTotal = _audioEl.duration;
-                this.timeCurrent = _audioEl.currentTime;
+                this.timeTotal = _audioEl.duration * 1000;
+                this.timeCurrent = _audioEl.currentTime * 1000;
                 if (!this.ui.paused) _setUpdateTimeInterval();
             }
         }
