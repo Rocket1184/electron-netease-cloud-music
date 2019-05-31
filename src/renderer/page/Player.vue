@@ -274,11 +274,10 @@ export default {
             ctx.globalAlpha = 0.9;
             ctx.filter = 'blur(60px) brightness(0.75)';
             const handler = () => {
-                img.removeEventListener('load', handler);
                 ctx.clearRect(0, 0, w, h);
                 ctx.drawImage(img, 0, 0, size, size, -30, -30, w + 60, h + 60);
             };
-            img.addEventListener('load', handler);
+            img.addEventListener('load', handler, { once: true });
         },
         async refreshThreadInfo() {
             this.threadInfoId = this.playing.id;
