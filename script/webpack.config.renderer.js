@@ -21,10 +21,21 @@ let cfg = {
     },
     output: {
         filename: '[name].js',
-        path: absPath('dist')
+        path: absPath('dist'),
+        // https://github.com/webpack/webpack/issues/6642
+        globalObject: 'this'
     },
     module: {
         rules: [
+            {
+                test: /worker\.js$/,
+                use: {
+                    loader: 'worker-loader',
+                    options: {
+                        name: '[name].js'
+                    }
+                }
+            },
             {
                 test: /\.vue$/,
                 use: {
@@ -38,7 +49,7 @@ let cfg = {
                 test: /\.(png|jpe?g|gif|svg|webp)(\?.*)?$/,
                 use: {
                     loader: 'file-loader',
-                    query: {
+                    options: {
                         name: 'imgs/[name].[ext]'
                     }
                 }
@@ -47,7 +58,7 @@ let cfg = {
                 test: /\.(woff2?|eot|ttf|otf)(\?.*)?$/,
                 use: {
                     loader: 'file-loader',
-                    query: {
+                    options: {
                         name: 'fonts/[name].[ext]'
                     }
                 }
@@ -61,29 +72,6 @@ let cfg = {
         }),
         new VueLoaderPlugin()
     ],
-    resolve: {
-        alias: {
-            'muse-ui': '@rocka/muse-ui',
-            'assets': absPath('assets'),
-            '@': absPath('src/renderer')
-        }
-    }
-};
-
-/** @type {import('webpack').Configuration} */
-let cfgWorker = {
-    context: absPath('src/renderer'),
-    target: 'electron-renderer',
-    entry: {
-        worker: [
-            './worker/worker.js'
-        ]
-    },
-    output: {
-        filename: '[name].js',
-        path: absPath('dist'),
-        globalObject: 'this'
-    },
     resolve: {
         alias: {
             'muse-ui': '@rocka/muse-ui',
@@ -131,9 +119,6 @@ if (isProd) {
             { from: absPath('src/renderer/login.html'), to: absPath('dist') }
         ])
     );
-    // worker
-    cfgWorker.mode = 'production';
-    cfgWorker.devtool = 'source-map';
 } else {
     // dev config
     cfg.mode = 'development';
@@ -147,9 +132,6 @@ if (isProd) {
     cfg.resolve.modules = [
         absPath('node_modules')
     ];
-    // worker
-    cfgWorker.mode = 'development';
-    cfgWorker.devtool = 'cheap-module-eval-source-map';
 }
 
-module.exports = [cfg, cfgWorker];
+module.exports = cfg;

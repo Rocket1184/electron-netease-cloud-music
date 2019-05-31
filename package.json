@@ -32,7 +32,8 @@
     "vue-loader": "^15.7.0",
     "vue-template-compiler": "2.6.10",
     "webpack": "^4.32.2",
-    "webpack-dev-server": "3.4.1"
+    "webpack-dev-server": "3.4.1",
+    "worker-loader": "^2.0.0"
   },
   "dependencies": {
     "@rocka/muse-ui": "^3.0.3",

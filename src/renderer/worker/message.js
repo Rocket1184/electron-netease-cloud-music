@@ -1,6 +1,8 @@
+import Worker from './worker';
+
 let resolveId = 0;
 const ResolveMap = new Map();
-const worker = new Worker('./worker.js');
+const worker = new Worker();
 
 /**
  * @typedef {keyof import('./worker')} WorkerMethodNames

@@ -40,12 +40,19 @@ const compileCfg = require('./webpack.config.renderer');
 const wdsOpt = {
     // serve '/login/html'
     contentBase: absPath('/src/renderer'),
+    publicPath: '/',
     // `hot` must be true when using HMR
     hot: true,
+    // https://github.com/webpack/webpack-dev-server/pull/1775
+    // fixed by https://github.com/webpack/webpack-dev-server/pull/1935 , but not released yet
+    // inject 'webpack/hot/dev-server'
+    injectHot: true,
+    // inject 'webpack-dev-server/client?http://<host>:<port>'
+    injectClient: true,
     stats: 'minimal',
-    // `host` and `port` must be specified when using `addDevServerEntrypoints`
-    // see https://github.com/webpack/webpack-dev-server/blob/v3.1.1/lib/util/createDomain.js
-    host: 'localhost',
+    // `port` must be specified when using `addDevServerEntrypoints`
+    // https://github.com/webpack/webpack-dev-server/blob/v3.4.1/lib/utils/addEntries.js#L12-L18
+    // https://github.com/webpack/webpack-dev-server/blob/v3.4.1/lib/utils/createDomain.js
     port: config.devPort,
     overlay: true
 };

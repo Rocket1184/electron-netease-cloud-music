@@ -18,7 +18,7 @@ if (argv[0] === 'clean') {
 
 let webpackCfg = [];
 if (argv.includes('main')) webpackCfg.push(require('./webpack.config.main'));
-if (argv.includes('renderer')) webpackCfg.push(...require('./webpack.config.renderer'));
+if (argv.includes('renderer')) webpackCfg.push(require('./webpack.config.renderer'));
 
 if (!webpackCfg.length) {
     console.error('No dist target, expected "main" or "renderer"');
