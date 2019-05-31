@@ -3,6 +3,11 @@ declare module '*.vue' {
     export default Vue;
 }
 
+declare module 'muse-ui' {
+    import MuseUI from '@rocka/muse-ui';
+    export default MuseUI;
+}
+
 declare module 'muse-ui-toast' {
     import { Toast as IToast } from 'muse-ui-toast/types/index';
     declare const Toast: IToast;
