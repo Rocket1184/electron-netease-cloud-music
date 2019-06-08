@@ -177,7 +177,7 @@ export default {
             this.playNextTrack();
         },
         handleProgressDrag(value) {
-            this.audioEl.currentTime = this.timeTotal * value / 100;
+            this.audioEl.currentTime = (this.timeTotal / 1000) * (value / 100);
         },
         submitListened() {
             if (this.user.loginValid) {
