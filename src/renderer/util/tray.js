@@ -70,6 +70,10 @@ function subscribeHandler(mutation, state) {
             sendTrackMeta(state, track);
             break;
         case SET_AUDIO_VOLUME:
+            if (typeof mutation.payload.mute === 'boolean') {
+                send('mute', state.ui.audioMute);
+            }
+            break;
         case RESTORE_UI_STATE:
             send('mute', state.ui.audioMute);
             break;
