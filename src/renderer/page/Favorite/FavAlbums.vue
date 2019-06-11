@@ -10,7 +10,7 @@
                     :key="al.id"
                     :img="al.picUrl"
                     :title="al.name"
-                    :subTitle="`${al.artist.name}, ${al.size} 首`"
+                    :subTitle="`${al.artist.name} / ${al.size} 首`"
                     @click="handleClick(al.id)">
                 </AvatarListItem>
             </mu-list>

@@ -10,7 +10,7 @@
                     :key="ar.id"
                     :img="ar.picUrl"
                     :title="ar.name"
-                    :subTitle="`专辑：${ar.albumSize}， MV：${ar.mvSize}`"
+                    :subTitle="`专辑: ${ar.albumSize} / MV: ${ar.mvSize}`"
                     @click="handleClick(ar.id)">
                 </AvatarListItem>
             </mu-list>
