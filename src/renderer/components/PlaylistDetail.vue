@@ -169,15 +169,3 @@ export default {
     }
 };
 </script>
-
-<style lang="less">
-// most style comes from `AlbumDetail`
-.playlist-detail {
-    .tracks {
-        .pagination {
-            width: 100%;
-            padding: 16px;
-        }
-    }
-}
-</style>
