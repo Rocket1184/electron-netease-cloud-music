@@ -442,9 +442,10 @@ export function toggleCollectPopup({ commit, state }, payload = {}) {
 
 /**
  * @param {ActionContext} _
+ * @param {{pid: number; tracks: number[]}} payload
  */
-export async function collectTrack(_, { playlist, tracks }) {
-    const resp = await Api.collectTrack(playlist, ...tracks);
+export async function collectTrack(_, { pid, tracks }) {
+    const resp = await Api.collectTrack(pid, ...tracks);
     if (resp.code === 200) {
         return resp;
     }
@@ -453,9 +454,10 @@ export async function collectTrack(_, { playlist, tracks }) {
 
 /**
  * @param {ActionContext} _
+ * @param {{pid: number; tracks: number[]}} payload
  */
-export async function uncollectTrack(_, { playlist, tracks }) {
-    const resp = await Api.uncollectTrack(playlist, ...tracks);
+export async function uncollectTrack(_, { pid, tracks }) {
+    const resp = await Api.uncollectTrack(pid, ...tracks);
     if (resp.code === 200) {
         return resp;
     }
