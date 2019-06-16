@@ -10,7 +10,7 @@
                 :img="list.coverImgUrl"
                 :title="list.name"
                 :subTitle="`共 ${list.trackCount} 首`"
-                @click="handleCollect(list.id, index)">
+                @click="handleCollect(list, index)">
             </AvatarListItem>
         </mu-list>
         <template #actions>
@@ -48,7 +48,7 @@ export default {
                 return;
             }
             try {
-                await this.collectTrack({ playlist, tracks: this.ui.collectTrackIds });
+                await this.collectTrack({ pid: playlist.id, tracks: this.ui.collectTrackIds });
                 this.$toast.message('成功添加到歌单     (๑•̀ㅂ•́)و✧');
                 if (playlist.name.endsWith('喜欢的音乐')) {
                     this.updateFavoriteTrackIds();
