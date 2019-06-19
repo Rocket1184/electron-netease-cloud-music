@@ -32,8 +32,8 @@ const BackgroundColor = {
 };
 
 /**
- * @param {import('./settings').defaultSettings} settings 
- * @param {string} url 
+ * @param {import('./settings').defaultSettings} [settings]
+ * @param {string} [url]
  * @returns {import('electron').BrowserWindow}
  */
 function createMainWindow(settings, url = mainURL) {
@@ -118,6 +118,7 @@ app.on('before-quit', () => {
 });
 
 app.on('activate', () => {
+    if (!mainWindow) return;
     mainWindow.show();
     mainWindow.focus();
 });
