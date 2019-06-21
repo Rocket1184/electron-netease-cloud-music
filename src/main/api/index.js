@@ -77,6 +77,13 @@ export async function logout() {
 }
 
 /**
+ * @returns {Promise<Types.MyProfileRes>}
+ */
+export function getMyProfile() {
+    return client.postW('/nuser/account/get');
+}
+
+/**
  * @param {number} uid
  * @returns {Promise<Types.UserPlaylistRes>}
  */
@@ -1325,4 +1332,12 @@ export function getDjProgramMusics(idOrIds) {
  */
 export function getDjCreatedBy(userId, limit = 1000, offset = 0) {
     return client.postE('/djradio/get/byuser', { userId, limit, offset });
+}
+
+/**
+ * @param {number} uid
+ * @returns {Promise<Types.UserInfoRes>}
+ */
+export function getUserInfo(uid) {
+    return client.postE(`/v1/user/detail/${uid}`, { all: true });
 }

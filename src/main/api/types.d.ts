@@ -79,6 +79,11 @@ namespace Types {
         bindings: Binding[];
     }
 
+    export interface MyProfileRes extends ApiRes {
+        account: Account;
+        profile: Profile;
+    }
+
     interface PlaylistCreator {
         defaultAvatar: boolean;
         province: number;
@@ -2101,6 +2106,29 @@ namespace Types {
     export interface DjCreatedByRes extends ApiRes {
         djRadios: SubscribedDjRadio[];
         hasMore: boolean;
+    }
+
+    export interface UserInfoRes extends ApiRes {
+        adValid: boolean;
+        bindings: Binding[];
+        createDays: number;
+        createTime: number;
+        level: number;
+        listenSongs: number;
+        mobileSign: boolean;
+        pcSign: boolean;
+        peopleCanSeeMyPlayRecord: boolean;
+        profile: Profile;
+        userPoint: UserPoint;
+    }
+
+    export interface UserPoint {
+        balance: number;
+        blockBalance: number;
+        status: number;
+        updateTime: number;
+        userId: number;
+        version: number;
     }
 }
 
