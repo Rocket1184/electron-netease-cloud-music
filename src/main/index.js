@@ -22,7 +22,7 @@ let mainWindow;
 const mainURL = process.env.MAIN_URL;
 /** @type {import('electron').BrowserWindow} */
 let loginWindow;
-let loginURL = process.env.LOGIN_URL;
+let loginURL = 'https://music.163.com';
 /** @type {AppTray} */
 let appTray;
 
@@ -176,7 +176,35 @@ ipcMain.on('showLoginWindow', () => {
         minWidth: 1080,
         title: `Login - ${Settings.productName}`,
         parent: mainWindow,
-        modal: true
+        modal: true,
+        webPreferences: {
+            nodeIntegration: false
+        }
     });
     loginWindow.loadURL(loginURL);
+    const ses = loginWindow.webContents.session;
+    const wr = ses.webRequest;
+    wr.onCompleted({
+        urls: [
+            `${loginURL}/weapi/*`
+        ]
+    }, (details) => {
+        if (details.url.includes('/login')) {
+            if (details.statusCode === 200 && Array.isArray(details.responseHeaders['set-cookie'])) {
+                ipcMain.once('getLoginCookie', event => {
+                    const cookie = {};
+                    ses.cookies.get({ url: loginURL }, (err, cookies) => {
+                        for (const { name, value } of cookies) {
+                            cookie[name] = value;
+                        }
+                        event.sender.send('getLoginCookie', cookie);
+                        ses.clearCache(() => { });
+                        ses.clearStorageData({ storages: ['cookies', 'localstorage'] });
+                        loginWindow = null;
+                    });
+                });
+                loginWindow.close();
+            }
+        }
+    });
 });
