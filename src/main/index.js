@@ -78,6 +78,9 @@ function createMainWindow(settings, url = mainURL) {
     }
 
     win.loadURL(url);
+    if (process.env.NODE_ENV === 'development') {
+        win.webContents.openDevTools();
+    }
     return win;
 }
 
