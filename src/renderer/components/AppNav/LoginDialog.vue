@@ -149,8 +149,18 @@ export default {
             this.webLoginStep++;
             ipcRenderer.send('showLoginWindow');
         },
+        requestLoginCookies() {
+            return new Promise((resolve, reject) => {
+                ipcRenderer.send('getLoginCookie');
+                ipcRenderer.once('getLoginCookie', (event, cookie) => {
+                    resolve(cookie);
+                });
+                setTimeout(reject, 1000);
+            });
+        },
         async handleWebLoginComplete() {
-            const valid = await this.restoreUserInfo();
+            const cookie = await this.requestLoginCookies();
+            const valid = await this.restoreUserInfo(cookie);
             if (valid) {
                 this.$emit('update:show', false);
             } else {

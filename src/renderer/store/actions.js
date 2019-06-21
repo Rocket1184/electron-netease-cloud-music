@@ -59,30 +59,47 @@ export function restoreUiState({ commit, dispatch }) {
 }
 
 /**
- * @param {ActionContext} param0
+ * @param {ActionContext} context
  */
-export async function storeUserInfo({ state }) {
-    localStorage.setItem('user', JSON.stringify(state.user.info));
+export async function getUserInfo({ commit }) {
+    const resp = await Api.getMyProfile();
+    if (resp.code === 200) {
+        commit(types.SET_USER_INFO, resp.profile);
+        Api.getUserInfo(76980626);
+    }
+}
+
+/**
+ * @param {ActionContext} context
+ */
+export async function storeCredential({ state }) {
+    const user = state.user.info;
+    localStorage.setItem('user', JSON.stringify(user));
     const cookie = await Api.getCookie();
     localStorage.setItem('cookie', JSON.stringify(cookie));
 }
 
 /**
  * @param {ActionContext} param0
+ * @param {any} [payload]
  */
-export async function restoreUserInfo({ commit, dispatch }) {
-    const user = localStorage.getItem('user');
-    const cookie = localStorage.getItem('cookie');
-    if (user && cookie) {
-        const userObj = JSON.parse(user);
-        const cookieObj = JSON.parse(cookie);
-        commit(types.SET_USER_INFO, userObj);
+export async function restoreUserInfo({ commit, dispatch }, payload) {
+    let cookie;
+    if (payload) {
+        cookie = payload;
+    } else {
+        try { cookie = JSON.parse(localStorage.getItem('cookie')); } catch (e) { /* noop */ }
+    }
+    if (cookie) {
         commit(types.SET_LOGIN_PENDING, true);
-        Api.updateCookie(cookieObj);
+        Api.updateCookie(cookie);
         const resp = await Api.refreshLogin();
         commit(types.SET_LOGIN_PENDING, false);
         if (resp.code === 200) {
-            dispatch('setLoginValid');
+            dispatch('storeCredential');
+            dispatch('getUserInfo').then(() => {
+                dispatch('setLoginValid');
+            });
             return true;
         } else {
             Api.updateCookie();
@@ -150,7 +167,6 @@ export async function checkin({ state, dispatch }) {
  */
 export async function updateUserPlaylist({ state, commit }) {
     const { playlist } = await Api.getUserPlaylist(state.user.info.id);
-    commit(types.UPDATE_USER_INFO, playlist[0].creator);
     commit(types.SET_USER_PLAYLISTS, playlist);
     return playlist;
 }
@@ -182,6 +198,7 @@ export function setLoginValid({ commit, dispatch }, payload) {
 
 /**
  * @param {ActionContext} param0
+ * @param {{acc: string; pwd: string}} payload
  */
 export async function login({ commit, dispatch }, payload) {
     commit(types.SET_LOGIN_PENDING, true);
@@ -189,7 +206,7 @@ export async function login({ commit, dispatch }, payload) {
     if (resp.code === 200) {
         commit(types.SET_USER_INFO, resp);
         dispatch('setLoginValid', true);
-        dispatch('storeUserInfo');
+        dispatch('storeCredential');
     }
     commit(types.SET_LOGIN_PENDING, false);
     return resp;
