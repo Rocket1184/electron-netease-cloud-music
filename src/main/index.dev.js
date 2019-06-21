@@ -36,7 +36,6 @@ app.setVersion(version);
 
 // BrowserWindow URL
 process.env.MAIN_URL = `http://localhost:${devPort}`;
-process.env.LOGIN_URL = `http://localhost:${devPort}/login.html`;
 
 // Require `main` process to boot app
 require('./index');

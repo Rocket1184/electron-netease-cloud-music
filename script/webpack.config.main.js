@@ -29,7 +29,6 @@ if (isProd) {
     cfg.plugins = [
         new webpack.DefinePlugin({ 'process.env.NODE_ENV': '"production"' }),
         new webpack.DefinePlugin({ 'process.env.MAIN_URL': '`file://${__dirname}/index.html`' }),
-        new webpack.DefinePlugin({ 'process.env.LOGIN_URL': '`file://${__dirname}/login.html`' }),
         new CopyWebpackPlugin([
             { from: absPath('package.json'), to: absPath('dist') },
             { from: absPath('src/main/preload.prod.js'), to: absPath('dist/preload.js') },
