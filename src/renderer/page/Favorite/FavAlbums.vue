@@ -21,7 +21,7 @@
 
 <script>
 import { mapActions, mapState } from 'vuex';
-import {getAlbumDetail} from '@/api/typed';
+import { getAlbumDetail } from '@/api/typed';
 
 import { SET_LOGIN_VALID } from '@/store/mutation-types';
 import AlbumDetail from '@/components/AlbumDetail.vue';

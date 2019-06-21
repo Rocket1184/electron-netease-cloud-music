@@ -17,7 +17,8 @@
                 name="list"></slot>
         </div>
         <div class="ld-detail">
-            <CenteredLoading v-if="detailLoading"></CenteredLoading>
+            <template v-if="showTip"></template>
+            <CenteredLoading v-else-if="detailLoading"></CenteredLoading>
             <!-- default slot -->
             <slot v-else></slot>
         </div>
