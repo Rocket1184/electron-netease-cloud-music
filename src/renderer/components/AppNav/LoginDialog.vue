@@ -52,31 +52,34 @@
                     label-float></mu-text-field>
                 <div v-if="needCaptcha">
                     <mu-text-field label="验证码"
+                        ref="inputCaptcha"
                         class="text-field-captcha"
                         v-model="inputCaptcha"
                         :error-text="errMsgCaptcha"
                         label-float></mu-text-field>
                     <img :src="`https://music.163.com/captcha?id=${captchaId}`"
-                        class="captcha-img"
-                        alt="Refresh">
+                        class="captcha-img">
                 </div>
                 <mu-button full-width
                     color="primary"
                     @click="handleLogin()"
-                    :disabled="user.loginPending">登录</mu-button>
+                    :disabled="loginPending">登录</mu-button>
             </div>
         </div>
     </mu-dialog>
 </template>
 
 <script>
+import Api from '@/api/ipc';
+
 import { ipcRenderer } from 'electron';
-import { mapActions, mapState } from 'vuex';
+import { mapActions } from 'vuex';
 
 function initData() {
     return {
         webLoginStep: 0,
         loginType: 'app',
+        loginPending: false,
         inputUsr: '',
         inputPwd: '',
         errMsgUsr: '',
@@ -96,9 +99,6 @@ export default {
         }
     },
     data: initData,
-    computed: {
-        ...mapState(['user'])
-    },
     methods: {
         ...mapActions([
             'login',
@@ -110,6 +110,7 @@ export default {
         async handleLogin() {
             this.errMsgUsr = '';
             this.errMsgPwd = '';
+            this.errMsgCaptcha = '';
             if (!this.inputUsr) {
                 this.$refs.inputUsr.$el.querySelector('input').focus();
                 return this.errMsgUsr = '邮箱 / 手机号码 不能为空';
@@ -118,26 +119,50 @@ export default {
                 this.$refs.inputPwd.$el.querySelector('input').focus();
                 return this.errMsgPwd = '密码不能为空';
             }
-            // TODO: Login with captcha
+            if (this.needCaptcha && this.captchaId && !this.inputCaptcha) {
+                this.$refs.inputCaptcha.$el.querySelector('input').focus();
+                return this.errMsgCaptcha = '请输入验证码';
+            }
+            this.loginPending = true;
+            if (this.needCaptcha) {
+                const { code, result, captchaId } = await Api.verifyCaptcha(this.captchaId, this.inputCaptcha);
+                this.captchaId = captchaId;
+                this.inputCaptcha = '';
+                if (code !== 200) {
+                    this.errMsgCaptcha = `${code}：提交验证码失败`;
+                    this.loginPending = false;
+                    return;
+                }
+                if (result !== true) {
+                    this.errMsgCaptcha = '验证码错误';
+                    this.loginPending = false;
+                    return;
+                }
+                this.needCaptcha = false;
+            }
             let resp = await this.login({ acc: this.inputUsr, pwd: this.inputPwd });
             switch (resp.code) {
                 case 200:
                     this.$emit('update:show', false);
                     break;
                 case 415:
+                    this.$refs.inputCaptcha.$el.querySelector('input').focus();
                     this.errMsgCaptcha = '登录过于频繁，请输入验证码';
                     this.captchaId = resp.captchaId;
                     this.needCaptcha = true;
                     break;
                 case 501:
+                    this.$refs.inputUsr.$el.querySelector('input').select();
                     this.errMsgUsr = '用户不存在';
                     break;
                 case 502:
+                    this.$refs.inputPwd.$el.querySelector('input').select();
                     this.errMsgPwd = '密码错误';
                     break;
                 default:
-                    this.errMsgUsr = resp.msg;
+                    this.errMsgUsr = resp.msg || resp.message;
             }
+            this.loginPending = false;
         },
         bindKeybordEvent() {
             this.$refs.inputPwd.$el.querySelector('input').onkeydown = e => {
