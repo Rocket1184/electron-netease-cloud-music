@@ -63,7 +63,7 @@
                 <mu-button full-width
                     color="primary"
                     @click="handleLogin()"
-                    :disabled="ui.loginPending">登录</mu-button>
+                    :disabled="user.loginPending">登录</mu-button>
             </div>
         </div>
     </mu-dialog>
@@ -97,7 +97,7 @@ export default {
     },
     data: initData,
     computed: {
-        ...mapState(['ui'])
+        ...mapState(['user'])
     },
     methods: {
         ...mapActions([
