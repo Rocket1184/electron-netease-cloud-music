@@ -77,6 +77,15 @@ export async function logout() {
 }
 
 /**
+ * @param {string} id
+ * @param {string} captcha
+ * @returns {Promise<Types.VerifyCaptchaRes>}
+ */
+export function verifyCaptcha(id, captcha) {
+    return client.postW('/image/captcha/verify/hf', { id, captcha });
+}
+
+/**
  * @returns {Promise<Types.MyProfileRes>}
  */
 export function getMyProfile() {
@@ -396,6 +405,7 @@ export async function getMusicLyric(id) {
         let j = 0;
         while (i < mlrc.lyrics.length && j < tlrc.lyrics.length) {
             if (mlrc.lyrics[i].timestamp === tlrc.lyrics[j].timestamp) {
+                // @ts-ignore
                 mlrc.lyrics[i].trans = tlrc.lyrics[j].content;
                 i++; j++;
             } else if (mlrc.lyrics[i].timestamp < tlrc.lyrics[j].timestamp) {
@@ -1258,7 +1268,7 @@ export function getBanners(clientType = 'pc') {
  * @param {number} id
  * @returns {Promise<Types.ApiRes>}
  */
-export function subscribeDj(id) {
+export function subscribeDjRadio(id) {
     return client.postE('/djradio/sub', { id });
 }
 
@@ -1267,7 +1277,7 @@ export function subscribeDj(id) {
  * @param {number} id
  * @returns {Promise<Types.ApiRes>}
  */
-export function unsubscribeDj(id) {
+export function unsubscribeDjRadio(id) {
     return client.postE('/djradio/unsub', { id });
 }
 
@@ -1278,7 +1288,7 @@ export function unsubscribeDj(id) {
  * @param {boolean} needFee
  * @returns {Promise<Types.SubscribedDjRes>}
  */
-export function getSubscribedDj(limit = 100, time = 0, needFee = false) {
+export function getSubscribedDjRadio(limit = 100, time = 0, needFee = false) {
     return client.postE('/djradio/subed/v1', { limit, time, needFee });
 }
 
@@ -1287,20 +1297,20 @@ export function getSubscribedDj(limit = 100, time = 0, needFee = false) {
  * @param {number} id
  * @returns {Promise<Types.DjDetailRes>}
  */
-export function getDjDetail(id) {
+export function getDjRadioDetail(id) {
     return client.postE('/djradio/v2/get', { id });
 }
 
 /**
  * 电台节目列表
  * @param {number} radioId
- * @param {number} limit
+ * @param {number} limit max 500
  * @param {number} offset
  * @param {boolean} asc
  * @param {boolean} filterlikeplay
  * @returns {Promise<Types.DjProgramRes>}
  */
-export function getDjProgram(radioId, limit = 100, offset = 0, asc = false, filterlikeplay = true) {
+export function getDjRadioProgram(radioId, limit = 100, offset = 0, asc = false, filterlikeplay = true) {
     return client.postE('/v1/dj/program/byradio', { radioId, limit, offset, asc, filterlikeplay });
 }
 
@@ -1309,7 +1319,7 @@ export function getDjProgram(radioId, limit = 100, offset = 0, asc = false, filt
  * @param {number} id
  * @returns {Promise<Types.DjProgramDetailRes>}
  */
-export function getDjProgramDetail(id) {
+export function getDjRadioProgramDetail(id) {
     return client.postE('/dj/program/detail', { id });
 }
 
@@ -1318,7 +1328,7 @@ export function getDjProgramDetail(id) {
  * @param {number|number[]} idOrIds
  * @returns {Promise<Types.DjProgramMusicsRes>}
  */
-export function getDjProgramMusics(idOrIds) {
+export function getDjRadioProgramMusics(idOrIds) {
     const ids = `[${idOrIds}]`;
     return client.postE('/dj/program/song/musics', { ids });
 }
@@ -1330,7 +1340,7 @@ export function getDjProgramMusics(idOrIds) {
  * @param {number} offset
  * @returns {Promise<Types.DjCreatedByRes>}
  */
-export function getDjCreatedBy(userId, limit = 1000, offset = 0) {
+export function getDjRadioCreatedBy(userId, limit = 1000, offset = 0) {
     return client.postE('/djradio/get/byuser', { userId, limit, offset });
 }
 

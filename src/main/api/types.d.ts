@@ -79,6 +79,11 @@ namespace Types {
         bindings: Binding[];
     }
 
+    export interface VerifyCaptchaRes extends ApiRes {
+        result: boolean;
+        captchaId?: string;
+    }
+
     export interface MyProfileRes extends ApiRes {
         account: Account;
         profile: Profile;
