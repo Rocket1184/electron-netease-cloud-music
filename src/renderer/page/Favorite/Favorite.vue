@@ -24,12 +24,14 @@ import FavAlbums from './FavAlbums.vue';
 import FavVideos from './FavVideos.vue';
 import FavArtists from './FavArtists.vue';
 import FavPlaylists from './FavPlaylists.vue';
+import FavDjRadios from './FavDjRadios.vue';
 
 const FavTabs = [
     ['playlist', '歌单'],
     ['album', '专辑'],
     ['artist', '歌手'],
     ['video', '视频'],
+    ['djradio', '电台']
 ];
 
 const FavCompos = {
@@ -37,6 +39,7 @@ const FavCompos = {
     video: FavVideos,
     artist: FavArtists,
     playlist: FavPlaylists,
+    djradio: FavDjRadios
 };
 
 export default {
@@ -72,7 +75,8 @@ export default {
         FavAlbums,
         FavVideos,
         FavArtists,
-        FavPlaylists
+        FavPlaylists,
+        FavDjRadios
     }
 };
 </script>
