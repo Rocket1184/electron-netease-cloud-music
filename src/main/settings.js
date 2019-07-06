@@ -38,7 +38,7 @@ export function get() {
                 ...JSON.parse(fs.readFileSync(configPath).toString())
             };
             Object.keys(settings).forEach(k => {
-                if (!defaultSettings.hasOwnProperty(k)) {
+                if (!Object.prototype.hasOwnProperty.call(defaultSettings, k)) {
                     delete settings[k];
                 }
             });
