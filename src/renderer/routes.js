@@ -5,6 +5,7 @@ import Playlist from '@/page/Playlist.vue';
 import Album from '@/page/Album.vue';
 import Artist from '@/page/Artist.vue';
 import Video from '@/page/Video.vue';
+import DjRadio from '@/page/DjRadio.vue';
 import Settings from '@/page/Settings/Settings.vue';
 import Favorite from '@/page/Favorite/Favorite.vue';
 import RecommendSongs from '@/page/RecommendSongs/RecommendSongs.vue';
@@ -61,6 +62,11 @@ export default [
         name: 'video',
         path: '/video/:id',
         component: Video
+    },
+    {
+        name: 'djradio',
+        path: '/djradio/:id',
+        component: DjRadio
     },
     {
         name: 'recommend',
