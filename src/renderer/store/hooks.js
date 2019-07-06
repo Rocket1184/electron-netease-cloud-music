@@ -1,5 +1,6 @@
 import {
     SET_USER_SIGN_STATUS,
+    SET_LOGIN_VALID,
     SET_AUDIO_PAUSED
 } from './mutation-types';
 
@@ -36,6 +37,9 @@ function autoUpdateSignStatus(mutation, state) {
                 this.dispatch('updateUserSignStatus');
             }, timeout);
         }
+    } else if (mutation.type === SET_LOGIN_VALID && mutation.payload === false && signStatusTimeoutId > 0) {
+        clearTimeout(signStatusTimeoutId);
+        signStatusTimeoutId = -1;
     }
 }
 
