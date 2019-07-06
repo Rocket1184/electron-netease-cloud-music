@@ -91,6 +91,7 @@ const SourceName = {
     artist: '歌手',
     search: '搜索',
     radio: '私人 FM',
+    djradio: '主播电台',
     recommend: '每日歌曲推荐'
 };
 
@@ -100,6 +101,7 @@ const RouteName = {
     artist: 'artist',
     search: 'search',
     radio: 'radio',
+    djradio: 'djradio',
     recommend: 'recommend'
 };
 
@@ -173,6 +175,7 @@ export default {
                 case 'list':
                 case 'album':
                 case 'artist':
+                case 'djradio':
                     this.$router.push({ name, params: { id: source.id } });
                     break;
                 case 'search':
