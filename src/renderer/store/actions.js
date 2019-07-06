@@ -699,6 +699,36 @@ export async function unsubscribeVideo({ commit }, payload) {
 }
 
 /**
+ * @param {ActionContext} context
+ */
+export async function updateUserRadios({ commit }) {
+    const resp = await Api.getSubscribedDjRadio();
+    if (resp.code === 200) {
+        commit(types.SET_USER_DJ_RADIOS, resp.djRadios);
+    }
+}
+
+/**
+ * @param {ActionContext} context
+ */
+export async function subscribeDjRadio({ commit }, payload) {
+    const resp = await Api.subscribeDjRadio(payload.id);
+    if (resp.code === 200) {
+        commit(types.SUBSCRIBE_DJ_RADIO, payload);
+    }
+}
+
+/**
+ * @param {ActionContext} context
+ */
+export async function unsubscribeDjRadio({ commit }, { id }) {
+    const resp = await Api.unsubscribeDjRadio(id);
+    if (resp.code === 200) {
+        commit(types.SUBSCRIBE_DJ_RADIO);
+    }
+}
+
+/**
  * @param {ActionContext} _
  */
 export async function likeResource(_, id) {

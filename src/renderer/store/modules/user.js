@@ -1,5 +1,5 @@
 import * as types from '../mutation-types';
-import { User, PlayList, Artist, Album, Video } from '@/util/models';
+import { User, PlayList, Artist, Album, Video, DjRadio } from '@/util/models';
 
 const state = {
     loginValid: false,
@@ -21,7 +21,9 @@ const state = {
     /** @type {Models.Video[]} */
     videos: [],
     /** @type {Models.Album[]} */
-    albums: []
+    albums: [],
+    /** @type {Models.DjRadio[]} */
+    djradios: []
 };
 
 /**
@@ -112,6 +114,18 @@ const mutations = {
         const index = state.videos.findIndex(v => v.id === id);
         if (index !== -1) {
             state.videos.splice(index, 1);
+        }
+    },
+    [types.SET_USER_DJ_RADIOS](state, /** @type {Types.DjDetailData[]} */ payload) {
+        state.djradios = payload.map(r => new DjRadio(r));
+    },
+    [types.SUBSCRIBE_DJ_RADIO](state, /** @type {Models.DjRadio} */ payload) {
+        state.djradios.splice(0, 0, payload);
+    },
+    [types.UNSUBSCRIBE_DJ_RADIO](state, /** @type {{id:number}} */ { id }) {
+        const index = state.djradios.findIndex(v => v.id === id);
+        if (index !== -1) {
+            state.djradios.splice(index, 1);
         }
     }
 };
