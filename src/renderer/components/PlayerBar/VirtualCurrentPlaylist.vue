@@ -146,6 +146,8 @@ export default {
                 }
             } else {
                 this.findInput = '';
+                this.indexMap.clear();
+                this.filteredList = [];
             }
         },
         handleCollectAll() {
@@ -186,7 +188,12 @@ export default {
             this.$emit('navigate');
         },
         handleRemove(index) {
-            this.removeTrackFromPlaylist({ start: index, count: 1 });
+            let start = index;
+            if (this.filteredList.length > 0) {
+                start = this.indexMap.get(index);
+                this.filteredList.splice(index, 1);
+            }
+            this.removeTrackFromPlaylist({ start, count: 1 });
         },
         scrollTo(index) {
             const top = this.$refs.scroller.$el.scrollTop;
@@ -203,9 +210,6 @@ export default {
                     this.filteredList = res.result;
                     this.indexMap = res.indexMap;
                 });
-            } else {
-                this.list = this.queue.list;
-                this.indexMap.clear();
             }
         }
     },
