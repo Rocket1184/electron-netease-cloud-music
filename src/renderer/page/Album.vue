@@ -25,7 +25,6 @@
 </template>
 
 <script>
-import { mapState } from 'vuex';
 import Api from '@/api/ipc';
 import { Album } from '@/util/models';
 
@@ -41,9 +40,6 @@ export default {
             detailLoading: true,
             relatedLoading: true
         };
-    },
-    computed: {
-        ...mapState(['user']),
     },
     methods: {
         loadAlbum() {
