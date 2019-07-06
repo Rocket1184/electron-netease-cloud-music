@@ -65,7 +65,6 @@ export async function getUserInfo({ commit }) {
     const resp = await Api.getMyProfile();
     if (resp.code === 200) {
         commit(types.SET_USER_INFO, resp.profile);
-        Api.getUserInfo(76980626);
     }
 }
 
@@ -166,9 +165,10 @@ export async function checkin({ state, dispatch }) {
  * @param {ActionContext} param0
  */
 export async function updateUserPlaylist({ state, commit }) {
-    const { playlist } = await Api.getUserPlaylist(state.user.info.id);
-    commit(types.SET_USER_PLAYLISTS, playlist);
-    return playlist;
+    const resp = await Api.getUserPlaylist(state.user.info.id);
+    if (resp.code === 200) {
+        commit(types.SET_USER_PLAYLISTS, resp.playlist);
+    }
 }
 
 /**
@@ -665,7 +665,9 @@ export async function unfollowArtist({ commit }, payload) {
  */
 export async function updateUserVideos({ commit }) {
     const resp = await Api.getFavoriteVideos(1000);
-    commit(types.SET_USER_VIDEOS, resp.data);
+    if (resp.code == 200) {
+        commit(types.SET_USER_VIDEOS, resp.data);
+    }
 }
 
 /**
