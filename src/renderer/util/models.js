@@ -128,3 +128,29 @@ export class Video {
         this.alg = o.alg;
     }
 }
+
+export class DjRadio {
+    constructor(o) {
+        this.id = o.id;
+        this.name = o.name;
+        this.dj = o.dj;
+        this.picId = o.picId;
+        this.picUrl = o.picUrl;
+        this.desc = o.desc;
+        this.subCount = o.subCount;
+        // this.shareCount = o.shareCount;
+        this.likedCount = o.likedCount;
+        this.programCount = o.programCount;
+        this.commentCount = o.commentCount;
+        this.createTime = o.createTime;
+        this.categoryId = o.categoryId;
+        this.category = o.category;
+        // this.radioFeeType = o.radioFeeType;
+        // this.feeScope = o.feeScope;
+        // this.lastProgramCreateTime = o.lastProgramCreateTime;
+        // this.lastProgramId = o.lastProgramId;
+        // this.rcmdText = o.rcmdText;
+        this.subed = o.subed;
+        // this.feeInfo = o.feeInfo;
+    }
+}

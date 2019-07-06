@@ -149,6 +149,31 @@ namespace Models {
         commentThreadId: string;
         alg?: any;
     }
+
+    export class DjRadio {
+        constructor(o: any);
+        id: number;
+        name: string;
+        dj: Profile;
+        picId: number;
+        picUrl: string;
+        desc: string;
+        subCount: number;
+        // shareCount: number;
+        likedCount: number;
+        programCount: number;
+        commentCount: number;
+        createTime: number;
+        categoryId: number;
+        category: string;
+        // radioFeeType: number;
+        // feeScope: number;
+        // lastProgramCreateTime: number;
+        // lastProgramId: number;
+        // rcmdText: null;
+        subed: boolean;
+        // feeInfo: null;
+    }
 }
 
 export as namespace Models;
