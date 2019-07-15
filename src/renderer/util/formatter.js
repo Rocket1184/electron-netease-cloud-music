@@ -12,19 +12,17 @@ export function shortDate(timeStamp) {
 }
 
 /**
- * format millisecond to `(h:)mm:ss`
+ * format millisecond to `mm:ss`
  * @param {number} ms
  */
 export function shortTime(ms) {
     if (typeof ms !== 'number') return '00:00';
-    const dt = new Date(ms);
-    return dt.toLocaleTimeString('zh', {
-        hour12: false,
-        timeZone: 'utc',
-        hour: ms > 3600000 ? 'numeric' : undefined,
-        minute: '2-digit',
-        second: '2-digit'
-    });
+    const t = ms / 1000;
+    const m = Math.floor(t / 60);
+    const mm = m > 9 ? `${m}` : `0${m}`;
+    const s = Math.floor(t % 60);
+    const ss = s > 9 ? `${s}` : `0${s}`;
+    return `${mm}:${ss}`;
 }
 
 /**
