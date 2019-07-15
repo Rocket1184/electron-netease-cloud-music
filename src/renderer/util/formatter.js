@@ -8,7 +8,23 @@ export function shortDate(timeStamp) {
         year: 'numeric',
         month: '2-digit',
         day: '2-digit'
-    }).replace(/\//g, '-');
+    });
+}
+
+/**
+ * format timestamp to `yyyy/mm/dd mm:ss`
+ * @param {number} timeStamp
+ */
+export function longDate(timeStamp) {
+    const dt = new Date(timeStamp);
+    return dt.toLocaleDateString('zh', {
+        year: 'numeric',
+        month: '2-digit',
+        day: '2-digit',
+        hour12: false,
+        hour: '2-digit',
+        minute: '2-digit'
+    });
 }
 
 /**

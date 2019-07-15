@@ -9,7 +9,7 @@
             <div class="info">
                 <div class="user">
                     <div class="nickname">{{comment.user.nickname}}</div>
-                    <div class="time"> {{comment.time | shortDate}}</div>
+                    <div class="time"> {{comment.time | longDate}}</div>
                 </div>
                 <div class="actions">
                     <mu-button v-if="canDelete"
@@ -71,7 +71,7 @@
 <script>
 import { mapState } from 'vuex';
 
-import { shortDate } from '@/util/formatter';
+import { longDate } from '@/util/formatter';
 import { sizeImg, HiDpiPx } from '@/util/image';
 
 export default {
@@ -90,7 +90,7 @@ export default {
         avatarImgSrc(user) {
             return sizeImg(user.avatarUrl, HiDpiPx(40));
         },
-        shortDate
+        longDate
     }
 };
 </script>
