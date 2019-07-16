@@ -154,3 +154,14 @@ export class DjRadio {
         // this.feeInfo = o.feeInfo;
     }
 }
+
+export class DjRadioProgram {
+    constructor(o, radio) {
+        this.mainSong = new Track(o.mainSong);
+        this.id = o.id;
+        this.createTime = o.createTime;
+        this.description = o.description;
+        this.listenerCount = o.listenerCount;
+        this.radio = radio || o.radio;
+    }
+}

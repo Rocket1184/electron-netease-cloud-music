@@ -174,6 +174,15 @@ namespace Models {
         subed: boolean;
         // feeInfo: null;
     }
+
+    export class DjRadioProgram {
+        constructor(o: any, radio: DjRadio);
+        mainSong: Track;
+        id: number;
+        createTime: Number;
+        description: string;
+        radio: DjRadio;
+    }
 }
 
 export as namespace Models;
