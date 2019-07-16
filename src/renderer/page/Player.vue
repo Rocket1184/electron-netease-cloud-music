@@ -25,7 +25,7 @@
                 <mu-button flat
                     small
                     color="black"
-                    :to="{ name: 'comment', params: { type: 'song', id: playing.id } }"
+                    :to="commentRoute"
                     replace>
                     <mu-icon left
                         :size="18"
@@ -58,31 +58,46 @@
                 </mu-button>
             </div>
             <p class="source">
-                <template v-if="playing.artists">
-                    <span>歌手：</span>
-                    <template v-for="(ar, index) in playing.artists">
-                        <span v-if="index !== 0"
-                            :key="'sep' + index"
-                            class="sep">/</span>
-                        <router-link v-if="ar.id !== 0"
-                            :key="ar.id"
-                            class="artist link"
-                            :to="{ name: 'artist', params: { id: ar.id } }"
-                            replace>{{ar.name}}</router-link>
-                        <span v-else
-                            :key="'ar' + index"
-                            class="artist">{{ar.name}}</span>
+                <template v-if="isDjRadioProgram">
+                    <span>电台：</span>
+                    <router-link class="album link"
+                        :to="{ name: 'djradio', params: { id: playing.source.id } }"
+                        replace>{{playing.source.djradio.radio.name}}</router-link>
+                </template>
+                <template v-else>
+                    <template v-if="playing.artists">
+                        <span>歌手：</span>
+                        <template v-for="(ar, index) in playing.artists">
+                            <span v-if="index !== 0"
+                                :key="'sep' + index"
+                                class="sep">/</span>
+                            <router-link v-if="ar.id !== 0"
+                                :key="ar.id"
+                                class="artist link"
+                                :to="{ name: 'artist', params: { id: ar.id } }"
+                                replace>{{ar.name}}</router-link>
+                            <span v-else
+                                :key="'ar' + index"
+                                class="artist">{{ar.name}}</span>
+                        </template>
+                    </template>
+                    <span class="sep"></span>
+                    <template v-if="playing.album">
+                        <span>专辑：</span>
+                        <router-link class="album link"
+                            :to="{ name: 'album', params: { id: playing.album.id } }"
+                            replace>{{playing.album.name}}</router-link>
                     </template>
                 </template>
-                <span class="sep"></span>
-                <template v-if="playing.album">
-                    <span>专辑：</span>
-                    <router-link class="album link"
-                        :to="{ name: 'album', params: { id: playing.album.id } }"
-                        replace>{{playing.album.name}}</router-link>
-                </template>
             </p>
-            <div class="lyric">
+            <div v-if="isDjRadioProgram"
+                class="description">
+                <div class="scroller">
+                    <pre>{{playing.source.djradio.description}}</pre>
+                </div>
+            </div>
+            <div v-else
+                class="lyric">
                 <div v-if="playing.id"
                     class="control">
                     <mu-button flat
@@ -143,12 +158,11 @@
                 </div>
             </div>
         </div>
-        <mu-dialog width="400"
+        <mu-dialog width="500"
+            title="分享"
             dialog-class="share-dlg"
             :open.sync="dlgShareOpen">
             <div class="share-content">
-                <img class="share-img"
-                    :src="shareImgSrc">
                 <div class="share-text">{{ shareText }}</div>
             </div>
             <template #actions>
@@ -190,21 +204,34 @@ export default {
     computed: {
         ...mapState(['ui', 'user']),
         ...mapGetters(['playing']),
+        isDjRadioProgram() {
+            const { source = {} } = this.playing;
+            return (source && source.djradio);
+        },
         albumImgStyle() {
             if (this.playing.album && this.playing.album.picUrl) {
                 return bkgImg(sizeImg(this.playing.album.picUrl, HiDpiPx(220)));
             }
             return '';
         },
+        commentRoute() {
+            const { id, source = {} } = this.playing;
+            return {
+                name: 'comment',
+                params: this.isDjRadioProgram
+                    ? { type: 'dj', id: source.djradio.id }
+                    : { type: 'song', id }
+            };
+        },
         btnCommentText() {
             return `评论 (${this.commentCount})`;
         },
-        shareImgSrc() {
-            if (!this.playing.id) return '';
-            return sizeImg(this.playing.picUrl, 352);
-        },
         shareText() {
             if (!this.playing.id) return '';
+            if (this.isDjRadioProgram) {
+                const { id, radio } = this.playing.source.djradio;
+                return `分享 ${radio.name} 的节目 《${this.playing.name}》：https://music.163.com/program/${id}`;
+            }
             const { id, name, artistName } = this.playing;
             return `分享 ${artistName} 的单曲 《${name}》：https://music.163.com/song/${id}`;
         },
@@ -280,10 +307,11 @@ export default {
             img.addEventListener('load', handler, { once: true });
         },
         async refreshThreadInfo() {
-            this.threadInfoId = this.playing.id;
-            if (!this.playing.id) return;
+            const { id, source = {} } = this.playing;
+            if (!id) return;
+            this.threadInfoId = id;
             this.commentCount = '...';
-            const thread = `R_SO_4_${this.playing.id}`;
+            const thread = source.djradio ? `A_DJ_1_${source.djradio.id}` : `R_SO_4_${id}`;
             const resp = await Api.getCommentThreadInfoE(thread);
             if (resp.code === 200) {
                 this.commentCount = resp.commentCount;
@@ -471,6 +499,15 @@ export default {
                 text-decoration: underline;
             }
         }
+        .description {
+            height: 340px;
+            position: relative;
+            .scroller {
+                height: 100%;
+                overflow-y: auto;
+                padding-left: 6px;
+            }
+        }
         .lyric {
             height: 340px;
             position: relative;
@@ -523,14 +560,6 @@ export default {
     }
     100% {
         transform: rotate(360deg);
-    }
-}
-
-.share-content {
-    .share-img {
-        width: 100%;
-        height: 352px;
-        object-fit: contain;
     }
 }
 </style>
