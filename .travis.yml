@@ -1,12 +1,11 @@
 dist: xenial
 language: node_js
-node_js: '11'
+node_js: 'node'
 
 cache:
   npm: true
   yarn: true
   directories:
-    - "$HOME/.electron"
     - "$HOME/.cache/electron"
 
 addons:
@@ -17,7 +16,6 @@ addons:
     packages:
       - jq
       - yarn
-      - libdbus-1-dev
 
 script:
   - script/travis-ci.sh
