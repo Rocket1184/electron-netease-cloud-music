@@ -62,16 +62,16 @@
             <mu-divider></mu-divider>
             <CenteredLoading v-if="programsLoading"></CenteredLoading>
             <DjRadioProgramList v-else
-                :tracks="programSongs"
-                :total="djradio.programCount"
-                :source="trackSource"></DjRadioProgramList>
+                ref="programList"
+                :programs="programs"
+                :total="djradio.programCount"></DjRadioProgramList>
         </div>
     </div>
 </template>
 
 <script>
 import { mapActions, mapState } from 'vuex';
-import Api from '@/api/ipc';
+import { getDjRadioProgram } from '@/api/typed';
 
 import CenteredLoading from '../CenteredLoading.vue';
 import DjRadioProgramList from './DjRadioProgramList.vue';
@@ -115,33 +115,20 @@ export default {
         },
         djradioDesc() {
             return this.djradio.desc || '暂无';
-        },
-        trackSource() {
-            return {
-                name: 'djradio',
-                id: this.djradio.id
-            };
-        },
-        programSongs() {
-            return this.programs.map(p => p.mainSong);
         }
     },
     methods: {
         ...mapActions([
-            'playPlaylist',
             'subscribeDjRadio',
             'unsubscribeDjRadio'
         ]),
         async getPrograms() {
             this.programsLoading = true;
-            const resp = await Api.getDjRadioProgram(this.djradio.id, 500);
+            this.programs = await getDjRadioProgram(this.djradio.id, 500);
             this.programsLoading = false;
-            if (resp.code == 200) {
-                this.programs = resp.programs;
-            }
         },
         async handlePlayAll() {
-            this.playPlaylist({ tracks: this.programSongs, source: this.trackSource });
+            this.$refs.programList.playAll();
         },
         async handleSubscribe() {
             if (!this.user.loginValid) {
