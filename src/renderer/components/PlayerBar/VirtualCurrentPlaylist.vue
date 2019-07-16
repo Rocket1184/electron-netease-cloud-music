@@ -199,6 +199,7 @@ export default {
             this.removeTrackFromPlaylist({ start, count: 1 });
         },
         scrollTo(index) {
+            if (this.queueEmpty) return;
             const top = this.$refs.scroller.$el.scrollTop;
             const offset = index * 36;
             if (top > offset || top + 324 < offset) {
