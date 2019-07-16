@@ -1,6 +1,6 @@
 import { senderFn } from './ipc';
 import * as tracks from './database/track';
-import { Album, Artist, Track,  Video, PlayList } from '@/util/models';
+import { Album, Artist, Track, Video, PlayList, DjRadio, DjRadioProgram } from '@/util/models';
 
 /**
  * @param {number[]} ids
@@ -71,5 +71,14 @@ export async function getVideoDetail(id, type) {
         if (resp.code === 200) {
             return new Video({ ...resp.data, type });
         }
+    }
+}
+
+export async function getDjRadioProgram(radioId, limit = 100, offset = 0, asc = false, filterlikeplay = true) {
+    /** @type {Types.DjProgramRes} */
+    const resp = await senderFn('getDjRadioProgram', radioId, limit, offset, asc, filterlikeplay);
+    if (resp.code === 200 && resp.programs.length > 0) {
+        const r = new DjRadio(resp.programs[0].radio);
+        return resp.programs.map(p => new DjRadioProgram(p, r));
     }
 }
