@@ -1,4 +1,4 @@
-import diff from 'lodash.difference';
+import diff from 'lodash/difference';
 
 import { trackTable } from './db';
 
