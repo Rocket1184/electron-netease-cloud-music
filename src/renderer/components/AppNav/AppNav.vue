@@ -172,7 +172,7 @@ export default {
             this.drawerOpen = false;
             if (route.name === this.$route.name) return;
             if (route.name === 'index') window.__NAV_BACK__ = true;
-            this.$router.push(route.path);
+            this.$router.push({ name: route.name });
         },
         handleNameClick() {
             if (!this.user.loginValid) {
