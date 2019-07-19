@@ -14,6 +14,12 @@ import ListDetailLayout from '@/components/ListDetailLayout.vue';
 import VideoDetail from '@/components/VideoDetail/VideoDetail.vue';
 
 export default {
+    props: {
+        id: {
+            type: [Number , String],
+            required: true
+        }
+    },
     data() {
         return {
             video: null,
@@ -30,7 +36,7 @@ export default {
             'playAudio'
         ]),
         async loadVideo() {
-            const id = this.$route.params.id;
+            const id = this.id;
             this.video = await getVideoDetail(id, Number(id.length >= 30));
             this.detailLoading = false;
             this.$nextTick(() => {

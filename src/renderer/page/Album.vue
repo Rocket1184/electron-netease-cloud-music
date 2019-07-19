@@ -33,6 +33,12 @@ import AvatarListItem from '@/components/AvatarListItem.vue';
 import ListDetailLayout from '@/components/ListDetailLayout.vue';
 
 export default {
+    props: {
+        id: {
+            type: [Number , String],
+            required: true
+        }
+    },
     data() {
         return {
             album: null,
@@ -43,7 +49,7 @@ export default {
     },
     methods: {
         loadAlbum() {
-            const id = this.$route.params.id;
+            const id = this.id;
             this.detailLoading = true;
             this.relatedLoading = true;
             Api.getAlbumDetailW(id).then(res => {

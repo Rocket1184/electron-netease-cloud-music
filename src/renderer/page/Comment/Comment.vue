@@ -65,6 +65,16 @@ const ThreadPrefix = {
 };
 
 export default {
+    props: {
+        type: {
+            type: String,
+            required: true
+        },
+        id: {
+            type: [Number , String],
+            required: true
+        }
+    },
     data() {
         return {
             tab: 'hot',
@@ -78,8 +88,7 @@ export default {
     computed: {
         ...mapState(['user']),
         thread() {
-            const { id, type } = this.$route.params;
-            return `${ThreadPrefix[type]}${id}`;
+            return ThreadPrefix[this.type] + this.id;
         },
         transitionName() {
             if (this.tab === 'hot') return 'slide-right';

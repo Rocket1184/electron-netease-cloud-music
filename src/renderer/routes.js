@@ -14,9 +14,12 @@ import Radio from '@/page/Radio/Radio.vue';
 import UnderConstruction from '@/page/UnderConstruction.vue';
 
 /**
- * @type {import('vue-router').RouteConfig[]}
+ * @typedef {import('vue-router').RouteConfig} R
+ * @typedef {{title?: string; icon?: string}} M
+ * @typedef { R & M } Route
+ * @type {Route[]}
  */
-export default [
+const routes = [
     {
         name: 'index',
         path: '/',
@@ -47,26 +50,31 @@ export default [
         name: 'playlist',
         path: '/playlist/:id',
         component: Playlist,
+        props: true
     },
     {
         name: 'album',
         path: '/album/:id',
-        component: Album
+        component: Album,
+        props: true
     },
     {
         name: 'artist',
         path: '/artist/:id',
-        component: Artist
+        component: Artist,
+        props: true
     },
     {
         name: 'video',
         path: '/video/:id',
-        component: Video
+        component: Video,
+        props: true
     },
     {
         name: 'djradio',
         path: '/djradio/:id',
-        component: DjRadio
+        component: DjRadio,
+        props: true
     },
     {
         name: 'recommend',
@@ -76,7 +84,8 @@ export default [
     {
         name: 'comment',
         path: '/comment/:type/:id',
-        component: Comment
+        component: Comment,
+        props: true
     },
     {
         name: 'radio',
@@ -95,3 +104,5 @@ export default [
         component: UnderConstruction
     }
 ];
+
+export default routes;

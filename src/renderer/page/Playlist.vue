@@ -33,6 +33,12 @@ import PlaylistDetail from '@/components/PlaylistDetail.vue';
 import AvatarListItem from '@/components/AvatarListItem.vue';
 
 export default {
+    props: {
+        id: {
+            type: [Number , String],
+            required: true
+        }
+    },
     data() {
         return {
             playlist: null,
@@ -43,7 +49,7 @@ export default {
     },
     methods: {
         loadPlaylist() {
-            const id = this.$route.params.id;
+            const id = this.id;
             this.detailLoading = true;
             this.relatedLoading = true;
             getPlaylistDetail(id).then(playlist => {

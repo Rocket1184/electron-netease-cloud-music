@@ -13,6 +13,12 @@ import DjRadioDetail from '../components/DjRadioDetail/DjRadioDetail.vue';
 import ListDetailLayout from '../components/ListDetailLayout.vue';
 
 export default {
+    props: {
+        id: {
+            type: [Number , String],
+            required: true
+        }
+    },
     data() {
         return {
             djradio: null,
@@ -21,7 +27,7 @@ export default {
     },
     methods: {
         loadDjRadio() {
-            const id = this.$route.params.id;
+            const id = this.id;
             this.detailLoading = true;
             Api.getDjRadioDetail(id).then(resp => {
                 if (resp.code === 200) {

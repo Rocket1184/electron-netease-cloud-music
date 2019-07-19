@@ -13,6 +13,12 @@ import ArtistDetail from '@/components/ArtistDetail/ArtistDetail.vue';
 import ListDetailLayout from '@/components/ListDetailLayout.vue';
 
 export default {
+    props: {
+        id: {
+            type: [Number , String],
+            required: true
+        }
+    },
     data() {
         return {
             artist: null,
@@ -21,7 +27,7 @@ export default {
     },
     methods: {
         async loadArtist() {
-            const id = this.$route.params.id;
+            const id = this.id;
             this.artist = await getArtistDetail(id);
             this.detailLoading = false;
         }
