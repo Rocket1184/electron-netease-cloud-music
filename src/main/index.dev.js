@@ -7,8 +7,7 @@ process.env.DEBUG = [
     'MPRIS',
     'MPRIS:IPC',
     'HTTP',
-    'Tray',
-    'Tray:IPC'
+    'Tray'
 ].join(',');
 process.env.DEBUG_COLORS = 'true';
 process.env.NODE_ENV = 'development';
@@ -17,7 +16,9 @@ require('@babel/register')({
     sourceMaps: 'inline',
     only: [/src\/main\//],
     plugins: [
-        '@babel/plugin-transform-modules-commonjs'
+        '@babel/plugin-proposal-class-properties',
+        '@babel/plugin-transform-modules-commonjs',
+        ['@babel/plugin-proposal-decorators', { decoratorsBeforeExport: true }]
     ]
 });
 
