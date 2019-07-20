@@ -6,6 +6,7 @@ const CopyWebpackPlugin = require('copy-webpack-plugin');
 const { isProd, absPath } = require('./util');
 const packageJson = require('../package.json');
 
+/** @type {import('webpack').Configuration} */
 let cfg = {
     performance: { hints: false },
     target: 'electron-main',
@@ -15,6 +16,28 @@ let cfg = {
     output: {
         filename: '[name].js',
         path: absPath('dist')
+    },
+    module: {
+        rules: [
+            {
+                resource: path => path.includes('src/main') && path.endsWith('.js'),
+                use: {
+                    loader: 'babel-loader',
+                    options: {
+                        babelrc: false,
+                        plugins: [
+                            '@babel/plugin-proposal-class-properties',
+                            ['@babel/plugin-proposal-decorators', { decoratorsBeforeExport: true }]
+                        ]
+                    }
+                }
+            }
+        ]
+    },
+    resolve: {
+        alias: {
+            'jsbi':  'jsbi/dist/jsbi-cjs.js'
+        }
     },
     node: {
         __dirname: false,
