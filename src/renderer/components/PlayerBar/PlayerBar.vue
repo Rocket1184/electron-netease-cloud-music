@@ -228,6 +228,7 @@ export default {
             } else if (volume < 0) {
                 volume = 0;
             }
+            if (volume === this.ui.audioVolume) return;
             this.setAudioVolume({ volume });
         },
         handleVolumeWheel(ev) {
