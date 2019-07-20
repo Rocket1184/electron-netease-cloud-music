@@ -8,7 +8,6 @@
  */
 
 import crypto from 'crypto';
-import Bigint from 'big-integer';
 
 /**
  * @param {string} text
@@ -19,15 +18,25 @@ function weapiAesEncrypt(text, secKey) {
     return cipher.update(text, 'utf8', 'base64') + cipher.final('base64');
 }
 
+const WEAPI = {
+    pk: BigInt('0x' + '010001'),
+    md: BigInt('0x' + '00e0b509f6259df8642dbc35662901477df22677ec152b5ff68ace615bb7b725152b3ab17a876aea8a5aa76d2e417629ec4ee341f56135fccf695280104e0312ecbda92557c93870114af6c9d05c4f7f0c3685b7a46bee255932575cce10b424d813cfe4875d3e82047b97ddef52741d546b8e289dc6935b3ece0462db0a22b8e7'),
+    bigModPow(a, b = WEAPI.pk, mod = WEAPI.md) {
+        let result = BigInt(1);
+        for (var i = BigInt(0); i < b; i += BigInt(1)) {
+            result = (result * a) % mod;
+        }
+        return result;
+    }
+};
+
 /**
  * @param {string} text
  */
 function weapiRsaEncrypt(text) {
     let textHex = Buffer.from(text.split('').reverse().join(''), 'utf8').toString('hex');
-    let tb = Bigint(textHex, 16);
-    let pk = Bigint('010001', 16);
-    let md = Bigint('00e0b509f6259df8642dbc35662901477df22677ec152b5ff68ace615bb7b725152b3ab17a876aea8a5aa76d2e417629ec4ee341f56135fccf695280104e0312ecbda92557c93870114af6c9d05c4f7f0c3685b7a46bee255932575cce10b424d813cfe4875d3e82047b97ddef52741d546b8e289dc6935b3ece0462db0a22b8e7', 16);
-    let rs = tb.modPow(pk, md).toString(16);
+    let tb = BigInt('0x' + textHex);
+    let rs = WEAPI.bigModPow(tb).toString(16);
     return rs.padStart(256, '0');
 }
 
