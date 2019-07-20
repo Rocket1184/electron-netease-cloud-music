@@ -2,7 +2,6 @@
 
 const { VueLoaderPlugin } = require('vue-loader');
 const HtmlWebpackPlugin = require('html-webpack-plugin');
-const CopyWebpackPlugin = require('copy-webpack-plugin');
 const MiniCSSExtractPlugin = require('mini-css-extract-plugin');
 
 const config = require('./config');
@@ -84,7 +83,6 @@ let cfg = {
 if (isProd) {
     // release config
     cfg.mode = 'production';
-    const CleanCSSPlugin = require('less-plugin-clean-css');
     cfg.devtool = 'source-map';
     cfg.module.rules.push(
         {
@@ -99,10 +97,8 @@ if (isProd) {
             use: [
                 { loader: MiniCSSExtractPlugin.loader },
                 { loader: 'css-loader' },
-                {
-                    loader: 'less-loader',
-                    options: { plugins: [new CleanCSSPlugin({ level: 2 })] }
-                }
+                { loader: 'clean-css-loader', options: { level: 2 } },
+                { loader: 'less-loader' }
             ]
         }
     );
@@ -114,10 +110,7 @@ if (isProd) {
         content: `script-src 'self'; media-src http://localhost:* https://*.vod.126.net; img-src 'self' https://*.music.126.net https://music.163.com`
     }];
     cfg.plugins.push(
-        new MiniCSSExtractPlugin(),
-        new CopyWebpackPlugin([
-            { from: absPath('src/renderer/login.html'), to: absPath('dist') }
-        ])
+        new MiniCSSExtractPlugin()
     );
 } else {
     // dev config
