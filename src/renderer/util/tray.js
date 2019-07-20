@@ -17,7 +17,7 @@ import {
  */
 
 const TrayEmitter = new EventEmitter();
-const TAG = 'Tray:IPC';
+const TAG = 'Tray';
 const d = debug(TAG);
 
 ipcRenderer.on(TAG, (event, /** @type {string} */ type, ...args) => {

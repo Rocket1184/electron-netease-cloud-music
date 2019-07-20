@@ -1,13 +1,10 @@
 import { join } from 'path';
-import { EventEmitter } from 'events';
 import { Tray, Menu, ipcMain, app } from 'electron';
 
 import debug from 'debug';
 
 const TAG = 'Tray';
 const d = debug(TAG);
-const IPC_TAG = `${TAG}:IPC`;
-const dd = debug(IPC_TAG);
 
 /**
  * @param {string} name
@@ -66,7 +63,10 @@ export class AppTray {
     }
 
     constructor(color = 'light') {
-        this.emitter = new EventEmitter();
+        /** @type {import('electron').BrowserWindow} */
+        this.win = null;
+        /** @type {import('electron').WebContents} */
+        this.wc = null;
         const xcd = process.env.XDG_CURRENT_DESKTOP;
         const name = app.getName();
         // KDE tray icon scale hack
@@ -77,7 +77,7 @@ export class AppTray {
         if (isKDE) process.env.XDG_CURRENT_DESKTOP = xcd;
         if (isGNOME || isUnity) app.setName(name);
         // doesn't work when using 'appindicator'
-        this.tray.on('click', () => this.emit('raise'));
+        this.tray.on('click', () => this.send('raise'));
         // doesn't work on KDE Plasma
         this.tray.setToolTip('Electron NCM');
         /**
@@ -85,26 +85,29 @@ export class AppTray {
          */
         this.controlMenu = [
             { type: 'separator' },
-            { label: '⏮ 上一首', click: () => this.emit('prev') },
-            { label: '⏭ 下一首', click: () => this.emit('next') },
-            { label: '⏯ 播放 / 暂停', click: () => this.emit('playpause') }
+            { label: '⏮ 上一首', click: () => this.send('prev') },
+            { label: '⏭ 下一首', click: () => this.send('next') },
+            { label: '⏯ 播放 / 暂停', click: () => this.send('playpause') }
         ];
         /**
          * @type {import('electron').MenuItemConstructorOptions[]}
          */
         this.exitMenu = [
             { type: 'separator' },
-            { label: '显示主界面', click: () => this.emit('raise') },
-            { label: '退出', click: () => this.emit('quit') }
+            { label: '显示主界面', click: () => this.raise() },
+            { label: '退出', click: () => this.quit() }
         ];
         this.muted = false;
-        /**
-         * @param {import('../renderer/util/tray').TrayTrack} track
-         */
-        this.track = {};
+        /** @type {import('@/util/tray').TrayTrack}*/
+        this.track = null;
         this.updateMenu();
+        /**
+         * @param {import('electron').IpcMessageEvent} _
+         * @param {string} type
+         * @param {any[]} args
+         */
         this.ipcListener = (_, type, ...args) => {
-            dd('↓ %s %o', type, ...args);
+            d('↓ %s %o', type, ...args);
             switch (type) {
                 case 'mute':
                     this.muted = args[0];
@@ -115,7 +118,7 @@ export class AppTray {
             }
             this.updateMenu();
         };
-        ipcMain.on(IPC_TAG, this.ipcListener);
+        ipcMain.on(TAG, this.ipcListener);
     }
 
     /**
@@ -123,7 +126,7 @@ export class AppTray {
      */
     get muteMenu() {
         return [
-            { label: '静音', click: () => this.emit('mute'), type: 'checkbox', checked: this.muted }
+            { label: '静音', click: () => this.send('mute'), type: 'checkbox', checked: this.muted }
         ];
     }
 
@@ -131,7 +134,7 @@ export class AppTray {
      * @type {import('electron').MenuItemConstructorOptions[]}
      */
     get likeMenu() {
-        if (!this.track.id) {
+        if (!this.track) {
             return [];
         }
         return [
@@ -141,12 +144,12 @@ export class AppTray {
                 type: 'checkbox',
                 checked: this.track.favorite,
                 enabled: this.track.canFavorite,
-                click: () => this.emit('favorite', this.track.id, !this.track.favorite)
+                click: () => this.send('favorite', this.track.id, !this.track.favorite)
             },
             {
                 label: '不感兴趣',
                 enabled: this.track.canDislike,
-                click: () => this.emit('dislike', this.track.id)
+                click: () => this.send('dislike', this.track.id)
             },
         ];
     }
@@ -155,7 +158,7 @@ export class AppTray {
      * @type {import('electron').MenuItemConstructorOptions[]}
      */
     get trackMenu() {
-        if (!this.track.id) {
+        if (!this.track) {
             return [];
         }
         return [
@@ -177,13 +180,26 @@ export class AppTray {
         }
     }
 
+    raise() {
+        this.win.show();
+        this.win.focus();
+    }
+
+    quit() {
+        app.quit();
+    }
+
     /**
      * @param {string} event
      * @param {...any} args 
      */
-    emit(event, ...args) {
-        d('%s %o', event, args);
-        this.emitter.emit(event, ...args);
+    send(event, ...args) {
+        if (!this.wc) {
+            d(event, 'webContents not available');
+            return;
+        }
+        d('↑ %s %o', event, ...args);
+        this.wc.send(TAG, event, ...args);
     }
 
     updateMenu() {
@@ -196,43 +212,14 @@ export class AppTray {
      * @param {import('electron').BrowserWindow} win 
      */
     bindWindow(win) {
-        this.emitter.on('raise', () => {
-            win.show();
-            win.focus();
-        });
-        this.emitter.on('quit', () => {
-            win.removeAllListeners('close');
-            win.close();
-            this.destroy();
-            app.quit();
-        });
-        this.bindWebContents(win.webContents);
-    }
-
-    /**
-     * @param {import('electron').webContents} wc 
-     */
-    bindWebContents(wc) {
-        const sendListeners = AppTray.SendEvents.map(type => (...args) => {
-            dd('↑ %s %o', type, ...args);
-            wc.send(IPC_TAG, type, ...args);
-        });
-        AppTray.SendEvents.forEach((type, index) => this.emitter.on(type, sendListeners[index]));
-        const wcDestroyListener = () => AppTray.SendEvents.forEach((type, index) => {
-            this.emitter.removeListener(type, sendListeners[index]);
-        });
-        wc.on('destroyed', wcDestroyListener);
-        this.emitter.on('destroy', () => {
-            wc.removeListener('destroyed', wcDestroyListener);
-            wcDestroyListener();
-        });
-        this.emit('get');
+        this.win = win;
+        this.wc = win.webContents;
+        this.send('get');
     }
 
     destroy() {
-        this.emit('destroy');
         this.tray.destroy();
         this.tray = null;
-        ipcMain.removeListener(IPC_TAG, this.ipcListener);
+        ipcMain.removeListener(TAG, this.ipcListener);
     }
 }
