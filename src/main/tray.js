@@ -32,10 +32,29 @@ function ellipsisText(str, length) {
     return str.substr(0, length) + '...';
 }
 
-const isKDE = [
+let isKDE = false;
+let isGNOME = false;
+let isUnity = false;
+
+const DesktopEnvs = [
     process.env['XDG_CURRENT_DESKTOP'] || '',
     process.env['XDG_SESSION_DESKTOP'] || ''
-].some(s => s.toUpperCase().endsWith('KDE'));
+];
+
+for (const env of DesktopEnvs) {
+    if (env.endsWith('KDE')) {
+        isKDE = true;
+        break;
+    }
+    if (env.endsWith('GNOME')) {
+        isGNOME = true;
+        break;
+    }
+    if (env.endsWith('Unity')) {
+        isUnity = true;
+        break;
+    }
+}
 
 export class AppTray {
     static get SendEvents() {
@@ -49,10 +68,14 @@ export class AppTray {
     constructor(color = 'light') {
         this.emitter = new EventEmitter();
         const xcd = process.env.XDG_CURRENT_DESKTOP;
+        const name = app.getName();
         // KDE tray icon scale hack
         if (isKDE) process.env.XDG_CURRENT_DESKTOP = 'Unity';
+        // GNOME tray icon override by icon theme's Electron icon hack
+        if (isGNOME || isUnity) app.setName(name.replace(/^electron/, 'whatever'));
         this.tray = new Tray(requireIcon(`tray.${color}`));
         if (isKDE) process.env.XDG_CURRENT_DESKTOP = xcd;
+        if (isGNOME || isUnity) app.setName(name);
         // doesn't work when using 'appindicator'
         this.tray.on('click', () => this.emit('raise'));
         // doesn't work on KDE Plasma
