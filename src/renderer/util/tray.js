@@ -8,7 +8,7 @@ import {
     SET_AUDIO_VOLUME,
     RESTORE_UI_STATE,
     UPDATE_PLAYING_URL,
-    UPDATE_USER_PLAYLIST
+    SET_USER_FAVOR_TRACKS
 } from '@/store/mutation-types';
 
 /**
@@ -66,7 +66,7 @@ function subscribeHandler(mutation, state) {
     switch (mutation.type) {
         case SET_LOGIN_VALID:
         case UPDATE_PLAYING_URL:
-        case UPDATE_USER_PLAYLIST:
+        case SET_USER_FAVOR_TRACKS:
             sendTrackMeta(state, track);
             break;
         case SET_AUDIO_VOLUME:
