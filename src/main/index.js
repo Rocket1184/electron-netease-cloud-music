@@ -114,9 +114,22 @@ app.on('window-all-closed', () => {
 });
 
 app.on('before-quit', () => {
+    if (appTray) {
+        appTray.destroy();
+        appTray = null;
+    }
+    if (mainWindow) {
+        this.win.removeAllListeners('close');
+        this.win.close();
+    }
+    if (loginWindow) {
+        loginWindow.destroy();
+    }
     if (process.platform === 'darwin') {
         // quit safely on macOS
         mainWindow.removeAllListeners('close');
+    } else if (process.platform === 'linux') {
+        require('./mpris').destroy();
     }
 });
 
