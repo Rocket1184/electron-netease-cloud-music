@@ -1,9 +1,8 @@
 'use strict';
 
-const { remote, ipcRenderer, shell, webFrame } = require('electron');
+const { remote, ipcRenderer, shell } = require('electron');
 const { EventEmitter } = require('events');
-const platform = require('os').platform();
-const versions = process.versions;
+const { versions, platform } = process;
 
 // @ts-ignore
 window.require = function (id) {
@@ -11,23 +10,15 @@ window.require = function (id) {
         case 'electron':
             return {
                 remote: {
-                    getGlobal: name => name === 'process' ? { versions } : null,
+                    getGlobal: name => name === 'process' ? { versions, platform } : null,
                     getCurrentWindow: remote.getCurrentWindow,
                     getCurrentWebContents: remote.getCurrentWebContents
                 },
                 ipcRenderer: ipcRenderer,
-                shell: { openExternal: shell.openExternal },
-                webFrame: {
-                    getZoomFactor: webFrame.getZoomFactor,
-                    setZoomFactor: webFrame.setZoomFactor
-                }
+                shell: { openExternal: shell.openExternal }
             };
-        case 'os':
-            return { platform: () => platform };
         case 'events':
             return { EventEmitter };
-        default:
-            return {};
     }
 };
 
