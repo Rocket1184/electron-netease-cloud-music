@@ -4,10 +4,6 @@ import { app, BrowserWindow, ipcMain, Menu } from 'electron';
 import * as Settings from './settings';
 import { AppTray } from './tray';
 
-// allow audio play before user gesture
-// eg: control play via MPRIS
-app.commandLine.appendSwitch('autoplay-policy', 'no-user-gesture-required');
-
 const isDev = process.env.NODE_ENV === 'development';
 
 let shouldAppQuit = true;
@@ -53,6 +49,7 @@ function createMainWindow(settings, url = mainURL) {
             nodeIntegration: isDev,
             nodeIntegrationInWorker: isDev,
             contextIsolation: false,
+            autoplayPolicy: 'no-user-gesture-required',
             additionalArguments: [`--initial-settings=${JSON.stringify(settings)}`]
         }
     });
