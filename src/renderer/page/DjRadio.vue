@@ -7,7 +7,7 @@
 </template>
 
 <script>
-import { getDjRadioDetail } from '@/api/typed';
+import Api from '@/api/ipc';
 
 import DjRadioDetail from '../components/DjRadioDetail/DjRadioDetail.vue';
 import ListDetailLayout from '../components/ListDetailLayout.vue';
@@ -28,8 +28,12 @@ export default {
     methods: {
         async loadDjRadio() {
             this.detailLoading = true;
-            this.djradio = await getDjRadioDetail(this.id);
-            this.detailLoading = false;
+            Api.getDjRadioDetail(this.id).then(resp => {
+                if (resp.code === 200) {
+                    this.djradio = resp.data;
+                }
+                this.detailLoading = false;
+            });
         }
     },
     mounted() {
