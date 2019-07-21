@@ -77,8 +77,8 @@ const mutations = {
     [types.HIDE_COLLECT_POPUP](state) {
         state.collectPopupShow = false;
     },
-    [types.SET_COLLECT_TRACKS](state, /** @type {{ ids: number[] }} */ payload) {
-        state.collectTrackIds = payload.ids;
+    [types.SET_COLLECT_TRACKS](state, /** @type {number[]} */ payload) {
+        state.collectTrackIds = payload;
     },
     [types.ACTIVATE_RADIO](state, /** @type {boolean} */ payload) {
         state.radioMode = payload;

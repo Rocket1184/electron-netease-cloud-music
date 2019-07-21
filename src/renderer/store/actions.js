@@ -440,19 +440,14 @@ export function restorePlaylist({ commit }) {
 /**
  * @param {ActionContext} param0
  */
-export function toggleCollectPopup({ commit, state }, payload = {}) {
-    const tracks = typeof payload === 'number'
-        ? { ids: [payload] }
-        : Array.isArray(payload)
-            ? { ids: payload }
-            : Array.isArray(payload.ids)
-                ? { ids: payload.ids }
-                : { ids: [] };
-    commit(types.SET_COLLECT_TRACKS, tracks);
-    if (state.ui.collectPopupShow === true) {
+export function toggleCollectPopup({ commit }, payload) {
+    if (!payload) {
+        commit(types.SET_COLLECT_TRACKS, []);
         commit(types.HIDE_COLLECT_POPUP);
         return;
     }
+    const ids = typeof payload === 'number' ? [payload] : payload;
+    commit(types.SET_COLLECT_TRACKS, ids);
     commit(types.SHOW_COLLECT_POPUP);
 }
 
