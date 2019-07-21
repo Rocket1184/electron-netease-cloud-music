@@ -1,8 +1,13 @@
 import {
     SET_USER_SIGN_STATUS,
     SET_LOGIN_VALID,
-    SET_AUDIO_PAUSED
+    SET_AUDIO_PAUSED,
+    SET_PLAY_LIST,
+    CLEAR_PLAY_LIST,
+    INSERT_TRACK_INTO_PLAYLIST,
+    REMOVE_TRACK_FROM_PLAYLIST
 } from './mutation-types';
+import * as PlaylistDb from '@/api/database/playlist';
 
 /**
  * @type {(() => void)[]}
@@ -44,7 +49,7 @@ function autoUpdateSignStatus(mutation, state) {
 }
 
 /**
- * @this {typeof import('.').default}
+ * @this {Store}
  * @param {Mutation} mutation
  * @param {State} state
  */
@@ -54,6 +59,29 @@ function moreRadioSongs(mutation, state) {
         if (state.ui.radioMode === true && list.length - 1 === index) {
             this.dispatch('getRadio');
         }
+    }
+}
+
+/**
+ * @this {Store}
+ * @param {Mutation} mutation
+ */
+function updatePlaylistTable(mutation) {
+    switch (mutation.type) {
+        case CLEAR_PLAY_LIST:
+            PlaylistDb.clear();
+            break;
+        case SET_PLAY_LIST:
+            PlaylistDb.replace(mutation.payload);
+            break;
+        case INSERT_TRACK_INTO_PLAYLIST:
+            const { index, tracks } = mutation.payload;
+            PlaylistDb.insert(index, tracks);
+            break;
+        case REMOVE_TRACK_FROM_PLAYLIST:
+            const { start, count } = mutation.payload;
+            PlaylistDb.remove(start, count);
+            break;
     }
 }
 
@@ -72,7 +100,8 @@ export function unsubscribeAll() {
 export function installHooks(store) {
     const subFns = [
         autoUpdateSignStatus,
-        moreRadioSongs
+        moreRadioSongs,
+        updatePlaylistTable
     ];
     unSubFns.push.apply(unSubFns, subFns.map(subFn => store.subscribe(subFn.bind(store))));
 }

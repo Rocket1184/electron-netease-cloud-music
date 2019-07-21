@@ -1,5 +1,6 @@
 import Api from '@/api/ipc';
 import * as ApiTyped from '@/api/typed';
+import * as DbPlaylist from '@/api/database/playlist';
 import * as types from './mutation-types';
 import { Track, Video } from '@/util/models';
 import { LOOP_MODE } from './modules/playlist';
@@ -47,15 +48,13 @@ export function storeUiState({ state }) {
 /**
  * @param {ActionContext} param0
  */
-export function restoreUiState({ commit, dispatch }) {
+export function restoreUiState({ commit }) {
     try {
         const obj = JSON.parse(localStorage.getItem('ui'));
         commit(types.RESTORE_UI_STATE, obj);
     } catch (e) {
         localStorage.removeItem('ui');
     }
-    dispatch('updateUiAudioSrc');
-    dispatch('updateUiLyric');
 }
 
 /**
@@ -417,23 +416,30 @@ export function clearPlaylist({ state, commit, dispatch }) {
     dispatch('updateUiLyric');
 }
 
+/**
+ * @param {ActionContext} context
+ */
 export function storePlaylist({ state }) {
-    localStorage.setItem('playlist', JSON.stringify(state.playlist));
+    const { index, loopMode } = state.playlist;
+    localStorage.setItem('playlist', JSON.stringify({ index, loopMode }));
 }
 
 /**
- * @param {ActionContext} param0
+ * @param {ActionContext} context
  */
-export function restorePlaylist({ commit }) {
+export async function restorePlaylist({ commit, dispatch }) {
     try {
         const stored = localStorage.getItem('playlist');
         if (stored) {
-            const playlist = JSON.parse(stored);
-            commit(types.RESTORE_PLAYLIST, playlist);
+            const { index, loopMode } = JSON.parse(stored);
+            const list = await DbPlaylist.get();
+            commit(types.RESTORE_PLAYLIST, { index, list, loopMode });
+            dispatch('updateUiAudioSrc');
+            dispatch('updateUiLyric');
         }
     } catch (e) {
         // eslint-disable-next-line no-console
-        console.info('Playlist stored in localStorage not valid.');
+        console.info('restorePlaylist failed:', e);
     }
 }
 
