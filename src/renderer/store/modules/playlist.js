@@ -26,11 +26,7 @@ const mutations = {
         state.list = [];
     },
     [types.SET_CURRENT_INDEX](state, payload) {
-        if (typeof payload === 'number') {
-            state.index = payload;
-            return;
-        }
-        throw new Error('Wrong mutation payload in SET_CURRENT_INDEX.');
+        state.index = payload;
     },
     [types.SET_LOOP_MODE_LIST](state) {
         state.loopMode = LOOP_MODE.LIST;
