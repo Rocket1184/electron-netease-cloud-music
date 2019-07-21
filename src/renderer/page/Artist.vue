@@ -15,7 +15,7 @@ import ListDetailLayout from '@/components/ListDetailLayout.vue';
 export default {
     props: {
         id: {
-            type: [Number , String],
+            type: [Number, String],
             required: true
         }
     },
@@ -27,8 +27,8 @@ export default {
     },
     methods: {
         async loadArtist() {
-            const id = this.id;
-            this.artist = await getArtistDetail(id);
+            this.detailLoading = true;
+            this.artist = await getArtistDetail(this.id);
             this.detailLoading = false;
         }
     },
@@ -38,7 +38,7 @@ export default {
     beforeRouteUpdate(to, from, next) {
         // this component is reused in the new route
         next();
-        this.loadArtist();
+        this.nextTick(() => this.loadArtist());
     },
     components: {
         ArtistDetail,

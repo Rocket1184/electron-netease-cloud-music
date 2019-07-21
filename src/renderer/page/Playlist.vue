@@ -35,7 +35,7 @@ import AvatarListItem from '@/components/AvatarListItem.vue';
 export default {
     props: {
         id: {
-            type: [Number , String],
+            type: [Number, String],
             required: true
         }
     },
@@ -49,14 +49,13 @@ export default {
     },
     methods: {
         loadPlaylist() {
-            const id = this.id;
             this.detailLoading = true;
             this.relatedLoading = true;
-            getPlaylistDetail(id).then(playlist => {
+            getPlaylistDetail(this.id).then(playlist => {
                 this.playlist = playlist;
                 this.detailLoading = false;
             });
-            Api.getRelatedPlaylists(id).then(resp => {
+            Api.getRelatedPlaylists(this.id).then(resp => {
                 if (resp.code === 200) {
                     this.related = resp.data;
                 }
@@ -73,7 +72,7 @@ export default {
     beforeRouteUpdate(to, from, next) {
         // this component is reused in the new route
         next();
-        this.loadPlaylist();
+        this.$nextTick(() => this.loadPlaylist());
     },
     components: {
         ListDetailLayout,
