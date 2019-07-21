@@ -7,7 +7,7 @@
 </template>
 
 <script>
-import Api from '@/api/ipc';
+import { getDjRadioDetail } from '@/api/typed';
 
 import DjRadioDetail from '../components/DjRadioDetail/DjRadioDetail.vue';
 import ListDetailLayout from '../components/ListDetailLayout.vue';
@@ -15,7 +15,7 @@ import ListDetailLayout from '../components/ListDetailLayout.vue';
 export default {
     props: {
         id: {
-            type: [Number , String],
+            type: [Number, String],
             required: true
         }
     },
@@ -26,15 +26,10 @@ export default {
         };
     },
     methods: {
-        loadDjRadio() {
-            const id = this.id;
+        async loadDjRadio() {
             this.detailLoading = true;
-            Api.getDjRadioDetail(id).then(resp => {
-                if (resp.code === 200) {
-                    this.djradio = resp.data;
-                }
-                this.detailLoading = false;
-            });
+            this.djradio = await getDjRadioDetail(this.id);
+            this.detailLoading = false;
         }
     },
     mounted() {
@@ -43,7 +38,7 @@ export default {
     beforeRouteUpdate(to, from, next) {
         // this component is reused in the new route
         next();
-        this.loadDjRadio();
+        this.$nextTick(() => this.loadDjRadio());
     },
     components: {
         DjRadioDetail,

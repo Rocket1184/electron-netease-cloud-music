@@ -35,7 +35,7 @@ import ListDetailLayout from '@/components/ListDetailLayout.vue';
 export default {
     props: {
         id: {
-            type: [Number , String],
+            type: [Number, String],
             required: true
         }
     },
@@ -49,15 +49,14 @@ export default {
     },
     methods: {
         loadAlbum() {
-            const id = this.id;
             this.detailLoading = true;
             this.relatedLoading = true;
-            Api.getAlbumDetailW(id).then(res => {
+            Api.getAlbumDetailW(this.id).then(res => {
                 res.album.songs = res.songs;
                 this.album = new Album(res.album);
                 this.detailLoading = false;
             });
-            Api.getRelatedAlbums(id).then(res => {
+            Api.getRelatedAlbums(this.id).then(res => {
                 this.related = res.data;
                 this.relatedLoading = false;
             });
@@ -72,7 +71,7 @@ export default {
     beforeRouteUpdate(to, from, next) {
         // this component is reused in the new route
         next();
-        this.loadAlbum();
+        this.$nextTick(() => this.loadAlbum());
     },
     components: {
         AlbumDetail,

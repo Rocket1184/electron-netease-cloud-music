@@ -16,7 +16,7 @@ import VideoDetail from '@/components/VideoDetail/VideoDetail.vue';
 export default {
     props: {
         id: {
-            type: [Number , String],
+            type: [Number, String],
             required: true
         }
     },
@@ -36,8 +36,8 @@ export default {
             'playAudio'
         ]),
         async loadVideo() {
-            const id = this.id;
-            this.video = await getVideoDetail(id, Number(id.length >= 30));
+            this.detailLoading = true;
+            this.video = await getVideoDetail(this.id, Number(this.id.toString().length >= 30));
             this.detailLoading = false;
             this.$nextTick(() => {
                 this.$el.querySelector('video').onplay = () => {
@@ -59,7 +59,7 @@ export default {
     beforeRouteUpdate(to, from, next) {
         // this component is reused in the new route
         next();
-        this.loadVideo();
+        this.$nextTick(() => this.loadVideo());
     },
     components: {
         ListDetailLayout,
