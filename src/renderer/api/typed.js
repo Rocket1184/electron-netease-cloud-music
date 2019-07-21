@@ -74,6 +74,14 @@ export async function getVideoDetail(id, type) {
     }
 }
 
+export async function getDjRadioDetail(id) {
+    /** @type {Types.DjDetailRes} */
+    const resp = await send('getDjRadioDetail', id);
+    if (resp.code === 200) {
+        return new DjRadio(resp.data);
+    }
+}
+
 export async function getDjRadioProgram(radioId, limit = 100, offset = 0, asc = false, filterlikeplay = true) {
     /** @type {Types.DjProgramRes} */
     const resp = await send('getDjRadioProgram', radioId, limit, offset, asc, filterlikeplay);
