@@ -1,5 +1,9 @@
 <template>
     <div class="player-bar">
+        <audio id="playerbar-audio"
+            ref="audio"
+            :src="ui.audioSrc"
+            :autoplay="settings.autoPlay"></audio>
         <div class="cover"
             @click="handleCoverClick">
             <div class="img"
@@ -68,7 +72,8 @@
                             color="secondary"
                             :inputValue="currentListShown"></mu-checkbox>
                         <template #content>
-                            <CurrentPlaylist ref="list" @navigate="handleSourceNavigate"></CurrentPlaylist>
+                            <CurrentPlaylist ref="list"
+                                @navigate="handleSourceNavigate"></CurrentPlaylist>
                         </template>
                     </mu-menu>
                 </div>
@@ -104,7 +109,6 @@
 </template>
 
 <script>
-import { platform } from 'os';
 import { mapActions, mapGetters, mapState } from 'vuex';
 
 import Api from '@/api/ipc';
@@ -128,8 +132,6 @@ const VolumeIcon = [
 export default {
     data() {
         return {
-            /** @type {HTMLAudioElement} */
-            audioEl: null,
             hasRetried: false,
             timeTotal: 0,
             timeCurrent: 0,
@@ -167,17 +169,20 @@ export default {
         handlePlayPause() {
             this.ui.audioSrc && (this.ui.paused ? this.playAudio() : this.pauseAudio());
         },
+        getAudioCurrentTime() {
+            return Math.trunc(this.$refs.audio.currentTime * 1000);
+        },
         handleNext() {
             if (this.ui.radioMode === true) {
                 this.skipRadio({
                     id: this.playing.id,
-                    time: Math.trunc(this.audioEl.currentTime * 1000)
+                    time: this.getAudioCurrentTime()
                 });
             }
             this.playNextTrack();
         },
         handleProgressDrag(value) {
-            this.audioEl.currentTime = (this.timeTotal / 1000) * (value / 100);
+            this.$refs.audio.currentTime = (this.timeTotal / 1000) * (value / 100);
         },
         submitListened() {
             if (this.user.loginValid) {
@@ -195,7 +200,7 @@ export default {
                 if (this.ui.radioMode) {
                     await this.likeRadio({
                         id: this.playing.id,
-                        time: Math.trunc(this.audioEl.currentTime * 1000),
+                        time: this.getAudioCurrentTime(),
                         like: this.shouldFavorite
                     });
                 } else {
@@ -269,7 +274,7 @@ export default {
                 this.$toast.message('不跟你玩了，哼  o(￣ヘ￣o＃)');
                 return;
             }
-            const time = Math.trunc(this.audioEl.currentTime * 1000);
+            const time = this.getAudioCurrentTime();
             this.trashRadio({ id: this.playing.id, time });
             this.playNextTrack();
         },
@@ -278,7 +283,7 @@ export default {
         }
     },
     computed: {
-        ...mapState(['ui', 'user']),
+        ...mapState(['ui', 'user', 'settings']),
         ...mapGetters(['playing', 'queue']),
         coverImgStyle() {
             if (this.playing.album && this.playing.album.picUrl) {
@@ -338,9 +343,9 @@ export default {
     },
     mounted() {
         /** @type {HTMLAudioElement} */
-        const _audioEl = document.getElementById('playerbar-audio');
+        const _audioEl = this.$refs.audio;
+        this.$root.$emit('audio-ready', _audioEl);
         let _playingIntervalId;
-        this.audioEl = _audioEl;
 
         if (this.ui.audioMute === true) {
             _audioEl.volume = 0;
@@ -348,7 +353,7 @@ export default {
             _audioEl.volume = this.ui.audioVolume / 100;
         }
 
-        const _updateTime = () => this.timeCurrent = this.audioEl.currentTime * 1000;
+        const _updateTime = () => this.timeCurrent = _audioEl.currentTime * 1000;
         const _setUpdateTimeInterval = () => {
             if (_playingIntervalId) {
                 clearInterval(_playingIntervalId);
@@ -428,9 +433,9 @@ export default {
                     break;
                 case SET_AUDIO_VOLUME:
                     if (this.ui.audioMute === true) {
-                        this.audioEl.volume = 0;
+                        _audioEl.volume = 0;
                     } else {
-                        this.audioEl.volume = this.ui.audioVolume / 100;
+                        _audioEl.volume = this.ui.audioVolume / 100;
                     }
                     break;
                 case SET_AUDIO_PAUSED:
@@ -438,10 +443,6 @@ export default {
                     break;
             }
         });
-
-        if (platform() === 'linux') {
-            require('@/util/mpris').bindAudioElement(_audioEl);
-        }
     },
     components: {
         CurrentPlaylist

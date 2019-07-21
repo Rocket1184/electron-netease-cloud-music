@@ -9,6 +9,7 @@ import { RecycleScroller } from 'vue-virtual-scroller';
 import App from './App.vue';
 import store from './store';
 import routes from './routes';
+import { isLinux } from './util/globals';
 import { initTheme } from './util/theme';
 import DblclickRipple from './util/dblclick-ripple';
 import './style.css';
@@ -33,9 +34,30 @@ Vue.component('RecycleScroller', RecycleScroller);
 const el = document.createElement('div');
 document.body.appendChild(el);
 
-new Vue({
+const app = new Vue({
     el,
     store,
     router: new Router({ routes }),
-    ...App
+    extends: App
 });
+
+store.dispatch('restoreUserInfo');
+store.dispatch('restorePlaylist');
+store.dispatch('restoreRadio');
+store.dispatch('restoreUiState');
+
+window.onbeforeunload = () => {
+    store.dispatch('storePlaylist');
+    store.dispatch('storeUiState');
+    store.dispatch('storeRadio');
+};
+
+if (isLinux) {
+    app.$once('audio-ready', audio => {
+        const m = require('@/util/mpris');
+        m.injectStore(store);
+        m.bindAudioElement(audio);
+    });
+}
+
+require('@/util/tray').injectStore(store);

@@ -1,7 +1,5 @@
 <template>
     <div>
-        <audio id="playerbar-audio"
-            :src="ui.audioSrc"></audio>
         <AppNav></AppNav>
         <div class="router-view">
             <transition :name="transitionName">
@@ -16,8 +14,6 @@
 </template>
 
 <script>
-import { mapActions, mapState } from 'vuex';
-
 import AppNav from '@/components/AppNav/AppNav.vue';
 import PlayerBar from '@/components/PlayerBar/PlayerBar.vue';
 import CollectPopup from '@/components/CollectPopup.vue';
@@ -34,30 +30,6 @@ export default {
             transitionName: 'fade-up'
         };
     },
-    methods: {
-        ...mapActions([
-            'playAudio',
-            'restoreUserInfo',
-            'storeUiState',
-            'restoreUiState',
-            'storePlaylist',
-            'restorePlaylist',
-            'storeRadio',
-            'restoreRadio'
-        ])
-    },
-    computed: {
-        ...mapState(['ui', 'settings'])
-    },
-    beforeCreate() {
-        // if return value of this handler is something other than `undefined`,
-        // 'unload' would be prevented.
-        window.onbeforeunload = () => {
-            this.storePlaylist();
-            this.storeUiState();
-            this.storeRadio();
-        };
-    },
     created() {
         this.$router.beforeEach((to, from, next) => {
             if (to.name === 'player') {
@@ -72,13 +44,6 @@ export default {
             window.__NAV_BACK__ = false;
             next();
         });
-        this.restoreUserInfo();
-        this.restorePlaylist();
-        this.restoreRadio();
-        this.restoreUiState();
-        if (this.settings.autoPlay === true) {
-            this.playAudio();
-        }
     }
 };
 </script>

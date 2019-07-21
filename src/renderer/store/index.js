@@ -1,4 +1,3 @@
-import { platform } from 'os';
 import Vue from 'vue';
 import Vuex from 'vuex';
 
@@ -22,12 +21,6 @@ const store = new Vuex.Store({
 });
 
 installHooks(store);
-
-if (platform() === 'linux') {
-    require('@/util/mpris').injectStore(store);
-}
-
-require('@/util/tray').injectStore(store);
 
 export default store;
 
