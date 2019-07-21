@@ -6,6 +6,7 @@ import debounce from 'lodash/debounce';
 import {
     UPDATE_PLAYING_URL,
     RESTORE_UI_STATE,
+    RESTORE_PLAYLIST,
     SET_AUDIO_VOLUME,
     SET_AUDIO_PAUSED
 } from '@/store/mutation-types';
@@ -58,6 +59,7 @@ function subscribeHandler(mutation, state) {
     const track = queue.list[queue.index];
     switch (mutation.type) {
         case UPDATE_PLAYING_URL:
+        case RESTORE_PLAYLIST:
             if (track) {
                 ipcSend('metadata', track);
             } else {

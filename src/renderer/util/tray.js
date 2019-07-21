@@ -6,6 +6,7 @@ import debug from 'debug';
 import {
     SET_LOGIN_VALID,
     SET_AUDIO_VOLUME,
+    RESTORE_PLAYLIST,
     RESTORE_UI_STATE,
     UPDATE_PLAYING_URL,
     SET_USER_FAVOR_TRACKS
@@ -40,7 +41,7 @@ function send(type, ...args) {
  * @typedef {{id: number, name: string, artist: string, album: string, canFavorite: boolean, favorite: boolean, canDislike: boolean}} TrayTrack
  */
 function sendTrackMeta(state, track) {
-    let payload = { id: 0 };
+    let payload = null;
     if (track && track.id) {
         payload = {
             id: track.id,
@@ -65,6 +66,7 @@ function subscribeHandler(mutation, state) {
     const track = queue.list[queue.index];
     switch (mutation.type) {
         case SET_LOGIN_VALID:
+        case RESTORE_PLAYLIST:
         case UPDATE_PLAYING_URL:
         case SET_USER_FAVOR_TRACKS:
             sendTrackMeta(state, track);
