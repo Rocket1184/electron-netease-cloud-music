@@ -102,21 +102,25 @@ class MediaPlayer2Player extends Interface {
     }
 
     setMetadata(value) {
-        const trackid = i.path(value.id);
-        if (!this._Metadata['mpris:trackid'] || trackid !== this._Metadata['mpris:trackid']['value']) {
-            this.timer.reset();
+        d('property: Metadata %o', value);
+        if (!value) {
+            this._Metadata = {};
+        } else {
+            const trackid = i.path(value.id);
+            /** @type {Variant} */
+            const oldId = this._Metadata['mpris:trackid'];
+            if (!oldId || oldId.value !== trackid) { this.timer.reset(); }
+            this._Metadata = {
+                'mpris:trackid': new Variant('o', trackid),
+                'mpris:length': new Variant('x', value.duration * 1e3),
+                'mpris:artUrl': new Variant('s', value.album.picUrl || 'file:///dev/null'),
+                'xesam:album': new Variant('s', value.album.name || '未知专辑'),
+                'xesam:artist': new Variant('as', [value.artistName || '未知歌手']),
+                'xesam:discNumber': new Variant('n', Number.parseInt(value.cd, 10) || 0),
+                'xesam:title': new Variant('s', value.name || '未知歌曲'),
+                'xesam:trackNumber': new Variant('n', value.no || 0),
+            };
         }
-        this._Metadata = {
-            'mpris:trackid': new Variant('s', trackid),
-            'mpris:length': new Variant('x', value.duration * 1e3),
-            'mpris:artUrl': new Variant('s', value.album.picUrl || 'file:///dev/null'),
-            'xesam:album': new Variant('s', value.album.name || '未知专辑'),
-            'xesam:artist': new Variant('as', [value.artistName || '未知歌手']),
-            'xesam:discNumber': new Variant('n', Number.parseInt(value.cd, 10) || 0),
-            'xesam:title': new Variant('s', value.name || '未知歌曲'),
-            'xesam:trackNumber': new Variant('n', value.no || 0),
-        };
-        d('property: Metadata %o', this._Metadata);
         Interface.emitPropertiesChanged(this, {
             Metadata: this._Metadata
         });
