@@ -5,8 +5,6 @@ const TAG = 'API';
 const d = debug(TAG);
 
 let resolveId = 0;
-
-const methodMap = new Map();
 const resolveMap = new Map();
 
 ipcRenderer.on(TAG, (_, /** @type {number} */ id, data) => {
@@ -21,7 +19,7 @@ ipcRenderer.on(TAG, (_, /** @type {number} */ id, data) => {
  * @param {string} methodName
  * @param  {...any} args
  */
-export function senderFn(methodName, ...args) {
+export function send(methodName, ...args) {
     resolveId++;
     return new Promise(resolve => {
         resolveMap.set(resolveId, resolve);
@@ -32,12 +30,7 @@ export function senderFn(methodName, ...args) {
 
 const Api = new Proxy({}, {
     get(_, propName) {
-        if (methodMap.has(propName)) {
-            return methodMap.get(propName);
-        }
-        const fn = senderFn.bind(null, propName);
-        methodMap.set(propName, fn);
-        return fn;
+        return send.bind(null, propName);
     }
 });
 

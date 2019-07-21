@@ -1,4 +1,4 @@
-import { senderFn } from './ipc';
+import { send } from './ipc';
 import * as tracks from './database/track';
 import { Album, Artist, Track, Video, PlayList, DjRadio, DjRadioProgram } from '@/util/models';
 
@@ -13,7 +13,7 @@ export async function getSongDetail(ids) {
         const tasks = [];
         for (let i = 0; i < missed.length; i += 1000) {
             const ids = missed.slice(i, i + 1000);
-            const promise = senderFn('getSongDetail', ids).then(resp => {
+            const promise = send('getSongDetail', ids).then(resp => {
                 if (resp.code === 200) {
                     tracks.insert(resp.songs);
                 }
@@ -29,7 +29,7 @@ export async function getSongDetail(ids) {
 
 export async function getPlaylistDetail(id, limit = 0) {
     /** @type {Types.ListDetailRes} */
-    const resp = await senderFn('getListDetail', id, limit);
+    const resp = await send('getListDetail', id, limit);
     if (resp.code === 200) {
         return new PlayList(resp.playlist);
     }
@@ -37,7 +37,7 @@ export async function getPlaylistDetail(id, limit = 0) {
 
 export async function getAlbumDetail(id) {
     /** @type {Types.AlbumDetailWRes} */
-    const resp = await senderFn('getAlbumDetailW', id);
+    const resp = await send('getAlbumDetailW', id);
     if (resp.code === 200) {
         // @ts-ignore
         tracks.upsert(resp.songs);
@@ -47,7 +47,7 @@ export async function getAlbumDetail(id) {
 
 export async function getArtistDetail(id) {
     /** @type {Types.ArtistDetailWRes} */
-    const resp = await senderFn('getArtistDetailW', id);
+    const resp = await send('getArtistDetailW', id);
     if (resp.code === 200) {
         // @ts-ignore
         tracks.upsert(resp.hotSongs);
@@ -61,13 +61,13 @@ export async function getArtistDetail(id) {
 export async function getVideoDetail(id, type) {
     if (type === 0) {
         /** @type {Types.MVDetailRes} */
-        const resp = await senderFn('getMVDetail', id);
+        const resp = await send('getMVDetail', id);
         if (resp.code === 200) {
             return new Video({ ...resp.data, type, subed: resp.subed });
         }
     } else if (type === 1) {
         /** @type {Types.VideoDetailRes} */
-        const resp = await senderFn('getVideoDetail', id);
+        const resp = await send('getVideoDetail', id);
         if (resp.code === 200) {
             return new Video({ ...resp.data, type });
         }
@@ -76,7 +76,7 @@ export async function getVideoDetail(id, type) {
 
 export async function getDjRadioProgram(radioId, limit = 100, offset = 0, asc = false, filterlikeplay = true) {
     /** @type {Types.DjProgramRes} */
-    const resp = await senderFn('getDjRadioProgram', radioId, limit, offset, asc, filterlikeplay);
+    const resp = await send('getDjRadioProgram', radioId, limit, offset, asc, filterlikeplay);
     if (resp.code === 200 && resp.programs.length > 0) {
         const r = new DjRadio(resp.programs[0].radio);
         return resp.programs.map(p => new DjRadioProgram(p, r));
