@@ -86,17 +86,15 @@
 </template>
 
 <script>
-import { platform } from 'os';
-import { remote } from 'electron';
 import { mapActions, mapState } from 'vuex';
 
 import Routes from '@/routes';
 import SearchBox from './SearchBox.vue';
 import LoginDialog from './LoginDialog.vue';
 import { bkgImg, sizeImg, HiDpiPx } from "@/util/image";
+import { isDarwin, browserWindow } from '@/util/globals';
 import { UPDATE_SETTINGS, SET_USER_SIGN_STATUS } from '@/store/mutation-types';
 
-const currentWindow = remote.getCurrentWindow();
 const SignIcon = {
     0: 'looks_5',
     2: 'looks_3',
@@ -107,7 +105,7 @@ const SignIcon = {
 export default {
     data() {
         return {
-            isDarwin: platform() === 'darwin',
+            isDarwin,
             drawerOpen: false,
             loginDlgShow: false
         };
@@ -157,16 +155,16 @@ export default {
             'checkin'
         ]),
         handleClose() {
-            currentWindow.close();
+            browserWindow.close();
         },
         handleMinimize() {
-            currentWindow.minimize();
+            browserWindow.minimize();
         },
         handleMaximize() {
-            if (currentWindow.isMaximized())
-                currentWindow.unmaximize();
+            if (browserWindow.isMaximized())
+                browserWindow.unmaximize();
             else
-                currentWindow.maximize();
+                browserWindow.maximize();
         },
         handleSideNav(route) {
             this.drawerOpen = false;

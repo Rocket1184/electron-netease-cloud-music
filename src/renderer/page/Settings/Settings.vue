@@ -193,18 +193,16 @@
 </template>
 
 <script>
-import { platform } from 'os';
-import { ipcRenderer, remote, shell } from 'electron';
+import { ipcRenderer, shell } from 'electron';
 import { mapState, mapActions } from 'vuex';
 
 import Api from '@/api/ipc';
 import { setTheme } from '@/util/theme';
 import ColorPicker from './ColorPicker.vue';
 import { humanSize } from '@/util/formatter';
+import { process, isDarwin, browserWindow, webContents } from '@/util/globals';
 
 const TAG = 'Settings';
-const browserWindow = remote.getCurrentWindow();
-const webContents = remote.getCurrentWebContents();
 
 const CacheName = {
     chrome: '浏览器',
@@ -218,7 +216,7 @@ const CacheClearFunc = {
     lyric: resolve => Api.clearCache('lyric').then(() => resolve(true)),
 };
 
-const versions = remote.getGlobal('process').versions;
+const versions = process.versions;
 
 const ver = `Electron: ${versions.electron}
 Chrome: ${versions.chrome}
@@ -229,7 +227,7 @@ export default {
     name: 'page-settings',
     data() {
         return {
-            isDarwin: platform() === 'darwin',
+            isDarwin,
             primaryPickerOpen: false,
             secondaryPickerOpen: false,
             cacheSize: 0,
