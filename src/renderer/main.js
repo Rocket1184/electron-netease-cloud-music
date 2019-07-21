@@ -35,7 +35,6 @@ const el = document.createElement('div');
 document.body.appendChild(el);
 
 const app = new Vue({
-    el,
     store,
     router: new Router({ routes }),
     extends: App
@@ -61,3 +60,5 @@ if (isLinux) {
 }
 
 require('@/util/tray').injectStore(store);
+
+app.$mount(el);
