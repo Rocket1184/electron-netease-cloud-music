@@ -157,6 +157,9 @@ export class DjRadio {
 
 export class DjRadioProgram {
     constructor(o, radio) {
+        const album = o.mainSong.album;
+        if (album.picId === 0) album.picUrl = o.coverUrl;
+        if (!album.name) album.name = `[DJ节目]${o.dj.name}的DJ节目 第${o.serialNum}期`;
         this.mainSong = new Track(o.mainSong);
         this.id = o.id;
         this.createTime = o.createTime;
