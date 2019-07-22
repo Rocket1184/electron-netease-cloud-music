@@ -13,7 +13,19 @@
             </div>
             <div v-if="playing.id"
                 class="action">
-                <mu-button flat
+                <mu-button v-if="isDjRadioProgram"
+                    flat
+                    small
+                    :color="threadLiked ? 'primary' : 'black'"
+                    :disabled="threadLiked === null"
+                    @click="handleProgramLike">
+                    <mu-icon left
+                        :size="18"
+                        value="thumb_up"></mu-icon>
+                    <span>{{ threadLiked ? '已赞' : '赞' }}</span>
+                </mu-button>
+                <mu-button v-else
+                    flat
                     small
                     color="black"
                     @click="handleCollect">
@@ -193,6 +205,7 @@ export default {
             isActive: false,
             canvasImageId: -1,
             threadInfoId: -1,
+            threadLiked: false,
             commentCount: '...',
             /** @type {HTMLAudioElement} */
             audioEl: null,
@@ -310,17 +323,35 @@ export default {
             const { id, source = {} } = this.playing;
             if (!id) return;
             this.threadInfoId = id;
+            this.threadLiked = null;
             this.commentCount = '...';
             const thread = source.djradio ? `A_DJ_1_${source.djradio.id}` : `R_SO_4_${id}`;
             const resp = await Api.getCommentThreadInfoE(thread);
             if (resp.code === 200) {
+                this.threadLiked = resp.liked;
                 this.commentCount = resp.commentCount;
-            } else {
-                this.commentCount = '...';
             }
         },
         handleLyricRefresh() {
             this.updateUiLyric({ ignoreCache: true });
+        },
+        async handleProgramLike() {
+            if (!this.user.loginValid) {
+                this.$toast.message('汝还没有登录呀      (눈‸눈)');
+                return;
+            }
+            const thread = `A_DJ_1_${this.playing.source.djradio.id}`;
+            const shouldLike = !this.threadLiked;
+            this.threadLiked = null;
+            let resp;
+            if (this.threadLiked) {
+                resp = await Api.unlikeResourceE(thread);
+            } else {
+                resp = await Api.likeResourceE(thread);
+            }
+            if (resp.code === 200) {
+                this.threadLiked = shouldLike;
+            }
         },
         handleCollect() {
             if (!this.user.loginValid) {
@@ -502,10 +533,10 @@ export default {
         .description {
             height: 340px;
             position: relative;
+            margin: 0 40px 0 6px;
             .scroller {
                 height: 100%;
                 overflow-y: auto;
-                padding-left: 6px;
             }
         }
         .lyric {
