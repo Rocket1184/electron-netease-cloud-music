@@ -171,13 +171,25 @@ export async function updateUserPlaylist({ state, commit }) {
 }
 
 /**
+ * @param {ActionContext} context
+ * @param {number} payload
+ */
+export async function updatePlaylistDetailById({ commit }, payload) {
+    const list = await ApiTyped.getPlaylistDetail(payload);
+    list.tracks = null;
+    delete list.trackIds;
+    commit(types.UPDATE_USER_PLAYLIST, list);
+}
+
+/**
  * @param {ActionContext} param0
  */
 export async function updateFavoriteTrackIds({ state, commit }) {
-    const { id, name } = state.user.playlist[0];
-    if (!name.endsWith('喜欢的音乐')) return;
+    const { id } = state.user.playlist[0];
     const list = await ApiTyped.getPlaylistDetail(id);
     commit(types.SET_USER_FAVOR_TRACKS, list.trackIds.map(i => i.id));
+    delete list.trackIds;
+    commit(types.UPDATE_USER_PLAYLIST, list);
 }
 
 /**
@@ -431,8 +443,12 @@ export async function restorePlaylist({ commit, dispatch }) {
     try {
         const stored = localStorage.getItem('playlist');
         if (stored) {
-            const { index, loopMode } = JSON.parse(stored);
-            const list = await DbPlaylist.get();
+            let { index, list, loopMode } = JSON.parse(stored);
+            if (list) {
+                localStorage.removeItem('playlist');
+            } else {
+                list = await DbPlaylist.get();
+            }
             commit(types.RESTORE_PLAYLIST, { index, list, loopMode });
             dispatch('updateUiAudioSrc');
             dispatch('updateUiLyric');

@@ -36,7 +36,8 @@ export default {
         ...mapActions([
             'collectTrack',
             'toggleCollectPopup',
-            'updateFavoriteTrackIds'
+            'updateFavoriteTrackIds',
+            'updatePlaylistDetailById'
         ]),
         handleClose() {
             this.toggleCollectPopup();
@@ -48,10 +49,13 @@ export default {
                 return;
             }
             try {
-                await this.collectTrack({ pid: playlist.id, tracks: this.ui.collectTrackIds });
+                const pid = playlist.id;
+                await this.collectTrack({ pid, tracks: this.ui.collectTrackIds });
                 this.$toast.message('成功添加到歌单     (๑•̀ㅂ•́)و✧');
-                if (playlist.name.endsWith('喜欢的音乐')) {
+                if (this.user.playlist[0].id === pid) {
                     this.updateFavoriteTrackIds();
+                } else {
+                    this.updatePlaylistDetailById(pid);
                 }
             } catch (resp) {
                 if (resp.code === 502) {
