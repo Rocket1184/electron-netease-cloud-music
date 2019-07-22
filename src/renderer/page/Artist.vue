@@ -2,7 +2,11 @@
     <ListDetailLayout class="ncm-page"
         showBack
         :detailLoading="detailLoading">
-        <ArtistDetail :artist="artist"></ArtistDetail>
+        <CenteredTip v-if="!artist"
+            icon="person_outline"
+            tip="查无此人 ..."></CenteredTip>
+        <ArtistDetail v-else
+            :artist="artist"></ArtistDetail>
     </ListDetailLayout>
 </template>
 
@@ -11,6 +15,7 @@ import { getArtistDetail } from '@/api/typed';
 
 import ArtistDetail from '@/components/ArtistDetail/ArtistDetail.vue';
 import ListDetailLayout from '@/components/ListDetailLayout.vue';
+import CenteredTip from '@/components/CenteredTip.vue';
 
 export default {
     props: {
@@ -42,7 +47,8 @@ export default {
     },
     components: {
         ArtistDetail,
-        ListDetailLayout
+        ListDetailLayout,
+        CenteredTip
     }
 };
 </script>
