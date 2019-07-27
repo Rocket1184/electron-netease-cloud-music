@@ -116,8 +116,8 @@ app.on('before-quit', () => {
         appTray = null;
     }
     if (mainWindow) {
-        this.win.removeAllListeners('close');
-        this.win.close();
+        mainWindow.removeAllListeners('close');
+        mainWindow.close();
     }
     if (loginWindow) {
         loginWindow.destroy();
