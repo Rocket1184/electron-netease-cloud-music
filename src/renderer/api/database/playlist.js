@@ -1,17 +1,9 @@
 import { db, playlistTable } from './db';
+import { wrapTracks, getIndexedTrack } from './helpers';
 
 /**
- * @param {Models.Track[]} tracks 
- * @param {number} offset
+ * @typedef {import('./helpers').TrackWithIndex} PlaylistRecord
  */
-function wrapTracks(tracks, offset = 0) {
-    return tracks.map((track, index) => {
-        return {
-            index: offset + index,
-            track
-        };
-    });
-}
 
 export function clear() {
     return playlistTable.clear();
@@ -33,12 +25,14 @@ export function replace(tracks) {
  */
 export function insert(index, tracks) {
     return db.transaction('rw', playlistTable, async () => {
+        /** @type {PlaylistRecord[]} */
         const exists = await playlistTable
             .where('track.id')
             .anyOf(tracks.map(t => t.id))
             .toArray();
-        const uniq = tracks.filter(a => exists.findIndex(e => a.id === e.id) < 0);
+        const uniq = tracks.filter(track => exists.findIndex(e => track.id === e.track.id) < 0);
         const count = uniq.length;
+        /** @type {PlaylistRecord[]} */
         const pendingItems = await playlistTable
             .where('index')
             .aboveOrEqual(index)
@@ -63,6 +57,7 @@ export function remove(index, count = 1) {
             .where('index')
             .inAnyRange(range)
             .delete();
+        /** @type {PlaylistRecord[]} */
         const pendingItems = await playlistTable
             .where('index')
             .aboveOrEqual(index + count)
@@ -78,9 +73,6 @@ export function remove(index, count = 1) {
 /**
  * @returns {Promise<Models.Track[]>}
  */
-export async function get() {
-    const arr = await playlistTable.toArray();
-    arr.sort((a, b) => a.index - b.index);
-    const tracks = arr.map(a => a.track);
-    return tracks;
+export function get() {
+    return getIndexedTrack(playlistTable);
 }
