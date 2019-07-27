@@ -41,9 +41,15 @@ const app = new Vue({
 });
 
 store.dispatch('restoreUserInfo');
-store.dispatch('restorePlaylist');
-store.dispatch('restoreRadio');
-store.dispatch('restoreUiState');
+store.dispatch('restoreUiState').then(() => {
+    Promise.all([
+        store.dispatch('restoreRadio'),
+        store.dispatch('restorePlaylist')
+    ]).then(() => {
+        store.dispatch('updateUiAudioSrc');
+        store.dispatch('updateUiLyric');
+    });
+});
 
 window.onbeforeunload = () => {
     store.dispatch('storePlaylist');

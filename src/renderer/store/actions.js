@@ -436,7 +436,7 @@ export function storePlaylist({ state }) {
 /**
  * @param {ActionContext} context
  */
-export async function restorePlaylist({ commit, dispatch }) {
+export async function restorePlaylist({ commit }) {
     try {
         const stored = localStorage.getItem('playlist');
         if (stored) {
@@ -447,8 +447,6 @@ export async function restorePlaylist({ commit, dispatch }) {
                 list = await DbPlaylist.get();
             }
             commit(types.RESTORE_PLAYLIST, { index, list, loopMode });
-            dispatch('updateUiAudioSrc');
-            dispatch('updateUiLyric');
         }
     } catch (e) {
         // eslint-disable-next-line no-console
