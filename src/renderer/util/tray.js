@@ -40,7 +40,7 @@ function send(type, ...args) {
  * @typedef {{id: number, name: string, artist: string, album: string, canFavorite: boolean, favorite: boolean, canDislike: boolean}} TrayTrack
  */
 function sendTrackMeta(state, track) {
-    let payload = { id: 0 };
+    let payload = null;
     if (track && track.id) {
         payload = {
             id: track.id,
