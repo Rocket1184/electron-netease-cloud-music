@@ -443,6 +443,7 @@ export async function restorePlaylist({ commit }) {
             let { index, list, loopMode } = JSON.parse(stored);
             if (list) {
                 localStorage.removeItem('playlist');
+                DbPlaylist.replace(list);
             } else {
                 list = await DbPlaylist.get();
             }
@@ -539,10 +540,9 @@ export function insertTrackIntoPlaylist({ commit, state }, payload) {
  * @param {ActionContext} param0
  */
 export function removeTrackFromPlaylist({ getters, commit, dispatch }, payload) {
-    const track1 = getters.playing;
+    const playingId = getters.playing.id;
     commit(types.REMOVE_TRACK_FROM_PLAYLIST, payload);
-    const track2 = getters.playing;
-    if (!track2 || track1.id !== track2.id) {
+    if (playingId !== getters.playing.id) {
         dispatch('updateUiLyric');
         dispatch('updateUiAudioSrc');
     }
