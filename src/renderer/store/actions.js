@@ -1,6 +1,7 @@
 import Api from '@/api/ipc';
 import * as ApiTyped from '@/api/typed';
 import * as DbPlaylist from '@/api/database/playlist';
+import * as DbRadio from '@/api/database/radio';
 import * as types from './mutation-types';
 import { Track, Video } from '@/util/models';
 import { LOOP_MODE } from './modules/playlist';
@@ -415,15 +416,11 @@ export async function playPlaylist({ commit, dispatch, state }, { tracks, source
 }
 
 /**
- * @param {ActionContext} param0
+ * @param {ActionContext} context
  */
-export function clearPlaylist({ state, commit, dispatch }) {
-    if (state.ui.radioMode) {
-        commit(types.RESTORE_RADIO, { list: [], index: 0 });
-    } else {
-        commit(types.SET_PLAY_LIST, []);
-        commit(types.SET_CURRENT_INDEX, 0);
-    }
+export function clearPlaylist({ commit, dispatch }) {
+    commit(types.SET_PLAY_LIST, []);
+    commit(types.SET_CURRENT_INDEX, 0);
     dispatch('updateUiAudioSrc');
     dispatch('updateUiLyric');
 }
@@ -763,26 +760,42 @@ export async function unlikeResource(_, id) {
 }
 
 /**
- * @param {ActionContext} param0
+ * @param {ActionContext} context
  */
 export function storeRadio({ state }) {
-    localStorage.setItem('radio', JSON.stringify(state.radio));
+    const { index } = state.radio;
+    localStorage.setItem('radio', JSON.stringify({ index }));
 }
 
 /**
- * @param {ActionContext} param0
+ * @param {ActionContext} context
  */
-export function restoreRadio({ commit }) {
+export async function restoreRadio({ commit }) {
     try {
         const stored = localStorage.getItem('radio');
         if (stored) {
-            const radio = JSON.parse(stored);
-            commit(types.RESTORE_RADIO, radio);
+            let { index, list } = JSON.parse(stored);
+            if (list) {
+                localStorage.removeItem('radio');
+                DbRadio.replace(list);
+            } else {
+                list = await DbRadio.get();
+            }
+            commit(types.RESTORE_RADIO, { index, list });
         }
     } catch (e) {
         // eslint-disable-next-line no-console
-        console.info('Radio stored in localStorage not valid.');
+        console.info('restoreRadio failed:', e);
     }
+}
+
+/**
+ * @param {ActionContext} context
+ */
+export function clearRadio({ commit, dispatch }) {
+    commit(types.CLEAR_RADIO);
+    dispatch('updateUiAudioSrc');
+    dispatch('updateUiLyric');
 }
 
 /**
@@ -793,6 +806,18 @@ export async function getRadio({ commit }) {
     if (resp.code === 200) {
         const tracks = resp.data.map(t => new Track(t));
         commit(types.APPEND_RADIO, { tracks });
+    }
+}
+
+/**
+ * @param {ActionContext} context
+ */
+export async function removeRadio({ getters, commit, dispatch }, { id }) {
+    const playingId = getters.playing.id;
+    commit(types.REMOVE_RADIO, { id });
+    if (playingId === id) {
+        dispatch('updateUiLyric');
+        dispatch('updateUiAudioSrc');
     }
 }
 
