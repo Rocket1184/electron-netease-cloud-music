@@ -2,8 +2,7 @@
     <div class="player-bar">
         <audio id="playerbar-audio"
             ref="audio"
-            :src="ui.audioSrc"
-            :autoplay="settings.autoPlay"></audio>
+            :src="ui.audioSrc"></audio>
         <div class="cover"
             @click="handleCoverClick">
             <div class="img"

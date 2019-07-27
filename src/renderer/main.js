@@ -48,6 +48,9 @@ store.dispatch('restoreUiState').then(() => {
     ]).then(() => {
         store.dispatch('updateUiAudioSrc');
         store.dispatch('updateUiLyric');
+        if (store.state.settings.autoPlay) {
+            store.dispatch('playAudio');
+        }
     });
 });
 
