@@ -134,6 +134,8 @@ export default {
     },
     methods: {
         ...mapActions([
+            'clearRadio',
+            'removeRadio',
             'clearPlaylist',
             'playTrackIndex',
             'toggleCollectPopup',
@@ -157,10 +159,15 @@ export default {
             this.toggleCollectPopup(ids);
         },
         async handleClearPlaylist() {
-            const msg = await this.$confirm('真的要清空播放列表吗？', '提示');
-            if (msg.result === true) {
-                this.clearPlaylist();
+            if (this.ui.radioMode) {
+                this.$confirm('真的要清空私人 FM 播放记录吗？', '提示').then(m => {
+                    if (m.result === true) this.clearRadio();
+                });
+                return;
             }
+            this.$confirm('真的要清空播放列表吗？', '提示').then(m => {
+                if (m.result === true) this.clearPlaylist();
+            });
         },
         handleListClick(index) {
             let i = this.indexMap.size > 0 ? this.indexMap.get(index) : index;
@@ -195,6 +202,10 @@ export default {
             if (this.filteredList.length > 0) {
                 start = this.indexMap.get(index);
                 this.filteredList.splice(index, 1);
+            }
+            if (this.ui.radioMode) {
+                this.removeRadio(this.queue.list[start]);
+                return;
             }
             this.removeTrackFromPlaylist({ start, count: 1 });
         },
