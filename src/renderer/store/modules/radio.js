@@ -24,6 +24,10 @@ const mutations = {
             }
         });
     },
+    [types.CLEAR_RADIO](state) {
+        state.list = [];
+        state.index = 0;
+    },
     [types.APPEND_RADIO](state, /** @type {{ tracks: Models.Track[] }} */ { tracks }) {
         const toAppend = [];
         tracks.forEach(t => {

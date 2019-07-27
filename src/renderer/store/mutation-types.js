@@ -54,6 +54,7 @@ export const UPDATE_SETTINGS = 'UPDATE_SETTINGS';
 
 // Radio
 export const ACTIVATE_RADIO = 'ACTIVATE_RADIO';
+export const CLEAR_RADIO = 'CLEAR_RADIO';
 export const APPEND_RADIO = 'APPEND_RADIO';
 export const REMOVE_RADIO = 'REMOVE_RADIO';
 export const SET_RADIO_INDEX = 'SET_RADIO_INDEX';
