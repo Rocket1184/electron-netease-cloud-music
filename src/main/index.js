@@ -114,6 +114,17 @@ app.on('window-all-closed', () => {
 });
 
 app.on('before-quit', () => {
+    if (appTray) {
+        appTray.destroy();
+        appTray = null;
+    }
+    if (mainWindow) {
+        mainWindow.removeAllListeners('close');
+        mainWindow.close();
+    }
+    if (loginWindow) {
+        loginWindow.destroy();
+    }
     if (process.platform === 'darwin') {
         // quit safely on macOS
         mainWindow.removeAllListeners('close');
