@@ -327,7 +327,7 @@ export async function updateUiLyric({ commit, getters }, { ignoreCache = false }
     const track = getters.playing;
     if (track && track.id) {
         commit(types.SET_LYRIC_LOADING, true);
-        const lyric = await Api.getMusicLyricCached(track.id, ignoreCache);
+        const lyric = await ApiTyped.getMusicLyric(track.id, ignoreCache);
         commit(types.SET_ACTIVE_LYRIC, lyric);
         commit(types.SET_LYRIC_LOADING, false);
     } else {

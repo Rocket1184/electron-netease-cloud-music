@@ -1,5 +1,6 @@
 import { send } from './ipc';
 import * as tracks from './database/track';
+import * as lyric from './database/lyric';
 import { Album, Artist, Track, Video, PlayList, DjRadio, DjRadioProgram } from '@/util/models';
 
 /**
@@ -89,4 +90,15 @@ export async function getDjRadioProgram(radioId, limit = 100, offset = 0, asc = 
         const r = new DjRadio(resp.programs[0].radio);
         return resp.programs.map(p => new DjRadioProgram(p, r));
     }
+}
+
+export async function getMusicLyric(id, ignoreCache = false) {
+    const cached = await lyric.get(id);
+    if (ignoreCache || !cached) {
+        /** @type {Types.MusicLyricRes} */
+        const resp = await send('getMusicLyric', id);
+        lyric.save(id, resp);
+        return resp;
+    }
+    return cached;
 }
