@@ -149,13 +149,6 @@
                     </mu-list-item-action>
                 </mu-list-item>
                 <mu-list-item button
-                    @click="promptClearCache('lyric')">
-                    <mu-list-item-title>歌词缓存</mu-list-item-title>
-                    <mu-list-item-action>
-                        <span class="nowrap">{{lyricSize | humanSize}}</span>
-                    </mu-list-item-action>
-                </mu-list-item>
-                <mu-list-item button
                     @click="promptWipeAppData()">
                     <mu-list-item-title>所有应用数据</mu-list-item-title>
                     <mu-list-item-action>
@@ -206,14 +199,12 @@ const TAG = 'Settings';
 
 const CacheName = {
     chrome: '浏览器',
-    music: '歌曲',
-    lyric: '歌词'
+    music: '歌曲'
 };
 
 const CacheClearFunc = {
     chrome: resolve => webContents.session.clearCache(() => resolve(true)),
-    music: resolve => Api.clearCache('music').then(() => resolve(true)),
-    lyric: resolve => Api.clearCache('lyric').then(() => resolve(true)),
+    music: resolve => Api.clearCache('music').then(() => resolve(true))
 };
 
 const versions = process.versions;
@@ -232,7 +223,6 @@ export default {
             secondaryPickerOpen: false,
             cacheSize: 0,
             musicSize: 0,
-            lyricSize: 0,
             dataSize: 0,
             versionName: ''
         };
@@ -249,7 +239,6 @@ export default {
             webContents.session.getCacheSize(s => this.cacheSize = s);
             Api.getDataSize('all').then(s => this.dataSize = s.size);
             Api.getDataSize('music').then(s => this.musicSize = s.size);
-            Api.getDataSize('lyric').then(s => this.lyricSize = s.size);
         },
         toggleByName(name) {
             const val = !this.settings[name];
@@ -327,7 +316,6 @@ export default {
                         this.clearStorage(),
                         this.resetSettings(),
                         this.clearCache('music'),
-                        this.clearCache('lyric'),
                         this.clearCache('chrome'),
                     ]).then(() => this.recreateWindow());
                 }
