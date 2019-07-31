@@ -1,6 +1,6 @@
 {
   "name": "electron-netease-cloud-music",
-  "version": "0.8.14",
+  "version": "0.9.0",
   "description": "UNOFFICIAL client for music.163.com",
   "main": "main.js",
   "scripts": {
