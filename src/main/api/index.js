@@ -9,6 +9,7 @@ import { app } from 'electron';
 import { Lrc } from 'lrc-kit';
 
 import Cache from './cache';
+import migrate from './migrate';
 import Client from './httpClient';
 import * as Settings from '../settings';
 import MusicServer from './musicServer';
@@ -20,11 +21,10 @@ const client = new Client();
 const dataPath = app.getPath('userData');
 const CachePath = {
     all: dataPath,
-    music: path.join(dataPath, 'musicCache'),
-    lyric: path.join(dataPath, 'lyricCache')
+    music: path.join(dataPath, 'musicCache')
 };
 const musicCache = new Cache(CachePath.music);
-const lyricCache = new Cache(CachePath.lyric);
+migrate();
 
 const musicServer = new MusicServer(musicCache);
 let musicServerPort = 0;
@@ -420,24 +420,6 @@ export async function getMusicLyric(id) {
 }
 
 /**
- * @param {number} id
- * @param {boolean} ignoreCache
- * @returns {Promise<Types.MusicLyricRes>}
- */
-export async function getMusicLyricCached(id, ignoreCache = false) {
-    const hasCache = await lyricCache.has(id.toString());
-    if (hasCache && !ignoreCache) {
-        const pathname = lyricCache.fullPath(id);
-        const text = await fsPromises.readFile(pathname, 'utf8');
-        return JSON.parse(text);
-    } else {
-        const lyric = await getMusicLyric(id);
-        lyricCache.save(id.toString(), lyric);
-        return lyric;
-    }
-}
-
-/**
  * this maybe have been removed, use `sumbitFeedback` instead
  */
 export function submitWebLog(action, json) {
@@ -527,7 +509,7 @@ export function removeRecursive(pathname) {
 
 /**
  * get size of cached data in bytes
- * @param {'all'|'music'|'lyric'} type cache type
+ * @param {Types.CacheType} type cache type
  * @returns {Promise<{ok: boolean; size: number; msg?: string}>}
  */
 export async function getDataSize(type) {
@@ -546,7 +528,7 @@ export async function getDataSize(type) {
 }
 
 /**
- * @param {'all'|'music'|'lyric'} type cache type
+ * @param {Types.CacheType} type cache type
  * @returns {Promise<{ok: boolean; msg?: string}>}
  */
 export async function clearCache(type) {

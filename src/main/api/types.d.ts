@@ -1,4 +1,5 @@
 namespace Types {
+    export type CacheType = 'all' | 'music';
     export type MusicQuality = 'h' | 'm' | 'l';
 
     interface ApiRes {
