@@ -19,10 +19,3 @@ declare module 'muse-ui-message' {
     declare const Message: IMessage;
     export default Message;
 }
-
-declare module 'electron' {
-    import { IpcMessageEvent } from 'electron';
-    interface IpcRenderer {
-        on(channel: string, listener: (event: IpcMessageEvent, ...args: any[]) => void): this;
-    }
-}

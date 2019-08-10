@@ -38,7 +38,7 @@ export function bindWebContents(wc) {
         d('↑ %s %d, %o', type, msgId, ...args);
     });
     /**
-     * @param {import('electron').IpcMessageEvent} _
+     * @param {import('electron').IpcMainEvent} _
      * @param {string} msg
      */
     const handler = (_, msg) => {
