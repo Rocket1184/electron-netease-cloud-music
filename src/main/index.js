@@ -82,8 +82,8 @@ function createMainWindow(settings, url = mainURL) {
 }
 
 if (app.requestSingleInstanceLock()) {
-    app.on('ready', () => {
-        const settings = Settings.get();
+    app.on('ready', async () => {
+        const settings = await Settings.get();
         // do not display default menu bar
         if (!isDev) {
             Menu.setApplicationMenu(null);
@@ -136,7 +136,7 @@ app.on('activate', () => {
     mainWindow.focus();
 });
 
-ipcMain.on('Settings', (event, /** @type {string} */ type, ...args) => {
+ipcMain.on('Settings', async (event, /** @type {string} */ type, ...args) => {
     switch (type) {
         case 'recreateWindow':
             // prevent App quit
@@ -144,8 +144,9 @@ ipcMain.on('Settings', (event, /** @type {string} */ type, ...args) => {
             // ensure window can be closed
             mainWindow.removeAllListeners('close');
             mainWindow.close();
-            const settings = Settings.get();
-            mainWindow = createMainWindow(settings, args[0]);
+            mainWindow = null;
+            const settings = await Settings.get();
+            mainWindow = createMainWindow(settings, args[0]); //eslint-disable-line require-atomic-updates
             if (appTray) {
                 appTray.bindWindow(mainWindow);
             }
@@ -153,7 +154,7 @@ ipcMain.on('Settings', (event, /** @type {string} */ type, ...args) => {
             break;
         case 'showTrayIcon':
             if (args[0] === true) {
-                const settings = Settings.get();
+                const settings = await Settings.get();
                 appTray = new AppTray(settings.trayIconVariety);
                 appTray.bindWindow(mainWindow);
             } else if (args[0] === false) {

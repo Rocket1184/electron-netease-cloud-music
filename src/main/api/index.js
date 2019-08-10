@@ -537,7 +537,7 @@ export async function getVersionName() {
 }
 
 /**
- * @returns {typeof Settings.defaultSettings}
+ * @returns {Promise<Settings.Value>}
  */
 export function getCurrentSettings() {
     return Settings.get();
@@ -545,7 +545,7 @@ export function getCurrentSettings() {
 
 /**
  * write and save settings to file
- * @param {typeof Settings.defaultSettings} target settings to write
+ * @param {Settings.Value} target settings to write
  */
 export function writeSettings(target) {
     Settings.set(target);
