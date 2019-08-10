@@ -302,7 +302,7 @@ export default {
                     this.$toast.message(`${cacheName}缓存清除完成`);
                     this.refreshSize();
                 }
-            });
+            }).catch(() => { /* ignore */ });
         },
         promptWipeAppData() {
             this.$confirm(
