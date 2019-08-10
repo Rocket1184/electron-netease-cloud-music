@@ -2,10 +2,10 @@ import fs from 'fs';
 import path from 'path';
 import { app } from 'electron';
 
-import { removeRecursive } from './index';
+import { removeRecursive } from '../util/fs';
 
 function clearLegacyLyricCache() {
-    const lyricPath = path.join(app.getPath('userData'), 'lyric');
+    const lyricPath = path.join(app.getPath('userData'), 'lyricCache');
     fs.access(lyricPath, (err) => {
         if (!err) {
             removeRecursive(lyricPath);
