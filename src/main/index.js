@@ -54,7 +54,7 @@ function createMainWindow(settings, url = mainURL) {
         }
     });
 
-    if (!settings.exitOnWindowClose) {
+    if (settings.exitOnWindowClose === false) {
         win.on('close', preventQuitHandler);
     }
 
@@ -68,9 +68,6 @@ function createMainWindow(settings, url = mainURL) {
                 console.error(e);
                 /* eslint-enable no-console */
             }
-            break;
-        case 'darwin':
-            win.on('close', preventQuitHandler);
             break;
     }
 
@@ -122,11 +119,13 @@ app.on('before-quit', () => {
     if (loginWindow) {
         loginWindow.destroy();
     }
-    if (process.platform === 'darwin') {
-        // quit safely on macOS
-        mainWindow.removeAllListeners('close');
-    } else if (process.platform === 'linux') {
-        require('./mpris').destroy();
+    switch (process.platform) {
+        case 'linux':
+            require('./mpris').destroy();
+            break;
+        case 'darwin':
+            mainWindow.removeAllListeners('close');
+            break;
     }
 });
 
