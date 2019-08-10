@@ -13,8 +13,8 @@ import migrate from './migrate';
 import Client from './httpClient';
 import * as Settings from '../settings';
 import MusicServer from './musicServer';
+import { getDiskUsage, clearDirectory } from '../util/fs';
 
-const fsPromises = fs.promises;
 const BaseURL = 'https://music.163.com';
 const client = new Client();
 
@@ -470,44 +470,6 @@ export function getVipInfo() {
 }
 
 /**
- * get disk usage of file or directory
- * @param {string} pathname
- * @returns {Promise<number>}
- */
-export function getDiskUsage(pathname) {
-    return new Promise((resolve, reject) => {
-        fsPromises.lstat(pathname).then(stat => {
-            if (stat.isSymbolicLink() || stat.isFile()) {
-                resolve(stat.size);
-            } else if (stat.isDirectory()) {
-                fsPromises.readdir(pathname).then(files => {
-                    const p = files.map(file => getDiskUsage(path.join(pathname, file)));
-                    Promise.all(p).then(sizes => {
-                        const tot = sizes.reduce((a, b) => a + b, 0);
-                        resolve(tot);
-                    }).catch(reject);
-                });
-            }
-        }).catch(reject);
-    });
-}
-
-export function removeRecursive(pathname) {
-    return new Promise((resolve, reject) => {
-        fsPromises.lstat(pathname).then(stat => {
-            if (stat.isSymbolicLink() || stat.isFile()) {
-                fsPromises.unlink(pathname).then(resolve).catch(reject);
-            } else if (stat.isDirectory()) {
-                fsPromises.readdir(pathname).then(files => {
-                    const p = files.map(file => removeRecursive(path.join(pathname, file)));
-                    Promise.all(p).then(resolve).catch(reject);
-                });
-            }
-        }).catch(reject);
-    });
-}
-
-/**
  * get size of cached data in bytes
  * @param {Types.CacheType} type cache type
  * @returns {Promise<{ok: boolean; size: number; msg?: string}>}
@@ -533,7 +495,7 @@ export async function getDataSize(type) {
  */
 export async function clearCache(type) {
     try {
-        await removeRecursive(CachePath[type]);
+        await clearDirectory(CachePath[type]);
     } catch (e) {
         return {
             ok: false,
