@@ -1,7 +1,7 @@
 import debug from 'debug';
 import { ipcMain } from 'electron';
 
-import * as API from './api';
+import * as API from './index';
 
 const TAG = 'API';
 const d = debug(TAG);

@@ -94,7 +94,7 @@ if (app.requestSingleInstanceLock()) {
             appTray.bindWindow(mainWindow);
         }
         // boot up ApiHost
-        require('./apiHost');
+        require('./api/ipc');
     });
     app.on('second-instance', () => {
         mainWindow.show();
