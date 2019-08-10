@@ -43,14 +43,11 @@ jspm_packages
 thumbs.db
 
 # Build dist
-build/*
-dist/*
+build
+dist
 
 # npm lock file
 package-lock.json
-
-# Keep Folders
-!.gitkeep
 
 # Debug config
 !.vscode/launch.json
