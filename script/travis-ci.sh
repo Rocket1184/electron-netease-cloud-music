@@ -10,7 +10,7 @@ VERSION_HASH="${TRAVIS_COMMIT:0:7}"
 PKG_VER="$VERSION_HASH"
 QSHELL_VER="v2.4.0"
 QSHELL_DIR="node_modules/.cache/qshell/$QSHELL_VER"
-QSHELL_BIN="$QSHELL_DIR/bin/qshell_linux_x64"
+QSHELL_BIN="$QSHELL_DIR/bin/qshell-linux-x64-$QSHELL_VER"
 
 # functions
 build_dist() {
@@ -41,7 +41,7 @@ build_tar() {
 
 qshell_init() {
     if [ ! -x "$QSHELL_BIN" ] ; then
-        curl -Lo "$QSHELL_DIR/qshell.zip" --create-dirs "http://devtools.qiniu.com/qshell-${QSHELL_VER}.zip"
+        curl -Lo "$QSHELL_DIR/qshell.zip" --create-dirs "http://devtools.qiniu.com/qshell-linux-x64-${QSHELL_VER}.zip"
         unzip "$QSHELL_DIR/qshell.zip" -d "$QSHELL_DIR/bin"
         chmod +x "$QSHELL_BIN"
     fi
