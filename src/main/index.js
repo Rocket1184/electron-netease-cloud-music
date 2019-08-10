@@ -61,7 +61,7 @@ function createMainWindow(settings, url = mainURL) {
     switch (process.platform) {
         case 'linux':
             try {
-                require('./mpris').bindWindow(win);
+                require('./mpris/ipc').bindWindow(win);
             } catch (e) {
                 /* eslint-disable no-console */
                 console.error('Failed to load MPRIS module.');
@@ -121,7 +121,7 @@ app.on('before-quit', () => {
     }
     switch (process.platform) {
         case 'linux':
-            require('./mpris').destroy();
+            require('./mpris/ipc').destroy();
             break;
         case 'darwin':
             mainWindow.removeAllListeners('close');

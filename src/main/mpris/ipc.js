@@ -2,7 +2,7 @@ import { app, ipcMain } from 'electron';
 
 import debug from 'debug';
 
-import MPRISEmitter from './mpris';
+import mpris from './mpris';
 
 const TAG = 'MPRIS:IPC';
 const d = debug(TAG);
@@ -13,18 +13,23 @@ const DBusEvents = ['raise', 'quit', 'next', 'prev', 'play', 'pause', 'stop', 's
 
 ipcMain.on(TAG, (_, /** @type {string} */ type, ...args) => {
     d('↓ %s', type);
-    MPRISEmitter.emit(type, ...args);
+    mpris.emit(type, ...args);
 });
+
+mpris.on('dbus:quit', () => app.quit());
 
 /**
  * @param {import('electron').BrowserWindow} win 
  */
 export function bindWindow(win) {
-    MPRISEmitter.on('dbus:raise', () => {
+    const raiseListener = () => {
         win.show();
         win.focus();
+    };
+    mpris.on('dbus:raise', raiseListener);
+    win.on('closed', () => {
+        mpris.removeListener('dbus:raise', raiseListener);
     });
-    MPRISEmitter.on('dbus:quit', () => app.quit());
     bindWebContents(win.webContents);
 }
 
@@ -46,18 +51,18 @@ export function bindWebContents(wc) {
             ipcMain.removeListener(TAG, handler);
             d('bindWebContents');
             DBusEvents.forEach((type, index) => {
-                MPRISEmitter.on(`dbus:${type}`, dbusListeners[index]);
+                mpris.on(`dbus:${type}`, dbusListeners[index]);
             });
         }
     };
     ipcMain.on(TAG, handler);
     wc.on('destroyed', () => {
         DBusEvents.forEach((type, index) => {
-            MPRISEmitter.removeListener(`dbus:${type}`, dbusListeners[index]);
+            mpris.removeListener(`dbus:${type}`, dbusListeners[index]);
         });
     });
 }
 
 export function destroy() {
-    MPRISEmitter.destroy();
+    mpris.destroy();
 }
