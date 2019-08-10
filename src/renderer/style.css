@@ -36,6 +36,7 @@ body {
     font-family: 'Material Icons';
     font-style: normal;
     font-weight: 400;
+    font-display: block;
     src: url('~assets/font/material-icons.woff2') format('woff2');
 }
 
@@ -51,5 +52,6 @@ body {
     white-space: nowrap;
     word-wrap: normal;
     direction: ltr;
+    -webkit-font-feature-settings: 'liga';
     -webkit-font-smoothing: antialiased;
 }
