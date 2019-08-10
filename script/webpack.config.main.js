@@ -1,5 +1,6 @@
 'use strict';
 
+const terser = require('terser');
 const webpack = require('webpack');
 const CopyWebpackPlugin = require('copy-webpack-plugin');
 
@@ -36,7 +37,7 @@ let cfg = {
     },
     resolve: {
         alias: {
-            'jsbi':  'jsbi/dist/jsbi-cjs.js'
+            'jsbi': 'jsbi/dist/jsbi-cjs.js'
         }
     },
     node: {
@@ -53,8 +54,27 @@ if (isProd) {
         new webpack.DefinePlugin({ 'process.env.NODE_ENV': '"production"' }),
         new webpack.DefinePlugin({ 'process.env.MAIN_URL': '`file://${__dirname}/index.html`' }),
         new CopyWebpackPlugin([
-            { from: absPath('package.json'), to: absPath('dist') },
-            { from: absPath('src/main/preload.prod.js'), to: absPath('dist/preload.js') },
+            {
+                from: absPath('package.json'),
+                to: absPath('dist'),
+                transform: (content) => {
+                    const json = JSON.parse(content.toString('utf8'));
+                    const exclude = ['scripts', 'dependencies', 'devDependencies'];
+                    const replacer = (key, value) => exclude.includes(key) ? undefined : value;
+                    return JSON.stringify(json, replacer, 0);
+                }
+            },
+            {
+                from: absPath('src/main/preload.prod.js'),
+                to: absPath('dist/preload.js'),
+                transform: (content) => {
+                    const out = terser.minify(content.toString('utf8'), {
+                        ecma: 8,
+                        toplevel: true
+                    });
+                    return out.code;
+                }
+            },
             {
                 from: { glob: absPath('assets/icons/tray*.png') },
                 to: absPath('dist/icons/[name].[ext]'),
