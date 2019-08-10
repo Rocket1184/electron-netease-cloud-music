@@ -1,9 +1,7 @@
-import fs from 'fs';
 import url from 'url';
 import path from 'path';
 import crypto from 'crypto';
 import qs from 'querystring';
-import cp from 'child_process';
 import { app } from 'electron';
 
 import { Lrc } from 'lrc-kit';
@@ -506,34 +504,18 @@ export async function clearCache(type) {
 }
 
 /**
- * @param {string} command
- */
-function execAsync(command) {
-    return new Promise((resolve, reject) => {
-        cp.exec(command, (err, stdout, stderr) => {
-            if (err) {
-                reject({ stderr, stack: err.stack });
-                return;
-            }
-            resolve(stdout.trim());
-        });
-    });
-}
-
-/**
  * @returns {Promise<string>}
  */
-export async function getVersionName() {
+export function getVersionName() {
     let version = app.getVersion();
     if (process.env.NODE_ENV === 'development') {
-        try {
-            const hash = await execAsync('git rev-parse --short HEAD');
-            return `${version}-git.${hash}.dev`;
-        } catch (e) {
-            return `${version}.dev`;
-        }
+        return new Promise((resolve) => {
+            require('child_process').exec('git describe --long', (err, stdout) => {
+                resolve(err ? `${version}-dev` : stdout.trim());
+            });
+        });
     }
-    return version;
+    return Promise.resolve(version);
 }
 
 /**
