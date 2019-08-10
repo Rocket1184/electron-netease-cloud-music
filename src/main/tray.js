@@ -102,7 +102,7 @@ export class AppTray {
         this.track = null;
         this.updateMenu();
         /**
-         * @param {import('electron').IpcMessageEvent} _
+         * @param {import('electron').IpcMainEvent} _
          * @param {string} type
          * @param {any[]} args
          */
