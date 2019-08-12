@@ -129,6 +129,7 @@ export default {
         .scroller {
             display: flex;
             overflow: auto;
+            min-height: 218px;
         }
     }
 }
