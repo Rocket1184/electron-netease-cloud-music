@@ -13,12 +13,12 @@
             </div>
         </div>
         <div v-if="itemSubTitle"
-            class="title">
-            <div class="nowrap ellipsis">{{itemTitle}}</div>
-            <div class="nowrap ellipsis sub">{{itemSubTitle}}</div>
+            class="caption">
+            <div class="title__sup">{{itemTitle}}</div>
+            <div class="title__sub">{{itemSubTitle}}</div>
         </div>
-        <div v-else
-            class="title ellipsis">{{itemTitle}}</div>
+        <div class="caption"
+            v-else>{{itemTitle}}</div>
     </router-link>
 </template>
 
@@ -94,21 +94,22 @@ export default {
             color: #e5e2e5;
         }
     }
-    .title {
+    .caption {
+        height: 42px;
         display: -webkit-box;
         -webkit-line-clamp: 2;
         -webkit-box-orient: vertical;
-        height: 42px;
-        .ellipsis {
-            overflow: hidden;
-            text-overflow: ellipsis;
-        }
-        .nowrap {
-            white-space: nowrap;
-        }
-        .sub {
-            opacity: 0.62;
-        }
+        overflow: hidden;
+        text-overflow: ellipsis;
+    }
+    .title__sup,
+    .title__sub {
+        white-space: nowrap;
+        overflow: hidden;
+        text-overflow: ellipsis;
+    }
+    .title__sub {
+        opacity: 0.62;
     }
 }
 </style>
