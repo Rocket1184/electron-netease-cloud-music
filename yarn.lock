@@ -1978,10 +1978,10 @@ electron-packager@^14.0.4:
     semver "^6.0.0"
     yargs-parser "^13.0.0"
 
-electron@6.0.1:
-  version "6.0.1"
-  resolved "https://registry.yarnpkg.com/electron/-/electron-6.0.1.tgz#9dcdb3773e933890f432403f2ff5851cffbea126"
-  integrity sha512-XY69rI5IThIxsOS2BD+1ZkHE9hqkm4xN5a3WQFSmFRr2by4q5CnIe9vXmptlouGPTLs3tb7ySX/+K9CvH3szvg==
+electron@6.0.2:
+  version "6.0.2"
+  resolved "https://registry.yarnpkg.com/electron/-/electron-6.0.2.tgz#437f3ac2bcb42116d92a3f1084280e0b2cff1493"
+  integrity sha512-2SV10JlUsEGZ8CePeQIllFBwrOmm1EONne3Ev7Ro1F4tuS9sF184d3/3wZjEtwOs7hsM6elceYnNuZfx93++YA==
   dependencies:
     "@types/node" "^10.12.18"
     electron-download "^4.1.0"
@@ -3781,10 +3781,10 @@ lowercase-keys@^2.0.0:
   resolved "https://registry.yarnpkg.com/lowercase-keys/-/lowercase-keys-2.0.0.tgz#2603e78b7b4b0006cbca2fbcc8a3202558ac9479"
   integrity sha512-tqNXrS78oMOE73NMxK4EMLQsQowWf8jKooH9g7xPavRT706R6bkQJ6DY2Te7QukaZsulxa30wQ7bk0pm4XiHmA==
 
-lrc-kit@^1.0.0:
-  version "1.0.0"
-  resolved "https://registry.yarnpkg.com/lrc-kit/-/lrc-kit-1.0.0.tgz#eaa639c3d1df721bedbdba420a06d4e62117c821"
-  integrity sha512-dwuMzby87LNR5dtwQJPf+A/y+MTgNbxzLHIcdk3Ln5kjHWm0WERy8Un3kpksbmLmGta/I3sJiT9s+x6WcyaX5Q==
+lrc-kit@^1.1.1:
+  version "1.1.1"
+  resolved "https://registry.yarnpkg.com/lrc-kit/-/lrc-kit-1.1.1.tgz#90f6e61fffad0a1fb3adba19ac438ef0b687be12"
+  integrity sha512-n7wRGLWWyjIXpgo4iZQkce/wzZlNUO7dzZKHvwZjFK3e4QaKYyVYasMfN6adpoOibkVVV2TniuGfAlqYf3vngg==
 
 lru-cache@^4.1.2:
   version "4.1.5"
@@ -6521,10 +6521,10 @@ webpack-sources@^1.1.0, webpack-sources@^1.4.0, webpack-sources@^1.4.1:
     source-list-map "^2.0.0"
     source-map "~0.6.1"
 
-webpack@^4.39.1:
-  version "4.39.1"
-  resolved "https://registry.yarnpkg.com/webpack/-/webpack-4.39.1.tgz#60ed9fb2b72cd60f26ea526c404d2a4cc97a1bd8"
-  integrity sha512-/LAb2TJ2z+eVwisldp3dqTEoNhzp/TLCZlmZm3GGGAlnfIWDgOEE758j/9atklNLfRyhKbZTCOIoPqLJXeBLbQ==
+webpack@^4.39.2:
+  version "4.39.2"
+  resolved "https://registry.yarnpkg.com/webpack/-/webpack-4.39.2.tgz#c9aa5c1776d7c309d1b3911764f0288c8c2816aa"
+  integrity sha512-AKgTfz3xPSsEibH00JfZ9sHXGUwIQ6eZ9tLN8+VLzachk1Cw2LVmy+4R7ZiwTa9cZZ15tzySjeMui/UnSCAZhA==
   dependencies:
     "@webassemblyjs/ast" "1.8.5"
     "@webassemblyjs/helper-module-context" "1.8.5"
