@@ -4,7 +4,7 @@ process.env.NODE_ENV = 'production';
 
 const webpack = require('webpack');
 
-const { absPath, removeKeepDot } = require('./util');
+const { absPath, removeRecursive } = require('./util');
 
 let argv = process.argv.slice(2);
 if (!argv.length) argv = ['main', 'renderer'];
@@ -12,7 +12,7 @@ if (!argv.length) argv = ['main', 'renderer'];
 /* eslint-disable no-console */
 
 if (argv[0] === 'clean') {
-    removeKeepDot(absPath('dist'));
+    removeRecursive(absPath('dist'));
     process.exit(0);
 }
 

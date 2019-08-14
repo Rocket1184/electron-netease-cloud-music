@@ -2,6 +2,7 @@
 
 const fs = require('fs');
 const path = require('path');
+const fsPromises = fs.promises;
 
 const isDev = process.env.NODE_ENV === 'development';
 
@@ -13,26 +14,31 @@ function absPath(...paths) {
     return path.join(ProjectRoot, ...paths);
 }
 
-function removeKeepDot(dir) {
-    const toRemove = fs.readdirSync(dir).filter(f => !f.startsWith('.'));
-    if (!toRemove.length) return false;
-    toRemove.forEach(file => {
-        const fullPath = path.join(dir, file);
-        // lstat do not follow symbolic link
-        const stat = fs.lstatSync(fullPath);
-        if (!file.startsWith('.') && (stat.isFile() || stat.isSymbolicLink())) {
-            fs.unlinkSync(fullPath);
-        } else if (stat.isDirectory()) {
-            removeKeepDot(fullPath);
-            fs.rmdirSync(fullPath);
-        }
+/**
+ * like `rm -rf $pathname`
+ * @param {string} pathname
+ */
+function removeRecursive(pathname) {
+    return new Promise((resolve, reject) => {
+        fsPromises.lstat(pathname).then(stat => {
+            if (stat.isSymbolicLink() || stat.isFile()) {
+                fsPromises.unlink(pathname).then(resolve).catch(reject);
+            } else if (stat.isDirectory()) {
+                fsPromises.readdir(pathname).then(files => {
+                    const p = files.map(file => removeRecursive(path.join(pathname, file)));
+                    Promise.all(p)
+                        .then(() => fsPromises.rmdir(pathname))
+                        .then(resolve)
+                        .catch(reject);
+                });
+            }
+        }).catch(reject);
     });
-    return true;
 }
 
 module.exports = {
     isDev,
     isProd,
     absPath,
-    removeKeepDot
+    removeRecursive
 };
