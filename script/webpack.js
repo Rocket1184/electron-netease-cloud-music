@@ -35,15 +35,32 @@ const toStrOpt = {
     version: true
 };
 
-webpack(webpackCfg, (err, stats) => {
-    if (err) throw err;
-    else if (stats.hasErrors()) {
-        process.stderr.write(stats.toString(toStrOpt));
-        console.log(`'\n\nError when bundling ${argv.join(', ')}.`);
-        process.exit(1);
-    } else {
-        process.stdout.write(stats.toString(toStrOpt));
-        console.log(`'\n\nModule ${argv.join(', ')} bundled successfully.`);
-        process.exit(0);
+/**
+ * @param {import('webpack').Configuration} cfg
+ * @returns {import('webpack').Stats}
+ */
+function webpackCompile(cfg) {
+    return new Promise((resolve, reject) => {
+        webpack(cfg, (err, stats) => {
+            if (err) {
+                reject(err);
+            } else if (stats.hasErrors()) {
+                reject(stats.toString(toStrOpt));
+            } else {
+                resolve(stats.toString(toStrOpt));
+            }
+        });
+    });
+}
+
+(async () => {
+    for (const cfg of webpackCfg) {
+        try {
+            const stats = await webpackCompile(cfg);
+            console.log(stats);
+        } catch (e) {
+            console.err(e);
+            process.exitCode = 1;
+        }
     }
-});
+})();
