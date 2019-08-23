@@ -40,9 +40,6 @@ const mutations = {
     [types.SET_USER_INFO](state, payload) {
         state.info = new User(payload);
     },
-    [types.UPDATE_USER_INFO](state, payload) {
-        Object.assign(state.info, new User(payload));
-    },
     [types.SET_USER_SIGN_PENDING](state, payload) {
         state.signPending = payload;
     },
@@ -55,7 +52,7 @@ const mutations = {
             };
             return;
         }
-        Object.entries(payload).forEach(([key, val]) => state.signStatus[key] = val);
+        Object.assign(state.signStatus, payload);
     },
     [types.SET_USER_FAVOR_TRACKS](state, /** @type {number[]} */ payload) {
         state.favTrackIds = payload;
