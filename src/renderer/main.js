@@ -4,7 +4,7 @@ import MuseUI from 'muse-ui';
 import 'muse-ui/dist/muse-ui.css';
 import Toast from 'muse-ui-toast';
 import Message from 'muse-ui-message';
-import { RecycleScroller } from 'vue-virtual-scroller';
+import { RecycleScroller } from 'vue-virtual-scroller/dist/vue-virtual-scroller.esm';
 
 import App from './App.vue';
 import store from './store';
@@ -16,14 +16,6 @@ import './style.css';
 import './transition.css';
 import 'vue-virtual-scroller/dist/vue-virtual-scroller.css';
 
-try {
-    const settings = JSON.parse(sessionStorage.getItem('settings'));
-    initTheme({
-        primary: settings.themePrimaryColor,
-        secondary: settings.themeSecondaryColor
-    }, settings.themeVariety);
-} catch (e) { sessionStorage.removeItem('settings'); }
-
 Vue.use(Router);
 Vue.use(MuseUI);
 Vue.use(Toast);
@@ -31,14 +23,13 @@ Vue.use(Message);
 Vue.use(DblclickRipple);
 Vue.component('RecycleScroller', RecycleScroller);
 
-const el = document.createElement('div');
-document.body.appendChild(el);
-
-const app = new Vue({
-    store,
-    router: new Router({ routes }),
-    extends: App
-});
+try {
+    const settings = JSON.parse(sessionStorage.getItem('settings'));
+    initTheme({
+        primary: settings.themePrimaryColor,
+        secondary: settings.themeSecondaryColor
+    }, settings.themeVariety);
+} catch (e) { sessionStorage.removeItem('settings'); }
 
 store.dispatch('restoreUserInfo');
 store.dispatch('restoreUiState').then(() => {
@@ -60,6 +51,12 @@ window.onbeforeunload = () => {
     store.dispatch('storeRadio');
 };
 
+const app = new Vue({
+    store,
+    router: new Router({ routes }),
+    extends: App
+});
+
 if (isLinux) {
     app.$once('audio-ready', audio => {
         const m = require('@/util/mpris');
@@ -70,4 +67,6 @@ if (isLinux) {
 
 require('@/util/tray').injectStore(store);
 
+const el = document.createElement('div');
+document.body.appendChild(el);
 app.$mount(el);
