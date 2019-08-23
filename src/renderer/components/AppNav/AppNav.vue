@@ -197,15 +197,15 @@ export default {
     },
     created() {
         // register autoSign handler
-        this.$store.subscribe((mutation, state) => {
+        this.$store.subscribe(({ type, payload = {} }, state) => {
             if (// settings.autoSign enabled
-                (mutation.type === UPDATE_SETTINGS && mutation.payload.autoSign === true) ||
+                (type === UPDATE_SETTINGS && payload.autoSign === true) ||
                 // signStatus updated via `actions.updateUserSignStatus`
-                (mutation.type === SET_USER_SIGN_STATUS && mutation.payload)
+                (type === SET_USER_SIGN_STATUS && payload.timestamp)
             ) {
                 const { timestamp, pcSign, mobileSign } = state.user.signStatus;
                 // autoSign not enabled || signStatus was not up-to-date || signed already
-                if (state.settings.autoSign !== true || timestamp < 0 || pcSign && mobileSign) return;
+                if (state.settings.autoSign !== true || timestamp < 0 || (pcSign && mobileSign)) return;
                 this.handleSign();
             }
         });
