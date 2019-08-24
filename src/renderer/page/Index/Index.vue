@@ -71,11 +71,11 @@ export default {
         const scrollers = Array.from(document.getElementsByClassName('scroller'));
         scrollers.forEach(s => {
             s.addEventListener('wheel', function (ev) {
-                if (ev.deltaX !== 0) {
-                    // horizontal scroll with touchpad
+                if (ev.deltaX !== 0 || ev.shiftKey) {
+                    // horizontal scroll with touchpad || hold shift
                     return;
                 }
-                if (ev.deltaY !== 0 && Number.isInteger(ev.deltaY)) {
+                if (ev.deltaX === 0 && Number.isInteger(ev.deltaY)) {
                     // `ev.deltaY` is integer, (likely) vertical scroll with mouse wheel
                     ev.preventDefault();
                     this.scrollBy({ top: 0, left: ev.deltaY, behavior: 'instant' });
