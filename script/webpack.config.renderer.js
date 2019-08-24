@@ -89,7 +89,8 @@ if (isProd) {
             test: /\.css$/,
             use: [
                 { loader: MiniCSSExtractPlugin.loader },
-                { loader: 'css-loader' }
+                { loader: 'css-loader' },
+                { loader: 'clean-css-loader', options: { level: 2 } }
             ]
         },
         {
