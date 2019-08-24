@@ -35,7 +35,8 @@ export function append(tracks) {
             .orderBy('index')
             .reverse()
             .first();
-        await radioTable.bulkAdd(wrapTracks(uniq, last.index + 1));
+        const offset = last ? last.index + 1 : 0;
+        await radioTable.bulkAdd(wrapTracks(uniq, offset));
     });
 }
 
