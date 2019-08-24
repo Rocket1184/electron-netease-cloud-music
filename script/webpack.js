@@ -9,20 +9,8 @@ const { absPath, removeRecursive } = require('./util');
 let argv = process.argv.slice(2);
 if (!argv.length) argv = ['main', 'renderer'];
 
-/* eslint-disable no-console */
-
-if (argv[0] === 'clean') {
+async function clean() {
     removeRecursive(absPath('dist'));
-    process.exit(0);
-}
-
-let webpackCfg = [];
-if (argv.includes('main')) webpackCfg.push(require('./webpack.config.main'));
-if (argv.includes('renderer')) webpackCfg.push(require('./webpack.config.renderer'));
-
-if (!webpackCfg.length) {
-    console.error('No dist target, expected "main" or "renderer"');
-    process.exit(1);
 }
 
 /** @type {import('webpack').Stats.ToStringOptions} */
@@ -37,7 +25,7 @@ const toStrOpt = {
 
 /**
  * @param {import('webpack').Configuration} cfg
- * @returns {import('webpack').Stats}
+ * @returns {Promise<string>}
  */
 function webpackCompile(cfg) {
     return new Promise((resolve, reject) => {
@@ -53,7 +41,20 @@ function webpackCompile(cfg) {
     });
 }
 
-(async () => {
+/**
+ * @param {string[]} argv
+ */
+async function dist(argv) {
+    let webpackCfg = [];
+    if (argv.includes('main')) webpackCfg.push(require('./webpack.config.main'));
+    if (argv.includes('renderer')) webpackCfg.push(require('./webpack.config.renderer'));
+
+    if (!webpackCfg.length) {
+        console.error('No dist target, expected "main" or "renderer"');
+        process.exitCode = 1;
+        return;
+    }
+
     for (const cfg of webpackCfg) {
         try {
             const stats = await webpackCompile(cfg);
@@ -63,4 +64,11 @@ function webpackCompile(cfg) {
             process.exitCode = 1;
         }
     }
-})();
+}
+
+
+if (argv[0] === 'clean') {
+    clean();
+} else {
+    dist(argv);
+}
