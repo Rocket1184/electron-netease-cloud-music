@@ -50,6 +50,7 @@ if (isProd) {
     // release config
     cfg.mode = 'production';
     cfg.devtool = 'source-map';
+    cfg.resolve.alias.bindings = absPath('src/main/mpris/fake-bindings.js');
     cfg.plugins = [
         new webpack.DefinePlugin({ 'process.env.NODE_ENV': '"production"' }),
         new webpack.DefinePlugin({ 'process.env.MAIN_URL': '`file://${__dirname}/index.html`' }),
