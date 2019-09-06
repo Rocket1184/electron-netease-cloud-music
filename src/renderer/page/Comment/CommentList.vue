@@ -16,7 +16,12 @@
         </template>
         <div class="pagination"
             v-if="total > pageSize">
-            <mu-pagination :total="total"
+            <mu-button v-if="total === Infinity"
+                flat
+                @click="handleLoadMore">加载更多<mu-icon value="expand_more"></mu-icon>
+            </mu-button>
+            <mu-pagination v-else
+                :total="total"
                 :current="page"
                 :page-size="pageSize"
                 @change="handlePageChange">
@@ -34,61 +39,37 @@ import CenteredLoading from '@/components/CenteredLoading.vue';
 
 export default {
     props: {
-        type: {
-            type: String,
-            required: false,
-            default: 'all'
-        },
         thread: {
             type: String,
             required: true
         },
+        comments: {
+            type: Array,
+            default: () => []
+        },
+        total: {
+            type: Number,
+            default: 0
+        },
+        loading: {
+            type: Boolean,
+            default: false
+        },
         pageSize: {
             type: Number,
             required: false,
-            default: 30
+            default: 15
         }
     },
     data() {
         return {
-            loading: false,
-            page: 1,
-            comments: [],
-            total: 0
+            page: 1
         };
     },
-    computed: {
-        offset() { return (this.page - 1) * this.pageSize; }
-    },
     methods: {
-        getComments(limit, offset) {
-            if (this.type === 'hot') {
-                return Api.getHotComments(this.thread, limit, offset);
-            } else if (this.type === 'all') {
-                return Api.getComments(this.thread, limit, offset);
-            }
-        },
-        likeComment(commentId, liked) {
-            if (liked === true) {
-                return Api.unlikeCommentE(this.thread, commentId);
-            } else {
-                return Api.likeCommentE(this.thread, commentId);
-            }
-        },
-        deleteComment(commentId) {
-            return Api.deleteComment(this.thread, commentId);
-        },
-        async loadComments() {
-            this.loading = true;
-            const resp = await this.getComments(this.pageSize, this.offset);
-            if (resp.code === 200) {
-                this.total = resp.total;
-                this.comments = resp.comments || resp.hotComments || [];
-            }
-            this.loading = false;
-        },
         async handleLike(comment) {
-            const resp = await this.likeComment(comment.commentId, comment.liked);
+            const requestLike = comment.liked ? Api.unlikeCommentE : Api.likeCommentE;
+            const resp = await requestLike(this.thread, comment.commentId);
             if (resp.code === 200) {
                 comment.liked = !comment.liked;
                 comment.likedCount += comment.liked ? 1 : -1;
@@ -97,7 +78,7 @@ export default {
         async handleDelete({ commentId }) {
             const confirm = await this.$confirm('真的要删除此条评论吗？', '删除评论');
             if (confirm.result !== true) return;
-            const resp = await this.deleteComment(commentId);
+            const resp = await Api.deleteComment(this.thread, commentId);
             if (resp.code === 200) {
                 this.$toast.message('删除评论成功');
                 const index = this.comments.findIndex(cmt => cmt.commentId === commentId);
@@ -109,19 +90,17 @@ export default {
         handleReply(comment) {
             this.$emit('reply', comment);
         },
-        async handlePageChange(val) {
-            this.page = val;
-            this.loadComments();
+        handleLoadMore() {
+            this.page = 2;
+            /** page, limit, offset */
+            this.$emit('page', 2, this.pageSize, this.pageSize);
+        },
+        handlePageChange(page) {
+            this.page = page;
+            const offset = (page - 1) * this.pageSize;
+            /** page, limit, offset */
+            this.$emit('page', page, this.pageSize, offset);
         }
-    },
-    watch: {
-        thread() {
-            this.total = 0;
-            this.loadComments();
-        }
-    },
-    created() {
-        this.loadComments();
     },
     components: {
         CommentItem,

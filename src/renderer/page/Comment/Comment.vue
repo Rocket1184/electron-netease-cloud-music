@@ -3,7 +3,8 @@
         showBack
         :detailLoading="false">
         <mu-tabs inverse
-            :value.sync="tab">
+            :value="tab"
+            @change="handleTabChange">
             <mu-tab value="hot">热门评论</mu-tab>
             <mu-tab value="all">全部评论</mu-tab>
             <mu-button flat
@@ -19,9 +20,9 @@
                 mode="out-in">
                 <keep-alive>
                     <CommentList :key="tab"
-                        :ref="tab"
-                        :type="tab"
                         :thread="thread"
+                        v-bind="comment[tab]"
+                        @page="loadComments"
                         @reply="handleReply"></CommentList>
                 </keep-alive>
             </transition>
@@ -71,13 +72,18 @@ export default {
             required: true
         },
         id: {
-            type: [Number , String],
+            type: [Number, String],
             required: true
         }
     },
     data() {
         return {
             tab: 'hot',
+            comment: {
+                all: { comments: [], total: 0, loading: false },
+                hot: { comments: [], total: 0, loading: false }
+            },
+            transitionName: '',
             replyTo: -1,
             editorOpen: false,
             editorPlaceholder: '请输入评论内容 ヽ( ^∀^)ﾉ',
@@ -89,13 +95,55 @@ export default {
         ...mapState(['user']),
         thread() {
             return ThreadPrefix[this.type] + this.id;
-        },
-        transitionName() {
-            if (this.tab === 'hot') return 'slide-right';
-            return 'slide-left';
         }
     },
     methods: {
+        async initComments() {
+            const { all, hot } = this.comment;
+            if (all.comments.length === 0 && hot.comments.length === 0) {
+                all.loading = true;
+                hot.loading = true;
+                const resp = await Api.getComments(this.thread, 15, 0);
+                all.loading = false;
+                hot.loading = false;
+                if (resp.code === 200) {
+                    all.comments = resp.comments;
+                    all.total = resp.total;
+                    hot.comments = resp.hotComments;
+                    hot.total = resp.moreHot ? Infinity : resp.hotComments.length;
+                    if (hot.comments.length === 0 && this.tab === 'hot') {
+                        this.transitionName = '';
+                        this.tab = 'all';
+                    }
+                }
+            }
+        },
+        async loadComments(page, limit, offset) {
+            let model, requestComments;
+            if (this.tab === 'hot') {
+                model = this.comment.hot;
+                requestComments = Api.getHotComments;
+            } else if (this.tab === 'all') {
+                model = this.comment.all;
+                requestComments = Api.getComments;
+            }
+            if (model && requestComments) {
+                if (model.total === Infinity) model.total = 0;
+                model.loading = true;
+                const resp = await requestComments(this.thread, limit, offset);
+                model.loading = false;
+                if (resp.code === 200) {
+                    model.total = resp.total;
+                    model.comments = resp.comments || resp.hotComments || [];
+                } else {
+                    model.comments = [];
+                }
+            }
+        },
+        handleTabChange(value) {
+            this.tab = value;
+            this.transitionName = value === 'hot' ? 'slide-right' : 'slide-left';
+        },
         toggleEditor() {
             this.editorOpen = !this.editorOpen;
             if (this.editorOpen === true) {
@@ -139,11 +187,23 @@ export default {
             if (resp.code === 200) {
                 this.editorOpen = false;
                 this.tab = 'all';
-                this.$refs.all.loadComments();
+                this.loadComments();
             } else {
                 this.$toast.message(`发布评论失败 ...  ${resp.code}: ${resp.msg}`);
             }
         }
+    },
+    watch: {
+        thread() {
+            this.comment = {
+                all: { comments: [], total: 0, loading: false },
+                hot: { comments: [], total: 0, loading: false }
+            };
+            this.initComments();
+        }
+    },
+    mounted() {
+        this.initComments();
     },
     components: {
         CommentList,
