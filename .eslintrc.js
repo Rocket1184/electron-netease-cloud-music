@@ -21,6 +21,7 @@ module.exports = {
     ],
     rules: {
         'semi': 'error',
-        'no-case-declarations': 'off'
+        'no-case-declarations': 'off',
+        'require-atomic-updates': 'off'
     }
 };
