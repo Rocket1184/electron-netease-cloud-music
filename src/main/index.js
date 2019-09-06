@@ -1,10 +1,9 @@
 import { join } from 'path';
 import { app, BrowserWindow, ipcMain, Menu } from 'electron';
 
+import { IsDev, IsDarwin, MainURL, LoginURL } from './util/constants';
 import * as Settings from './settings';
 import { AppTray } from './tray';
-
-const isDev = process.env.NODE_ENV === 'development';
 
 let shouldAppQuit = true;
 /** @type {(ev: import('electron').Event) => any} */
@@ -14,15 +13,12 @@ const preventQuitHandler = ev => {
 };
 /** @type {import('electron').BrowserWindow} */
 let mainWindow;
-/** URL defined in `index.dev.js` or `webpack.config.renderer.js` */
-const mainURL = process.env.MAIN_URL;
 /** @type {import('electron').BrowserWindow} */
 let loginWindow;
-let loginURL = 'https://music.163.com';
 /** @type {AppTray} */
 let appTray;
 
-const BackgroundColor = {
+const MainBkgColor = {
     light: '#fafafa',
     dark: '#303030'
 };
@@ -32,7 +28,7 @@ const BackgroundColor = {
  * @param {string} [url]
  * @returns {import('electron').BrowserWindow}
  */
-function createMainWindow(settings, url = mainURL) {
+function createMainWindow(settings, url = MainURL) {
     const win = new BrowserWindow({
         height: 700,
         width: 1000,
@@ -41,13 +37,13 @@ function createMainWindow(settings, url = mainURL) {
         minHeight: 640,
         frame: settings.windowBorder,
         titleBarStyle: settings.windowBorder ? 'default' : 'hidden',
-        backgroundColor: BackgroundColor[settings.themeVariety],
+        backgroundColor: MainBkgColor[settings.themeVariety],
         title: Settings.productName,
         webPreferences: {
             zoomFactor: settings.windowZoom || 1,
             preload: join(__dirname, 'preload.js'),
-            nodeIntegration: isDev,
-            nodeIntegrationInWorker: isDev,
+            nodeIntegration: IsDev,
+            nodeIntegrationInWorker: IsDev,
             contextIsolation: false,
             autoplayPolicy: 'no-user-gesture-required',
             additionalArguments: [`--initial-settings=${JSON.stringify(settings)}`]
@@ -72,7 +68,7 @@ function createMainWindow(settings, url = mainURL) {
     }
 
     win.loadURL(url);
-    if (process.env.NODE_ENV === 'development') {
+    if (IsDev) {
         win.webContents.openDevTools();
     }
     return win;
@@ -82,7 +78,7 @@ if (app.requestSingleInstanceLock()) {
     app.on('ready', async () => {
         const settings = await Settings.get();
         // do not display default menu bar
-        if (!isDev) {
+        if (!IsDev) {
             Menu.setApplicationMenu(null);
         }
         mainWindow = createMainWindow(settings);
@@ -145,7 +141,7 @@ ipcMain.on('Settings', async (event, /** @type {string} */ type, ...args) => {
             mainWindow.close();
             mainWindow = null;
             const settings = await Settings.get();
-            mainWindow = createMainWindow(settings, args[0]); //eslint-disable-line require-atomic-updates
+            mainWindow = createMainWindow(settings, args[0]);
             if (appTray) {
                 appTray.bindWindow(mainWindow);
             }
@@ -169,7 +165,7 @@ ipcMain.on('Settings', async (event, /** @type {string} */ type, ...args) => {
             }
             break;
         case 'exitOnWindowClose':
-            if (process.platform === 'darwin') return;
+            if (IsDarwin) return;
             shouldAppQuit = args[0];
             if (args[0] === true) {
                 mainWindow.removeListener('close', preventQuitHandler);
@@ -189,24 +185,24 @@ ipcMain.on('showLoginWindow', () => {
         minWidth: 1080,
         title: `Login - ${Settings.productName}`,
         parent: mainWindow,
-        modal: true,
+        modal: !IsDarwin,
         webPreferences: {
             nodeIntegration: false
         }
     });
-    loginWindow.loadURL(loginURL);
+    loginWindow.loadURL(LoginURL);
     const ses = loginWindow.webContents.session;
     const wr = ses.webRequest;
     wr.onCompleted({
         urls: [
-            `${loginURL}/weapi/*`
+            `${LoginURL}/weapi/*`
         ]
     }, (details) => {
         if (details.url.includes('/login')) {
             if (details.statusCode === 200 && Array.isArray(details.responseHeaders['set-cookie'])) {
                 ipcMain.once('getLoginCookie', event => {
                     const cookie = {};
-                    ses.cookies.get({ url: loginURL }, (err, cookies) => {
+                    ses.cookies.get({ url: LoginURL }, (err, cookies) => {
                         for (const { name, value } of cookies) {
                             cookie[name] = value;
                         }
