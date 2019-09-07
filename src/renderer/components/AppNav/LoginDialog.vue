@@ -184,11 +184,14 @@ export default {
             });
         },
         async handleWebLoginComplete() {
-            const cookie = await this.requestLoginCookies();
-            const valid = await this.restoreUserInfo(cookie);
-            if (valid) {
+            try {
+                const cookie = await this.requestLoginCookies();
+                const valid = await this.restoreUserInfo(cookie);
+                if (!valid) {
+                    throw new Error('restoreUserInfo failed');
+                }
                 this.$emit('update:show', false);
-            } else {
+            } catch (e) {
                 this.$toast.message('根本没有登录成功啊喂 (╯‵□′)╯︵┻━┻');
             }
             this.webLoginStep = 0;
