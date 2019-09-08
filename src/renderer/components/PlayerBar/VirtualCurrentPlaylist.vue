@@ -54,7 +54,7 @@
                                     color="secondary"
                                     value="volume_up"
                                     :size="18"></mu-icon>
-                                <span v-else>{{(indexMap.get(index) || index) + 1}}</span>
+                                <span v-else>{{(indexMap.has(index) ? indexMap.get(index) : index) + 1}}</span>
                             </div>
                             <div class="mu-item-title">
                                 {{item.name}}
@@ -170,7 +170,10 @@ export default {
             });
         },
         handleListClick(index) {
-            let i = this.indexMap.size > 0 ? this.indexMap.get(index) : index;
+            let i = index;
+            if (this.indexMap.size > 0 && this.indexMap.has(index)) {
+                i = this.indexMap.get(index);
+            }
             this.playTrackIndex(i);
         },
         sourceTipText(track) {
@@ -225,6 +228,9 @@ export default {
                     this.filteredList = res.result;
                     this.indexMap = res.indexMap;
                 });
+            } else {
+                this.filteredList = [];
+                this.indexMap.clear();
             }
         }
     },
