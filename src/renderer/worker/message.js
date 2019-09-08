@@ -10,9 +10,9 @@ const worker = new Worker();
 
 /**
  * @param {WorkerMethodNames} method
- * @param {any[]} [args=[]]
+ * @param {any[]} args
  */
-export function workerExecute(method, args = []) {
+export function workerExecute(method, ...args) {
     resolveId++;
     return new Promise(resolve => {
         ResolveMap.set(resolveId, resolve);

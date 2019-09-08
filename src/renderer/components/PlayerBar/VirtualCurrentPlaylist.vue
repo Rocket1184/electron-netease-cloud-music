@@ -221,7 +221,7 @@ export default {
     watch: {
         findInput(val) {
             if (val.length > 0) {
-                workerExecute('filterTracks', [val, this.queue.list]).then(res => {
+                workerExecute('filterTracks', val, this.queue.list).then(res => {
                     this.filteredList = res.result;
                     this.indexMap = res.indexMap;
                 });
