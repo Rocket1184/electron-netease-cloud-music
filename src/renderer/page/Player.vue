@@ -1,5 +1,6 @@
 <template>
-    <div class="player ncm-page">
+    <div class="player ncm-page"
+        :class="{ dark: this.dark }">
         <div class="bkg">
             <canvas ref="cvs"
                 width="1000"
@@ -190,7 +191,11 @@
 import { mapActions, mapGetters, mapState } from 'vuex';
 
 import Api from '@/api/ipc';
+import { workerExecute } from '@/worker/message';
 import {
+    RESTORE_PLAYLIST,
+    RESTORE_RADIO,
+    UPDATE_SETTINGS,
     SET_CURRENT_INDEX,
     SET_RADIO_INDEX,
     SET_ACTIVE_LYRIC
@@ -202,6 +207,7 @@ export default {
     name: 'page-player',
     data() {
         return {
+            dark: false,
             isActive: false,
             canvasImageId: -1,
             threadInfoId: -1,
@@ -215,8 +221,11 @@ export default {
         };
     },
     computed: {
-        ...mapState(['ui', 'user']),
+        ...mapState(['ui', 'user', 'settings']),
         ...mapGetters(['playing']),
+        themeCompensation() {
+            return this.settings.themeVariety === 'light' ? 25 : 4.8;
+        },
         isDjRadioProgram() {
             const { source = {} } = this.playing;
             return (source && source.djradio);
@@ -300,12 +309,12 @@ export default {
         },
         paintBkgCanvas() {
             this.canvasImageId = this.playing.id;
-            const img = new Image();
+            let src;
             const size = HiDpiPx(64);
             if (this.playing.album && this.playing.album.picUrl) {
-                img.src = sizeImg(this.playing.album.picUrl, size);
+                src = sizeImg(this.playing.album.picUrl, size);
             } else {
-                img.src = defaultCoverImg;
+                src = defaultCoverImg;
             }
             const w = 1000;
             const h = 600;
@@ -313,11 +322,19 @@ export default {
             const ctx = this.$refs.cvs.getContext('2d');
             ctx.globalAlpha = 0.9;
             ctx.filter = 'blur(60px) brightness(0.75)';
-            const handler = () => {
+            fetch(src).then(r => r.blob()).then(b => {
+                this.determineBrightness(b);
+                return createImageBitmap(b);
+            }).then(bm => {
                 ctx.clearRect(0, 0, w, h);
-                ctx.drawImage(img, 0, 0, size, size, -30, -30, w + 60, h + 60);
-            };
-            img.addEventListener('load', handler, { once: true });
+                ctx.drawImage(bm, 0, 0, size, size, -30, -30, w + 60, h + 60);
+            });
+        },
+        async determineBrightness(bms) {
+            const b = await workerExecute('determineBrightness', bms);
+            // globalAlpha = 0.9;  brightness(0.75)
+            const brightness = (b * 0.9 * 0.75 + this.themeCompensation);
+            this.dark = brightness < 102;
         },
         async refreshThreadInfo() {
             const { id, source = {} } = this.playing;
@@ -385,16 +402,21 @@ export default {
         this.refreshThreadInfo();
         this.listenAudioUpdate();
         this.createLyricElemMap();
-        this.$store.subscribe(mutation => {
-            if (mutation.type === SET_CURRENT_INDEX || mutation.type === SET_RADIO_INDEX) {
+        this.$store.subscribe(({ type, payload }) => {
+            if (type === SET_CURRENT_INDEX
+                || type === SET_RADIO_INDEX
+                || type === RESTORE_PLAYLIST
+                || type === RESTORE_RADIO) {
                 if (!this.isActive) return;
                 this.paintBkgCanvas();
                 this.refreshThreadInfo();
-            } else if (mutation.type === SET_ACTIVE_LYRIC) {
+            } else if (type === SET_ACTIVE_LYRIC) {
                 // reset lyric position
                 this.currentLyricIndex = -1;
                 // query lyric elements after they are created
                 this.$nextTick(() => this.createLyricElemMap());
+            } else if (type === UPDATE_SETTINGS && payload.themeVariety) {
+                this.paintBkgCanvas();
             }
         });
     },
@@ -581,6 +603,22 @@ export default {
                     opacity: 1;
                 }
             }
+        }
+    }
+}
+
+.player.dark {
+    .phonograph .mu-button-wrapper {
+        color: #eee;
+    }
+    .info {
+        .title,
+        .source,
+        .control .mu-button-wrapper {
+            color: #eee;
+        }
+        .lyric {
+            color: rgba(255, 255, 255, 0.6);
         }
     }
 }
