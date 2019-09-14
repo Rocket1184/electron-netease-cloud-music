@@ -5,6 +5,7 @@ import qs from 'querystring';
 import { app } from 'electron';
 
 import { Lrc } from 'lrc-kit';
+import { decodeHTML } from 'entities';
 
 import Cache from './cache';
 import migrate from './migrate';
@@ -769,12 +770,12 @@ export async function getRelatedPlaylists(id) {
         let match;
         while (match = RelatedPlaylists.regexp.exec(html)) { // eslint-disable-line no-cond-assign
             data.push({
-                name: match[1],
+                name: decodeHTML(match[1]),
                 id: match[2],
                 picUrl: RelatedPlaylists.trimSrc(match[3]),
                 creator: {
                     id: RelatedPlaylists.trimId(match[4]),
-                    name: match[5]
+                    name: decodeHTML(match[5])
                 }
             });
         }
@@ -825,7 +826,7 @@ export async function getRelatedAlbums(id) {
         while (match = RelatedAlbums.regexp.exec(html)) { // eslint-disable-line no-cond-assign
             data.push({
                 id: RelatedPlaylists.trimId(match[1]),
-                name: match[2],
+                name: decodeHTML(match[2]),
                 picUrl: RelatedPlaylists.trimSrc(match[3]),
                 publishDate: match[4]
             });
