@@ -130,7 +130,7 @@ class MusicServer {
         try {
             const music = await this.getMusicUrl(Number.parseInt(id, 10), quality);
             d('Got URL for music id=%d', id);
-            const musicRes = await this.cache.fetch(music.url);
+            const musicRes = await this.cache.fetch(music.url.replace(/^http:/, 'https:'));
             musicRes.body.pipe(fs.createWriteStream(filePath));
 
             const range = MusicServer.getRange(req, +musicRes.headers.get('content-length'));
