@@ -192,14 +192,6 @@ import { mapActions, mapGetters, mapState } from 'vuex';
 
 import Api from '@/api/ipc';
 import { workerExecute } from '@/worker/message';
-import {
-    RESTORE_PLAYLIST,
-    RESTORE_RADIO,
-    UPDATE_SETTINGS,
-    SET_CURRENT_INDEX,
-    SET_RADIO_INDEX,
-    SET_ACTIVE_LYRIC
-} from '@/store/mutation-types';
 import { bkgImg, sizeImg, HiDpiPx } from '@/util/image';
 import defaultCoverImg from 'assets/img/cover_default.webp';
 
@@ -304,7 +296,7 @@ export default {
         },
         createLyricElemMap() {
             if (this.ui.lyric.lrc) {
-                this.lyricElemMap = Array.from(document.getElementsByClassName('line'));
+                this.lyricElemMap = Array.from(this.$el.getElementsByClassName('line'));
             }
         },
         paintBkgCanvas() {
@@ -397,28 +389,27 @@ export default {
             });
         }
     },
+    watch: {
+        ['playing.id']() {
+            if (!this.isActive) return;
+            this.paintBkgCanvas();
+            this.refreshThreadInfo();
+        },
+        ['settings.themeVariety']() {
+            this.paintBkgCanvas();
+        },
+        ['ui.lyric']() {
+            // reset lyric position
+            this.currentLyricIndex = -1;
+            // query lyric elements after they are created
+            this.$nextTick(() => this.createLyricElemMap());
+        }
+    },
     mounted() {
         this.paintBkgCanvas();
         this.refreshThreadInfo();
         this.listenAudioUpdate();
         this.createLyricElemMap();
-        this.$store.subscribe(({ type, payload }) => {
-            if (type === SET_CURRENT_INDEX
-                || type === SET_RADIO_INDEX
-                || type === RESTORE_PLAYLIST
-                || type === RESTORE_RADIO) {
-                if (!this.isActive) return;
-                this.paintBkgCanvas();
-                this.refreshThreadInfo();
-            } else if (type === SET_ACTIVE_LYRIC) {
-                // reset lyric position
-                this.currentLyricIndex = -1;
-                // query lyric elements after they are created
-                this.$nextTick(() => this.createLyricElemMap());
-            } else if (type === UPDATE_SETTINGS && payload.themeVariety) {
-                this.paintBkgCanvas();
-            }
-        });
     },
     activated() {
         this.isActive = true;
