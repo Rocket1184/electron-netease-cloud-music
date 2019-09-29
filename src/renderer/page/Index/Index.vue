@@ -130,6 +130,11 @@ export default {
             display: flex;
             overflow: auto;
             min-height: 218px;
+            &::after {
+                content: ' ';
+                flex-shrink: 0;
+                flex-basis: 12px;
+            }
         }
     }
 }

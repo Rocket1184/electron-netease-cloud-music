@@ -3,8 +3,12 @@
         :title="title"
         tag="div"
         class="scroll-item">
-        <div class="pic"
-            :style="bkgImgStyle(img)">
+        <div class="cover">
+            <img class="img"
+                :src="imgSrc"
+                :alt="title"
+                width="160"
+                height="160">
             <div v-if="maskIcon"
                 class="mask">
                 <mu-icon :value="maskIcon"
@@ -23,7 +27,8 @@
 </template>
 
 <script>
-import { bkgImg, sizeImg, HiDpiPx } from '@/util/image';
+import { sizeImg, HiDpiPx } from '@/util/image';
+import coverDefault from 'assets/img/cover_default.webp';
 
 export default {
     props: {
@@ -31,8 +36,7 @@ export default {
             required: true
         },
         img: {
-            type: String,
-            required: true
+            type: String
         },
         title: {
             type: String,
@@ -55,9 +59,9 @@ export default {
             required: false
         }
     },
-    methods: {
-        bkgImgStyle(img) {
-            return bkgImg(sizeImg(img, HiDpiPx(160)));
+    computed: {
+        imgSrc() {
+            return sizeImg(this.img || coverDefault, HiDpiPx(160));
         }
     }
 };
@@ -66,32 +70,31 @@ export default {
 <style lang="less">
 .scroll-item {
     width: 160px;
-    min-width: 160px;
     height: 210px;
     margin-left: 12px;
-    overflow: visible;
+    flex-shrink: 0;
     cursor: pointer;
-    &:last-child {
-        padding-right: 12px;
-    }
-    .pic {
+    .cover {
         height: 160px;
-        background-size: cover;
-        display: flex;
-        flex-direction: column-reverse;
+        width: 160px;
+        position: relative;
+        color: #e5e2e5;
         .mask {
-            color: #e5e2e5;
-            padding: 0.4em 0.8em;
+            position: absolute;
+            left: 0;
+            right: 0;
+            bottom: 0;
+            color: currentColor;
+            padding: 6px 10px;
             background-color: rgba(0, 0, 0, 0.54);
-            display: flex;
-            align-items: center;
             .text {
                 margin-left: 4px;
                 flex-grow: 1;
             }
         }
         .mu-icon {
-            color: #e5e2e5;
+            vertical-align: text-bottom;
+            color: currentColor;
         }
     }
     .caption {
