@@ -6,11 +6,21 @@
                 width="1000"
                 height="600"></canvas>
         </div>
-        <div :class="{ phonograph: true, play: !this.ui.paused }">
-            <div class="needle"></div>
-            <div class="cover"
-                :style="albumImgStyle">
-                <div class="disc"></div>
+        <div class="phonograph"
+            :class="{ play: !this.ui.paused }">
+            <img class="stylus"
+                src="~assets/img/needle.webp"
+                width="100"
+                height="142.5">
+            <div class="vinyl">
+                <img :src="albumImgSrc"
+                    class="cover"
+                    width="220"
+                    height="220">
+                <img src="~assets/img/disc.webp"
+                    class="border"
+                    width="350"
+                    height="350">
             </div>
             <div v-if="playing.id"
                 class="action">
@@ -192,7 +202,9 @@ import { mapActions, mapGetters, mapState } from 'vuex';
 
 import Api from '@/api/ipc';
 import { workerExecute } from '@/worker/message';
-import { bkgImg, sizeImg, HiDpiPx } from '@/util/image';
+import { sizeImg, HiDpiPx } from '@/util/image';
+
+import discDefault from 'assets/img/disc_default.webp';
 import defaultCoverImg from 'assets/img/cover_default.webp';
 
 export default {
@@ -222,11 +234,11 @@ export default {
             const { source = {} } = this.playing;
             return (source && source.djradio);
         },
-        albumImgStyle() {
+        albumImgSrc() {
             if (this.playing.album && this.playing.album.picUrl) {
-                return bkgImg(sizeImg(this.playing.album.picUrl, HiDpiPx(220)));
+                return sizeImg(this.playing.album.picUrl, HiDpiPx(220));
             }
-            return '';
+            return discDefault;
         },
         commentRoute() {
             const { id, source = {} } = this.playing;
@@ -458,41 +470,32 @@ export default {
     .phonograph,
     .info {
         z-index: 1;
+        flex-grow: 1;
+        flex-basis: 0;
     }
     .phonograph {
-        flex: 1;
-        transition: transform 25s;
         display: flex;
         flex-direction: column;
         align-items: center;
-        .needle {
+        .stylus {
             z-index: 2;
-            width: 100px;
-            height: 200px;
-            margin: -6px 0 -132px 74px;
-            background-image: url('~assets/img/needle.webp');
-            background-repeat: no-repeat;
-            background-size: contain;
+            margin: -6px 0 -74px 74px;
             transition: transform 0.5s;
             transform-origin: 15px 0;
             transform: rotate(-25deg);
         }
-        .cover {
+        .vinyl {
+            position: relative;
             will-change: transform;
-            width: 220px;
-            height: 220px;
-            margin: 65px;
-            // fallback album cover image
-            background-image: url('~assets/img/disc_default.webp');
-            background-size: cover;
             animation: disk-playing 25s linear infinite;
             animation-play-state: paused;
-            .disc {
-                width: 350px;
-                height: 350px;
-                margin: -65px;
-                background-image: url('~assets/img/disc.webp');
-                background-size: contain;
+            .cover {
+                margin: 65px;
+            }
+            .border {
+                position: absolute;
+                top: 0;
+                left: 0;
             }
         }
         .action {
@@ -500,16 +503,15 @@ export default {
             display: flex;
         }
         &.play {
-            .needle {
+            .stylus {
                 transform: rotate(0deg);
             }
-            .cover {
+            .vinyl {
                 animation-play-state: running;
             }
         }
     }
     .info {
-        flex: 1;
         .title,
         .source,
         .scroller-wrapper {
