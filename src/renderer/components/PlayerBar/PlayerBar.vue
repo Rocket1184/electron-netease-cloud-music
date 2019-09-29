@@ -5,9 +5,10 @@
             :src="ui.audioSrc"></audio>
         <div class="cover"
             @click="handleCoverClick">
-            <div class="img"
-                :style="coverImgStyle">
-            </div>
+            <img :src="coverImgSrc"
+                class="img"
+                width="64"
+                height="64">
             <mu-icon :value="coverIcon"
                 :size="48"
                 color="white"></mu-icon>
@@ -118,8 +119,10 @@ import {
     SET_AUDIO_PAUSED
 } from '@/store/mutation-types';
 import { LOOP_MODE } from '@/store/modules/playlist';
-import { sizeImg, HiDpiPx, bkgImg } from '@/util/image';
+import { sizeImg, HiDpiPx } from '@/util/image';
 import { shortTime } from '@/util/formatter';
+
+import coverDefault from 'assets/img/cover_default.webp';
 
 const VolumeIcon = [
     'volume_off',
@@ -284,11 +287,11 @@ export default {
     computed: {
         ...mapState(['ui', 'user', 'settings']),
         ...mapGetters(['playing', 'queue']),
-        coverImgStyle() {
+        coverImgSrc() {
             if (this.playing.album && this.playing.album.picUrl) {
-                return bkgImg(sizeImg(this.playing.album.picUrl, HiDpiPx(64)));
+                return sizeImg(this.playing.album.picUrl, HiDpiPx(64));
             }
-            return '';
+            return coverDefault;
         },
         coverIcon() {
             if (this.$route.name === 'player') return 'fullscreen_exit';
@@ -461,22 +464,19 @@ export default {
     bottom: 0;
     left: 0;
     .cover {
+        height: 64px;
+        width: 64px;
         cursor: pointer;
-        display: flex;
         position: relative;
-        align-items: center;
-        justify-content: center;
         background-color: black;
-        .img {
-            background-image: url('~assets/img/cover_default.webp');
-            background-size: cover;
-            width: 64px;
-            height: 64px;
+        .img,
+        .mu-icon {
             transition: 0.3s opacity;
         }
         .mu-icon {
+            top: 8px;
+            left: 8px;
             opacity: 0;
-            transition: 0.3s opacity;
             position: absolute;
         }
         &:hover {
@@ -495,13 +495,12 @@ export default {
     }
     .info {
         font-size: 14px;
-        padding: 4px 12px 0 10px;
+        padding: 0 12px;
         flex-grow: 1;
         overflow: hidden;
-        display: flex;
-        flex-direction: column;
-        justify-content: space-around;
         .desc {
+            margin-top: 8px;
+            margin-bottom: 4px;
             display: flex;
             justify-content: space-between;
             .name {
@@ -536,9 +535,9 @@ export default {
         }
     }
     .control {
-        width: 170px;
-        min-width: 170px;
-        padding-right: 10px;
+        flex-basis: 160px;
+        flex-shrink: 0;
+        margin-right: 10px;
         display: flex;
         justify-content: space-between;
         align-items: center;
