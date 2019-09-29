@@ -33,7 +33,7 @@ const shortcuts = [
     {
         event: 'queue',
         icon: 'playlist_add',
-        title: '添加到播放列表'
+        title: '下一首播放'
     }
 ];
 
@@ -94,9 +94,9 @@ export default {
             this.insertTrackIntoPlaylist({
                 tracks: [this.trackDetails[index]],
                 source: this.source,
-                index: this.playlist.list.length
+                index: this.playlist.index + 1
             });
-            this.$toast.message('已添加到播放列表  _(:з」∠)_');
+            this.$toast.message('已添加下一首播放  _(:з」∠)_');
         },
         handleQueue(index) {
             if (this.ui.radioMode) {

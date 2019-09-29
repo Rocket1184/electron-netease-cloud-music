@@ -21,7 +21,7 @@
                         <div class="track-col buttons">
                             <mu-button icon
                                 small
-                                title="添加到播放列表"
+                                title="下一首播放"
                                 @click="handleQueue(index)">
                                 <mu-icon value="playlist_add"></mu-icon>
                             </mu-button>
@@ -90,9 +90,9 @@ export default {
             this.insertTrackIntoPlaylist({
                 tracks: [program.mainSong],
                 source: this.getProgramSource(program),
-                index: this.playlist.list.length
+                index: this.playlist.index + 1
             });
-            this.$toast.message('已添加到播放列表  _(:з」∠)_');
+            this.$toast.message('已添加下一首播放  _(:з」∠)_');
         },
         handlePlay(index) {
             if (this.ui.radioMode === true) {

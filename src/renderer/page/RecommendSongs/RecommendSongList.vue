@@ -35,7 +35,7 @@ const shortcuts = [
     {
         event: 'queue',
         icon: 'playlist_add',
-        title: '添加到播放列表'
+        title: '下一首播放'
     },
     {
         event: 'dislike',
