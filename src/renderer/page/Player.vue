@@ -186,7 +186,7 @@
             dialog-class="share-dlg"
             :open.sync="dlgShareOpen">
             <div class="share-content">
-                <div class="share-text">{{ shareText }}</div>
+                <div ref="shareText">{{ shareText }}</div>
             </div>
             <template #actions>
                 <mu-button flat
@@ -388,8 +388,8 @@ export default {
         toggleShare() {
             this.dlgShareOpen = !this.dlgShareOpen;
             if (this.dlgShareOpen) this.$nextTick(() => {
-                const node = document.querySelector('.share-text');
-                if (!node) return;
+                /** @type {HTMLDivElement} */
+                const node = this.$refs.shareText;
                 const selection = window.getSelection();
                 const range = document.createRange();
                 range.selectNodeContents(node);
