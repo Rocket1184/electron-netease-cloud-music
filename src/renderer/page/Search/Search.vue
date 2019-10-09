@@ -107,12 +107,11 @@ export default {
             let { keyword, type } = this.$route.query;
             if (!keyword) return;
             if (!type) type = this.tab; else this.tab = type;
-            const offset = this.searchOffset;
             if (keyword === this.ui.search.keyword &&
                 type === this.ui.search.type &&
-                offset === this.ui.search.offset) return;
+                this.searchOffset === this.ui.search.offset) return;
             if (keyword !== this.ui.search.keyword) this.currentPage = 1;
-            await this.search({ keyword, type, limit: this.pageSize, offset });
+            await this.search({ keyword, type, limit: this.pageSize, offset: this.searchOffset });
             if (!this.haveSearched) this.haveSearched = true;
         }
     },
