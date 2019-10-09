@@ -257,39 +257,46 @@ export async function search({ state, commit }, { keyword, type, limit = 20, off
         };
         switch (type) {
             case 'song':
-                result.total = resp.result.songCount || 0;
+                const { songCount, songs } = resp.result;
+                result.total = songCount || songs.length || 0;
                 if (result.total > 0) {
-                    result.items = resp.result.songs.map(i => new Track(i));
+                    result.items = songs.map(i => new Track(i));
                 }
                 break;
             case 'artist':
-                result.total = resp.result.artistCount || 0;
+                const { artistCount, artists } = resp.result;
+                result.total = artistCount || artists.length || 0;
                 if (result.total > 0) {
-                    result.items = resp.result.artists;
+                    result.items = artists;
                 }
                 break;
             case 'album':
-                result.total = resp.result.albumCount || 0;
+                const { albumCount, albums } = resp.result;
+                // sometimes, albumCount is `0` but album.length != 0
+                result.total = albumCount || albums.length || 0;
                 if (result.total > 0) {
-                    result.items = resp.result.albums;
+                    result.items = albums;
                 }
                 break;
             case 'playlist':
-                result.total = resp.result.playlistCount || 0;
+                const { playlistCount, playlists } = resp.result;
+                result.total = playlistCount || playlists.length || 0;
                 if (result.total > 0) {
-                    result.items = resp.result.playlists;
+                    result.items = playlists;
                 }
                 break;
             case 'video':
-                result.total = resp.result.videoCount || 0;
+                const { videoCount, videos } = resp.result;
+                result.total = videoCount || videos.length || 0;
                 if (result.total > 0) {
-                    result.items = resp.result.videos.map(v => new Video(v));
+                    result.items = videos.map(v => new Video(v));
                 }
                 break;
             case 'user':
-                result.total = resp.result.userprofileCount || 0;
+                const { userprofileCount, userprofiles } = resp.result;
+                result.total = userprofileCount || userprofiles.length || 0;
                 if (result.total > 0) {
-                    result.items = resp.result.userprofiles;
+                    result.items = userprofiles;
                 }
         }
         commit(types.SET_SEARCH_RESULT, result);
