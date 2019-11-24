@@ -179,6 +179,13 @@ export default {
         sourceTipText(track) {
             return `来自${SourceName[track.source.name]}`;
         },
+        navigateToSource(location) {
+            if (this.$route.name === 'player') {
+                this.$router.replace(location);
+            } else {
+                this.$router.push(location);
+            }
+        },
         handleSourceClick(source) {
             const name = RouteName[source.name];
             switch (source.name) {
@@ -186,14 +193,14 @@ export default {
                 case 'album':
                 case 'artist':
                 case 'djradio':
-                    this.$router.push({ name, params: { id: source.id } });
+                    this.navigateToSource({ name, params: { id: source.id } });
                     break;
                 case 'search':
-                    this.$router.push({ name, query: { keyword: source.id, type: 'song' } });
+                    this.navigateToSource({ name, query: { keyword: source.id, type: 'song' } });
                     break;
                 case 'radio':
                 case 'recommend':
-                    this.$router.push({ name });
+                    this.navigateToSource({ name });
                     break;
                 default:
                     break;
@@ -264,6 +271,7 @@ export default {
             }
             .mu-input-action-icon {
                 padding-right: 0;
+                font-size: 18px;
             }
         }
         .mu-button-small {
