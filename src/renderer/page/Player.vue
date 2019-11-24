@@ -88,7 +88,8 @@
                         replace>{{playing.source.djradio.radio.name}}</router-link>
                 </template>
                 <template v-else>
-                    <template v-if="playing.artists">
+                    <span v-if="playing.artists"
+                        class="source-artist">
                         <span>歌手：</span>
                         <template v-for="(ar, index) in playing.artists">
                             <span v-if="index !== 0"
@@ -96,21 +97,20 @@
                                 class="sep">/</span>
                             <router-link v-if="ar.id !== 0"
                                 :key="ar.id"
-                                class="artist link"
+                                class="source-link"
                                 :to="{ name: 'artist', params: { id: ar.id } }"
                                 replace>{{ar.name}}</router-link>
                             <span v-else
-                                :key="'ar' + index"
-                                class="artist">{{ar.name}}</span>
+                                :key="'ar' + index">{{ar.name}}</span>
                         </template>
-                    </template>
-                    <span class="sep"></span>
-                    <template v-if="playing.album">
+                    </span>
+                    <span v-if="playing.album"
+                        class="source-album">
                         <span>专辑：</span>
-                        <router-link class="album link"
+                        <router-link class="source-link"
                             :to="{ name: 'album', params: { id: playing.album.id } }"
                             replace>{{playing.album.name}}</router-link>
-                    </template>
+                    </span>
                 </template>
             </p>
             <div v-if="isDjRadioProgram"
@@ -477,6 +477,11 @@ export default {
         display: flex;
         flex-direction: column;
         align-items: center;
+        .stylus,
+        .vinyl {
+            pointer-events: none;
+            user-select: none;
+        }
         .stylus {
             z-index: 2;
             margin: -6px 0 -74px 74px;
@@ -531,18 +536,23 @@ export default {
             }
         }
         .source {
-            user-select: none;
             margin: 16px 0 24px;
-            .sep {
-                margin: 0 6px;
+            .source-artist {
+                margin-inline-end: 16px;
             }
-            .artist,
-            .album {
+            .source-album {
+                white-space: nowrap;
+            }
+            .sep {
+                margin: 0 4px;
+            }
+            .source-link {
                 .ellipsis-text;
                 color: unset;
-            }
-            .link:hover {
-                text-decoration: underline;
+                user-select: text;
+                &:hover {
+                    text-decoration: underline;
+                }
             }
         }
         .description {
