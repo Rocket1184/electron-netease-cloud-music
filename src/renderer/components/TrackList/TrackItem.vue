@@ -1,5 +1,6 @@
 <template>
     <ncm-mu-dbclick-ripple class="track-row"
+        :class="dynamicClassName"
         @dblclick="handleDblClick">
         <div v-if="index"
             class="track-col index">{{index}}</div>
@@ -43,9 +44,20 @@ export default {
         track: {
             required: true
         },
+        status: {
+            required: false
+        },
         shortcuts: {
             type: Array,
             required: false
+        }
+    },
+    computed: {
+        dynamicClassName() {
+            return {
+                'track--grey': (this.status && this.status.code !== 200)
+                    || (this.track.privilege && this.track.privilege.st !== 0)
+            };
         }
     },
     methods: {
@@ -101,6 +113,19 @@ export default {
         align-items: center;
         .mu-icon {
             opacity: 0.6;
+        }
+    }
+}
+
+.track--grey {
+    .name,
+    .artist,
+    .duration {
+        opacity: 0.4;
+    }
+    .buttons {
+        .mu-icon {
+            opacity: 0.3;
         }
     }
 }
