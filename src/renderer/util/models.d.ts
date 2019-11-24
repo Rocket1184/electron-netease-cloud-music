@@ -52,6 +52,7 @@ namespace Models {
         }
         /** MV ID */
         mv: number;
+        privilege: Types.Privilege;
     }
 
     export class PlayList {

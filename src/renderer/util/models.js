@@ -31,6 +31,7 @@ export class Track {
         this.commentThreadId = o.commentThreadId;
         this.source = o.source || source;
         this.mv = o.mv;
+        this.privilege = o.privilege;
     }
 }
 
