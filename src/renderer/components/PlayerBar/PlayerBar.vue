@@ -16,8 +16,8 @@
         <div class="info">
             <div class="desc">
                 <div class="name">
-                    <span class="song">{{playing.name}}</span>
-                    <span class="artist mu-item-after-text">{{playing.artistName}}</span>
+                    <span class="track">{{playing.name}}</span>
+                    <span class="artist">{{playing.artistName}}</span>
                 </div>
                 <div class="shortcut">
                     <div title="喜欢">
@@ -504,20 +504,29 @@ export default {
             display: flex;
             justify-content: space-between;
             .name {
+                flex-grow: 1;
+                display: flex;
                 overflow: hidden;
-                text-overflow: ellipsis;
-                width: calc(100% - 36px * 4);
-                span {
-                    max-width: 310px;
-                    white-space: nowrap;
+                white-space: nowrap;
+                line-height: 24px;
+                .track,
+                .artist {
+                    overflow: hidden;
+                    text-overflow: ellipsis;
+                }
+                .track {
+                    min-width: min-content;
+                    max-width: 400px;
                 }
                 .artist {
-                    margin-left: 0.5em;
-                    font-size: inherit;
+                    margin-left: 8px;
+                    color: rgba(0, 0, 0, 0.54);
                 }
             }
             .shortcut {
-                width: calc(36px * 4);
+                flex-basis: calc(36px * 4);
+                flex-shrink: 0;
+                margin-left: 16px;
                 display: flex;
                 justify-content: space-between;
                 font-size: 0;
