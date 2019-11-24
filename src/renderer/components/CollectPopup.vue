@@ -60,6 +60,8 @@ export default {
             } catch (resp) {
                 if (resp.code === 502) {
                     this.$toast.message('歌曲已存在        ¯\\_(ツ)_/¯');
+                } else if (resp.message) {
+                    this.$toast.message(resp.message);
                 } else {
                     this.$toast.message(`失败了 ∑(っ °Д °;)っ 错误代码 ${resp.code}`);
                 }
