@@ -520,7 +520,7 @@ export default {
                 }
                 .artist {
                     margin-left: 8px;
-                    color: rgba(0, 0, 0, 0.54);
+                    opacity: 0.6;
                 }
             }
             .shortcut {
