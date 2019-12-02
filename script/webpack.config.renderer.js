@@ -49,7 +49,8 @@ let cfg = {
                 use: {
                     loader: 'file-loader',
                     options: {
-                        name: 'imgs/[name].[ext]'
+                        name: 'imgs/[name].[ext]',
+                        esModule: false
                     }
                 }
             },
