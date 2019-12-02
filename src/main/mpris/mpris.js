@@ -52,6 +52,12 @@ class MediaPlayer2 extends Interface {
     @property({ signature: 's', access: ACCESS_READ })
     DesktopEntry = 'electron-netease-cloud-music';
 
+    @property({ signature: 'as', access: ACCESS_READ })
+    SupportedUriSchemes = ['http', 'https', 'file'];
+
+    @property({ signature: 'as', access: ACCESS_READ })
+    SupportedMimeTypes = ['audio/mpeg'];
+
     @method({})
     Quit() {
         d('method: Quit');
