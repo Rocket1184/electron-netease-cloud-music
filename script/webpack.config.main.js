@@ -21,7 +21,7 @@ let cfg = {
     module: {
         rules: [
             {
-                resource: path => path.includes('src/main') && path.endsWith('.js'),
+                resource: path => path.includes('src/main/mpris/mpris.js'),
                 use: {
                     loader: 'babel-loader',
                     options: {
