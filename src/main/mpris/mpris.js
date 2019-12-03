@@ -302,6 +302,9 @@ class MPRISEmitter extends EventEmitter {
         this.objectPath = i.path();
         this.mp2 = new MediaPlayer2(i.name(), this);
         this.mp2Player = new MediaPlayer2Player(i.name('Player'), this);
+        if (process.env.NODE_ENV === 'development') {
+            this.mp2.DesktopEntry = 'electron';
+        }
         this.bindEvent();
         this.exportInterface();
     }
