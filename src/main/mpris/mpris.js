@@ -3,7 +3,7 @@ import { EventEmitter } from 'events';
 
 import debug from 'debug';
 import throttle from 'lodash/throttle';
-import { sessionBus, Variant, interface as DbusInterface } from 'dbus-next';
+import { sessionBus, NameFlag, Variant, interface as DbusInterface } from 'dbus-next';
 const { signal, method, property, Interface, ACCESS_READ, ACCESS_READWRITE } = DbusInterface;
 
 import { Timer } from './timer';
@@ -318,10 +318,9 @@ class MPRISEmitter extends EventEmitter {
     }
 
     exportInterface() {
-        bus.requestName(this.interfaceName).then(() => {
-            bus.export(this.objectPath, this.mp2);
-            bus.export(this.objectPath, this.mp2Player);
-        }).catch(e => {
+        bus.export(this.objectPath, this.mp2);
+        bus.export(this.objectPath, this.mp2Player);
+        bus.requestName(this.interfaceName, NameFlag.DO_NOT_QUEUE).catch(e => {
             console.error('Failed to request interface name', this.interfaceName);
             console.error(e);
         });
