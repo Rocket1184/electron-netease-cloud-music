@@ -74,6 +74,8 @@ function subscribeHandler(mutation, state) {
         case SET_AUDIO_VOLUME:
             if (typeof mutation.payload.mute === 'boolean') {
                 send('mute', state.ui.audioMute);
+            } else if (typeof mutation.payload.volume === 'number') {
+                send('mute', mutation.payload.volume === 0);
             }
             break;
         case RESTORE_UI_STATE:
@@ -116,8 +118,12 @@ export function injectStore(store) {
         store.dispatch('playNextTrack');
     });
     TrayEmitter.on('mute', () => {
-        const mute = !store.state.ui.audioMute;
-        store.dispatch('setAudioVolume', { mute });
+        const { audioMute, audioVolume } = store.state.ui;
+        if (audioVolume !== 0) {
+            store.dispatch('setAudioVolume', { mute: !audioMute });
+        } else {
+            store.dispatch('setAudioVolume', { volume: 50 });
+        }
     });
     TrayEmitter.on('get', () => {
         sendTrackMeta(store.state, store.getters.playing);
