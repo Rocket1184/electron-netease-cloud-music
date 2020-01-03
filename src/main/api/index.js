@@ -768,7 +768,7 @@ export async function getRelatedPlaylists(id) {
         const html = await client.get(`${BaseURL}/playlist?id=${id}`);
         const data = [];
         let match;
-        while (match = RelatedPlaylists.regexp.exec(html)) { // eslint-disable-line no-cond-assign
+        while ((match = RelatedPlaylists.regexp.exec(html)) !== null) {
             data.push({
                 name: decodeHTML(match[1]),
                 id: match[2],
@@ -823,7 +823,7 @@ export async function getRelatedAlbums(id) {
         const html = await client.get(`${BaseURL}/album?id=${id}`);
         const data = [];
         let match;
-        while (match = RelatedAlbums.regexp.exec(html)) { // eslint-disable-line no-cond-assign
+        while ((match = RelatedAlbums.regexp.exec(html)) !== null) {
             data.push({
                 id: RelatedPlaylists.trimId(match[1]),
                 name: decodeHTML(match[2]),

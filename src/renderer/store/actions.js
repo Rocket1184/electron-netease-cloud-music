@@ -457,8 +457,7 @@ export async function restorePlaylist({ commit }) {
             commit(types.RESTORE_PLAYLIST, { index, list, loopMode });
         }
     } catch (e) {
-        // eslint-disable-next-line no-console
-        console.info('restorePlaylist failed:', e);
+        console.info('restorePlaylist failed:', e); // eslint-disable-line no-console
     }
 }
 
@@ -789,8 +788,7 @@ export async function restoreRadio({ commit }) {
             commit(types.RESTORE_RADIO, { index, list });
         }
     } catch (e) {
-        // eslint-disable-next-line no-console
-        console.info('restoreRadio failed:', e);
+        console.info('restoreRadio failed:', e); // eslint-disable-line no-console
     }
 }
 

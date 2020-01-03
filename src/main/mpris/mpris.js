@@ -324,8 +324,8 @@ class MPRISEmitter extends EventEmitter {
         bus.export(this.objectPath, this.mp2);
         bus.export(this.objectPath, this.mp2Player);
         bus.requestName(this.interfaceName, NameFlag.DO_NOT_QUEUE).catch(e => {
-            console.error('Failed to request interface name', this.interfaceName);
-            console.error(e);
+            /* eslint-disable-next-line no-console */
+            console.error('Failed to request interface name', this.interfaceName, e);
         });
     }
 

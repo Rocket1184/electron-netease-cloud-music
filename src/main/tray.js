@@ -98,7 +98,7 @@ export class AppTray {
             { label: '退出', click: () => this.quit() }
         ];
         this.muted = false;
-        /** @type {import('@/util/tray').TrayTrack}*/
+        /** @type {import('@/util/tray').TrayTrack} */
         this.track = null;
         this.updateMenu();
         /**

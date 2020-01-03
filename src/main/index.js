@@ -59,10 +59,7 @@ function createMainWindow(settings, url = MainURL) {
             try {
                 require('./mpris/ipc').bindWindow(win);
             } catch (e) {
-                /* eslint-disable no-console */
-                console.error('Failed to load MPRIS module.');
-                console.error(e);
-                /* eslint-enable no-console */
+                console.error('Failed to load MPRIS module', e); // eslint-disable-line no-console
             }
             break;
     }

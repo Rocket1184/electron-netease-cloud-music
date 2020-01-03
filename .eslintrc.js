@@ -1,5 +1,9 @@
 module.exports = {
     root: true,
+    ignorePatterns: [
+        'dist/',
+        'build/'
+    ],
     parserOptions: {
         parser: 'babel-eslint',
         sourceType: 'module'
@@ -7,10 +11,7 @@ module.exports = {
     env: {
         browser: true,
         node: true,
-        es6: true
-    },
-    globals: {
-        BigInt: 'readonly'
+        es2020: true
     },
     plugins: [
         'vue'
@@ -21,6 +22,7 @@ module.exports = {
     ],
     rules: {
         'semi': 'error',
+        'no-console': 'error',
         'no-case-declarations': 'off',
         'require-atomic-updates': 'off'
     }

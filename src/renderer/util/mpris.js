@@ -28,7 +28,6 @@ function ipcSend(type, ...args) {
     d('🔺 %s %o', type, args);
 }
 
-
 /**
  * bind audio element and MPRIS Emitter
  * @param {HTMLAudioElement} audioEl
