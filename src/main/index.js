@@ -190,27 +190,23 @@ ipcMain.on('showLoginWindow', () => {
     loginWindow.loadURL(LoginURL);
     const ses = loginWindow.webContents.session;
     const wr = ses.webRequest;
-    wr.onCompleted({
-        urls: [
-            `${LoginURL}/weapi/*`
-        ]
-    }, (details) => {
-        if (details.url.includes('/login')) {
-            if (details.statusCode === 200 && Array.isArray(details.responseHeaders['set-cookie'])) {
-                ipcMain.once('getLoginCookie', event => {
-                    const cookie = {};
-                    ses.cookies.get({ url: LoginURL }, (err, cookies) => {
-                        for (const { name, value } of cookies) {
-                            cookie[name] = value;
-                        }
-                        event.sender.send('getLoginCookie', cookie);
-                        ses.clearCache(() => { });
-                        ses.clearStorageData({ storages: ['cookies', 'localstorage'] });
-                        loginWindow = null;
-                    });
+    wr.onCompleted({ urls: [`${LoginURL}/weapi/login`] }, details => {
+        if (details.statusCode === 200 && Array.isArray(details.responseHeaders['set-cookie'])) {
+            ipcMain.once('getLoginCookie', event => {
+                const cookie = {};
+                ses.cookies.get({ url: LoginURL }).then(cookies => {
+                    // TODO: send and save cookies in structured json format
+                    for (const { name, value } of cookies) {
+                        cookie[name] = value;
+                    }
+                    event.sender.send('getLoginCookie', cookie);
+                    ses.clearCache();
+                    ses.clearStorageData({ storages: ['cookies', 'localstorage'] });
+                    loginWindow.destroy();
+                    loginWindow = null;
                 });
-                loginWindow.close();
-            }
+            });
+            loginWindow.close();
         }
     });
 });
