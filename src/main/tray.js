@@ -29,28 +29,45 @@ function ellipsisText(str, length) {
     return str.substr(0, length) + '...';
 }
 
-let isKDE = false;
-let isGNOME = false;
-let isUnity = false;
-
-const DesktopEnvs = [
-    process.env['XDG_CURRENT_DESKTOP'] || '',
-    process.env['XDG_SESSION_DESKTOP'] || ''
-];
-
-for (const env of DesktopEnvs) {
-    if (env.endsWith('KDE')) {
-        isKDE = true;
-        break;
+function doDesktopHacks() {
+    let isKDE = false;
+    let isGNOME = false;
+    let isUnity = false;
+    const DesktopEnvs = [
+        process.env['XDG_CURRENT_DESKTOP'] || '',
+        process.env['XDG_SESSION_DESKTOP'] || ''
+    ];
+    for (const env of DesktopEnvs) {
+        if (env.endsWith('KDE')) {
+            isKDE = true;
+            break;
+        }
+        if (env.endsWith('GNOME')) {
+            isGNOME = true;
+            break;
+        }
+        if (env.endsWith('Unity')) {
+            isUnity = true;
+            break;
+        }
     }
-    if (env.endsWith('GNOME')) {
-        isGNOME = true;
-        break;
+    const xcd = process.env.XDG_CURRENT_DESKTOP;
+    const name = app.name;
+    const whatever = name.replace('electron', 'whatever');
+    if (isKDE) {
+        // KDE tray icon scale hack
+        process.env.XDG_CURRENT_DESKTOP = 'Unity';
+    } else if (isGNOME || isUnity) {
+        // GNOME tray icon override by icon theme's Electron icon hack
+        app.name = whatever;
     }
-    if (env.endsWith('Unity')) {
-        isUnity = true;
-        break;
-    }
+    return () => {
+        if (isKDE) {
+            process.env.XDG_CURRENT_DESKTOP = xcd;
+        } else if (isGNOME || isUnity) {
+            app.name = name;
+        }
+    };
 }
 
 export class AppTray {
@@ -67,15 +84,9 @@ export class AppTray {
         this.win = null;
         /** @type {import('electron').WebContents} */
         this.wc = null;
-        const xcd = process.env.XDG_CURRENT_DESKTOP;
-        const name = app.getName();
-        // KDE tray icon scale hack
-        if (isKDE) process.env.XDG_CURRENT_DESKTOP = 'Unity';
-        // GNOME tray icon override by icon theme's Electron icon hack
-        if (isGNOME || isUnity) app.setName(name.replace(/^electron/, 'whatever'));
+        const restore = doDesktopHacks();
         this.tray = new Tray(requireIcon(`tray.${color}`));
-        if (isKDE) process.env.XDG_CURRENT_DESKTOP = xcd;
-        if (isGNOME || isUnity) app.setName(name);
+        restore();
         // doesn't work when using 'appindicator'
         this.tray.on('click', () => this.send('raise'));
         // doesn't work on KDE Plasma
