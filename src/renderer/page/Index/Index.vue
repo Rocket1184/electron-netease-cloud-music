@@ -17,7 +17,7 @@
                         :to="{ name: 'playlist', params: { id: p.id } }"
                         :img="p.picUrl"
                         maskIcon="headset"
-                        :maskText="humanCount(p.playcount || p.playCount)"
+                        :maskText="(p.playcount || p.playCount) | humanCount"
                         :title="p.copywriter"
                         :itemTitle="p.name"></ScrollerItem>
                 </div>
@@ -32,6 +32,18 @@
                         :title="al.copywriter"
                         :itemTitle="al.name"
                         :itemSubTitle="al.artistName"></ScrollerItem>
+                </div>
+            </mu-card>
+            <mu-card class="card">
+                <div class="heading">推荐 MV</div>
+                <div class="scroller">
+                    <ScrollerItem v-for="v in mv"
+                        :key="v.id"
+                        :to="{ name: 'video', params: { id: v.id } }"
+                        :img="v.picUrl"
+                        :title="v.copywriter"
+                        :itemTitle="v.name"
+                        :itemSubTitle="v.artistName"></ScrollerItem>
                 </div>
             </mu-card>
         </div>
@@ -57,13 +69,41 @@ export default {
                 { title: '排行榜', icon: 'equalizer', to: { path: '/top' } }
             ],
             playlist: [],
-            album: []
+            album: [],
+            mv: []
         };
     },
     computed: {
         ...mapState(['user'])
     },
     methods: {
+        async getPlaylists() {
+            if (this.user.loginPending || this.user.loginValid) {
+                const res = await Api.getRecommendPlaylist();
+                if (res.code === 200) {
+                    this.playlist = res.recommend;
+                }
+            } else {
+                const res = await Api.getPersonalizedPlaylists();
+                if (res.code === 200) {
+                    this.playlist = res.result;
+                }
+            }
+        },
+        async getAlbums() {
+            const res = await Api.getNewAlbums();
+            if (res.code === 200) {
+                this.album = res.result;
+            }
+        },
+        async getMVs() {
+            const res = await Api.getRecommendMVs();
+            if (res.code === 200) {
+                this.mv = res.result;
+            }
+        }
+    },
+    filters: {
         humanCount
     },
     mounted() {
@@ -82,22 +122,9 @@ export default {
                 }
             });
         });
-        if (this.user.loginPending || this.user.loginValid) {
-            Api.getRecommendPlaylist().then(res => this.playlist = res.recommend);
-        } else {
-            Api.getPersonalizedPlaylists().then(res => this.playlist = res.result);
-        }
-        Api.getNewAlbums().then(res => {
-            if (res.code === 200) {
-                res.result.forEach(r => {
-                    if (r.alg === 'artistbased' || r.alg === 'tagbased' || r.alg === 'itembased') {
-                        this.album.unshift(r);
-                    } else {
-                        this.album.push(r);
-                    }
-                });
-            }
-        });
+        this.getPlaylists();
+        this.getAlbums();
+        this.getMVs();
     },
     components: {
         ActionItem,
