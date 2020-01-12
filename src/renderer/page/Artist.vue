@@ -43,7 +43,7 @@ export default {
     beforeRouteUpdate(to, from, next) {
         // this component is reused in the new route
         next();
-        this.nextTick(() => this.loadArtist());
+        this.$nextTick(() => this.loadArtist());
     },
     components: {
         ArtistDetail,
