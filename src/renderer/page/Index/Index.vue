@@ -58,6 +58,10 @@ import ActionItem from './ActionItem.vue';
 import ScrollerItem from './ScrollerItem.vue';
 import { humanCount } from '@/util/formatter';
 
+const algBlockList = [
+    'official_playlist_sceneRank'
+];
+
 export default {
     name: 'page-index',
     data() {
@@ -74,14 +78,24 @@ export default {
         };
     },
     computed: {
-        ...mapState(['user'])
+        ...mapState([
+            'user',
+            'settings'
+        ])
     },
     methods: {
+        filterRecommend(item) {
+            return algBlockList.includes(item.alg);
+        },
         async getPlaylists() {
             if (this.user.loginPending || this.user.loginValid) {
                 const res = await Api.getRecommendPlaylist();
                 if (res.code === 200) {
-                    this.playlist = res.recommend;
+                    if (this.settings.filterRcmd) {
+                        this.playlist = res.recommend.filter(r => !this.filterRecommend(r));
+                    } else {
+                        this.playlist = res.recommend;
+                    }
                 }
             } else {
                 const res = await Api.getPersonalizedPlaylists();

@@ -6,6 +6,7 @@ const DefaultSettings = {
     /** @type {Types.MusicQuality} */
     // @ts-ignore
     bitRate: 'l',
+    filterRcmd: false,
     windowBorder: true,
     windowZoom: null,
     showTrayIcon: false,
