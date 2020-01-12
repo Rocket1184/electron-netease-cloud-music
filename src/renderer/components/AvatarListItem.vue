@@ -2,14 +2,22 @@
     <mu-list-item avatar
         button
         class="avatar-li"
-        @click="$emit('click')">
+        v-bind="$attrs"
+        v-on="$listeners">
         <mu-list-item-action>
-            <mu-avatar>
-                <img :src="imgSrc">
-            </mu-avatar>
+            <slot>
+                <mu-avatar>
+                    <img :src="imgSrc">
+                </mu-avatar>
+            </slot>
         </mu-list-item-action>
         <mu-list-item-content>
-            <mu-list-item-title>{{title}}</mu-list-item-title>
+            <mu-list-item-title>
+                <mu-badge v-if="titleTag"
+                    :content="titleTag"
+                    color="primary"></mu-badge>
+                {{title}}
+            </mu-list-item-title>
             <mu-list-item-sub-title>{{subTitle}}</mu-list-item-sub-title>
         </mu-list-item-content>
     </mu-list-item>
@@ -21,16 +29,18 @@ import { sizeImg, HiDpiPx } from '@/util/image';
 export default {
     props: {
         img: {
+            type: String
+        },
+        title: {
             type: String,
             required: true
         },
-        title:{
+        subTitle: {
             type: String,
             required: true
         },
-        subTitle:{
-            type: String,
-            required: true
+        titleTag: {
+            type: String
         }
     },
     computed: {
