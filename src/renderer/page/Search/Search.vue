@@ -12,8 +12,7 @@
             <mu-tab value="user">用户</mu-tab>
         </mu-tabs>
         <div class="search-content">
-            <CenteredTip v-if="tab === 'user'"></CenteredTip>
-            <CenteredLoading v-else-if="ui.search.pending"></CenteredLoading>
+            <CenteredLoading v-if="ui.search.pending"></CenteredLoading>
             <CenteredTip v-else-if="haveSearched === false"
                 icon="search"
                 tip="右上角搜索框内输入，回车搜索！"></CenteredTip>
@@ -27,6 +26,8 @@
                 :tracks="ui.search.result.items"
                 :source="{ name: 'search', id: $route.query.keyword }"
                 :indexOffset="searchOffset"></TrackList>
+            <UserList v-else-if="tab === 'user'"
+                :users="ui.search.result.items"></UserList>
             <ArtistList v-else-if="tab === 'artist'"
                 :list="ui.search.result.items"></ArtistList>
             <AlbumList v-else-if="tab === 'album'"
@@ -58,6 +59,7 @@ import { mapActions, mapState } from 'vuex';
 import TrackList from '@/components/TrackList/TrackList.vue';
 import CenteredTip from '@/components/CenteredTip.vue';
 import CenteredLoading from '@/components/CenteredLoading.vue';
+import UserList from '@/components/UserList/UserList.vue';
 import VideoList from '@/components/VideoList.vue';
 import AlbumList from '@/components/AlbumList.vue';
 import ArtistList from '@/components/ArtistList.vue';
@@ -130,6 +132,7 @@ export default {
         TrackList,
         CenteredTip,
         CenteredLoading,
+        UserList,
         VideoList,
         AlbumList,
         ArtistList,
