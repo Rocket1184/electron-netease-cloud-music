@@ -620,7 +620,8 @@ export default {
         .control .mu-button-wrapper {
             color: #eee;
         }
-        .lyric {
+        .lyric,
+        .description {
             color: rgba(255, 255, 255, 0.6);
         }
     }
