@@ -62,7 +62,8 @@ const ThreadPrefix = {
     playlist: 'A_PL_0_',
     mv: 'R_MV_5_',
     video: 'R_VI_62_',
-    dj: 'A_DJ_1_'
+    dj: 'A_DJ_1_',
+    event: 'A_EV_2_'
 };
 
 export default {
