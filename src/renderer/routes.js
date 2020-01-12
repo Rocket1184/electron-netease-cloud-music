@@ -5,6 +5,7 @@ import Playlist from '@/page/Playlist.vue';
 import Album from '@/page/Album.vue';
 import Artist from '@/page/Artist.vue';
 import Video from '@/page/Video.vue';
+import User from '@/page/User.vue';
 import DjRadio from '@/page/DjRadio.vue';
 import Settings from '@/page/Settings/Settings.vue';
 import Favorite from '@/page/Favorite/Favorite.vue';
@@ -68,6 +69,12 @@ const routes = [
         name: 'video',
         path: '/video/:id',
         component: Video,
+        props: true
+    },
+    {
+        name: 'user',
+        path: '/user/:id',
+        component: User,
         props: true
     },
     {
