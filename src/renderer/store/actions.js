@@ -64,7 +64,7 @@ export function restoreUiState({ commit }) {
 export async function getUserInfo({ commit }) {
     const resp = await Api.getMyProfile();
     if (resp.code === 200) {
-        commit(types.SET_USER_INFO, resp.profile);
+        commit(types.SET_USER_INFO, resp);
     }
 }
 

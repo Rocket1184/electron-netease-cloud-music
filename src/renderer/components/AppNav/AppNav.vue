@@ -151,7 +151,6 @@ export default {
     },
     methods: {
         ...mapActions([
-            'logout',
             'checkin'
         ]),
         handleClose() {
@@ -176,14 +175,9 @@ export default {
             if (!this.user.loginValid) {
                 this.loginDlgShow = true;
             } else {
-                this.$confirm(
-                    '退出登录后将无法查看每日歌曲推荐，收藏的歌单等信息，确定吗？',
-                    '退出登录'
-                ).then(({ result }) => {
-                    if (result) {
-                        this.logout();
-                    }
-                });
+                this.drawerOpen = false;
+                if (this.$route.name === 'profile') return;
+                this.$router.push({ name: 'profile' });
             }
         },
         async handleSign() {

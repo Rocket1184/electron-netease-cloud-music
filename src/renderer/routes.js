@@ -6,6 +6,7 @@ import Album from '@/page/Album.vue';
 import Artist from '@/page/Artist.vue';
 import Video from '@/page/Video.vue';
 import User from '@/page/User.vue';
+import Profile from '@/page/Profile.vue';
 import DjRadio from '@/page/DjRadio.vue';
 import Settings from '@/page/Settings/Settings.vue';
 import Favorite from '@/page/Favorite/Favorite.vue';
@@ -76,6 +77,11 @@ const routes = [
         path: '/user/:id',
         component: User,
         props: true
+    },
+    {
+        name: 'profile',
+        path: '/profile',
+        component: Profile
     },
     {
         name: 'djradio',
