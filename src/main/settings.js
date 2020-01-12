@@ -12,6 +12,7 @@ export const defaultSettings = {
     autoPlay: false,
     autoSign: false,
     bitRate: 'l',
+    filterRcmd: false,
     windowBorder: process.platform !== 'darwin',
     windowZoom: null,
     showTrayIcon: false,
