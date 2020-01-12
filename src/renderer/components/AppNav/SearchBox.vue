@@ -77,7 +77,7 @@ export default {
                 query: {
                     keyword: this.searchText
                 }
-            });
+            }).catch(() => { /* noop */ });
         },
         handleCompleteSelect(value, item) {
             // event 'select' would be triggered by selecting text in textField
