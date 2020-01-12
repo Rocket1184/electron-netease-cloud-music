@@ -7,12 +7,14 @@
                 <div class="info">
                     <div class="name">{{playlist.name}}</div>
                     <div class="creation-info">
-                        <div class="creator">
+                        <router-link class="creator"
+                            tag="div"
+                            :to="{ name: 'user', params: { id: playlist.creator.id } }">
                             <mu-avatar class="avatar">
                                 <img :src="creatorAvatarSrc">
                             </mu-avatar>
                             <span class="creator-name">{{playlist.creator.nickname}}</span>
-                        </div>
+                        </router-link>
                         <span class="create-time  mu-item-after-text">创建于 {{createTime}}</span>
                     </div>
                 </div>

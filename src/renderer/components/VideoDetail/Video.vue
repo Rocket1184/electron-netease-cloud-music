@@ -6,7 +6,7 @@
             <router-link v-for="u in video.creator"
                 :key="u.id"
                 class="creator"
-                :to="{ path: '/user', params: { id: u.id } }"
+                :to="{ name: 'user', params: { id: u.id } }"
                 tag="a">{{u.name}}</router-link>
         </div>
         <video ref="videoEl"
