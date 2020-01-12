@@ -1272,9 +1272,79 @@ export function getDjRadioCreatedBy(userId, limit = 1000, offset = 0) {
 }
 
 /**
- * @param {number} uid
+ * 用户信息
+ * @param {number} id
  * @returns {Promise<Types.UserInfoRes>}
  */
-export function getUserInfo(uid) {
-    return client.postE(`/v1/user/detail/${uid}`, { all: true });
+export function getUserInfo(id) {
+    return client.postE(`/v1/user/detail/${id}`, { all: true });
+}
+
+/**
+ * 关注用户
+ * @param {number} id
+ * @returns {Promise<Types.FollowUserRes>}
+ */
+export function followUser(id) {
+    return client.postE(`/user/follow/${id}`);
+}
+
+/**
+ * 取消关注用户
+ * @param {number} id
+ * @returns {Promise<Types.ApiRes>}
+ */
+export function unfollowUser(id) {
+    return client.postE(`/user/delfollow/${id}`);
+}
+
+/**
+ * 用户的粉丝
+ * @param {number} userId
+ * @param {number} time
+ * @param {number} limit
+ * @returns {Promise<Types.UserFollowersRes>}
+ */
+export function getUserFollowers(userId, time = -1, limit = 30) {
+    return client.postE(`/user/getfolloweds/${userId}`, { userId, time, limit });
+}
+
+/**
+ * 用户关注的人
+ * @param {number} userId
+ * @param {number} offset
+ * @param {number} limit
+ * @param {boolean} order
+ * @returns {Promise<Types.UserFollowsRes>}
+ */
+export function getUserFollows(userId, offset = 0, limit = 30, order = true) {
+    return client.postE(`/user/getfollows/${userId}`, { offset, limit, order });
+}
+
+/**
+ * 用户动态
+ * @param {number} id
+ * @param {number} time
+ * @param {number} limit
+ * @returns {Promise<Types.UserEventsRes>}
+ */
+export function getUserEvents(id, time = -1, limit = 30) {
+    return client.postE(`/event/get/${id}`, { time, limit });
+}
+
+/**
+ * 用户的置顶动态
+ * @param {number} userId
+ * @returns {Promise<Types.UserTopEventsRes>}
+ */
+export function getUserTopEvents(userId) {
+    return client.postE(`/event/top/get`, { userId });
+}
+
+/**
+ * 用户的大学信息
+ * @param {number} userId
+ */
+export function getUserCollege(userId) {
+    return client.postE(`/college/usercollege/get`, { userId });
 }

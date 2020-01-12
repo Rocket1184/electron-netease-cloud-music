@@ -2136,6 +2136,106 @@ namespace Types {
         userId: number;
         version: number;
     }
+
+    export interface FollowUserRes extends ApiRes {
+        followContent: string;
+        followTimeContent: string;
+        py: string;
+        user: Profile;
+    }
+
+    export interface UserFollowsRes extends ApiRes {
+        follow: Profile[];
+        more: boolean;
+        touchCount: number;
+    }
+
+    export interface UserFollowersRes extends ApiRes {
+        followeds: Profile[];
+        more: boolean;
+    }
+
+    export interface Event {
+        actId: number;
+        actName: null;
+        eventTime: number;
+        expireTime: number;
+        forwardCount: number;
+        id: number;
+        info: EventInfo;
+        insiteForwardCount: number;
+        json: string;
+        lotteryEventData: null;
+        pendantData: null;
+        pics: EventPic[];
+        rcmdInfo: null;
+        showTime: number;
+        tmplId: number;
+        topEvent: boolean;
+        type: number;
+        user: Profile;
+        uuid: null | string;
+    }
+
+    export interface EventInfo {
+        commentCount: number;
+        commentThread: EventCommentThread;
+        comments: null;
+        latestLikedUsers: null;
+        liked: boolean;
+        likedCount: number;
+        resourceId: number;
+        resourceType: number;
+        shareCount: number;
+        threadId: string;
+    }
+
+    export interface EventCommentThread {
+        commentCount: number;
+        hotCount: number;
+        id: string;
+        latestLikedUsers: {
+            s: number;
+            t: number;
+        }[];
+        likedCount: number;
+        resourceId: number;
+        resourceInfo: {
+            creator: null;
+            eventType?: number;
+            id: number;
+            imgUrl: null;
+            name: string;
+            userId: number;
+        };
+        resourceOwnerId: number;
+        resourceTitle: string;
+        resourceType: number;
+        shareCount: number;
+    }
+
+    export interface EventPic {
+        format: string;
+        height: number;
+        originUrl: string;
+        pcRectangleUrl: string;
+        pcSquareUrl: string;
+        rectangleUrl: string;
+        squareUrl: string;
+        width: number;
+    }
+
+
+    export interface UserEventsRes extends ApiRes {
+        events: Event[];
+        lasttime: number;
+        more: boolean;
+        size: number;
+    }
+
+    export interface UserTopEventsRes extends ApiRes {
+        data: Event;
+    }
 }
 
 export as namespace Types;
