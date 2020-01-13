@@ -6,19 +6,35 @@
             tip="暂无动态"></CenteredTip>
         <template v-else>
             <EventItem v-if="topEvent"
-                top
                 :event="topEvent"></EventItem>
             <EventItem v-for="e in events"
                 :key="e.id"
                 :event="e"></EventItem>
         </template>
+        <div v-if="more"
+            class="event-more">
+            <div v-if="loadingMore"
+                class="event-more-loading">
+                <span class="event-more-text">正在加载</span>
+                <mu-circular-progress color="secondary"
+                    :size="16"
+                    :stroke-width="2"></mu-circular-progress>
+            </div>
+            <mu-button v-else
+                flat
+                small
+                @click="handleLoadMore">加载更多
+                <mu-icon right
+                    value="expand_more"></mu-icon>
+            </mu-button>
+        </div>
     </div>
 </template>
 
 <script>
 import Api from '@/api/ipc';
 
-import EventItem from '@/components/EventItem.vue';
+import EventItem from '@/components/EventDetail/EventItem.vue';
 import CenteredTip from '@/components/CenteredTip.vue';
 import CenteredLoading from '@/components/CenteredLoading.vue';
 
@@ -31,6 +47,8 @@ export default {
     data() {
         return {
             loading: true,
+            more: false,
+            loadingMore: false,
             total: -1,
             lastTime: -1,
             events: [],
@@ -43,7 +61,7 @@ export default {
             const id = this.user.profile.userId;
             const p1 = Api.getUserEvents(id).then(r => {
                 if (r.code === 200) {
-                    this.total = r.size;
+                    this.more = r.more;
                     this.lastTime = r.lasttime;
                     this.events = r.events;
                 }
@@ -54,6 +72,17 @@ export default {
                 }
             });
             Promise.all([p1, p2]).then(() => this.loading = false);
+        },
+        handleLoadMore() {
+            this.loadingMore = true;
+            Api.getUserEvents(this.user.profile.userId, this.lastTime).then(r => {
+                if (r.code === 200) {
+                    this.more = r.more;
+                    this.lastTime = r.lasttime;
+                    this.events = this.events.concat(r.events);
+                }
+                this.loadingMore = false;
+            });
         }
     },
     mounted() {
@@ -72,6 +101,19 @@ export default {
     margin: 8px 24px;
     .event-item:not(:first-child) {
         border-top: 1px solid rgba(0, 0, 0, 0.1);
+    }
+    .event-more {
+        margin: 24px 44px;
+        font-size: 13px;
+        .event-more-loading {
+            padding: 0 8px;
+            height: 28px;
+            display: flex;
+            align-items: center;
+            .event-more-text {
+                margin-right: 10px;
+            }
+        }
     }
 }
 </style>
