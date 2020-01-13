@@ -1326,10 +1326,11 @@ export function getUserFollows(userId, offset = 0, limit = 30, order = true) {
  * @param {number} id
  * @param {number} time
  * @param {number} limit
+ * @param {boolean} getcounts
  * @returns {Promise<Types.UserEventsRes>}
  */
-export function getUserEvents(id, time = -1, limit = 30) {
-    return client.postE(`/event/get/${id}`, { time, limit });
+export function getUserEvents(id, time = -1, limit = 20, getcounts = true) {
+    return client.postE(`/event/get/${id}`, { time, limit, getcounts });
 }
 
 /**
