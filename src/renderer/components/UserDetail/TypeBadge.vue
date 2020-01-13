@@ -15,7 +15,15 @@ export const UserType = {
     4: { icon: 'music_note', class: 'user-type-4', name: '网易音乐人' },
     10: { icon: 'check', class: 'user-type-10', name: '认证的官方帐号' },
     200: { icon: 'star_border', class: 'user-type-200', name: '云音乐达人' },
-    201: { icon: 'star_border', class: 'user-type-201', name: '云音乐达人' }
+    201: { icon: 'star_border', class: 'user-type-201', name: '云音乐达人' },
+    202: { icon: 'star_border', class: 'user-type-201', name: '云音乐达人' }
+};
+
+export const DefaultUserType = {
+    icon: 'help_outline',
+    class: 'user-type-unknown',
+    name: '未知的用户类型，快来 GitHub 开个 Issue ！',
+    unknown: true
 };
 
 export default {
@@ -27,7 +35,7 @@ export default {
     },
     computed: {
         userType() {
-            return UserType[this.type];
+            return UserType[this.type] || DefaultUserType;
         }
     }
 };
@@ -49,7 +57,11 @@ export default {
     background-color: #f44336; // red500
 }
 .user-type-200,
-.user-type-201 {
+.user-type-201,
+.user-type-202 {
     background-color: #fbc02d; // yellow700
+}
+.user-type-unknown {
+    background-color: lightslategrey;;
 }
 </style>

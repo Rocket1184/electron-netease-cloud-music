@@ -71,7 +71,7 @@ import { mapState } from 'vuex';
 import Api from '@/api/ipc';
 import { sizeImg, HiDpiPx } from '@/util/image';
 
-import TypeBadge, { UserType } from './TypeBadge.vue';
+import TypeBadge, { UserType, DefaultUserType } from './TypeBadge.vue';
 import GenderIcon from './GenderIcon.vue';
 import Music from './Music.vue';
 import Event from './Event.vue';
@@ -122,7 +122,7 @@ export default {
         description() {
             const p = this.user.profile;
             if (!p.userType) return null;
-            return p.description || UserType[p.userType].name;
+            return p.description || (UserType[p.userType] || DefaultUserType).name;
         },
         follows() {
             const p = this.user.profile;
