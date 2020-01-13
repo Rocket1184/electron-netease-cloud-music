@@ -18,7 +18,7 @@
             v-if="total > pageSize">
             <mu-button v-if="total === Infinity"
                 flat
-                @click="handleLoadMore">加载更多<mu-icon value="expand_more"></mu-icon>
+                @click="handleLoadMore">加载下一页<mu-icon value="chevron_right"></mu-icon>
             </mu-button>
             <mu-pagination v-else
                 :total="total"
