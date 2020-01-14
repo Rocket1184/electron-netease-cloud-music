@@ -45,7 +45,7 @@ export default {
         },
         forwardJson() {
             if (!this.json.event) return null;
-            return JSON.parse(this.josn.event.json);
+            return JSON.parse(this.json.event.json);
         }
     },
     components: {

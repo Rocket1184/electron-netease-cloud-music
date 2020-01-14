@@ -25,9 +25,7 @@ export default {
             const j = this.json;
             if (!j) return null;
             let r = {};
-            if (j.event) {
-                // TODO: forward event
-            } else if (j.song) {
+            if (j.song) {
                 // TODO: add song to playlist directly?
                 const e = j.song;
                 r = {
