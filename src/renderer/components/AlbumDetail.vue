@@ -195,8 +195,9 @@ export default {
         }
         .side {
             flex-grow: 1;
+            overflow: hidden;
             .info {
-                padding-left: 16px;
+                margin-left: 16px;
                 .name {
                     font-size: 20px;
                     line-height: 30px;
@@ -210,12 +211,20 @@ export default {
                         margin: 9px 0;
                         display: flex;
                         align-items: center;
+                        max-width: calc(100% - 150px);
+                        .avatar {
+                            flex-shrink: 0;
+                        }
                         .creator-name {
                             margin: 0 1em;
+                            white-space: nowrap;
+                            overflow: hidden;
+                            text-overflow: ellipsis;
                         }
                     }
                     .create-time {
                         font-size: inherit;
+                        min-width: 140px;
                     }
                 }
             }
