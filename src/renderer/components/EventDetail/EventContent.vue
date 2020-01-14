@@ -26,6 +26,7 @@
         <div class="event-text">{{ json.msg }}</div>
         <div v-if="pics.length"
             class="event-pics">
+            <!-- TODO: 查看大图 -->
             <img class="event-img"
                 v-for="(p, index) in pics"
                 :src="p"
@@ -60,7 +61,7 @@ export default {
             return sizeImg(this.event.user.avatarUrl, HiDpiPx(40));
         },
         pics() {
-            return this.event.pics.map(p => sizeImg(p.squareUrl, HiDpiPx(100)));
+            return this.event.pics.map(p => sizeImg(p.pcSquareUrl, HiDpiPx(100)));
         },
         shareType() {
             if (this.json.event) return '转发：';
