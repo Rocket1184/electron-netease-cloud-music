@@ -141,41 +141,49 @@
                     <div class="scroller"
                         :style="lyricScrollerStyle">
                         <template v-if="ui.lyric.mlrc">
-                            <p v-for="(line, index) in ui.lyric.mlrc.lyrics"
+                            <div v-for="(line, index) in ui.lyric.mlrc.lyrics"
                                 class="line"
                                 :key="index"
                                 :class="{active: index == currentLyricIndex}"
                                 :data-time="line.timestamp">
-                                <span>{{line.content}}</span>
-                                <br>
-                                <span>{{line.trans}}</span>
-                            </p>
+                                <div>{{line.content}}</div>
+                                <div>{{line.trans}}</div>
+                            </div>
                         </template>
                         <template v-else-if="ui.lyric.lrc">
-                            <p v-for="(line, index) in ui.lyric.lrc.lyrics"
+                            <div v-for="(line, index) in ui.lyric.lrc.lyrics"
                                 :key="index"
                                 class="line"
                                 :class="{active: index == currentLyricIndex}"
                                 :data-time="line.timestamp">
-                                <span>{{line.content}}</span>
-                            </p>
+                                {{line.content}}
+                            </div>
                         </template>
                         <template v-else-if="ui.lyric.txtLyric">
-                            <pre>{{ui.lyric.txtLyric}}</pre>
-                            <p><br><br></p>
+                            <pre class="txt">{{ui.lyric.txtLyric}}</pre>
                         </template>
                         <template v-else>
                             <p>暂无歌词</p>
                         </template>
                         <template v-if="ui.lyric.lyricUser">
-                            <p><br></p>
-                            <p>
-                                <span>歌词贡献者：{{ui.lyric.lyricUser.nickname}}</span>
-                                <template v-if="ui.lyric.transUser">
-                                    <br>
-                                    <span>翻译贡献者：{{ui.lyric.transUser.nickname}}</span>
-                                </template>
-                            </p>
+                            <div class="contributors">
+                                <div>
+                                    <span>歌词贡献者：</span>
+                                    <router-link class="contributor"
+                                        replace
+                                        :to="{ name: 'user', params: { id: ui.lyric.lyricUser.userid } }">
+                                        {{ ui.lyric.lyricUser.nickname }}
+                                    </router-link>
+                                </div>
+                                <div v-if="ui.lyric.transUser">
+                                    <span>翻译贡献者：</span>
+                                    <router-link class="contributor"
+                                        replace
+                                        :to="{ name: 'user', params: { id: ui.lyric.transUser.userid } }">
+                                        {{ ui.lyric.transUser.nickname }}
+                                    </router-link>
+                                </div>
+                            </div>
                         </template>
                     </div>
                 </div>
@@ -591,6 +599,18 @@ export default {
                     .active {
                         color: white;
                         text-shadow: 0 0 4px black, 0 2px 4px rgba(0, 0, 0, 0.7);
+                    }
+                    .txt {
+                        margin-bottom: 84px;
+                    }
+                    .contributors {
+                        margin-top: 56px;
+                    }
+                    .contributor {
+                        color: inherit;
+                        &:hover {
+                            text-decoration: underline;
+                        }
                     }
                 }
             }
