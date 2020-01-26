@@ -94,6 +94,8 @@ namespace Models {
         mvSize?: number;
         /** usually an empty string */
         info: string;
+        /** artist's NCM account */
+        accountId: number;
     }
 
     export class Album {

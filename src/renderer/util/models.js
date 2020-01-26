@@ -69,6 +69,7 @@ export class Artist {
         this.albumSize = o.albumSize;
         this.mvSize = o.mvSize;
         this.info = o.info;
+        this.accountId = o.accountId || 0;
     }
 }
 

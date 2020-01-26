@@ -4,13 +4,25 @@
             <div class="inner"
                 :style="bkgImgStyle">
                 <div class="name-wrapper">
-                    <span>
-                        <span class="shadow">{{artist.detail.name}}</span>
+                    <span class="left">
+                        <span class="shadow name">{{artist.detail.name}}</span>
                         <span class="shadow alia"
                             v-for="alia in artist.detail.alias"
                             :key="alia">{{alia}}</span>
                     </span>
                     <mu-button flat
+                        small
+                        class="shadow account"
+                        color="white"
+                        v-if="accountRoute"
+                        :to="accountRoute"
+                        @click="handleFollow">
+                        <mu-icon left
+                            value="person_outline"></mu-icon>
+                        <span class="shaodw">个人主页</span>
+                    </mu-button>
+                    <mu-button flat
+                        small
                         class="shadow"
                         color="white"
                         @click="handleFollow">
@@ -83,6 +95,10 @@ export default {
         ...mapState(['user']),
         bkgImgStyle() {
             return bkgImg(sizeImg(this.artist.detail.picUrl, 640, 300));
+        },
+        accountRoute() {
+            const id = this.artist.detail.accountId;
+            return id ? { name: 'user', params: { id } } : null;
         },
         detailCompo() {
             return DetailCompo[this.tab];
@@ -165,17 +181,26 @@ export default {
             .name-wrapper {
                 padding: 0 16px 8px;
                 display: flex;
-                justify-content: space-between;
-                font-size: 24px;
+                justify-content: flex-start;
+                align-items: flex-end;
                 color: white;
-                background: linear-gradient(transparent, rgba(0, 0, 0, 0.75));
+                background: linear-gradient(transparent, rgba(0, 0, 0, 0.5));
                 .shadow {
                     text-shadow: 0 2px 6px rgba(0, 0, 0, 0.5);
                 }
-                .alia {
-                    font-size: 18px;
-                    opacity: 0.8;
-                    margin-left: 0.5em;
+                .left {
+                    margin-right: auto;
+                    .name {
+                        font-size: 24px;
+                    }
+                    .alia {
+                        font-size: 18px;
+                        opacity: 0.8;
+                        margin-left: 0.5em;
+                    }
+                }
+                .account {
+                    margin-right: 8px;
                 }
             }
         }
