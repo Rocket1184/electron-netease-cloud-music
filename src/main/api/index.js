@@ -106,9 +106,10 @@ export function getUserPlaylist(uid) {
 /**
  * 用户听歌记录
  * @param {number} uid
- * @param {0|1} type `0`: 所有时间, `1`: 最近一周
+ * @param {0 | 1} type 0: 所有时间; 1: 最近一周
+ * @returns {Promise<Types.UserPlayRecordRes>}
  */
-export function getMusicRecord(uid, type = 0) {
+export function getUserPlayRecord(uid, type = 0) {
     return client.postW('/v1/play/record', {
         limit: 1000,
         offset: 0,
