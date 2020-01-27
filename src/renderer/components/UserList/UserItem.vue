@@ -1,8 +1,7 @@
 <template>
     <mu-list-item class="user-item"
         button
-        :to="route"
-        :ripple="false">
+        :to="route">
         <div class="user-avatar-wrapper">
             <img class="user-avatar"
                 :src="avatar">
