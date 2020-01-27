@@ -15,14 +15,6 @@
             <!-- <mu-sub-header>音乐专栏</mu-sub-header> -->
             <mu-sub-header>创建的歌单</mu-sub-header>
             <!-- TODO: 歌单分页展示，或者上 RecycleScroller -->
-            <AvatarListItem :title="`${user.profile.nickname}的听歌排行`"
-                :subTitle="`累计听歌 ${user.listenSongs} 首`"
-                :to="{ path: '/listen_record' }">
-                <mu-avatar color="#1b1b1b"
-                    text-color="white">
-                    <mu-icon value="equalizer"></mu-icon>
-                </mu-avatar>
-            </AvatarListItem>
             <AvatarListItem v-for="p in listCreated"
                 :key="'p' + p.id"
                 :img="p.coverImgUrl"

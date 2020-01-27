@@ -59,7 +59,8 @@
             mode="out-in">
             <keep-alive>
                 <component :is="detailCompo"
-                    :user="user"></component>
+                    :user="user"
+                    :isSelf="isSelf"></component>
             </keep-alive>
         </transition>
     </div>
@@ -74,17 +75,20 @@ import { sizeImg, HiDpiPx } from '@/util/image';
 import TypeBadge, { UserType, DefaultUserType } from './TypeBadge.vue';
 import GenderIcon from './GenderIcon.vue';
 import Music from './Music.vue';
+import Record from './Record.vue';
 import Event from './Event.vue';
 import About from './About.vue';
 
 const Tabs = [
     ['music', '音乐'],
+    ['record', '排行'],
     ['event', '动态'],
     ['about', '关于']
 ];
 
 const DetailCompo = {
     music: Music,
+    record: Record,
     event: Event,
     about: About
 };
@@ -201,6 +205,7 @@ export default {
         TypeBadge,
         GenderIcon,
         Music,
+        Record,
         Event,
         About
     }
@@ -209,7 +214,10 @@ export default {
 
 <style lang="less">
 .user-detail {
-    overflow-x: hidden;
+    // a hack to make RecyclerScroller work
+    // https://github.com/Akryum/vue-virtual-scroller/blob/v1.0.0-rc.2/src/components/RecycleScroller.vue#L462
+    // https://github.com/olahol/scrollparent.js/blob/2.0.1/scrollparent.js#L18-L28
+    overflow: hidden overlay;
     .user-bkg {
         position: relative;
         height: 300px;
