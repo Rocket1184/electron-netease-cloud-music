@@ -2,13 +2,15 @@
     <div class="user-about">
         <template v-if="user.profile.allAuthTypes">
             <h2 class="subhead">认证信息</h2>
-            <p class="para"
-                v-for="(a, i) in user.profile.allAuthTypes"
-                :key="i">
-                <TypeBadge class="auth-badge"
-                    :type="a.type"></TypeBadge>
-                <span class="auth-desc">{{ a.desc }}</span>
-            </p>
+            <template v-for="(a, i) in user.profile.allAuthTypes">
+                <p class="para"
+                    v-if="a.desc.length > 0"
+                    :key="i">
+                    <TypeBadge class="auth-badge"
+                        :type="a.type"></TypeBadge>
+                    <span class="auth-desc">{{ a.desc }}</span>
+                </p>
+            </template>
         </template>
         <h2 class="subhead">个人信息</h2>
         <p class="para">等级：<span>{{ user.level }}</span></p>
@@ -64,14 +66,11 @@ export default {
             return result;
         },
     },
-    methods: {
-    },
     components: {
         TypeBadge
     }
 };
 </script>
-
 
 <style lang="less">
 .user-about {
