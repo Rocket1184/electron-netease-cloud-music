@@ -5,10 +5,10 @@ APP_NAME="Electron NCM"
 PKG_NAME="electron-netease-cloud-music"
 ARTIFACT_NAME="electron-ncm"
 PLATFORMS=(linux darwin)
-BUCKET_NAME="$PKG_NAME"
+BUCKET_NAME="electron-ncm-ci"
 VERSION_HASH="${TRAVIS_COMMIT:0:7}"
 PKG_VER="$VERSION_HASH"
-QSHELL_VER="v2.4.0"
+QSHELL_VER="v2.4.1"
 QSHELL_DIR="node_modules/.cache/qshell/$QSHELL_VER"
 QSHELL_BIN="$QSHELL_DIR/bin/qshell-linux-x64-$QSHELL_VER"
 
