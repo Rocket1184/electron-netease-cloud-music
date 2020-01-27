@@ -46,6 +46,7 @@ store.dispatch('restoreUiState').then(() => {
 });
 
 window.onbeforeunload = () => {
+    store.dispatch('storeCredential');
     store.dispatch('storePlaylist');
     store.dispatch('storeUiState');
     store.dispatch('storeRadio');

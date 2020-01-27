@@ -88,6 +88,7 @@ export async function restoreUserInfo({ commit, dispatch }, payload) {
         cookie = payload;
     } else {
         try { cookie = JSON.parse(localStorage.getItem('cookie')); } catch (e) { /* noop */ }
+        try { commit(types.SET_USER_INFO, JSON.parse(localStorage.getItem('user'))); } catch (e) { /* noop */ }
     }
     if (cookie) {
         commit(types.SET_LOGIN_PENDING, true);
@@ -95,7 +96,6 @@ export async function restoreUserInfo({ commit, dispatch }, payload) {
         const resp = await Api.refreshLogin();
         commit(types.SET_LOGIN_PENDING, false);
         if (resp.code === 200) {
-            dispatch('storeCredential');
             dispatch('getUserInfo').then(() => {
                 dispatch('setLoginValid');
             });
