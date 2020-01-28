@@ -8,9 +8,9 @@
                 :json="forwardJson"></EventContent>
         </div>
         <div class="event-buttons">
-            <!-- TODO: like event -->
             <mu-button flat
-                small>
+                small
+                @click="handleLike">
                 <mu-icon left
                     size="16"
                     :color="event.info.liked ? 'primary': ''"
@@ -46,6 +46,11 @@ export default {
         forwardJson() {
             if (!this.json.event) return null;
             return JSON.parse(this.json.event.json);
+        }
+    },
+    methods: {
+        handleLike() {
+            this.$emit('like', this.event);
         }
     },
     components: {

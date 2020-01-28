@@ -6,10 +6,12 @@
             tip="暂无动态"></CenteredTip>
         <template v-else>
             <EventItem v-if="topEvent"
-                :event="topEvent"></EventItem>
+                :event="topEvent"
+                @like="handleLike"></EventItem>
             <EventItem v-for="e in events"
                 :key="e.id"
-                :event="e"></EventItem>
+                :event="e"
+                @like="handleLike"></EventItem>
         </template>
         <div v-if="more"
             class="event-more">
@@ -56,6 +58,12 @@ export default {
         };
     },
     methods: {
+        pickTopEvent() {
+            if (!this.topEvent) return;
+            const te = this.events.find(e => e.id === this.topEvent.id);
+            if (!te) return;
+            this.topEvent = te;
+        },
         getEvents() {
             this.loading = true;
             const id = this.user.profile.userId;
@@ -71,7 +79,21 @@ export default {
                     this.topEvent = r.data;
                 }
             });
-            Promise.all([p1, p2]).then(() => this.loading = false);
+            Promise.all([p1, p2]).then(() => {
+                this.pickTopEvent();
+                this.loading = false;
+            });
+        },
+        /**
+         * @param {Types.Event} event
+         */
+        async handleLike(event) {
+            const requestLike = event.info.liked ? Api.unlikeResource : Api.likeResource;
+            const resp = await requestLike(event.info.threadId);
+            if (resp.code === 200) {
+                event.info.likedCount += event.info.liked ? -1 : 1;
+                event.info.liked = !event.info.liked;
+            }
         },
         handleLoadMore() {
             this.loadingMore = true;
@@ -80,6 +102,7 @@ export default {
                     this.more = r.more;
                     this.lastTime = r.lasttime;
                     this.events = this.events.concat(r.events);
+                    this.pickTopEvent();
                 }
                 this.loadingMore = false;
             });
