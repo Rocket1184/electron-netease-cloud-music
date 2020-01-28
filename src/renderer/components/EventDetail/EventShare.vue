@@ -55,7 +55,7 @@ export default {
                 r = {
                     img: e.imgurl,
                     title: e.name,
-                    subTitle: e.artists.map(ar => ar.name).join(' / '),
+                    subTitle: (e.artists || [e.artist]).map(ar => ar.name).join(' / '),
                     route: { name: 'video', params: { id: e.id } }
                 };
             } else if (j.video) {
