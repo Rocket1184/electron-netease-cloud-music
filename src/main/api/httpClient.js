@@ -183,9 +183,9 @@ class HttpClient {
      * @param {string} url
      * @param {object} data
      */
-    postL(url, data = {}) {
+    postL(url, data = {}, method = 'POST') {
         let body = {
-            method: 'POST',
+            method,
             url: `http://music.163.com/api${url}`,
             params: data
         };
@@ -197,7 +197,7 @@ class HttpClient {
             },
             body: qs.stringify(encodeLinux(body))
         };
-        return this.post('https://music.163.com/linux/forward', init);
+        return this.post('https://music.163.com/api/linux/forward', init);
     }
 
     /**

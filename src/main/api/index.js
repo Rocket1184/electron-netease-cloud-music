@@ -191,7 +191,7 @@ export function getListDetailE(id, n = 1000) {
  * @returns {Promise<Types.SongDetailRes>}
  */
 export function getSongDetail(ids) {
-    return client.postW('/v3/song/detail', {
+    return client.postE('/v3/song/detail', {
         c: `[${ids.map(id => JSON.stringify({ id }))}]`,
         // ids: `[${ ids }]`
     });
@@ -699,6 +699,15 @@ export function getAlbumDetailW(id) {
         ext: true,
         private_cloud: true
     });
+}
+
+/**
+ * album detail, linux forward api
+ * @param {number|string} id
+ * @returns {Promise<Types.AlbumDetailWRes>}
+ */
+export function getAlbumDetailL(id) {
+    return client.postL(`/v1/album/${id}`, { id }, 'GET');
 }
 
 /**
