@@ -10,48 +10,51 @@
 import crypto from 'crypto';
 import qs from 'querystring';
 
-/**
- * @param {string} text
- * @param {string} secKey
- */
-function weapiAesEncrypt(text, secKey) {
-    let cipher = crypto.createCipheriv('aes-128-cbc', secKey, '0102030405060708');
-    return cipher.update(text, 'utf8', 'base64') + cipher.final('base64');
-}
-
-const WEAPI = {
+const WeApi = {
     pk: BigInt('0x' + '010001'),
     md: BigInt('0x' + '00e0b509f6259df8642dbc35662901477df22677ec152b5ff68ace615bb7b725152b3ab17a876aea8a5aa76d2e417629ec4ee341f56135fccf695280104e0312ecbda92557c93870114af6c9d05c4f7f0c3685b7a46bee255932575cce10b424d813cfe4875d3e82047b97ddef52741d546b8e289dc6935b3ece0462db0a22b8e7'),
-    bigModPow(a, b = WEAPI.pk, mod = WEAPI.md) {
+    /**
+     * @param {bigint} a
+     * @param {bigint} b
+     * @param {bigint} mod
+     */
+    modPow(a, b = WeApi.pk, mod = WeApi.md) {
         let result = BigInt(1);
-        for (var i = BigInt(0); i < b; i += BigInt(1)) {
+        for (let i = BigInt(0); i < b; i += BigInt(1)) {
             result = (result * a) % mod;
         }
         return result;
+    },
+    /**
+     * @param {string} text
+     * @param {string} key
+     */
+    aes(text, key) {
+        const cipher = crypto.createCipheriv('aes-128-cbc', key, '0102030405060708');
+        return cipher.update(text, 'utf8', 'base64') + cipher.final('base64');
+    },
+    /**
+     * @param {string} text
+     */
+    rsa(text) {
+        const textHex = Buffer.from(text.split('').reverse().join(''), 'utf8').toString('hex');
+        const tb = BigInt('0x' + textHex);
+        const rs = WeApi.modPow(tb).toString(16);
+        return rs.padStart(256, '0');
     }
 };
-
-/**
- * @param {string} text
- */
-function weapiRsaEncrypt(text) {
-    let textHex = Buffer.from(text.split('').reverse().join(''), 'utf8').toString('hex');
-    let tb = BigInt('0x' + textHex);
-    let rs = WEAPI.bigModPow(tb).toString(16);
-    return rs.padStart(256, '0');
-}
 
 /**
  * @param {any} payload
  */
 export function encodeWeb(payload) {
-    let json = JSON.stringify(payload);
-    let secKey = crypto.randomFillSync(Buffer.alloc(12)).toString('base64');
-    let encSecKey = weapiRsaEncrypt(secKey);
-    let encText = weapiAesEncrypt(json, '0CoJUm6Qyw8W8jud');
-    encText = weapiAesEncrypt(encText, secKey);
+    const json = JSON.stringify(payload);
+    const encJson = WeApi.aes(json, '0CoJUm6Qyw8W8jud');
+    const secKey = crypto.randomFillSync(Buffer.alloc(12)).toString('base64');
+    const params = WeApi.aes(encJson, secKey);
+    const encSecKey = WeApi.rsa(secKey);
     return {
-        params: encText,
+        params,
         encSecKey
     };
 }
@@ -78,13 +81,22 @@ export function encodeLinux(payload) {
  * @see https://juejin.im/post/5b1b6e4b6fb9a01e87569e96
  */
 
-const EApiKey = 'e82ckenh8dichen8';
+const EApi = {
+    key: 'e82ckenh8dichen8',
+    /**
+     * string hex md5 in lowercase
+     * @param {string} text
+     */
+    md5(text) {
+        return crypto.createHash('md5').update(text).digest('hex');
+    }
+};
 
 /**
  * @param {string|Buffer} buffer
  */
 export function decodeEApi(buffer) {
-    const dc = crypto.createDecipheriv('aes-128-ecb', EApiKey, null);
+    const dc = crypto.createDecipheriv('aes-128-ecb', EApi.key, null);
     let text;
     if (buffer instanceof Buffer) {
         text = dc.update(buffer, undefined, 'utf8') + dc.final('utf8');
@@ -95,23 +107,15 @@ export function decodeEApi(buffer) {
 }
 
 /**
- * string hex md5 in lowercase
- * @param {string} text
- */
-function md5(text) {
-    return crypto.createHash('md5').update(text).digest('hex');
-}
-
-/**
  * @param {string} uri
  * @param {any} data
  */
 export function encodeEApi(uri, data) {
     const prefix = uri.replace(/^\/eapi/, '/api');
     const json = JSON.stringify(data);
-    const suffix = md5(`nobody${prefix}use${json}md5forencrypt`);
+    const suffix = EApi.md5(`nobody${prefix}use${json}md5forencrypt`);
     const text = `${prefix}-36cd479b6b5-${json}-36cd479b6b5-${suffix}`;
-    const cipher = crypto.createCipheriv('aes-128-ecb', EApiKey, null);
+    const cipher = crypto.createCipheriv('aes-128-ecb', EApi.key, null);
     /**
      * thanks to cipher's AutoPadding, we can just encrypt it as-is.
      * otherwise, we must pad it manually with PKCS#7:
