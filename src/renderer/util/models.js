@@ -17,10 +17,10 @@ export class User {
 }
 
 export class Track {
-    constructor(o, source) {
+    constructor(o, source, album) {
         this.id = o.id;
         this.name = o.name;
-        this.album = o.al || o.album;
+        this.album = album || o.al || o.album;
         this.picUrl = this.album.picUrl;
         this.cd = o.cd;
         this.no = o.no;
@@ -79,7 +79,7 @@ export class Album {
         this.name = o.name;
         this.alias = o.alias;
         this.transNames = o.transNames;
-        this.artist = o.artist || o.artists[0];
+        this.artist = new Artist(o.artist || o.artists[0]);
         this.artists = o.artists;
         this.copyrightId = o.copyrightId;
         this.picId = o.picId;
@@ -90,7 +90,7 @@ export class Album {
         this.info = o.info;
         this.description = o.description;
         this.subType = o.subType;
-        this.songs = (o.songs || []).map(t => new Track(t));
+        this.songs = (o.songs || []).map(t => new Track(t, null, this));
     }
 }
 

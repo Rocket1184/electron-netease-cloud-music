@@ -38,7 +38,7 @@ export async function getPlaylistDetail(id, limit = 0) {
 
 export async function getAlbumDetail(id) {
     /** @type {Types.AlbumDetailWRes} */
-    const resp = await send('getAlbumDetailW', id);
+    const resp = await send('getAlbumDetailL', id);
     if (resp.code === 200) {
         // @ts-ignore
         tracks.upsert(resp.songs);
