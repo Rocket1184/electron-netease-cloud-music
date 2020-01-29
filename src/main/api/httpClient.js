@@ -6,7 +6,7 @@ import debug from 'debug';
 import fetch from 'node-fetch';
 import { CookieJar, CookieAccessInfo } from 'cookiejar';
 
-import { encodeWeb, encodeLinux, encodeEApi, decodeEApi } from './codec';
+import { encodeWeb, encodeLinux, encodeEApi, decodeEApi, getCacheKey } from './codec';
 
 const d = debug('HTTP');
 
@@ -204,10 +204,14 @@ class HttpClient {
      * eapi request
      * @param {string} url
      * @param {object} data
+     * @param {boolean} putCacheKey
      */
-    async postE(url, data = {}) {
+    async postE(url, data = {}, putCacheKey = false) {
         url = `https://music.163.com/eapi${url}`;
         let body = Object.assign({ e_r: 'true' }, data);
+        if (putCacheKey) {
+            body['cache_key'] = getCacheKey(body);
+        }
         // default eapi cookies
         body.header = Object.assign({
             os: 'pc',

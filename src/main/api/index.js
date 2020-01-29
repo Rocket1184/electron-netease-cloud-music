@@ -711,21 +711,12 @@ export function getAlbumDetailL(id) {
 }
 
 /**
- * **DO NOT USE** album detail, eapi.
+ * album detail, eapi.
  * @param {number|string} id
  * @returns {Promise<Types.AlbumDetailRes>}
  */
 export function getAlbumDetailE(id) {
-    return client.postE('/album/v3/detail', {
-        id,
-        // TODO: find out what is this `cache_key`
-        cache_key: crypto.randomFillSync(Buffer.alloc(32)).toString('base64')
-    });
-    /**
-     * it seems that `cache_key` is only related to album id
-     * 35864444 BA06KMtT+Jm5DZSrXsuZ0jGEx2migzblBUw9lQhLRk8=
-     * 71853061 A8n1QcV7AJngH5IqI6PCRh6+VMaxh6RGw+7gM294MTA=
-     */
+    return client.postE('/album/v3/detail', { id }, true);
 }
 
 /**
@@ -887,16 +878,13 @@ export function getPersonalizedPlaylists(limit = 10, offset = 0) {
 }
 
 /**
- * **DO NOT USE** artist detail, eapi.
+ * artist detail, eapi.
  * @param {number|string} id
+ * @param {number} top
  * @returns {Promise<Types.ArtistDetailERes>}
  */
-export function getArtistDetailE(id) {
-    return client.postE('/artist/v3/detail', {
-        id,
-        top: '50',
-        cache_key: ''
-    });
+export function getArtistDetailE(id, top = 50) {
+    return client.postE('/artist/v3/detail', { id, top }, true);
 }
 
 /**
