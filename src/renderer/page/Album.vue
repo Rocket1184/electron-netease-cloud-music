@@ -26,7 +26,7 @@
 
 <script>
 import Api from '@/api/ipc';
-import { Album } from '@/util/models';
+import { getAlbumDetail } from '@/api/typed';
 
 import AlbumDetail from '@/components/AlbumDetail.vue';
 import AvatarListItem from '@/components/AvatarListItem.vue';
@@ -51,9 +51,8 @@ export default {
         loadAlbum() {
             this.detailLoading = true;
             this.relatedLoading = true;
-            Api.getAlbumDetailW(this.id).then(res => {
-                res.album.songs = res.songs;
-                this.album = new Album(res.album);
+            getAlbumDetail(this.id).then(res => {
+                this.album = res;
                 this.detailLoading = false;
             });
             Api.getRelatedAlbums(this.id).then(res => {
