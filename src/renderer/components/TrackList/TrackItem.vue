@@ -44,9 +44,6 @@ export default {
         track: {
             required: true
         },
-        status: {
-            required: false
-        },
         shortcuts: {
             type: Array,
             required: false
@@ -55,8 +52,7 @@ export default {
     computed: {
         dynamicClassName() {
             return {
-                'track--grey': (this.status && this.status.code !== 200)
-                    || (this.track.privilege && this.track.privilege.st !== 0)
+                'track--grey': (this.track.privilege && this.track.privilege.st !== 0)
             };
         }
     },
@@ -105,8 +101,8 @@ export default {
         }
     }
     .duration {
-        width: 50px;
-        padding-left: 3px;
+        width: 48px;
+        margin-left: 2px;
     }
     .buttons {
         display: flex;
