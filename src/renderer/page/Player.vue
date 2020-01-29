@@ -83,7 +83,7 @@
             <p class="source">
                 <template v-if="isDjRadioProgram">
                     <span>电台：</span>
-                    <router-link class="album link"
+                    <router-link class="source-link"
                         :to="{ name: 'djradio', params: { id: playing.source.id } }"
                         replace>{{playing.source.djradio.radio.name}}</router-link>
                 </template>
