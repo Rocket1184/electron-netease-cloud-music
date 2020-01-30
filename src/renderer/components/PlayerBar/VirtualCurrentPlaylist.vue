@@ -265,13 +265,13 @@ export default {
             margin: 0;
             padding: 0;
             min-height: unset;
-            margin-right: 8px;
+            line-height: 26px;
             .mu-text-field-input {
                 height: unset;
             }
             .mu-input-action-icon {
                 padding-right: 0;
-                font-size: 18px;
+                font-size: 20px;
             }
         }
         .mu-button-small {
