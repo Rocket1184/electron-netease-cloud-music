@@ -39,6 +39,7 @@ const WeApi = {
     rsa(text) {
         const textHex = Buffer.from(text.split('').reverse().join(''), 'utf8').toString('hex');
         const tb = BigInt('0x' + textHex);
+        /** @type {string} */
         const rs = WeApi.modPow(tb).toString(16);
         return rs.padStart(256, '0');
     }
@@ -153,4 +154,24 @@ export function getCacheKey(params) {
     const cipher = crypto.createCipheriv('aes-128-ecb', ')(13daqP@ssw0rd~', null);
     const key = cipher.update(text, 'utf8', 'base64') + cipher.final('base64');
     return key;
+}
+
+/**
+ * calculate picture hash from picture id
+ * `https://p{1,2,3,4}.music.126.net/${hash}/${id}.jpg`
+ * 
+ * Credit:
+ * @see https://github.com/metowolf/Meting
+ * 
+ * @param {string | number} id
+ */
+export function encodePicUrl(id) {
+    const key = Buffer.from('3go8&$8*3*3h0k(2)2', 'utf8');
+    const bytes = Buffer.from(`${id}`, 'utf8');
+    for (let i = 0; i < bytes.length; i++) {
+        bytes[i] = bytes[i] ^ key[i % key.length];
+    }
+    const hash = crypto.createHash('md5');
+    const md5 = hash.update(bytes).digest('base64');
+    return md5.replace(/\//g, '_').replace(/\+/g, '-');
 }
