@@ -1,5 +1,5 @@
 <template>
-    <div class="event-list">
+    <div class="user-event">
         <CenteredLoading v-if="loading"></CenteredLoading>
         <CenteredTip v-else-if="events.length === 0"
             icon="cloud_off"
@@ -120,7 +120,7 @@ export default {
 </script>
 
 <style lang="less">
-.event-list {
+.user-event {
     margin: 8px 24px;
     .event-item:not(:first-child) {
         border-top: 1px solid rgba(0, 0, 0, 0.1);

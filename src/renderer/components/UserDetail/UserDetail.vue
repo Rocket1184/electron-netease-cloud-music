@@ -271,7 +271,10 @@ export default {
         background: transparent;
     }
     .user-music,
-    .event-list {
+    .user-record,
+    .user-event,
+    .user-about {
+        min-height: calc(~'100vh - 176px');
         .centered-loading {
             height: 160px;
         }
