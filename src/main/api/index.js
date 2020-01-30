@@ -10,6 +10,7 @@ import { decodeHTML } from 'entities';
 import Cache from './cache';
 import migrate from './migrate';
 import Client from './httpClient';
+import { encodePicUrl } from './codec';
 import * as Settings from '../settings';
 import MusicServer from './musicServer';
 import { getDiskUsage, clearDirectory } from '../util/fs';
@@ -195,6 +196,26 @@ export function getSongDetail(ids) {
         c: `[${ids.map(id => JSON.stringify({ id }))}]`,
         // ids: `[${ ids }]`
     });
+}
+
+/**
+ * 通过 pic 获取 picUrl
+ * @param {number | string} id
+ * @param {1|2|3|4} cdn
+ */
+export function getPicUrl(id, cdn = 3) {
+    try {
+        const hash = encodePicUrl(id);
+        return {
+            code: 200,
+            url: `https://p${cdn}.music.126.net/${hash}/${id}.jpg`
+        };
+    } catch (e) {
+        return {
+            code: 500,
+            msg: e.message
+        };
+    }
 }
 
 const QualityMap = {
