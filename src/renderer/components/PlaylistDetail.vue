@@ -65,9 +65,8 @@
             </div>
         </div>
         <div class="tracks">
-            <mu-sub-header>曲目列表</mu-sub-header>
-            <mu-divider></mu-divider>
-            <VirtualTrackList :source="trackSource"
+            <VirtualTrackList title="曲目列表"
+                :source="trackSource"
                 :trackIds="playlist.trackIds"
                 @load="handleTracksLoad"></VirtualTrackList>
         </div>

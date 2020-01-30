@@ -1,20 +1,29 @@
 <template>
     <div class="tracklist tracklist--virtual">
+        <template v-if="title">
+            <mu-sub-header>
+                <span>{{ title }}</span>
+                <mu-text-field ref="findInput"
+                    v-model="findInput"
+                    placeholder="查找歌曲 ..."
+                    :action-icon="findInput.length > 0 ? 'close' : null"
+                    :action-click="clearFind"></mu-text-field>
+            </mu-sub-header>
+            <mu-divider></mu-divider>
+        </template>
         <CenteredLoading v-if="loading"></CenteredLoading>
         <template v-else-if="trackDetails.length !== 0">
-            <RecycleScroller class="list"
-                page-mode
-                :items="trackDetails"
+            <RecycleScroller page-mode
+                :items="tracksToShow"
                 :item-size="40"
                 key-field="id">
-                <template v-slot="{item, index}">
-                    <TrackItem :index="1 + index + indexOffset"
+                <template v-slot="{ item, index }">
+                    <TrackItem :index="(indexMap.has(index) ? indexMap.get(index) : index) + 1 + indexOffset"
                         :track="item"
-                        :status="status[item.id]"
                         :shortcuts="shortcuts"
-                        @dblclick="handlePlay(index)"
+                        @dblclick="handlePlayMapped(index)"
                         @collect="handleCollect(item.id)"
-                        @queue="handleQueue(index)"></TrackItem>
+                        @queue="handleQueueMapped(index)"></TrackItem>
                 </template>
             </RecycleScroller>
         </template>
@@ -26,8 +35,8 @@
 
 <script>
 import { getSongDetail } from '@/api/typed';
+import { workerExecute } from '@/worker/message';
 
-import Api from '@/api/ipc';
 import TrackList from './TrackList.vue';
 import TrackItem from './TrackItem.vue';
 import CenteredTip from '@/components/CenteredTip.vue';
@@ -36,6 +45,10 @@ import CenteredLoading from '@/components/CenteredLoading.vue';
 export default {
     extends: TrackList,
     props: {
+        title: {
+            type: String,
+            required: false
+        },
         tracks: {
             type: Array,
             required: false
@@ -49,11 +62,17 @@ export default {
         return {
             loading: false,
             details: [],
-            status: {}
+            findInput: '',
+            filteredList: [],
+            indexMap: new Map()
         };
     },
     computed: {
         trackDetails() {
+            return this.details;
+        },
+        tracksToShow() {
+            if (this.findInput.length > 0) return this.filteredList;
             return this.details;
         }
     },
@@ -61,15 +80,32 @@ export default {
         async updateTrackDetails() {
             this.loading = true;
             const ids = this.trackIds.map(i => i.id);
-            Api.getMusicUrlE(ids, 'l').then(pr => {
-                for (const d of pr.data) {
-                    this.status[d.id] = { code: d.code };
-                }
-            });
             this.details = await getSongDetail(ids);
             this.$emit('load', this.details);
             this.loading = false;
         },
+        handlePlayMapped(index) {
+            return this.handlePlay(this.indexMap.has(index) ? this.indexMap.get(index) : index);
+        },
+        handleQueueMapped(index) {
+            return this.handleQueue(this.indexMap.has(index) ? this.indexMap.get(index) : index);
+        },
+        handleFind() {
+            if (this.findInput.length > 0) {
+                workerExecute('filterTracks', this.findInput, this.details).then(res => {
+                    this.filteredList = res.result;
+                    this.indexMap = res.indexMap;
+                });
+            } else {
+                this.filteredList = [];
+                this.indexMap.clear();
+            }
+        },
+        clearFind() {
+            this.findInput = '';
+            this.indexMap.clear();
+            this.filteredList = [];
+        }
     },
     created() {
         if (this.tracks) {
@@ -78,16 +114,32 @@ export default {
             this.updateTrackDetails();
         }
     },
+    mounted() {
+        if (!this.$refs.findInput) return;
+        /** @type {HTMLInputElement} */
+        const input = this.$refs.findInput.$el.getElementsByTagName('input')[0];
+        input.addEventListener('keydown', ev => {
+            if (ev.key === 'Escape') {
+                this.clearFind();
+                input.blur();
+            }
+        });
+    },
     watch: {
         tracks(val) {
             if (val) {
                 this.details = val;
             }
+            this.handleFind();
         },
         trackIds(val) {
             if (val) {
                 this.updateTrackDetails();
             }
+            this.handleFind();
+        },
+        findInput() {
+            this.handleFind();
         }
     },
     components: {
@@ -97,3 +149,27 @@ export default {
     }
 };
 </script>
+
+<style lang="less">
+.tracklist--virtual {
+    .mu-sub-header {
+        display: flex;
+        align-items: center;
+        padding: 0 0 0 16px;
+        .mu-input {
+            margin: 0 0 0 auto;
+            padding: 0;
+            font-size: 14px;
+            min-height: unset;
+            line-height: 30px;
+            .mu-text-field-input {
+                height: unset;
+            }
+            .mu-input-action-icon {
+                padding: 0 2px;
+                font-size: 20px;
+            }
+        }
+    }
+}
+</style>
