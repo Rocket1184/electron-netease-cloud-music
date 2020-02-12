@@ -38,10 +38,9 @@
                 sub-title="根据你的音乐口味生成，每天 6:00 更新">
                 <div class="recommend-header"></div>
             </mu-card-media>
-            <PlayTracks :tracks="recommend.songs"
-                :source="trackSoruce"></PlayTracks>
+            <PlayTracks :tracks="recommend.songs"></PlayTracks>
             <RecommendSongList :tracks="recommend.songs"
-                :source="trackSoruce"></RecommendSongList>
+                @dislike="handleDislike"></RecommendSongList>
         </template>
         <CenteredTip v-else
             icon="nature_people"
@@ -58,7 +57,7 @@ import CenteredTip from '@/components/CenteredTip.vue';
 import PlayTracks from '@/components/PlayTracks.vue';
 import RecommendSongList from './RecommendSongList.vue';
 
-const trackSoruce = {
+const RecommendSource = {
     name: 'recommend'
 };
 
@@ -69,13 +68,13 @@ export default {
         };
     },
     computed: {
-        ...mapState(['recommend', 'user']),
-        trackSoruce() { return trackSoruce; }
+        ...mapState(['recommend', 'user'])
     },
     methods: {
         ...mapActions([
             'updateRecommendSongs',
-            'updateRecommendStatistics'
+            'updateRecommendStatistics',
+            'dislikeRecommend'
         ]),
         shouldUpdateSongs() {
             if (this.recommend.timestamp < 0) return true;
@@ -90,10 +89,22 @@ export default {
         fetchData() {
             if (this.shouldUpdateSongs()) {
                 this.loading = true;
-                this.updateRecommendSongs()
+                this.updateRecommendSongs({ source: RecommendSource })
                     .then(() => this.loading = false);
             }
             this.updateRecommendStatistics();
+        },
+        async handleDislike(id) {
+            const resp = await this.dislikeRecommend({ id, source: RecommendSource });
+            if (resp.code === 200) {
+                if (resp.data.id) {
+                    this.$toast.message('已替换歌曲');
+                } else {
+                    this.$toast.message('已标记为不感兴趣');
+                }
+            } else {
+                this.$toast.message(`${resp.code}: ${resp.msg}`);
+            }
         }
     },
     mounted() {

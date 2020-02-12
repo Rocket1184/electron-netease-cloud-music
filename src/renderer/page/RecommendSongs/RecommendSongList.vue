@@ -20,8 +20,6 @@
 </template>
 
 <script>
-import { mapActions } from 'vuex';
-
 import TrackItem from '@/components/TrackList/TrackItem.vue';
 import TrackList from '@/components/TrackList/TrackList.vue';
 import CenteredTip from '@/components/CenteredTip.vue';
@@ -52,18 +50,8 @@ export default {
         }
     },
     methods: {
-        ...mapActions(['dislikeRecommend']),
-        async handleDislike(id) {
-            const resp = await this.dislikeRecommend(id);
-            if (resp.code === 200) {
-                if (resp.data.id) {
-                    this.$toast.message('已替换歌曲');
-                } else {
-                    this.$toast.message('已标记为不感兴趣');
-                }
-            } else {
-                this.$toast.message(`${resp.code}: ${resp.msg}`);
-            }
+        handleDislike(id) {
+            this.$emit('dislike', id);
         }
     },
     components: {

@@ -590,10 +590,14 @@ export async function updateUserAlbums({ commit }) {
 
 /**
  * @param {ActionContext} param0
+ * @param {{ source: { name: string } }} payload
  */
-export async function updateRecommendSongs({ commit }) {
+export async function updateRecommendSongs({ commit }, { source }) {
     const resp = await Api.getRecommendSongs();
     if (resp.code === 200) {
+        resp.recommend.forEach(song => {
+            song.source = source;
+        });
         commit(types.SET_RECOMMEND_SONGS, resp.recommend);
     }
 }
@@ -610,10 +614,12 @@ export async function updateRecommendStatistics({ commit }) {
 
 /**
  * @param {ActionContext} param0
+ * @param {{ id: number; source: { name: string } }} payload
  */
-export async function dislikeRecommend({ commit }, id) {
+export async function dislikeRecommend({ commit }, { id, source }) {
     const resp = await Api.dislikeRecommend(id);
     if (resp.code === 200) {
+        resp.data.source = source;
         commit(types.REPLACE_RECOMMEND_SONG, { id, track: resp.data });
     }
     return resp;
