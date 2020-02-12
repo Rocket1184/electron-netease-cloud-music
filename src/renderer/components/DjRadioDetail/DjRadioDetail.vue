@@ -60,9 +60,7 @@
             </div>
         </div>
         <div class="tracks">
-            <mu-sub-header>节目</mu-sub-header>
-            <mu-divider></mu-divider>
-            <CenteredLoading v-if="programsLoading"></CenteredLoading>
+            <CenteredLoading v-if="programs.length === 0 && programsLoading"></CenteredLoading>
             <DjRadioProgramList v-else
                 ref="programList"
                 :programs="programs"
@@ -73,6 +71,8 @@
 
 <script>
 import { mapActions, mapState } from 'vuex';
+import throttle from 'lodash/throttle';
+
 import { getDjRadioProgram } from '@/api/typed';
 
 import CenteredLoading from '../CenteredLoading.vue';
@@ -124,9 +124,10 @@ export default {
             'subscribeDjRadio',
             'unsubscribeDjRadio'
         ]),
-        async getPrograms() {
+        async getPrograms(offset = 0) {
             this.programsLoading = true;
-            this.programs = await getDjRadioProgram(this.djradio.id, 500);
+            const programs = await getDjRadioProgram(this.djradio.id, 100, offset);
+            this.programs.push(...programs);
             this.programsLoading = false;
         },
         async handlePlayAll() {
@@ -154,11 +155,23 @@ export default {
             } catch (e) {
                 this.$toast.message(`订阅电台失败 ●﹏● ： ${e.code}`);
             }
+        },
+        handleScroll() {
+            const { clientHeight, scrollHeight, scrollTop } = this.$el.parentElement;
+            if (scrollHeight - clientHeight - scrollTop > 10) return;
+            this.getPrograms(this.programs.length);
         }
     },
     created() {
         this.shouldSubscribed = this.djradio.subed;
         this.getPrograms();
+    },
+    mounted() {
+        this.handleScrollThrottled = throttle(this.handleScroll, 200);
+        this.$el.parentElement.addEventListener('scroll', this.handleScrollThrottled, { passive: true });
+    },
+    beforeDestroy() {
+        this.$el.parentElement.removeEventListener('scroll', this.handleScrollThrottled);
     },
     components: {
         CenteredLoading,
