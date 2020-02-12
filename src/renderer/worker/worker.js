@@ -23,6 +23,28 @@ export function filterTracks(w, tracks) {
 
 MethodMap.set('filterTracks', filterTracks);
 
+/**
+ * filter djradio program name and description
+ * @param {string} w key word
+ * @param {Models.DjRadioProgram[]} programs
+ */
+export function filterDjRadioPrograms(w, programs) {
+    const kw = w.toLowerCase();
+    const result = [];
+    const indexMap = new Map();
+    for (let i = 0; i < programs.length; i++) {
+        const p = programs[i];
+        if (p.description.toLowerCase().includes(kw) ||
+            p.mainSong.name.toLowerCase().includes(kw)) {
+            indexMap.set(result.length, i);
+            result.push(p);
+        }
+    }
+    return { result, indexMap };
+}
+
+MethodMap.set('filterDjRadioPrograms', filterDjRadioPrograms);
+
 const oscvs = new OffscreenCanvas(64, 64);
 const oscvsCtx = oscvs.getContext('2d');
 
