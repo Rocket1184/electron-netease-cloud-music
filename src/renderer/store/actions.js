@@ -72,6 +72,7 @@ export async function getUserInfo({ commit }) {
  * @param {ActionContext} context
  */
 export async function storeCredential({ state }) {
+    if (!state.user.loginValid) return;
     const user = state.user.info;
     localStorage.setItem('user', JSON.stringify(user));
     const cookie = await Api.getCookie();
