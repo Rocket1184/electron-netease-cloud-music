@@ -4,7 +4,7 @@
         :detailLoading="detailLoading">
         <template #list>
             <mu-list class="related">
-                <mu-list-item>TA 的其他热门专辑</mu-list-item>
+                <mu-list-item>其他热门专辑</mu-list-item>
                 <div v-if="relatedLoading"
                     class="progress-wrapper">
                     <mu-circular-progress color="secondary"
