@@ -23,6 +23,9 @@ const MainBkgColor = {
     dark: '#303030'
 };
 
+// disable electron's poor MPRIS implementation
+app.commandLine.appendSwitch('disable-features', 'HardwareMediaKeyHandling,MediaSessionService');
+
 /**
  * @param {import('./settings').defaultSettings} [settings]
  * @param {string} [url]
@@ -46,6 +49,7 @@ function createMainWindow(settings, url = MainURL) {
             nodeIntegrationInWorker: IsDev,
             contextIsolation: false,
             autoplayPolicy: 'no-user-gesture-required',
+            disableBlinkFeatures: 'MediaSession,MediaSessionPosition,MediaSessionSeeking', // this disables `navigator.mediaSession`
             additionalArguments: [`--initial-settings=${JSON.stringify(settings)}`]
         }
     });
@@ -72,6 +76,7 @@ function createMainWindow(settings, url = MainURL) {
 }
 
 if (app.requestSingleInstanceLock()) {
+    app.allowRendererProcessReuse = true;
     app.on('ready', async () => {
         const settings = await Settings.get();
         // do not display default menu bar
