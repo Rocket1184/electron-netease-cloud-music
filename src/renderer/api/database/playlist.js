@@ -32,16 +32,16 @@ export function insert(index, tracks) {
             .toArray();
         const uniq = tracks.filter(track => exists.findIndex(e => track.id === e.track.id) < 0);
         const count = uniq.length;
+        if (count <= 0) return;
         /** @type {PlaylistRecord[]} */
         const pendingItems = await playlistTable
             .where('index')
             .aboveOrEqual(index)
             .toArray();
-        const pendingIds = pendingItems.map(item => item.track.id);
-        await playlistTable
-            .where('track.id')
-            .anyOf(pendingIds)
-            .modify(item => item.index += count);
+        for (const item of pendingItems) {
+            item.index += count;
+        }
+        await playlistTable.bulkPut(pendingItems);
         await playlistTable.bulkAdd(wrapTracks(uniq, index));
     });
 }
@@ -60,13 +60,12 @@ export function remove(index, count = 1) {
         /** @type {PlaylistRecord[]} */
         const pendingItems = await playlistTable
             .where('index')
-            .aboveOrEqual(index + count)
+            .aboveOrEqual(index)
             .toArray();
-        const pendingIds = pendingItems.map(item => item.track.id);
-        await playlistTable
-            .where('track.id')
-            .anyOf(pendingIds)
-            .modify(item => item.index -= count);
+        for (const item of pendingItems) {
+            item.index -= count;
+        }
+        await playlistTable.bulkPut(pendingItems);
     });
 }
 

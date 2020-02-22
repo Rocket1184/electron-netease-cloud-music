@@ -30,11 +30,11 @@ export function append(tracks) {
             .anyOf(tracks.map(t => t.id))
             .toArray();
         const uniq = tracks.filter(track => exists.findIndex(e => e.track.id === track.id) < 0);
+        if (uniq.length <= 0) return;
         /** @type {RadioRecord} */
         const last = await radioTable
             .orderBy('index')
-            .reverse()
-            .first();
+            .last();
         const offset = last ? last.index + 1 : 0;
         await radioTable.bulkAdd(wrapTracks(uniq, offset));
     });
