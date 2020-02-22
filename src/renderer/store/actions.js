@@ -474,11 +474,14 @@ export async function restorePlaylist({ commit }) {
                 DbPlaylist.replace(list);
             } else {
                 list = await DbPlaylist.get();
+                if (index > list.length) {
+                    index = list.length - 1;
+                }
             }
             commit(types.RESTORE_PLAYLIST, { index, list, loopMode });
         }
     } catch (e) {
-        console.info('restorePlaylist failed:', e); // eslint-disable-line no-console
+        console.error('restorePlaylist failed:', e); // eslint-disable-line no-console
     }
 }
 
@@ -810,11 +813,14 @@ export async function restoreRadio({ commit }) {
                 DbRadio.replace(list);
             } else {
                 list = await DbRadio.get();
+                if (index > list.length) {
+                    index = list.length - 1;
+                }
             }
             commit(types.RESTORE_RADIO, { index, list });
         }
     } catch (e) {
-        console.info('restoreRadio failed:', e); // eslint-disable-line no-console
+        console.error('restoreRadio failed:', e); // eslint-disable-line no-console
     }
 }
 
