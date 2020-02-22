@@ -183,7 +183,7 @@ export default {
             if (this.$route.name === 'player') {
                 this.$router.replace(location);
             } else {
-                this.$router.push(location);
+                this.$router.push(location).catch(() => { /* noop */ });
             }
         },
         handleSourceClick(source) {
