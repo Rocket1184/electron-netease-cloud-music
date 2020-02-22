@@ -97,7 +97,7 @@ export function getMyProfile() {
  * @returns {Promise<Types.UserPlaylistRes>}
  */
 export function getUserPlaylist(uid) {
-    return client.postW('/user/playlist', {
+    return client.postE('/user/playlist', {
         uid,
         offset: 0,
         limit: 1000,
@@ -111,7 +111,7 @@ export function getUserPlaylist(uid) {
  * @returns {Promise<Types.UserPlayRecordRes>}
  */
 export function getUserPlayRecord(uid, type = 0) {
-    return client.postW('/v1/play/record', {
+    return client.postE('/v1/play/record', {
         limit: 1000,
         offset: 0,
         total: true,
@@ -125,7 +125,7 @@ export function getUserPlayRecord(uid, type = 0) {
  * @returns {Promise<Types.RecommendSongsRes>}
  */
 export function getRecommendSongs() {
-    return client.postW('/v2/discovery/recommend/songs', {
+    return client.postE('/v2/discovery/recommend/songs', {
         limit: 20,
         offset: 0,
         total: true
@@ -138,7 +138,7 @@ export function getRecommendSongs() {
  * @returns {Promise<Types.DislikeRecommendRes>}
  */
 export function dislikeRecommend(id) {
-    return client.postW('/v2/discovery/recommend/dislike', {
+    return client.postE('/v2/discovery/recommend/dislike', {
         resId: id,
         resType: 4,
         sceneType: 1
@@ -150,7 +150,7 @@ export function dislikeRecommend(id) {
  * @returns {Promise<Types.RecommendPlaylistRes>}
  */
 export function getRecommendPlaylist() {
-    return client.postW('/v1/discovery/recommend/resource');
+    return client.postE('/v1/discovery/recommend/resource');
 }
 
 /**
@@ -159,7 +159,7 @@ export function getRecommendPlaylist() {
  * @param {'bysong_rt'|'hotbased'} alg `bysong_rt`: 根据收藏的单曲推荐, `hotbased`: 热门推荐
  */
 export function dislikePlaylist(id, alg) {
-    return client.postW('/v2/discovery/recommend/dislike', {
+    return client.postE('/v2/discovery/recommend/dislike', {
         resId: id,
         resType: 1,
         type: alg
@@ -173,7 +173,7 @@ export function dislikePlaylist(id, alg) {
  * @returns {Promise<Types.ListDetailRes>}
  */
 export function getListDetail(id, n = 1000) {
-    return client.postW('/v3/playlist/detail', { id, n });
+    return client.postE('/v3/playlist/detail', { id, n });
 }
 
 /**
@@ -627,7 +627,7 @@ export function uncollectTrack(pid, ...tracks) {
  * @returns {Promise<Types.SearchSuggestRes>}
  */
 export function getSearchSuggest(s) {
-    return client.postW('/search/suggest/web', { s });
+    return client.postE('/search/suggest/web', { s });
 }
 
 const searchTypeMap = {
@@ -651,7 +651,7 @@ const searchTypeMap = {
  * @returns {Promise<Types.SearchRes>}
  */
 export function search(s, type, limit = 20, offset = 0) {
-    return client.postW('/cloudsearch/get/web', {
+    return client.postE('/cloudsearch/get/web', {
         hlposttag: '</span>',
         hlpretag: '<span class="s-fc7">',
         limit,
@@ -890,7 +890,7 @@ export function getRecommendMVs() {
  * @returns {Promise<Types.PersonalizedPlaylistRes>}
  */
 export function getPersonalizedPlaylists(limit = 10, offset = 0) {
-    return client.postW('/personalized/playlist', {
+    return client.postE('/personalized/playlist', {
         limit,
         offset,
         total: true,
