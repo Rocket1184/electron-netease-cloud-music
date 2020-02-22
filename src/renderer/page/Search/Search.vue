@@ -24,7 +24,6 @@
                 :tip="`出错了 ... ${ui.search.error.code}：${ui.search.error.msg}`"></CenteredTip>
             <TrackList v-else-if="tab === 'song'"
                 :tracks="ui.search.result.items"
-                :source="{ name: 'search', id: $route.query.keyword }"
                 :indexOffset="searchOffset"></TrackList>
             <UserList v-else-if="tab === 'user'"
                 :users="ui.search.result.items"></UserList>

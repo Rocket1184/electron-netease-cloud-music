@@ -261,7 +261,8 @@ export async function search({ state, commit }, { keyword, type, limit = 20, off
                 const { songCount, songs } = resp.result;
                 result.total = songCount || songs.length || 0;
                 if (result.total > 0) {
-                    result.items = songs.map(i => new Track(i));
+                    const source = { name: 'search', id: state.ui.search.keyword };
+                    result.items = songs.map(i => new Track(i, { source }));
                 }
                 break;
             case 'artist':
@@ -558,16 +559,16 @@ export function nextLoopMode({ commit, state }) {
 
 /**
  * @param {ActionContext} param0
+ * @param {{ tracks: Models.Track[]; source?: any; index?: number }} payload
  */
 export function insertTrackIntoPlaylist({ commit, state }, payload) {
-    let tracks = Array.isArray(payload.tracks)
-        ? payload.tracks
-        : [payload.tracks];
     if (payload.source) {
-        tracks = tracks.map(t => Object.assign({}, t, { source: payload.source }));
+        for (const t of payload.tracks) {
+            t.source = payload.source;
+        }
     }
     const index = payload.index || state.playlist.index;
-    commit(types.INSERT_TRACK_INTO_PLAYLIST, { tracks, index });
+    commit(types.INSERT_TRACK_INTO_PLAYLIST, { tracks: payload.tracks, index });
 }
 
 /**
