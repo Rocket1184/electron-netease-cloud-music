@@ -167,11 +167,13 @@ export default {
         this.getPrograms();
     },
     mounted() {
+        this.scrollElm = this.$el.parentElement;
         this.handleScrollThrottled = throttle(this.handleScroll, 200);
-        this.$el.parentElement.addEventListener('scroll', this.handleScrollThrottled, { passive: true });
+        this.scrollElm.addEventListener('scroll', this.handleScrollThrottled, { passive: true });
     },
     beforeDestroy() {
-        this.$el.parentElement.removeEventListener('scroll', this.handleScrollThrottled);
+        this.scrollElm.removeEventListener('scroll', this.handleScrollThrottled);
+        this.scrollElm = null;
     },
     components: {
         CenteredLoading,
