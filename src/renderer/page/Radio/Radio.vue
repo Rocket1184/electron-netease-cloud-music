@@ -44,13 +44,11 @@ export default {
             'playAudio',
             'pauseAudio',
             'activateRadio',
-            'updateUiLyric',
-            'updateUiAudioSrc'
+            'updateUiTrack'
         ]),
         async handleActivate(val) {
             await this.activateRadio(val);
-            this.updateUiLyric();
-            await this.updateUiAudioSrc();
+            await this.updateUiTrack();
             if (val === true) {
                 this.playAudio();
             } else {

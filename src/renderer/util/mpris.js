@@ -4,7 +4,7 @@ import { ipcRenderer } from 'electron';
 import debounce from 'lodash/debounce';
 
 import {
-    UPDATE_PLAYING_URL,
+    SET_COVER_IMG_SRC,
     RESTORE_UI_STATE,
     RESTORE_PLAYLIST,
     SET_AUDIO_VOLUME,
@@ -49,6 +49,24 @@ export function bindAudioElement(audioEl) {
 const debounceVolume = debounce(volume => ipcSend('volume', volume), 300);
 
 /**
+ * @param {Models.Track} track
+ */
+function trimMetadata(track, picUrl) {
+    return {
+        id: track.id,
+        name: track.name,
+        duration: track.duration,
+        artistName: track.artistName,
+        album: {
+            name: track.album.name,
+            picUrl
+        },
+        cd: track.cd,
+        no: track.no
+    };
+}
+
+/**
  * Vuex mutation subscribe handler
  * @param {import('vuex').MutationPayload} mutation 
  * @param {import('@/store').State} state 
@@ -57,10 +75,10 @@ function subscribeHandler(mutation, state) {
     const queue = state.ui.radioMode === true ? state.radio : state.playlist;
     const track = queue.list[queue.index];
     switch (mutation.type) {
-        case UPDATE_PLAYING_URL:
+        case SET_COVER_IMG_SRC:
         case RESTORE_PLAYLIST:
             if (track) {
-                ipcSend('metadata', track);
+                ipcSend('metadata', trimMetadata(track, state.ui.coverImgSrc));
             } else {
                 ipcSend('metadata', null);
                 ipcSend('stop');

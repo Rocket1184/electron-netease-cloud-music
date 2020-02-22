@@ -331,6 +331,19 @@ export function setAudioVolume({ commit }, payload) {
 /**
  * @param {ActionContext} param0
  */
+export async function updateUiCoverImgSrc({ commit, getters }) {
+    let img = '';
+    if (getters.queue.list.length !== 0) {
+        const id = getters.playing.album.pic;
+        const resp = await Api.getPicUrl(id);
+        img = resp.code === 200 ? resp.url : '';
+    }
+    commit(types.SET_COVER_IMG_SRC, img);
+}
+
+/**
+ * @param {ActionContext} param0
+ */
 export async function updateUiLyric({ commit, getters }, { ignoreCache = false } = {}) {
     const track = getters.playing;
     if (track && track.id) {
@@ -341,6 +354,15 @@ export async function updateUiLyric({ commit, getters }, { ignoreCache = false }
     } else {
         commit(types.SET_ACTIVE_LYRIC, {});
     }
+}
+
+/**
+ * @param {ActionContext} param0
+ */
+export function updateUiTrack({ dispatch }) {
+    dispatch('updateUiLyric');
+    dispatch('updateUiCoverImgSrc');
+    return dispatch('updateUiAudioSrc');
 }
 
 /**
@@ -366,8 +388,7 @@ export async function playTrackIndex({ state, commit, dispatch }, index) {
     } else {
         commit(types.SET_CURRENT_INDEX, index);
     }
-    dispatch('updateUiLyric');
-    await dispatch('updateUiAudioSrc');
+    await dispatch('updateUiTrack');
     dispatch('playAudio');
 }
 
@@ -429,8 +450,7 @@ export async function playPlaylist({ commit, dispatch, state }, { tracks, source
 export function clearPlaylist({ commit, dispatch }) {
     commit(types.SET_PLAY_LIST, []);
     commit(types.SET_CURRENT_INDEX, 0);
-    dispatch('updateUiAudioSrc');
-    dispatch('updateUiLyric');
+    dispatch('updateUiTrack');
 }
 
 /**
@@ -550,8 +570,7 @@ export function removeTrackFromPlaylist({ getters, commit, dispatch }, payload) 
     const playingId = getters.playing.id;
     commit(types.REMOVE_TRACK_FROM_PLAYLIST, payload);
     if (playingId !== getters.playing.id) {
-        dispatch('updateUiLyric');
-        dispatch('updateUiAudioSrc');
+        dispatch('updateUiTrack');
     }
 }
 
@@ -804,8 +823,7 @@ export async function restoreRadio({ commit }) {
  */
 export function clearRadio({ commit, dispatch }) {
     commit(types.CLEAR_RADIO);
-    dispatch('updateUiAudioSrc');
-    dispatch('updateUiLyric');
+    dispatch('updateUiTrack');
 }
 
 /**
@@ -826,8 +844,7 @@ export async function removeRadio({ getters, commit, dispatch }, { id }) {
     const playingId = getters.playing.id;
     commit(types.REMOVE_RADIO, { id });
     if (playingId === id) {
-        dispatch('updateUiLyric');
-        dispatch('updateUiAudioSrc');
+        dispatch('updateUiTrack');
     }
 }
 

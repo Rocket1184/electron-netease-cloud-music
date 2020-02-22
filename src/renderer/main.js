@@ -37,8 +37,7 @@ store.dispatch('restoreUiState').then(() => {
         store.dispatch('restoreRadio'),
         store.dispatch('restorePlaylist')
     ]).then(() => {
-        store.dispatch('updateUiAudioSrc');
-        store.dispatch('updateUiLyric');
+        store.dispatch('updateUiTrack');
         if (store.state.settings.autoPlay) {
             store.dispatch('playAudio');
         }

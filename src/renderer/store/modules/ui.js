@@ -4,6 +4,7 @@ const state = {
     audioSrc: '',
     audioVolume: 100,
     audioMute: false,
+    coverImgSrc: '',
     paused: true,
     lyricLoading: false,
     /** @type {Partial<Types.MusicLyricRes>} */
@@ -44,6 +45,9 @@ const mutations = {
     [types.SET_AUDIO_VOLUME](state, { mute, volume }) {
         if (typeof mute === 'boolean') state.audioMute = mute;
         if (typeof volume === 'number') state.audioVolume = volume;
+    },
+    [types.SET_COVER_IMG_SRC](state, payload) {
+        state.coverImgSrc = payload;
     },
     [types.SET_LYRIC_LOADING](state, payload) {
         if (payload === true) {

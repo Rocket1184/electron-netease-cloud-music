@@ -288,8 +288,8 @@ export default {
         ...mapState(['ui', 'user', 'settings']),
         ...mapGetters(['playing', 'queue']),
         coverImgSrc() {
-            if (this.playing.album && this.playing.album.picUrl) {
-                return sizeImg(this.playing.album.picUrl, HiDpiPx(64));
+            if (this.ui.coverImgSrc) {
+                return sizeImg(this.ui.coverImgSrc, HiDpiPx(64));
             }
             return coverDefault;
         },

@@ -243,8 +243,8 @@ export default {
             return (source && source.djradio);
         },
         albumImgSrc() {
-            if (this.playing.album && this.playing.album.picUrl) {
-                return sizeImg(this.playing.album.picUrl, HiDpiPx(220));
+            if (this.ui.coverImgSrc) {
+                return sizeImg(this.ui.coverImgSrc, HiDpiPx(220));
             }
             return discDefault;
         },
@@ -323,8 +323,8 @@ export default {
             this.canvasImageId = this.playing.id;
             let src;
             const size = HiDpiPx(64);
-            if (this.playing.album && this.playing.album.picUrl) {
-                src = sizeImg(this.playing.album.picUrl, size);
+            if (this.ui.coverImgSrc) {
+                src = sizeImg(this.ui.coverImgSrc, size);
             } else {
                 src = defaultCoverImg;
             }
@@ -412,8 +412,11 @@ export default {
     watch: {
         ['playing.id']() {
             if (!this.isActive) return;
-            this.paintBkgCanvas();
             this.refreshThreadInfo();
+        },
+        ['ui.coverImgSrc']() {
+            if (!this.isActive) return;
+            this.paintBkgCanvas();
         },
         ['settings.themeVariety']() {
             this.paintBkgCanvas();
