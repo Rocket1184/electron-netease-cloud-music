@@ -430,16 +430,20 @@ export function playPreviousTrack({ dispatch, getters }) {
  * @param {ActionContext} param0
  */
 export async function playPlaylist({ commit, dispatch, state }, { tracks, source }) {
-    if (source) {
-        tracks.forEach(t => t.source = source);
+    const list = [];
+    for (const t of tracks) {
+        if (source) {
+            t.source = source;
+        }
+        list.push(t);
     }
-    commit(types.SET_PLAY_LIST, tracks);
+    commit(types.SET_PLAY_LIST, list);
     if (state.ui.radioMode === true) {
         commit(types.ACTIVATE_RADIO, false);
     }
     let firstIndex = 0;
     if (state.playlist.loopMode === LOOP_MODE.RANDOM) {
-        firstIndex = Math.floor(Math.random() * tracks.length);
+        firstIndex = Math.floor(Math.random() * list.length);
     }
     dispatch('playTrackIndex', firstIndex);
 }
