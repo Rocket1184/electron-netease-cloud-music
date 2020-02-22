@@ -88,8 +88,7 @@ export default {
                     id: prog.id,
                     createTime: prog.createTime,
                     description: prog.description,
-                    radio: prog.radio,
-                    dj: prog.dj
+                    radio: prog.radio
                 }
             };
         },
