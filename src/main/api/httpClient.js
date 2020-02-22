@@ -3,7 +3,7 @@ import qs from 'querystring';
 import { randomFillSync } from 'crypto';
 
 import debug from 'debug';
-import fetch from 'node-fetch';
+import fetch from 'electron-fetch';
 import { CookieJar, CookieAccessInfo } from 'cookiejar';
 
 import { encodeWeb, encodeLinux, encodeEApi, decodeEApi, getCacheKey } from './codec';
@@ -89,15 +89,11 @@ class HttpClient {
 
     /**
      * update cookiejar with 'set-cookie' headers
-     * @param {import('node-fetch').Response} res node-fetch's `Response` object
+     * @param {import('electron-fetch').Response} res electron-fetch's `Response` object
      */
     handleResponse(res) {
-        const headers = res.headers.raw();
-        for (const key in headers) {
-            if (key.toLowerCase() === 'set-cookie') {
-                this.cookieJar.setCookies(headers[key]);
-                break;
-            }
+        if (res.headers.has('set-cookie')) {
+            this.cookieJar.setCookies(res.headers.get('set-cookie'));
         }
     }
 
@@ -117,7 +113,7 @@ class HttpClient {
 
     async get(config) {
         let url = typeof config === 'string' ? config : config.url;
-        /** @type {import('node-fetch').RequestInit} */
+        /** @type {import('electron-fetch').RequestInit} */
         let init = {
             method: 'GET'
         };
@@ -137,9 +133,9 @@ class HttpClient {
     }
 
     /**
-     * wrapper of node-fetch function
+     * wrapper of electron-fetch function
      * @param {string} url
-     * @param {import('node-fetch').RequestInit} init
+     * @param {import('electron-fetch').RequestInit} init
      */
     async post(url, init) {
         init.headers = this.mergeHeaders({
@@ -162,7 +158,7 @@ class HttpClient {
      */
     postW(url, data = {}) {
         url = `https://music.163.com/weapi${url}`;
-        /** @type {import('node-fetch').RequestInit} */
+        /** @type {import('electron-fetch').RequestInit} */
         let init = {
             method: 'POST',
             body: ''
@@ -189,7 +185,7 @@ class HttpClient {
             url: `http://music.163.com/api${url}`,
             params: data
         };
-        /** @type {import('node-fetch').RequestInit} */
+        /** @type {import('electron-fetch').RequestInit} */
         let init = {
             method: 'POST',
             headers: {
@@ -219,7 +215,7 @@ class HttpClient {
             appver: '2.0.3.131777',
             channel: 'netease'
         }, this.getCookie());
-        /** @type {import('node-fetch').RequestInit} */
+        /** @type {import('electron-fetch').RequestInit} */
         let init = {
             method: 'POST',
             headers: {},

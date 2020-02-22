@@ -2,7 +2,7 @@ import fs from 'fs';
 import path from 'path';
 import { Readable } from 'stream';
 
-import fetch from 'node-fetch';
+import fetch from 'electron-fetch';
 
 class Cache {
     /**
@@ -45,6 +45,7 @@ class Cache {
     async fetchAsFile(url, outputFileName) {
         const res = await fetch(url);
         if (res.status === 200) {
+            // @ts-ignore
             res.body.pipe(this.writeStream(outputFileName));
             return this.fullPath(outputFileName);
         }
