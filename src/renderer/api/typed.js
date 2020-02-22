@@ -30,27 +30,23 @@ export async function getSongDetail(ids) {
 
 export async function getPlaylistDetail(id, limit = 0) {
     /** @type {Types.ListDetailRes} */
-    const resp = await send('getListDetail', id, limit);
+    const resp = await send('getListDetailE', id, limit);
     if (resp.code === 200) {
         return new PlayList(resp.playlist);
     }
 }
 
 export async function getAlbumDetail(id) {
-    /** @type {Types.AlbumDetailWRes} */
-    const resp = await send('getAlbumDetailW', id);
+    const resp = await send('getAlbumDetailE', id);
     if (resp.code === 200) {
-        // @ts-ignore
         tracks.upsert(resp.songs);
         return new Album({ ...resp.album, songs: resp.songs });
     }
 }
 
 export async function getArtistDetail(id) {
-    /** @type {Types.ArtistDetailWRes} */
-    const resp = await send('getArtistDetailW', id);
+    const resp = await send('getArtistDetailE', id);
     if (resp.code === 200) {
-        // @ts-ignore
         tracks.upsert(resp.hotSongs);
         return {
             detail: new Artist(resp.artist),

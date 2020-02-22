@@ -18,41 +18,26 @@ namespace Models {
     }
 
     export class Track {
-        constructor(o: any);
+        constructor(o: any, a?: any);
         id: number;
         name: string;
         album: {
             id: number;
             name: string;
-            pic: number;
-            picUrl: string
-        };
-        picUrl: string;
+            pic: number | string;
+        }
+        artists: {
+            id: number;
+            name: string;
+        }[];
+        artistName: string;
+        duration: number;
         cd: string;
         no: number;
-        artists: Artist[];
-        artistName: string;
-        lyrics: {
-            qfy: Boolean;
-            sfy: Boolean;
-            sgc: Boolean;
-            lrc?: { version: number, lyric: string }
-            tlyric?: { ersion: number, lyric: string }
-            klyric?: { version: number, lyric: string }
-        }[];
-        urls: {
-            h?: string;
-            m?: string;
-            l?: string;
-        };
-        commentThreadId: number;
-        source: {
-            name: string;
-            id: string;
-        }
-        /** MV ID */
-        mv: number;
-        privilege: Types.Privilege;
+        fee: any;
+        copyright: any;
+        privilege: EApi.Privilege;
+        source?: any;
     }
 
     export class PlayList {

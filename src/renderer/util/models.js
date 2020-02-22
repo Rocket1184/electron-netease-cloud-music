@@ -1,3 +1,5 @@
+import pick from 'lodash/pick';
+
 export class User {
     constructor(o) {
         this.account = o.account || {};
@@ -17,21 +19,39 @@ export class User {
 }
 
 export class Track {
-    constructor(o, source) {
+    /**
+     * 
+     * @param {EApi.Song & EApi.SongWithLongFields & { source?: any }} o 
+     * @param {Record<string, any>} a additional props to overwrite
+     */
+    constructor(o, a = {}) {
         this.id = o.id;
         this.name = o.name;
-        this.album = o.al || o.album;
-        this.picUrl = this.album.picUrl;
-        this.cd = o.cd;
-        this.no = o.no;
-        this.artists = o.ar || o.artists;
-        this.artistName = this.artists.map(a => a.name).join(' / ');
-        // #38 track.dt may be `0`
+        // album
+        if (a.al) {
+            this.album = a.al;
+        } else {
+            const al = o.al || o.album;
+            this.album = pick(al, 'id', 'name');
+            // @ts-ignore
+            this.album.pic = al.pic_str || al.picId_str || al.picId || al.pic;
+        }
+        // artsit
+        if (a.ar) this.artists = o.ar;
+        else if (o.ar) this.artists = o.ar.map(a => pick(a, 'id', 'name'));
+        else if (o.artists) this.artists = o.artists.map(a => pick(a, 'id', 'name'));
+        /** artists' name divided by `'/'` */
+        this.artistName = this.artists.map(artist => artist.name).join(' / ');
+        /** duration, maybe `0` sometimes */
         this.duration = o.dt || o.duration || 0;
-        this.commentThreadId = o.commentThreadId;
-        this.source = o.source || source;
+        this.cd = o.cd;
         this.mv = o.mv;
+        this.no = o.no;
+        this.fee = o.fee;
+        this.copyright = o.copyright;
         this.privilege = o.privilege;
+        /** may contain djradio programs */
+        this.source = o.source || a.source;
     }
 }
 
@@ -51,8 +71,6 @@ export class PlayList {
         this.subscribed = o.subscribed;
         this.subscribedCount = o.subscribedCount;
         this.commentCount = o.commentCount;
-        const tracks = o.tracks || o.recommend || [];
-        this.tracks = tracks.map(t => new Track(t));
         this.trackIds = o.trackIds || [];
     }
 }
@@ -79,8 +97,8 @@ export class Album {
         this.name = o.name;
         this.alias = o.alias;
         this.transNames = o.transNames;
-        this.artist = o.artist || o.artists[0];
-        this.artists = o.artists;
+        this.artist = new Artist(o.artist || o.artists[0]);
+        this.artists = o.artists.map(ar => new Artist(ar));
         this.copyrightId = o.copyrightId;
         this.picId = o.picId;
         this.picUrl = o.picUrl;
@@ -160,8 +178,11 @@ export class DjRadio {
 export class DjRadioProgram {
     constructor(o, radio) {
         const album = o.mainSong.album;
-        if (album.picId === 0) album.picUrl = o.coverUrl;
-        if (!album.name) album.name = `[DJ节目]${o.dj.name}的DJ节目 第${o.serialNum}期`;
+        if (album.picId === 0 && typeof o.coverUrl === 'string') {
+            const match = o.coverUrl.match(/\/(?<pic>\d+)\.jpg/);
+            album.picId_str = match.groups.pic;
+        }
+        album.name = radio ? radio.name : o.radio.name;
         this.mainSong = new Track(o.mainSong);
         this.id = o.id;
         this.createTime = o.createTime;
