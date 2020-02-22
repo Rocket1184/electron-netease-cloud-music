@@ -17,12 +17,10 @@ const trackIdMap = new Map();
 const mutations = {
     [types.RESTORE_RADIO](state, /** @type {{ list: Models.Track[], index: number }} */ { list, index }) {
         state.index = index;
-        list.forEach(t => {
-            if (!trackIdMap.has(t.id)) {
-                trackIdMap.set(t.id, true);
-                state.list.push(t);
-            }
-        });
+        state.list = list;
+        for (const t of list) {
+            trackIdMap.set(t.id, true);
+        }
     },
     [types.CLEAR_RADIO](state) {
         state.list = [];
@@ -30,12 +28,12 @@ const mutations = {
     },
     [types.APPEND_RADIO](state, /** @type {{ tracks: Models.Track[] }} */ { tracks }) {
         const toAppend = [];
-        tracks.forEach(t => {
+        for (const t of tracks) {
             if (!trackIdMap.has(t.id)) {
                 trackIdMap.set(t.id, true);
                 toAppend.push(t);
             }
-        });
+        }
         const MaxLength = 150;
         state.list.push.apply(state.list, toAppend);
         if (state.list.length > MaxLength) {

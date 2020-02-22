@@ -1,5 +1,4 @@
 import * as types from '../mutation-types';
-import { Track } from '@/util/models';
 
 export const LOOP_MODE = {
     LIST: 0,
@@ -40,7 +39,7 @@ const mutations = {
     [types.RESTORE_PLAYLIST](state, { index, loopMode, list }) {
         state.index = index || 0;
         state.loopMode = loopMode || LOOP_MODE.LIST;
-        state.list = list.map(t => new Track(t));
+        state.list = list;
     },
     [types.INSERT_TRACK_INTO_PLAYLIST](state, { tracks, index }) {
         state.list.splice(index, 0, ...tracks);
