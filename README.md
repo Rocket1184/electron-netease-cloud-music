@@ -61,14 +61,17 @@
 - 签到（可同时签到桌面端和移动端）
 - 每日歌曲推荐
 - 私人 FM （保留历史记录）
+- 所有时间/最近一周 听歌记录
 - 推荐 歌单/最新音乐
 - 播放 歌单/专辑/主播电台
 - 喜欢音乐（加红心）
 - 收藏音乐到歌单
 - 播放/下载 MV/视频
-- 搜索 单曲/歌单/专辑/视频
+- 搜索 单曲/歌单/专辑/视频/用户
 - 收藏/取消收藏 歌单/专辑/歌手/视频/MV/电台
 - 创建/回复/点赞/删除 评论
+- 关注/取消关注 用户
+- 查看用户动态
 - Linux 桌面媒体控制（ MPRIS ）集成
 - 自定义主题颜色，可选全局暗色主题
 
@@ -130,18 +133,18 @@ electron /path/to/electron-netease-cloud-music_*.asar
     - [x] MV 页面
     - [x] 播放
     - [x] 下载（真的有人会下载网易云的带水印 MV 吗）
-  - [ ] 用户
-    - [ ] 显示结果
-    - [ ] 用户信息页面
-  - [ ] 主播电台
-    - [ ] 显示结果
+  - [x] 用户
+    - [x] 显示结果
+    - [x] 用户信息页面
+  - [x] 主播电台
+    - [x] 显示结果
     - [x] 电台详情页面
 - [x] 每日歌曲推荐
   - [x] 播放
   - [x] 不感兴趣
 - [ ] 其他推荐资源
   - [x] 推荐歌单
-  - [ ] ~~推荐 MV~~ （推荐的都是辣鸡资源，不要了）
+  - [x] 推荐 MV
   - [x] 最新音乐
   - [ ] 标记为不感兴趣
 - [x] 私人 FM
@@ -193,6 +196,7 @@ yarn build darwin
 
 - [darknessomi/musicbox/wiki](https://github.com/darknessomi/musicbox/wiki)
 - [metowolf/NeteaseCloudMusicApi/wiki](https://github.com/metowolf/NeteaseCloudMusicApi/wiki)
+- [metowolf/Meting](https://github.com/metowolf/Meting)
 - [Copay/cloudmusicapi](https://github.com/Copay/cloudmusicapi)
 - [Binaryify/NeteaseCloudMusicApi](https://github.com/Binaryify/NeteaseCloudMusicApi)
 - [nondanee/Glee](https://github.com/nondanee/Glee)
