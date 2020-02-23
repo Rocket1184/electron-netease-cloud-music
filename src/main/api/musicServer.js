@@ -118,12 +118,21 @@ class MusicServer {
                 } catch (e) { /* nothing happened */ }
             } else {
                 d('Hit cache for music id=%d', id);
-                const stat = await fsPromises.stat(filePath);
-                const range = MusicServer.getRange(req, stat.size);
-                // TODO: <range-end> may larger than <file-size>, cause file is still being downloaded
-                const file = fs.createReadStream(filePath, { start: range[0], end: range[1] });
+                let stat = await fsPromises.stat(filePath);
+                let range = MusicServer.getRange(req, stat.size);
+                let start = Date.now();
+                while (stat.size < range[0] && Date.now() - start <= 40 * 1000) {
+                    await new Promise(_ => setTimeout(() => _(), 500));
+                    let newStat = await fsPromises.stat(filePath);
+                    range = MusicServer.getRange(req, newStat.size);
+                    if (newStat.size === stat.size) {
+                        // file size hasn't changed in 500ms, download may be finished ...
+                        break;
+                    }
+                    stat = newStat;
+                }
                 res.writeHead(206, MusicServer.buildHeaders(range));
-                file.pipe(res);
+                fs.createReadStream(filePath, { start: range[0], end: range[1] }).pipe(res);
                 return;
             }
         }
@@ -131,6 +140,7 @@ class MusicServer {
             const music = await this.getMusicUrl(Number.parseInt(id, 10), quality);
             d('Got URL for music id=%d', id);
             const musicRes = await this.cache.fetch(music.url.replace(/^http:/, 'https:'));
+            // TODO: write file only md5 matches
             musicRes.body.pipe(fs.createWriteStream(filePath));
 
             const range = MusicServer.getRange(req, +musicRes.headers.get('content-length'));
