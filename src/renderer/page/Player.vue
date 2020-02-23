@@ -145,19 +145,14 @@
                                 class="line"
                                 :key="index"
                                 :class="{active: index == currentLyricIndex}"
-                                :data-time="line.timestamp">
-                                <div>{{line.content}}</div>
-                                <div>{{line.trans}}</div>
-                            </div>
+                                :data-time="line.timestamp">{{ line.content + '\n' + (line.trans || '') }}</div>
                         </template>
                         <template v-else-if="ui.lyric.lrc">
                             <div v-for="(line, index) in ui.lyric.lrc.lyrics"
                                 :key="index"
                                 class="line"
                                 :class="{active: index == currentLyricIndex}"
-                                :data-time="line.timestamp">
-                                {{line.content}}
-                            </div>
+                                :data-time="line.timestamp">{{line.content}}</div>
                         </template>
                         <template v-else-if="ui.lyric.txtLyric">
                             <pre class="txt">{{ui.lyric.txtLyric}}</pre>
@@ -598,6 +593,7 @@ export default {
                     transition: transform 0.5s cubic-bezier(0.25, 0.46, 0.45, 0.94);
                     .line {
                         margin: 14px 0;
+                        white-space: pre-wrap;
                     }
                     .active {
                         color: white;
