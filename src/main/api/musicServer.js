@@ -161,8 +161,14 @@ class MusicServer {
                 }
                 res.end();
             });
+            musicRes.body.on('error', e => {
+                d('Error when downloading music id=%d, reason: %o, aborting ...', id, e);
+                this.cache.rm(fileName).catch(() => { /* noop */ });
+                musicRes.body.unpipe();
+                res.end();
+            });
         } catch (e) {
-            d('Failed to get URL for music id=%d, reason: %O', id, e);
+            d('Failed to get URL for music id=%d', id);
             res.writeHead(500);
             res.write(JSON.stringify(e));
             res.end();
