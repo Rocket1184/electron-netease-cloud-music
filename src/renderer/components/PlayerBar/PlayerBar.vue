@@ -10,8 +10,7 @@
                 width="64"
                 height="64">
             <mu-icon :value="coverIcon"
-                :size="48"
-                color="white"></mu-icon>
+                :size="48"></mu-icon>
         </div>
         <div class="info">
             <div class="desc">
@@ -468,7 +467,6 @@ export default {
         width: 64px;
         cursor: pointer;
         position: relative;
-        background-color: black;
         .img,
         .mu-icon {
             transition: 0.3s opacity;
