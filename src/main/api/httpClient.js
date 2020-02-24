@@ -92,8 +92,14 @@ class HttpClient {
      * @param {import('electron-fetch').Response} res electron-fetch's `Response` object
      */
     handleResponse(res) {
-        if (res.headers.has('set-cookie')) {
-            this.cookieJar.setCookies(res.headers.get('set-cookie'));
+        /** @type {Record<string, string[]>} */
+        // @ts-ignore
+        const headers = res.headers.raw();
+        for (const [key, value] of Object.entries(headers)) {
+            if (key === 'set-cookie') {
+                this.cookieJar.setCookies(value);
+                break;
+            }
         }
     }
 
