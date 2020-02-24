@@ -91,7 +91,13 @@ function subscribeHandler(mutation, state) {
             ipcSend('volume', mutation.payload.audioVolume);
             break;
         case SET_AUDIO_VOLUME:
-            debounceVolume(mutation.payload.volume);
+            let { volume, mute } = mutation.payload;
+            if (mute === true) {
+                volume = 0;
+            } else if (mute === false) {
+                volume = state.ui.audioVolume;
+            }
+            debounceVolume(volume);
             break;
     }
 }
@@ -114,5 +120,11 @@ export function injectStore(store) {
         }
     });
     MPRISEmitter.on('prev', () => store.dispatch('playPreviousTrack'));
-    MPRISEmitter.on('volume', volume => store.dispatch('setAudioVolume', { volume }));
+    MPRISEmitter.on('volume', volume => {
+        let mute;
+        if (store.state.ui.audioMute && volume > 0) {
+            mute = false;
+        }
+        store.dispatch('setAudioVolume', { volume, mute });
+    });
 }
