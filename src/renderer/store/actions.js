@@ -336,8 +336,13 @@ export async function updateUiCoverImgSrc({ commit, getters }) {
     let img = '';
     if (getters.queue.list.length !== 0) {
         const id = getters.playing.album.pic;
-        const resp = await Api.getPicUrl(id);
-        img = resp.code === 200 ? resp.url : '';
+        if (id === -1) {
+            // @ts-ignore
+            img = require('assets/img/cloud_default.webp');
+        } else {
+            const resp = await Api.getPicUrl(id);
+            img = resp.code === 200 ? resp.url : '';
+        }
     }
     commit(types.SET_COVER_IMG_SRC, img);
 }

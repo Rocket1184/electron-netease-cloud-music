@@ -95,7 +95,7 @@
                             <span v-if="index !== 0"
                                 :key="'sep' + index"
                                 class="sep">/</span>
-                            <router-link v-if="ar.id !== 0"
+                            <router-link v-if="ar.id"
                                 :key="ar.id"
                                 class="source-link"
                                 :to="{ name: 'artist', params: { id: ar.id } }"
@@ -107,9 +107,12 @@
                     <span v-if="playing.album"
                         class="source-album">
                         <span>专辑：</span>
-                        <router-link class="source-link"
+                        <router-link v-if="playing.album.id"
+                            class="source-link"
                             :to="{ name: 'album', params: { id: playing.album.id } }"
                             replace>{{playing.album.name}}</router-link>
+                            <span v-else
+                                >{{playing.album.name}}</span>
                     </span>
                 </template>
             </p>
