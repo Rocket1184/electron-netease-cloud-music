@@ -169,15 +169,17 @@ export default {
             this.drawerOpen = false;
             if (route.name === this.$route.name) return;
             if (route.name === 'index') window.__NAV_BACK__ = true;
-            this.$router.push({ name: route.name });
+            if (this.$route.name === 'player') {
+                this.$router.replace(route);
+            } else {
+                this.$router.push(route);
+            }
         },
         handleNameClick() {
             if (!this.user.loginValid) {
                 this.loginDlgShow = true;
             } else {
-                this.drawerOpen = false;
-                if (this.$route.name === 'profile') return;
-                this.$router.push({ name: 'profile' });
+                this.handleSideNav({ name: 'profile' });
             }
         },
         async handleSign() {
@@ -263,6 +265,7 @@ export default {
         display: flex;
         flex-direction: column;
         justify-content: flex-end;
+        box-sizing: content-box;
         padding: 14px;
         width: 100%;
         height: 200px;
