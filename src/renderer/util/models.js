@@ -30,6 +30,8 @@ export class Track {
         // album
         if (a.al) {
             this.album = a.al;
+        } else if (o.pc) {
+            this.album = { id: 0, name: o.pc.alb, pic: -1 };
         } else {
             const al = o.al || o.album;
             this.album = pick(al, 'id', 'name');
@@ -37,7 +39,8 @@ export class Track {
             this.album.pic = al.pic_str || al.picId_str || al.picId || al.pic;
         }
         // artsit
-        if (a.ar) this.artists = o.ar;
+        if (a.ar) this.artists = a.ar;
+        else if (o.pc) this.artists = [{ id: 0, name: o.pc.ar }];
         else if (o.ar) this.artists = o.ar.map(a => pick(a, 'id', 'name'));
         else if (o.artists) this.artists = o.artists.map(a => pick(a, 'id', 'name'));
         /** artists' name divided by `'/'` */

@@ -136,6 +136,17 @@ namespace EApi {
         t: number;
         v: number;
         tns?: string[];
+        /** private cloud? */
+        pc?: {
+            nickname: string;
+            ar: string;
+            sn: string;
+            alb: string;
+            uid: number;
+            fn: string;
+            br: number;
+            cid: string;
+        };
     }
 
     // album detail
