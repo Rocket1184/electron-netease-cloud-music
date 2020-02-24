@@ -46,7 +46,7 @@ export function bindAudioElement(audioEl) {
     // TODO: MPRIS `LoopStatus` and `Shuffle` support; which DE support those props?
 }
 
-const debounceVolume = debounce(volume => ipcSend('volume', volume), 300);
+const debounceVolume = debounce(volume => ipcSend('volume', volume), 100);
 
 /**
  * @param {Models.Track} track
