@@ -13,6 +13,7 @@ import Favorite from '@/page/Favorite/Favorite.vue';
 import RecommendSongs from '@/page/RecommendSongs/RecommendSongs.vue';
 import Comment from '@/page/Comment/Comment.vue';
 import Radio from '@/page/Radio/Radio.vue';
+import Disk from '@/page/Disk.vue';
 import UnderConstruction from '@/page/UnderConstruction.vue';
 
 /**
@@ -104,6 +105,13 @@ const routes = [
         name: 'radio',
         path: '/radio',
         component: Radio
+    },
+    {
+        name: 'disk',
+        path: '/disk',
+        title: '音乐云盘',
+        component: Disk,
+        icon: 'cloud'
     },
     {
         name: 'settings',
