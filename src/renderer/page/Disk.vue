@@ -58,7 +58,13 @@ export default {
         async loadTracks() {
             const res = await Api.getPrivateCloudList(500, 0);
             if (res.code === 200) {
-                this.tracks = res.data.map(d => new Track(d.simpleSong));
+                this.tracks = res.data.map(d => {
+                    const a = {
+                        al: { id: 0, name: d.album, pic: -1 },
+                        ar: [{ id: 0, name: d.artist }]
+                    };
+                    return new Track(d.simpleSong, a);
+                });
                 this.size = res.size;
                 this.maxSize = res.maxSize;
                 this.count = res.count;
