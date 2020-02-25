@@ -48,7 +48,6 @@ export default {
         }
         span {
             line-height: 48px;
-            padding: 0 8px;
             user-select: none;
         }
     }
