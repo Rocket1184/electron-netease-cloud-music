@@ -1368,3 +1368,27 @@ export function getUserTopEvents(userId) {
 export function getUserCollege(userId) {
     return client.postE(`/college/usercollege/get`, { userId });
 }
+
+/**
+ * 全部喜欢的歌曲 ID
+ * @returns {Promise<Types.LikedSongIdsRes>}
+ */
+export function getLikedSongIds() {
+    return client.postE('/song/like/get');
+}
+
+/**
+ * 云盘歌曲列表
+ * @returns {Promise<Types.PrivateCloudListRes>}
+ */
+export function getPrivateCloudList(limit = 500, offset = 0) {
+    return client.postE(`/v1/cloud/get`, { limit, offset });
+}
+
+/**
+ * 删除云盘歌曲
+ * @param {number[]} songIds
+ */
+export function removePrivateCloudItem(songIds) {
+    return client.postE(`/cloud/del`, { songIds });
+}

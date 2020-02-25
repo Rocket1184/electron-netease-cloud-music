@@ -2055,6 +2055,35 @@ namespace Types {
     export interface UserTopEventsRes extends ApiRes {
         data: Event;
     }
+
+    export interface LikedSongIdsRes extends ApiRes {
+        ids: number[];
+    }
+
+    export interface PrivateCloudListItem {
+        simpleSong: EApi.Song;
+        addTime: number;
+        songId: number;
+        cover: number;
+        songName: string;
+        fileSize: number;
+        coverId: string;
+        lyricId: string;
+        album: string;
+        artist: string;
+        version: number;
+        bitrate: number;
+        fileName: string;
+    }
+
+    export interface PrivateCloudListRes extends ApiRes {
+        data: PrivateCloudListItem[];
+        count: number;
+        size: string;
+        maxSize: string;
+        upgradeSign: number;
+        hasMore: boolean;
+    }
 }
 
 export as namespace Types;
