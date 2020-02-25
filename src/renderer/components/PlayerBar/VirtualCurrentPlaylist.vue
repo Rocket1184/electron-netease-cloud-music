@@ -90,6 +90,7 @@ const SourceName = {
     album: '专辑',
     artist: '歌手',
     search: '搜索',
+    disk: '音乐云盘',
     radio: '私人 FM',
     djradio: '主播电台',
     recommend: '每日歌曲推荐'
@@ -100,6 +101,7 @@ const RouteName = {
     album: 'album',
     artist: 'artist',
     search: 'search',
+    disk: 'disk',
     radio: 'radio',
     djradio: 'djradio',
     recommend: 'recommend'
@@ -198,6 +200,7 @@ export default {
                 case 'search':
                     this.navigateToSource({ name, query: { keyword: source.id, type: 'song' } });
                     break;
+                case 'disk':
                 case 'radio':
                 case 'recommend':
                     this.navigateToSource({ name });
