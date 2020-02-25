@@ -265,7 +265,7 @@ export default {
         display: flex;
         flex-direction: column;
         justify-content: flex-end;
-        box-sizing: content-box;
+        box-sizing: border-box;
         padding: 14px;
         width: 100%;
         height: 200px;
