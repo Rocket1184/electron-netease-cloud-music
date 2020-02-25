@@ -67,7 +67,8 @@ export class PlayList {
         this.tags = o.tags || [];
         this.commentThreadId = o.commentThreadId;
         this.playCount = o.playCount;
-        this.trackCount = o.trackCount;
+        this.cloudTrackCount = o.cloudTrackCount || 0;
+        this.trackCount = o.trackCount + this.cloudTrackCount;
         this.coverImgId = o.coverImgId;
         this.coverImgUrl = o.coverImgUrl;
         this.createTime = o.createTime;
