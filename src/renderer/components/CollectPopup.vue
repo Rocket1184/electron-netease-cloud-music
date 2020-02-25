@@ -52,11 +52,7 @@ export default {
                 const pid = playlist.id;
                 await this.collectTrack({ pid, tracks: this.ui.collectTrackIds });
                 this.$toast.message('成功添加到歌单     (๑•̀ㅂ•́)و✧');
-                if (this.user.playlist[0].id === pid) {
-                    this.updateFavoriteTrackIds();
-                } else {
-                    this.updatePlaylistDetailById(pid);
-                }
+                this.updatePlaylistDetailById(pid);
             } catch (resp) {
                 if (resp.code === 502) {
                     this.$toast.message('歌曲已存在        ¯\\_(ツ)_/¯');

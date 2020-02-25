@@ -60,10 +60,10 @@ const mutations = {
     [types.SET_USER_PLAYLISTS](state, /** @type {Types.PlaylistDetail[]} */ payload) {
         state.playlist = payload.map(l => new PlayList(l));
     },
-    [types.UPDATE_USER_PLAYLIST](state, /** @type {Types.PlaylistDetail} */ payload) {
+    [types.UPDATE_USER_PLAYLIST](state, /** @type {Models.PlayList} */ payload) {
         const i = state.playlist.findIndex(p => p.id === payload.id);
         if (i >= 0) {
-            state.playlist.splice(i, 1, new PlayList(payload));
+            state.playlist.splice(i, 1, payload);
         }
     },
     [types.SUBSCRIBE_PLAYLIST](state, /** @type {Types.PlaylistDetail} */ payload) {

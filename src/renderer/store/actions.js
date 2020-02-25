@@ -176,9 +176,12 @@ export async function updateUserPlaylist({ state, commit }) {
  * @param {ActionContext} context
  * @param {number} payload
  */
-export async function updatePlaylistDetailById({ commit }, payload) {
+export async function updatePlaylistDetailById({ state, commit }, payload) {
     const list = await ApiTyped.getPlaylistDetail(payload);
-    list.tracks = null;
+    if (list.id === state.user.playlist[0].id) {
+        const ids = list.trackIds.map(i => i.id);
+        commit(types.SET_USER_FAVOR_TRACKS, ids);
+    }
     delete list.trackIds;
     commit(types.UPDATE_USER_PLAYLIST, list);
 }
@@ -186,12 +189,9 @@ export async function updatePlaylistDetailById({ commit }, payload) {
 /**
  * @param {ActionContext} param0
  */
-export async function updateFavoriteTrackIds({ state, commit }) {
+export function updateFavoriteTrackIds({ state, dispatch }) {
     const { id } = state.user.playlist[0];
-    const list = await ApiTyped.getPlaylistDetail(id);
-    commit(types.SET_USER_FAVOR_TRACKS, list.trackIds.map(i => i.id));
-    delete list.trackIds;
-    commit(types.UPDATE_USER_PLAYLIST, list);
+    return dispatch('updatePlaylistDetailById', id);
 }
 
 /**
