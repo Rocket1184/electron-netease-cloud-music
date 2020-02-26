@@ -2,7 +2,7 @@
     <div class="comment-item">
         <div class="avatar">
             <mu-avatar>
-                <img :src="comment.user | avatarImgSrc">
+                <img :src="avatarImgSrc(comment.user)">
             </mu-avatar>
         </div>
         <div class="text">
@@ -11,7 +11,7 @@
                     <router-link class="nickname"
                         :to="{ name: 'user', params: { id: comment.user.userId } }"
                         tag="a">{{ comment.user.nickname }}</router-link>
-                    <div class="time"> {{comment.time | longDate}}</div>
+                    <div class="time"> {{longDate(comment.time)}}</div>
                 </div>
                 <div class="actions">
                     <mu-button v-if="canDelete"
@@ -49,7 +49,7 @@
                     class="comment-item">
                     <div class="avatar">
                         <mu-avatar>
-                            <img :src="reply.user | avatarImgSrc">
+                            <img :src="avatarImgSrc(reply.user)">
                         </mu-avatar>
                     </div>
                     <div class="text">
@@ -90,11 +90,11 @@ export default {
             return this.user.loginValid && this.comment.user.userId === this.user.info.id;
         }
     },
-    filters: {
+    methods: {
+        longDate,
         avatarImgSrc(user) {
             return sizeImg(user.avatarUrl, HiDpiPx(40));
-        },
-        longDate
+        }
     }
 };
 </script>

@@ -18,7 +18,7 @@
                     :key="'ar' + index">{{ar.name}}</span>
             </template>
         </div>
-        <div class="track-col duration">{{track.duration | shortTime}}</div>
+        <div class="track-col duration">{{duration}}</div>
         <div class="track-col buttons">
             <mu-button v-for="act in shortcuts"
                 :key="act.event"
@@ -54,6 +54,9 @@ export default {
             return {
                 'track--grey': (this.track.privilege && this.track.privilege.st !== 0)
             };
+        },
+        duration() {
+            return shortTime(this.track.duration);
         }
     },
     methods: {
@@ -63,9 +66,6 @@ export default {
         handleAction(act) {
             this.$emit(act.event);
         }
-    },
-    filters: {
-        shortTime
     }
 };
 </script>

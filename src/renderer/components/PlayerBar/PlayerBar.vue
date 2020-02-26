@@ -82,7 +82,7 @@
                     :display-value="false"
                     :value="songProgress"
                     @change="handleProgressDrag"></mu-slider>
-                <span class="time">{{ timeCurrent | shortTime }} / {{ timeTotal | shortTime }}</span>
+                <span class="time">{{ shortTime(timeCurrent) }} / {{ shortTime(timeTotal) }}</span>
             </div>
         </div>
         <div class="control">
@@ -143,6 +143,7 @@ export default {
         };
     },
     methods: {
+        shortTime,
         ...mapActions([
             'playAudio',
             'pauseAudio',
@@ -328,9 +329,6 @@ export default {
         iconPlayPause() {
             return this.ui.paused ? 'play_arrow' : 'pause';
         }
-    },
-    filters: {
-        shortTime
     },
     watch: {
         currentListShown(val) {

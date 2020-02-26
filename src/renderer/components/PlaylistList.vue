@@ -6,10 +6,10 @@
             @click="navigateToList(pl.id)">
             <mu-card-media :title="pl.name"
                 class="pic"
-                :style="pl | coverImgStyle">
+                :style="coverImgStyle(pl)">
             </mu-card-media>
             <mu-card-header :title="pl.creator.nickname"
-                :subTitle="pl | playlistSummary">
+                :subTitle="playlistSummary(pl)">
             </mu-card-header>
         </mu-card>
         <div v-for="i in 10"
@@ -19,7 +19,6 @@
 </template>
 
 <script>
-import { shortDate } from '@/util/formatter';
 import { bkgImg, sizeImg, HiDpiPx } from '@/util/image';
 
 export default {
@@ -29,20 +28,14 @@ export default {
         }
     },
     methods: {
-        navigateToList(id) {
-            this.$router.push({ name: 'playlist', params: { id } });
-        }
-    },
-    filters: {
-        shortDate,
-        artistAvatarUrl(pl) {
-            return sizeImg(pl.creator.picUrl, HiDpiPx(40));
-        },
         coverImgStyle(pl) {
             return bkgImg(sizeImg(pl.coverImgUrl, HiDpiPx(200), HiDpiPx(160)));
         },
         playlistSummary(pl) {
             return `${pl.trackCount} 首，播放 ${pl.playCount} 次`;
+        },
+        navigateToList(id) {
+            this.$router.push({ name: 'playlist', params: { id } });
         }
     }
 };

@@ -17,7 +17,7 @@
                         :to="{ name: 'playlist', params: { id: p.id } }"
                         :img="p.picUrl"
                         maskIcon="headset"
-                        :maskText="(p.playcount || p.playCount) | humanCount"
+                        :maskText="humanCount(p.playcount || p.playCount)"
                         :title="p.copywriter"
                         :itemTitle="p.name"></ScrollerItem>
                 </div>
@@ -84,6 +84,7 @@ export default {
         ])
     },
     methods: {
+        humanCount,
         filterRecommend(item) {
             return algBlockList.includes(item.alg);
         },
@@ -116,9 +117,6 @@ export default {
                 this.mv = res.result;
             }
         }
-    },
-    filters: {
-        humanCount
     },
     mounted() {
         /** @type {HTMLDivElement[]} */

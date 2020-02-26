@@ -4,8 +4,8 @@
             :key="ar.id"
             class="item"
             @click="navigateToArtsit(ar.id)">
-            <mu-card-media :title="ar | artistTitle"
-                :style="ar | artistImgStyle"></mu-card-media>
+            <mu-card-media :title="artistTitle(ar)"
+                :style="artistImgStyle(ar)"></mu-card-media>
         </mu-card>
         <div v-for="i in 10"
             :key="i"
@@ -23,11 +23,6 @@ export default {
         }
     },
     methods: {
-        navigateToArtsit(id) {
-            this.$router.push({ name: 'artist', params: { id } });
-        }
-    },
-    filters: {
         artistTitle(ar) {
             const name = ar.name;
             const trans = ar.trans && ` (${ar.trans})` || '';
@@ -35,6 +30,9 @@ export default {
         },
         artistImgStyle(ar) {
             return bkgImg(sizeImg(ar.picUrl, HiDpiPx(200), HiDpiPx(160)));
+        },
+        navigateToArtsit(id) {
+            this.$router.push({ name: 'artist', params: { id } });
         }
     }
 };

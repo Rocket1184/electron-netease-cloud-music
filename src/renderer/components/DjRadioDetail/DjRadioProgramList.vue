@@ -23,9 +23,9 @@
                         <div class="track-col index">{{ total - (indexMap.get(index) || index) }}</div>
                         <div class="track-col name">{{ item.mainSong.name }}</div>
                         <div class="track-col count">
-                            <mu-icon value="headset"></mu-icon>{{ item.listenerCount | humanCount }}
+                            <mu-icon value="headset"></mu-icon>{{ humanCount(item.listenerCount) }}
                         </div>
-                        <div class="track-col duration">{{ item.mainSong.duration | shortTime }}</div>
+                        <div class="track-col duration">{{ shortTime(item.mainSong.duration) }}</div>
                         <div class="track-col buttons">
                             <mu-button icon
                                 small
@@ -74,6 +74,8 @@ export default {
         }
     },
     methods: {
+        shortTime,
+        humanCount,
         ...mapActions([
             'playPlaylist',
             'activateRadio',
@@ -161,10 +163,6 @@ export default {
         findInput() {
             this.handleFind();
         }
-    },
-    filters: {
-        shortTime,
-        humanCount
     },
     components: {
         CenteredTip

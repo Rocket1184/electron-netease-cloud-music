@@ -138,21 +138,21 @@
                     @click="promptClearCache('chrome')">
                     <mu-list-item-title>浏览器缓存</mu-list-item-title>
                     <mu-list-item-action>
-                        <span class="nowrap">{{cacheSize | humanSize}}</span>
+                        <span class="nowrap">{{humanSize(cacheSize)}}</span>
                     </mu-list-item-action>
                 </mu-list-item>
                 <mu-list-item button
                     @click="promptClearCache('music')">
                     <mu-list-item-title>歌曲缓存</mu-list-item-title>
                     <mu-list-item-action>
-                        <span class="nowrap">{{musicSize | humanSize}}</span>
+                        <span class="nowrap">{{humanSize(musicSize)}}</span>
                     </mu-list-item-action>
                 </mu-list-item>
                 <mu-list-item button
                     @click="promptWipeAppData()">
                     <mu-list-item-title>所有应用数据</mu-list-item-title>
                     <mu-list-item-action>
-                        <span class="nowrap">{{dataSize | humanSize}}</span>
+                        <span class="nowrap">{{humanSize(dataSize)}}</span>
                     </mu-list-item-action>
                 </mu-list-item>
                 <mu-sub-header>调试</mu-sub-header>
@@ -231,6 +231,7 @@ export default {
         ...mapState(['settings'])
     },
     methods: {
+        humanSize,
         ...mapActions([
             'updateSettings',
             'resetSettings'
@@ -340,9 +341,6 @@ export default {
         showVersions() {
             this.$alert(h => h('pre', { class: 'mono-font' }, ver), '版本号');
         }
-    },
-    filters: {
-        humanSize
     },
     beforeCreate() {
         Api.getVersionName().then(v => this.versionName = v);

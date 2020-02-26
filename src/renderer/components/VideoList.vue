@@ -6,15 +6,13 @@
             tag="div"
             class="v-item">
             <div class="v-cover"
-                :style="v.picUrl | bkgImgStyle">
+                :style="bkgImgStyle(v.picUrl)">
                 <div class="playcnt">
-                    <span class="cnt-number">{{v.playCount}}</span>
+                    <span class="cnt-number">{{humanCount(v.playCount)}}</span>
                     <mu-icon value="videocam"
                         :size="16"></mu-icon>
                 </div>
-                <div class="duration">
-                    <span>{{v.duration | shortTime}}</span>
-                </div>
+                <div class="duration">{{shortTime(v.duration)}}</div>
             </div>
             <span class="name">
                 <span v-if="showBadge && v.type === 0">
@@ -31,7 +29,7 @@
 </template>
 
 <script>
-import { shortTime } from '@/util/formatter';
+import { shortTime, humanCount } from '@/util/formatter';
 import { bkgImg, sizeImg, HiDpiPx } from '@/util/image';
 
 export default {
@@ -46,8 +44,9 @@ export default {
             default: false
         }
     },
-    filters: {
+    methods: {
         shortTime,
+        humanCount,
         bkgImgStyle(img) {
             return bkgImg(sizeImg(img, HiDpiPx(160), HiDpiPx(120)));
         }
@@ -93,8 +92,8 @@ export default {
             }
             .duration {
                 position: absolute;
-                width: 100%;
                 bottom: 0;
+                right: 0;
                 left: 0;
                 padding: 2px 6px;
                 color: #fff;

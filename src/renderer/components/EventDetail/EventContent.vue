@@ -14,7 +14,7 @@
                     <span v-if="shareType"
                         class="event-title-after">{{ shareType }}</span>
                 </div>
-                <div class="event-title-below">{{ event.eventTime | shortDate }}</div>
+                <div class="event-title-below">{{ time }}</div>
             </div>
             <div v-if="event.topEvent"
                 class="event-top"
@@ -60,6 +60,9 @@ export default {
         avatar() {
             return sizeImg(this.event.user.avatarUrl, HiDpiPx(40));
         },
+        time() {
+            return shortDate(this.event.eventTime);
+        },
         pics() {
             return this.event.pics.map(p => sizeImg(p.pcSquareUrl, HiDpiPx(100)));
         },
@@ -76,9 +79,6 @@ export default {
         hasShare() {
             return ShareFields.some(f => f in this.json);
         }
-    },
-    filters: {
-        shortDate
     },
     components: {
         TypeBadge,

@@ -19,7 +19,7 @@
                 :key="'p' + p.id"
                 :img="p.coverImgUrl"
                 :title="p.name"
-                :subTitle="p | formatPlaylistSubtitle"
+                :subTitle="formatPlaylistSubtitle(p)"
                 :to="{ name: 'playlist', params: { id: p.id } }"></AvatarListItem>
             <template v-if="listCollected.length">
                 <mu-sub-header>收藏的歌单</mu-sub-header>
@@ -27,7 +27,7 @@
                     :key="p.id"
                     :img="p.coverImgUrl"
                     :title="p.name"
-                    :subTitle="p | formatPlaylistSubtitle"
+                    :subTitle="formatPlaylistSubtitle(p)"
                     :to="{ name: 'playlist', params: { id: p.id } }"></AvatarListItem>
             </template>
         </template>
@@ -78,9 +78,7 @@ export default {
                 }
             });
             Promise.all([p1, p2]).then(() => this.loading = false);
-        }
-    },
-    filters: {
+        },
         formatPlaylistSubtitle(p) {
             return `共 ${p.trackCount} 首，${p.playCount} 次播放，${p.subscribedCount} 人收藏`;
         }

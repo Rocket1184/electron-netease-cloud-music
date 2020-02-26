@@ -6,16 +6,16 @@
             @click="navigateToAlbum(al.id)">
             <mu-card-header v-if="showArtist"
                 :title="al.artist.name"
-                :subTitle="al.publishTime | shortDate">
+                :subTitle="shortDate(al.publishTime)">
                 <template #avatar>
                     <mu-avatar>
-                        <img :src="al | artistAvatarUrl">
+                        <img :src="artistAvatarUrl(al)">
                     </mu-avatar>
                 </template>
             </mu-card-header>
             <mu-card-media :title="al.name"
                 class="pic"
-                :style="al | albumImgStyle">
+                :style="albumImgStyle(al)">
             </mu-card-media>
         </mu-card>
         <div v-for="i in 10"
@@ -40,17 +40,15 @@ export default {
         }
     },
     methods: {
-        navigateToAlbum(id) {
-            this.$router.push({ name: 'album', params: { id } });
-        }
-    },
-    filters: {
         shortDate,
         artistAvatarUrl(al) {
             return sizeImg(al.artist.picUrl, HiDpiPx(40));
         },
         albumImgStyle(al) {
             return bkgImg(sizeImg(al.picUrl, HiDpiPx(200), HiDpiPx(160)));
+        },
+        navigateToAlbum(id) {
+            this.$router.push({ name: 'album', params: { id } });
         }
     }
 };
