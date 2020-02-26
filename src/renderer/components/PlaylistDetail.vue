@@ -19,11 +19,6 @@
                     </div>
                 </div>
                 <div class="actions">
-                    <PlayTracksButton small
-                        :total="playlist.trackCount"
-                        :source="trackSource"
-                        :tracks="tracks"
-                        :disabled="!tracksLoaded"></PlayTracksButton>
                     <mu-button flat
                         small
                         :disabled="playlist.creator.id === user.info.id"
@@ -64,12 +59,10 @@
                 </div>
             </div>
         </div>
-        <div class="tracks">
-            <VirtualTrackList title="曲目列表"
-                :source="trackSource"
-                :trackIds="playlist.trackIds"
-                @load="handleTracksLoad"></VirtualTrackList>
-        </div>
+        <VirtualTrackList filterable
+            :source="trackSource"
+            :trackIds="playlist.trackIds"
+            @load="handleTracksLoad"></VirtualTrackList>
     </div>
 </template>
 
@@ -77,7 +70,6 @@
 import { mapActions, mapState } from 'vuex';
 
 import VirtualTrackList from './TrackList/VirtualTrackList.vue';
-import PlayTracksButton from './PlayTracksButton.vue';
 import { shortDate } from '@/util/formatter';
 import { sizeImg, HiDpiPx } from '@/util/image';
 
@@ -165,7 +157,6 @@ export default {
         this.shouldSubscribed = this.playlist.subscribed;
     },
     components: {
-        PlayTracksButton,
         VirtualTrackList
     }
 };

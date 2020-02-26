@@ -15,13 +15,10 @@
                             </mu-avatar>
                             <span class="creator-name">{{album.artist.name}}</span>
                         </router-link>
-                        <span class="create-time mu-item-after-text">发布于 {{createTime}}</span>
+                        <span class="create-time mu-item-after-text">发行于 {{createTime}}</span>
                     </div>
                 </div>
                 <div class="actions">
-                    <PlayTracksButton small
-                        :source="trackSource"
-                        :tracks="album.songs"></PlayTracksButton>
                     <mu-button flat
                         small
                         @click="handleSubscribe">
@@ -60,15 +57,20 @@
                 </div>
             </div>
         </div>
-        <div class="tracks">
-            <div v-for="(tracks, name) in tracksToShow"
-                :key="name">
-                <mu-sub-header>Disk {{name}}</mu-sub-header>
-                <mu-divider></mu-divider>
-                <TrackList :source="trackSource"
-                    :tracks="tracks"></TrackList>
-            </div>
-        </div>
+        <TrackListHeader :source="trackSource"
+            :tracks="album.songs"></TrackListHeader>
+        <template v-if="Object.keys(tracksToShow).length === 1">
+            <mu-divider></mu-divider>
+            <TrackList :tracks="album.songs"></TrackList>
+        </template>
+        <template v-else
+            v-for="(tracks, name) of tracksToShow">
+            <div :key="name + 'd'"
+                class="disk-divider mu-divider">Disk {{name}}</div>
+            <TrackList :key="name"
+                :source="trackSource"
+                :tracks="tracks"></TrackList>
+        </template>
     </div>
 </template>
 
@@ -76,10 +78,11 @@
 import { mapActions, mapState } from 'vuex';
 
 import Api from '@/api/ipc';
-import TrackList from './TrackList/TrackList.vue';
-import PlayTracksButton from './PlayTracksButton.vue';
 import { shortDate } from '@/util/formatter';
 import { sizeImg, HiDpiPx } from '@/util/image';
+
+import TrackList from '@/components/TrackList/TrackList.vue';
+import TrackListHeader from '@/components/TrackList/TrackListHeader.vue';
 
 export default {
     props: {
@@ -176,8 +179,8 @@ export default {
         this.updateDynamicDetail();
     },
     components: {
-        PlayTracksButton,
-        TrackList
+        TrackList,
+        TrackListHeader
     }
 };
 </script>
@@ -243,8 +246,11 @@ export default {
             }
         }
     }
-    .mu-sub-header {
-        user-select: none;
+    .disk-divider {
+        font-size: 13px;
+        padding-left: 16px;
+        height: 24px;
+        line-height: 24px;
     }
 }
 </style>

@@ -13,10 +13,8 @@
             </div>
         </template>
         <template v-if="user.loginValid">
-            <PlayTracks :tracks="tracks"
-                :source="TrackSource"></PlayTracks>
-            <VirtualTrackList :tracks="tracks"
-                :source="TrackSource"></VirtualTrackList>
+            <VirtualTrackList filterable
+                :tracks="tracks"></VirtualTrackList>
         </template>
         <CenteredTip v-else
             icon="cloud_off"
@@ -32,7 +30,6 @@ import { Track } from '@/util/models';
 import { humanSize } from '@/util/formatter';
 
 import ListDetailLayout from '@/components/ListDetailLayout.vue';
-import PlayTracks from '@/components/PlayTracks.vue';
 import VirtualTrackList from '@/components/TrackList/VirtualTrackList.vue';
 import CenteredTip from '@/components/CenteredTip.vue';
 
@@ -61,7 +58,8 @@ export default {
                 this.tracks = res.data.map(d => {
                     const a = {
                         al: { id: 0, name: d.album, pic: -1 },
-                        ar: [{ id: 0, name: d.artist }]
+                        ar: [{ id: 0, name: d.artist }],
+                        source: TrackSource
                     };
                     return new Track(d.simpleSong, a);
                 });
@@ -72,14 +70,10 @@ export default {
             this.detailLoading = false;
         }
     },
-    created() {
-        this.TrackSource = TrackSource;
-    },
     mounted() {
         this.loadTracks();
     },
     components: {
-        PlayTracks,
         ListDetailLayout,
         VirtualTrackList,
         CenteredTip

@@ -1,7 +1,8 @@
 <template>
     <div class="hot-songs resource">
-        <PlayTracks :source="trackSource"
-            :tracks="artist.hotSongs"></PlayTracks>
+        <TrackListHeader :source="trackSource"
+            :tracks="artist.hotSongs"></TrackListHeader>
+        <mu-divider></mu-divider>
         <TrackList :source="trackSource"
             :tracks="artist.hotSongs"></TrackList>
     </div>
@@ -9,7 +10,7 @@
 
 <script>
 import TrackList from '@/components/TrackList/TrackList.vue';
-import PlayTracks from '@/components/PlayTracks.vue';
+import TrackListHeader from '@/components/TrackList/TrackListHeader.vue';
 
 export default {
     props: {
@@ -27,7 +28,7 @@ export default {
     },
     components: {
         TrackList,
-        PlayTracks
+        TrackListHeader
     }
 };
 </script>
