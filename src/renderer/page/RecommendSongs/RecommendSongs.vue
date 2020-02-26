@@ -38,12 +38,13 @@
                 sub-title="根据你的音乐口味生成，每天 6:00 更新">
                 <div class="recommend-header"></div>
             </mu-card-media>
-            <PlayTracks :tracks="recommend.songs"></PlayTracks>
+            <TrackListHeader :tracks="recommend.songs"></TrackListHeader>
+            <mu-divider></mu-divider>
             <RecommendSongList :tracks="recommend.songs"
                 @dislike="handleDislike"></RecommendSongList>
         </template>
         <CenteredTip v-else
-            icon="nature_people"
+            icon="audiotrack"
             tip="登录后开启每日推荐"></CenteredTip>
     </ListDetailLayout>
 </template>
@@ -52,14 +53,11 @@
 import { mapActions, mapState } from 'vuex';
 
 import { SET_LOGIN_VALID } from '@/store/mutation-types';
+
 import ListDetailLayout from '@/components/ListDetailLayout.vue';
 import CenteredTip from '@/components/CenteredTip.vue';
-import PlayTracks from '@/components/PlayTracks.vue';
+import TrackListHeader from '@/components/TrackList/TrackListHeader.vue';
 import RecommendSongList from './RecommendSongList.vue';
-
-const RecommendSource = {
-    name: 'recommend'
-};
 
 export default {
     data() {
@@ -89,13 +87,13 @@ export default {
         fetchData() {
             if (this.shouldUpdateSongs()) {
                 this.loading = true;
-                this.updateRecommendSongs({ source: RecommendSource })
+                this.updateRecommendSongs()
                     .then(() => this.loading = false);
             }
             this.updateRecommendStatistics();
         },
         async handleDislike(id) {
-            const resp = await this.dislikeRecommend({ id, source: RecommendSource });
+            const resp = await this.dislikeRecommend({ id });
             if (resp.code === 200) {
                 if (resp.data.id) {
                     this.$toast.message('已替换歌曲');
@@ -121,7 +119,7 @@ export default {
     components: {
         ListDetailLayout,
         CenteredTip,
-        PlayTracks,
+        TrackListHeader,
         RecommendSongList
     }
 };
