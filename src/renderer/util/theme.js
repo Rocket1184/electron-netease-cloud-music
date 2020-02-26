@@ -1,7 +1,7 @@
 import MuseUI from 'muse-ui';
 
 const overrides = {
-    divider: 'rgba(0,0,0,.2)'
+    divider: 'rgba(0,0,0,.1)'
 };
 
 /**
