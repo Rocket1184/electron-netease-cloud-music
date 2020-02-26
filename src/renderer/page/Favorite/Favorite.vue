@@ -11,9 +11,7 @@
         <div class="fav-content">
             <transition :name="transitionName"
                 mode="out-in">
-                <keep-alive>
-                    <component :is="favCompo"></component>
-                </keep-alive>
+                <component :is="favCompo"></component>
             </transition>
         </div>
     </div>
