@@ -14,13 +14,10 @@
                     <div class="mu-card-sub-title">找到只属于你的频率</div>
                 </div>
             </div>
-            <mu-sub-header>播放记录</mu-sub-header>
-            <mu-divider></mu-divider>
-            <RadioSongList :tracks="radio.list"
-                :source="trackSource"></RadioSongList>
+            <RadioSongList :tracks="radio.list"></RadioSongList>
         </template>
         <CenteredTip v-else
-            icon="nature_people"
+            icon="radio"
             tip="登录后开启私人 FM"></CenteredTip>
     </ListDetailLayout>
 </template>
@@ -32,12 +29,9 @@ import RadioSongList from './RadioSongList.vue';
 import CenteredTip from '@/components/CenteredTip.vue';
 import ListDetailLayout from '@/components/ListDetailLayout.vue';
 
-const trackSource = { name: 'radio' };
-
 export default {
     computed: {
-        ...mapState(['ui', 'radio', 'user']),
-        trackSource() { return trackSource; }
+        ...mapState(['ui', 'radio', 'user'])
     },
     methods: {
         ...mapActions([

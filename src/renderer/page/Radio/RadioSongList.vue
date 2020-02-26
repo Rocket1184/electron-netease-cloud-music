@@ -1,15 +1,18 @@
 <template>
-    <div class="tracklist">
+    <div class="tracklist tracklist--virtual">
         <template v-if="tracks.length !== 0">
-            <div class="list">
-                <TrackItem v-for="n in tracks.length"
-                    :key="tracks[tracks.length - n].id"
-                    :track="tracks[tracks.length - n]"
-                    :shortcuts="shortcuts"
-                    @dblclick="handlePlay(tracks.length - n)"
-                    @collect="handleCollect(tracks[tracks.length - n].id)"
-                    @queue="handleQueue(tracks.length - n)"></TrackItem>
-            </div>
+            <RecycleScroller page-mode
+                :items="tracksToShow"
+                :item-size="40"
+                key-field="id">
+                <template v-slot="{ item, index }">
+                    <TrackItem :track="item"
+                        :shortcuts="shortcuts"
+                        @dblclick="handlePlay(tracks.length - index - 1)"
+                        @collect="handleCollect(tracks.id)"
+                        @queue="handleQueue(tracks.length - index - 1)"></TrackItem>
+                </template>
+            </RecycleScroller>
         </template>
         <CenteredTip v-else
             icon="inbox"
@@ -19,11 +22,16 @@
 
 <script>
 import TrackItem from '@/components/TrackList/TrackItem.vue';
-import TrackList from '@/components/TrackList/TrackList.vue';
+import TrackList from '@/components/TrackList/VirtualTrackList.vue';
 import CenteredTip from '@/components/CenteredTip.vue';
 
 export default {
     extends: TrackList,
+    computed: {
+        tracksToShow() {
+            return this.tracks.slice().reverse();
+        }
+    },
     methods: {
         handlePlay(index) {
             if (this.ui.radioMode) {
