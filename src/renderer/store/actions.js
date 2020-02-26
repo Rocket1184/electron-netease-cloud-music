@@ -623,11 +623,11 @@ export async function updateUserAlbums({ commit }) {
 
 /**
  * @param {ActionContext} param0
- * @param {{ source: { name: string } }} payload
  */
-export async function updateRecommendSongs({ commit }, { source }) {
+export async function updateRecommendSongs({ commit }) {
     const resp = await Api.getRecommendSongs();
     if (resp.code === 200) {
+        const source = { name: 'recommend' };
         resp.recommend.forEach(song => {
             song.source = source;
         });
@@ -647,12 +647,12 @@ export async function updateRecommendStatistics({ commit }) {
 
 /**
  * @param {ActionContext} param0
- * @param {{ id: number; source: { name: string } }} payload
+ * @param {{ id: number; }} payload
  */
-export async function dislikeRecommend({ commit }, { id, source }) {
+export async function dislikeRecommend({ commit }, { id }) {
     const resp = await Api.dislikeRecommend(id);
     if (resp.code === 200) {
-        resp.data.source = source;
+        resp.data.source = { name: 'recommend' };
         commit(types.REPLACE_RECOMMEND_SONG, { id, track: resp.data });
     }
     return resp;
@@ -848,7 +848,8 @@ export function clearRadio({ commit, dispatch }) {
 export async function getRadio({ commit }) {
     const resp = await Api.getRadioE();
     if (resp.code === 200) {
-        const tracks = resp.data.map(t => new Track(t));
+        const a = { source: { name: 'radio' } };
+        const tracks = resp.data.map(t => new Track(t, a));
         commit(types.APPEND_RADIO, { tracks });
     }
 }
