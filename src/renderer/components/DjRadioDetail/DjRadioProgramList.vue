@@ -1,13 +1,41 @@
 <template>
     <div class="tracklist tracklist--virtual tracklist--dj">
-        <mu-sub-header>
-            <span>电台节目</span>
+        <div class="tracklist__header">
+            <mu-button flat
+                class="tracklist__play"
+                :disabled="loadingAll"
+                @click="playAll">
+                <mu-icon left
+                    :size="20"
+                    color="grey"
+                    value="play_circle_filled"></mu-icon>
+                <span>{{ btnPlayText }}</span>
+            </mu-button>
+            <template v-if="programs.length < total">
+                <div v-if="loadingAll"
+                    class="djradio-loading">
+                    <mu-circular-progress color="secondary"
+                        :size="16"
+                        :stroke-width="2"></mu-circular-progress>
+                    <span>正在加载</span>
+                </div>
+                <mu-button v-else
+                    flat
+                    class="tracklist__play"
+                    @click="loadAll">
+                    <mu-icon left
+                        :size="20"
+                        color="grey"
+                        value="autorenew"></mu-icon>
+                    <span>加载全部</span>
+                </mu-button>
+            </template>
             <mu-text-field ref="findInput"
                 v-model="findInput"
                 placeholder="查找节目 ..."
                 :action-icon="findInput.length > 0 ? 'close' : null"
                 :action-click="clearFind"></mu-text-field>
-        </mu-sub-header>
+        </div>
         <mu-divider></mu-divider>
         <CenteredTip v-if="programs.length === 0"
             icon="inbox"
@@ -62,6 +90,7 @@ export default {
     },
     data() {
         return {
+            loadingAll: false,
             findInput: '',
             filteredPrograms: [],
             indexMap: new Map()
@@ -71,6 +100,9 @@ export default {
         ...mapState(['ui', 'playlist']),
         programsToShow() {
             return this.findInput.length > 0 ? this.filteredPrograms : this.programs;
+        },
+        btnPlayText() {
+            return `播放全部 (${this.total})`;
         }
     },
     methods: {
@@ -134,7 +166,17 @@ export default {
             const newIndex = this.findTrackInPlaylist(program.mainSong);
             this.playTrackIndex(newIndex);
         },
-        playAll() {
+        async loadAll() {
+            if (this.programs.length < this.total) {
+                this.loadingAll = true;
+                await new Promise(resolve => {
+                    this.$emit('loadAll', resolve);
+                });
+                this.loadingAll = false;
+            }
+        },
+        async playAll() {
+            await this.loadAll();
             this.playPlaylist({
                 tracks: this.programs.map(p => {
                     p.mainSong.source = this.getProgramSource(p);
@@ -171,6 +213,14 @@ export default {
 </script>
 
 <style lang="less">
+.djradio-loading {
+    height: 30px;
+    display: flex;
+    align-items: center;
+    .mu-circular-progress {
+        margin: 0 15px;
+    }
+}
 .tracklist--dj {
     .count {
         width: 70px;

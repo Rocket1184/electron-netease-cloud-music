@@ -21,14 +21,6 @@
                 <div class="actions">
                     <mu-button flat
                         small
-                        @click="handlePlayAll"
-                        :disabled="programsLoading || djradio.programCount <= 0">
-                        <mu-icon left
-                            value="play_circle_outline"></mu-icon>
-                        <span>{{btnPlayText}}</span>
-                    </mu-button>
-                    <mu-button flat
-                        small
                         @click="handleSubscribe">
                         <mu-icon left
                             :color="shouldSubscribed ? 'amber' : ''"
@@ -62,9 +54,9 @@
         <div class="tracks">
             <CenteredLoading v-if="programs.length === 0 && programsLoading"></CenteredLoading>
             <DjRadioProgramList v-else
-                ref="programList"
                 :programs="programs"
-                :total="djradio.programCount"></DjRadioProgramList>
+                :total="djradio.programCount"
+                @loadAll="loadAllPrograms"></DjRadioProgramList>
         </div>
     </div>
 </template>
@@ -106,10 +98,6 @@ export default {
         createTime() {
             return shortDate(this.djradio.createTime);
         },
-        btnPlayText() {
-            const n = this.programs.length || this.djradio.programCount;
-            return `播放全部 (${n})`;
-        },
         btnSubscribeText() {
             const t = this.shouldSubscribed ? '已订阅' : '订阅';
             const n = this.djradio.subCount + this.subsCntOffset;
@@ -124,14 +112,17 @@ export default {
             'subscribeDjRadio',
             'unsubscribeDjRadio'
         ]),
-        async getPrograms(offset = 0) {
+        async getPrograms(offset = 0, limit = 100) {
             this.programsLoading = true;
-            const programs = await getDjRadioProgram(this.djradio.id, 100, offset);
+            const programs = await getDjRadioProgram(this.djradio.id, limit, offset);
             this.programs.push(...programs);
             this.programsLoading = false;
         },
-        async handlePlayAll() {
-            this.$refs.programList.playAll();
+        async loadAllPrograms(resolve) {
+            while (this.programs.length < this.djradio.programCount) {
+                await this.getPrograms(this.programs.length, 500);
+            }
+            resolve();
         },
         async handleSubscribe() {
             if (!this.user.loginValid) {
@@ -159,6 +150,7 @@ export default {
         handleScroll() {
             const { clientHeight, scrollHeight, scrollTop } = this.$el.parentElement;
             if (scrollHeight - clientHeight - scrollTop > 10) return;
+            if (this.programs.length >= this.djradio.programCount) return;
             this.getPrograms(this.programs.length);
         }
     },
