@@ -1,16 +1,18 @@
 <template>
     <div class="tracklist tracklist--virtual">
-        <template v-if="title">
-            <mu-sub-header>
-                <span>{{ title }}</span>
+        <div v-if="filterable">
+            <TrackListHeaeder :disabled="loading"
+                :count="trackCount"
+                :tracks="details"
+                :source="source">
                 <mu-text-field ref="findInput"
                     v-model="findInput"
                     placeholder="查找歌曲 ..."
                     :action-icon="findInput.length > 0 ? 'close' : null"
                     :action-click="clearFind"></mu-text-field>
-            </mu-sub-header>
+            </TrackListHeaeder>
             <mu-divider></mu-divider>
-        </template>
+        </div>
         <CenteredLoading v-if="loading"></CenteredLoading>
         <template v-else-if="trackDetails.length !== 0">
             <RecycleScroller page-mode
@@ -39,6 +41,7 @@ import { workerExecute } from '@/worker/message';
 
 import TrackList from './TrackList.vue';
 import TrackItem from './TrackItem.vue';
+import TrackListHeaeder from './TrackListHeader.vue';
 import CenteredTip from '@/components/CenteredTip.vue';
 import CenteredLoading from '@/components/CenteredLoading.vue';
 
@@ -56,6 +59,10 @@ export default {
         trackIds: {
             type: Array,
             required: false
+        },
+        filterable: {
+            type: Boolean,
+            default: false
         }
     },
     data() {
@@ -74,6 +81,12 @@ export default {
         tracksToShow() {
             if (this.findInput.length > 0) return this.filteredList;
             return this.details;
+        },
+        trackCount() {
+            if (Array.isArray(this.trackIds)) {
+                return this.trackIds.length;
+            }
+            return this.details.length;
         }
     },
     methods: {
@@ -144,6 +157,7 @@ export default {
     },
     components: {
         TrackItem,
+        TrackListHeaeder,
         CenteredTip,
         CenteredLoading
     }
@@ -151,24 +165,19 @@ export default {
 </script>
 
 <style lang="less">
-.tracklist--virtual {
-    .mu-sub-header {
-        display: flex;
-        align-items: center;
-        padding: 0 0 0 16px;
-        .mu-input {
-            margin: 0 0 0 auto;
-            padding: 0;
-            font-size: 14px;
-            min-height: unset;
-            line-height: 30px;
-            .mu-text-field-input {
-                height: unset;
-            }
-            .mu-input-action-icon {
-                padding: 0 2px;
-                font-size: 20px;
-            }
+.tracklist__header {
+    .mu-input {
+        margin: 0 0 0 auto;
+        padding: 0;
+        font-size: 14px;
+        min-height: unset;
+        line-height: 30px;
+        .mu-text-field-input {
+            height: unset;
+        }
+        .mu-input-action-icon {
+            padding: 0 2px;
+            font-size: 20px;
         }
     }
 }
