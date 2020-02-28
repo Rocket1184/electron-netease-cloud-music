@@ -41,7 +41,7 @@ const FavCompos = {
 };
 
 export default {
-    name: 'page-favorite',
+    name: 'Favorite',
     data() {
         return {
             tab: 'playlist',
@@ -86,7 +86,7 @@ export default {
     flex-direction: column;
     .fav-tab {
         z-index: 10;
-        box-shadow: 0 0px 12px rgba(0, 0, 0, 0.4);
+        box-shadow: 0 0 12px rgba(0, 0, 0, 0.4);
     }
     .fav-content {
         height: calc(~'100% - 48px');

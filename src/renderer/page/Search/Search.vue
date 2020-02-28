@@ -13,7 +13,7 @@
         </mu-tabs>
         <div class="search-content">
             <CenteredLoading v-if="ui.search.pending"></CenteredLoading>
-            <CenteredTip v-else-if="haveSearched === false"
+            <CenteredTip v-else-if="ui.search.keyword === ''"
                 icon="search"
                 tip="右上角搜索框内输入，回车搜索！"></CenteredTip>
             <CenteredTip v-else-if="ui.search.result.items && ui.search.result.items.length === 0"
@@ -65,10 +65,8 @@ import ArtistList from '@/components/ArtistList.vue';
 import PlaylistList from '@/components/PlaylistList.vue';
 
 export default {
-    name: 'page-search',
     data() {
         return {
-            haveSearched: false,
             tab: 'song',
             pageSize: 20,
             currentPage: 1
@@ -81,7 +79,7 @@ export default {
         },
         paginationShow() {
             const { result: { total } } = this.ui.search;
-            return this.haveSearched && total > this.pageSize;
+            return total > this.pageSize;
         }
     },
     methods: {
@@ -113,8 +111,14 @@ export default {
                 this.searchOffset === this.ui.search.offset) return;
             if (keyword !== this.ui.search.keyword) this.currentPage = 1;
             await this.search({ keyword, type, limit: this.pageSize, offset: this.searchOffset });
-            if (!this.haveSearched) this.haveSearched = true;
         }
+    },
+    created() {
+        const { type, offset } = this.ui.search;
+        if (type) {
+            this.tab = type;
+        }
+        this.currentPage = offset / this.pageSize + 1;
     },
     beforeRouteEnter(to, from, next) {
         // this component would be created in the new route
@@ -147,7 +151,7 @@ export default {
     flex-direction: column;
     .search-tab {
         z-index: 10;
-        box-shadow: 0 0px 12px rgba(0, 0, 0, 0.4);
+        box-shadow: 0 0 12px rgba(0, 0, 0, 0.4);
     }
     .search-content {
         height: calc(~'100% - 48px');
@@ -157,7 +161,6 @@ export default {
         height: calc(~'100% - 78px');
     }
     .pagination {
-        width: 100%;
         padding: 16px 16px 30px;
     }
 }

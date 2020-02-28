@@ -215,7 +215,6 @@ Node: ${versions.node}
 V8: ${versions.v8}`;
 
 export default {
-    name: 'page-settings',
     data() {
         return {
             isDarwin,
@@ -342,10 +341,8 @@ export default {
             this.$alert(h => h('pre', { class: 'mono-font' }, ver), '版本号');
         }
     },
-    beforeCreate() {
+    created() {
         Api.getVersionName().then(v => this.versionName = v);
-    },
-    activated() {
         this.refreshSize();
     },
     components: {

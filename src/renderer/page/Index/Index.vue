@@ -63,7 +63,7 @@ const algBlockList = [
 ];
 
 export default {
-    name: 'page-index',
+    name: 'Index',
     data() {
         return {
             action: [
