@@ -168,8 +168,8 @@ electron /path/to/electron-netease-cloud-music_*.asar
   - [x] 视频/MV
   - [x] 主播电台
 - [ ] 音乐云盘
-  - [ ] 列表
-  - [ ] 播放
+  - [x] 列表
+  - [x] 播放
   - [ ] 上传
 - [ ] 私信读写 （真的有人用一个音乐 App 来聊天吗）
 - [ ] 通知消息 （私信，评论， @ 等）
