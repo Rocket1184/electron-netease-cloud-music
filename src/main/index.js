@@ -189,14 +189,21 @@ ipcMain.on('showLoginWindow', () => {
         parent: mainWindow,
         modal: !IsDarwin,
         webPreferences: {
-            nodeIntegration: false
+            contextIsolation: true,
+            enableRemoteModule: false,
+            nodeIntegration: false,
+            nativeWindowOpen: true
         }
     });
     loginWindow.loadURL(LoginURL);
     const ses = loginWindow.webContents.session;
     const wr = ses.webRequest;
-    wr.onCompleted({ urls: [`${LoginURL}/weapi/login`] }, details => {
-        if (details.statusCode === 200 && Array.isArray(details.responseHeaders['set-cookie'])) {
+    wr.onCompleted({ urls: [`${LoginURL}/weapi/*`] }, details => {
+        if (
+            details.url.includes('login') &&
+            details.statusCode === 200 &&
+            Array.isArray(details.responseHeaders['set-cookie'])
+        ) {
             ipcMain.once('getLoginCookie', event => {
                 const cookie = {};
                 ses.cookies.get({ url: LoginURL }).then(cookies => {
