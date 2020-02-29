@@ -1,185 +1,16 @@
 <template>
     <div class="ncm-page">
         <div class="settings">
-            <mu-list toggle-nested
-                :nested-indent="false">
-                <mu-sub-header>主题</mu-sub-header>
-                <mu-list-item button
-                    @click="primaryPickerOpen = true">
-                    <mu-list-item-title>主题色</mu-list-item-title>
-                    <ColorPicker :open.sync="primaryPickerOpen"
-                        @select="setThemeVariable('themePrimaryColor', $event)"></ColorPicker>
-                    <mu-list-item-action>
-                        <mu-avatar :size="24"
-                            :color="settings.themePrimaryColor"></mu-avatar>
-                    </mu-list-item-action>
-                </mu-list-item>
-                <mu-list-item button
-                    @click="secondaryPickerOpen = true">
-                    <mu-list-item-title>强调色</mu-list-item-title>
-                    <ColorPicker :open.sync="secondaryPickerOpen"
-                        @select="setThemeVariable('themeSecondaryColor', $event)"></ColorPicker>
-                    <mu-list-item-action>
-                        <mu-avatar :size="24"
-                            :color="settings.themeSecondaryColor"></mu-avatar>
-                    </mu-list-item-action>
-                </mu-list-item>
-                <mu-list-item>
-                    <mu-list-item-title>背景色</mu-list-item-title>
-                    <mu-list-item-action>
-                        <mu-select :value="settings.themeVariety"
-                            @change="setThemeVariable('themeVariety', $event)">
-                            <mu-option label="亮色"
-                                value="light"></mu-option>
-                            <mu-option label="暗色"
-                                value="dark"></mu-option>
-                        </mu-select>
-                    </mu-list-item-action>
-                </mu-list-item>
-                <mu-sub-header>行为</mu-sub-header>
-                <mu-list-item @click="setWindowZoom">
-                    <mu-list-item-title>界面缩放</mu-list-item-title>
-                    <mu-list-item-action>
-                        <mu-select :value="settings.windowZoom"
-                            @change="setWindowZoom($event)">
-                            <mu-option label="跟随系统"
-                                :value="null"></mu-option>
-                            <mu-option label="1x"
-                                :value="1"></mu-option>
-                            <mu-option label="1.25x"
-                                :value="1.25"></mu-option>
-                            <mu-option label="1.5x"
-                                :value="1.5"></mu-option>
-                            <mu-option label="1.75x"
-                                :value="1.75"></mu-option>
-                            <mu-option label="2x"
-                                :value="2"></mu-option>
-                        </mu-select>
-                    </mu-list-item-action>
-                </mu-list-item>
-                <mu-list-item button
-                    @click="toggleWindowBorder()">
-                    <mu-list-item-title>使用系统标题栏</mu-list-item-title>
-                    <mu-list-item-action>
-                        <mu-switch :inputValue="settings.windowBorder"
-                            color="secondary"></mu-switch>
-                    </mu-list-item-action>
-                </mu-list-item>
-                <mu-list-item button
-                    nested
-                    :open="!isDarwin && settings.showTrayIcon"
-                    @click="toggleTrayIcon()">
-                    <mu-list-item-title>显示托盘图标</mu-list-item-title>
-                    <mu-list-item-action>
-                        <mu-switch :inputValue="settings.showTrayIcon"
-                            color="secondary"></mu-switch>
-                    </mu-list-item-action>
-                    <template #nested>
-                        <mu-list-item>
-                            <mu-list-item-title>托盘图标颜色</mu-list-item-title>
-                            <mu-list-item-action>
-                                <mu-select :value="settings.trayIconVariety"
-                                    @change="setIPCVariable('trayIconVariety', $event)">
-                                    <mu-option label="亮色"
-                                        value="light"></mu-option>
-                                    <mu-option label="暗色"
-                                        value="dark"></mu-option>
-                                </mu-select>
-                            </mu-list-item-action>
-                        </mu-list-item>
-                        <mu-list-item>
-                            <mu-list-item-title>关闭窗口时</mu-list-item-title>
-                            <mu-list-item-action>
-                                <mu-select :value="settings.exitOnWindowClose"
-                                    @change="setIPCVariable('exitOnWindowClose', $event)">
-                                    <mu-option label="退出程序"
-                                        :value="true"></mu-option>
-                                    <mu-option label="最小化到托盘"
-                                        :value="false"></mu-option>
-                                </mu-select>
-                            </mu-list-item-action>
-                        </mu-list-item>
+            <mu-list>
+                <template v-for="group of Entries">
+                    <mu-sub-header :key="group.name">{{ group.name }}</mu-sub-header>
+                    <template v-for="item of group.items">
+                        <component v-if="shouldShowOption(item)"
+                            :key="item.title"
+                            :is="Option[item.type]"
+                            v-bind="item"></component>
                     </template>
-                </mu-list-item>
-                <mu-sub-header>播放</mu-sub-header>
-                <mu-list-item>
-                    <mu-list-item-title>音频码率</mu-list-item-title>
-                    <mu-list-item-action>
-                        <mu-select :value="settings.bitRate"
-                            @change="setByName('bitRate', $event)">
-                            <mu-option label="极高 (320 kbit/s)"
-                                value="h"></mu-option>
-                            <mu-option label="较高 (192 kbit/s)"
-                                value="m"></mu-option>
-                            <mu-option label="标准 (128 kbit/s)"
-                                value="l"></mu-option>
-                        </mu-select>
-                    </mu-list-item-action>
-                </mu-list-item>
-                <mu-list-item button
-                    @click="toggleByName('autoPlay')">
-                    <mu-list-item-title>启动时自动开始播放</mu-list-item-title>
-                    <mu-list-item-action>
-                        <mu-switch :inputValue="settings.autoPlay"
-                            color="secondary"></mu-switch>
-                    </mu-list-item-action>
-                </mu-list-item>
-                <mu-sub-header>特性</mu-sub-header>
-                <mu-list-item button
-                    @click="toggleByName('autoSign')">
-                    <mu-list-item-title>自动签到</mu-list-item-title>
-                    <mu-list-item-action>
-                        <mu-switch :inputValue="settings.autoSign"
-                            color="secondary"></mu-switch>
-                    </mu-list-item-action>
-                </mu-list-item>
-                <mu-sub-header>存储</mu-sub-header>
-                <mu-list-item button
-                    @click="promptClearCache('chrome')">
-                    <mu-list-item-title>浏览器缓存</mu-list-item-title>
-                    <mu-list-item-action>
-                        <span class="nowrap">{{humanSize(cacheSize)}}</span>
-                    </mu-list-item-action>
-                </mu-list-item>
-                <mu-list-item button
-                    @click="promptClearCache('music')">
-                    <mu-list-item-title>歌曲缓存</mu-list-item-title>
-                    <mu-list-item-action>
-                        <span class="nowrap">{{humanSize(musicSize)}}</span>
-                    </mu-list-item-action>
-                </mu-list-item>
-                <mu-list-item button
-                    @click="promptWipeAppData()">
-                    <mu-list-item-title>所有应用数据</mu-list-item-title>
-                    <mu-list-item-action>
-                        <span class="nowrap">{{humanSize(dataSize)}}</span>
-                    </mu-list-item-action>
-                </mu-list-item>
-                <mu-sub-header>调试</mu-sub-header>
-                <mu-list-item button
-                    @click="launchDevTools">
-                    <mu-list-item-title>启动开发者工具</mu-list-item-title>
-                </mu-list-item>
-                <mu-list-item button
-                    @click="reloadWindow">
-                    <mu-list-item-title>重新载入页面</mu-list-item-title>
-                </mu-list-item>
-                <mu-list-item button
-                    @click="recreateWindow">
-                    <mu-list-item-title>重新创建窗口</mu-list-item-title>
-                </mu-list-item>
-                <mu-sub-header>关于</mu-sub-header>
-                <mu-list-item button
-                    @click="showVersions">
-                    <mu-list-item-title>版本号</mu-list-item-title>
-                    <mu-list-item-action>
-                        <span class="nowrap">{{versionName}}</span>
-                    </mu-list-item-action>
-                </mu-list-item>
-                <mu-list-item button
-                    @click="openBrowser('https://github.com/rocket1184/electron-netease-cloud-music')">
-                    <mu-list-item-title>获取源代码</mu-list-item-title>
-                </mu-list-item>
+                </template>
             </mu-list>
         </div>
     </div>
@@ -191,38 +22,32 @@ import { mapState, mapActions } from 'vuex';
 
 import Api from '@/api/ipc';
 import { setTheme } from '@/util/theme';
-import ColorPicker from './ColorPicker.vue';
 import { humanSize } from '@/util/formatter';
-import { process, isDarwin, browserWindow, webContents } from '@/util/globals';
+import { UPDATE_SETTINGS } from '@/store/mutation-types';
+import { isDarwin, browserWindow, webContents } from '@/util/globals';
 
-const TAG = 'Settings';
+import OptionColor from './OptionColor.vue';
+import OptionPlain from './OptionPlain.vue';
+import OptionSelect from './OptionSelect.vue';
+import OptionToggle from './OptionToggle.vue';
+import { openColorPicker } from './open-color-picker';
 
-const CacheName = {
-    chrome: '浏览器',
-    music: '歌曲'
+import { Entries } from './entries';
+import { Versions, RepoURL, IpcTag } from './constants';
+
+const Option = {
+    color: OptionColor,
+    plain: OptionPlain,
+    select: OptionSelect,
+    toggle: OptionToggle
 };
-
-const CacheClearFunc = {
-    chrome: resolve => webContents.session.clearCache(() => resolve(true)),
-    music: resolve => Api.clearCache('music').then(() => resolve(true))
-};
-
-const versions = process.versions;
-
-const ver = `Electron: ${versions.electron}
-Chrome: ${versions.chrome}
-Node: ${versions.node}
-V8: ${versions.v8}`;
 
 export default {
     data() {
         return {
-            isDarwin,
-            primaryPickerOpen: false,
-            secondaryPickerOpen: false,
-            cacheSize: 0,
-            musicSize: 0,
-            dataSize: 0,
+            cacheSize: '',
+            musicSize: '',
+            dataSize: '',
             versionName: ''
         };
     },
@@ -230,79 +55,71 @@ export default {
         ...mapState(['settings'])
     },
     methods: {
-        humanSize,
         ...mapActions([
             'updateSettings',
             'resetSettings'
         ]),
+        shouldShowOption(item) {
+            if (!item.depends && !item.exclude) return true;
+            if (Array.isArray(item.depends)) {
+                for (const d of item.depends) {
+                    if (!this.settings[d]) return false;
+                }
+            }
+            if (Array.isArray(item.exclude)) {
+                for (const e of item.exclude) {
+                    if (this.Platforms[e]) return false;
+                }
+            }
+            return true;
+        },
         refreshSize() {
-            webContents.session.getCacheSize(s => this.cacheSize = s);
-            Api.getDataSize('all').then(s => this.dataSize = s.size);
-            Api.getDataSize('music').then(s => this.musicSize = s.size);
+            webContents.session.getCacheSize().then(s => this.cacheSize = humanSize(s));
+            Api.getDataSize('all').then(s => this.dataSize = humanSize(s.size));
+            Api.getDataSize('music').then(s => this.musicSize = humanSize(s.size));
         },
-        toggleByName(name) {
-            const val = !this.settings[name];
-            return this.updateSettings({ [name]: val });
-        },
-        async toggleWindowBorder() {
-            await this.toggleByName('windowBorder');
-            this.$nextTick(() => this.recreateWindow());
+        initData() {
+            this.refreshSize();
+            Api.getVersionName().then(v => this.versionName = v);
         },
         setByName(name, val) {
             if (this.settings[name] === val) return;
             return this.updateSettings({ [name]: val });
         },
-        async setThemeVariable(name, val) {
-            await this.setByName(name, val);
-            setTheme({
-                primary: this.settings.themePrimaryColor,
-                secondary: this.settings.themeSecondaryColor
-            }, this.settings.themeVariety);
-        },
-        setWindowZoom(val) {
-            this.setByName('windowZoom', val);
-            webContents.setZoomFactor(val || 1);
-        },
-        setIPCVariable(name, val) {
-            this.setByName(name, val);
-            ipcRenderer.send(TAG, name, val);
-        },
-        async toggleTrayIcon() {
-            const shouldShowTrayIcon = !this.settings.showTrayIcon;
-            this.setIPCVariable('showTrayIcon', shouldShowTrayIcon);
-            if (shouldShowTrayIcon === false) {
-                this.setIPCVariable('exitOnWindowClose', true);
-            }
-        },
-        async clearStorage() {
-            return new Promise(resolve => webContents.session.clearStorageData(resolve));
+        setColorByName(name) {
+            openColorPicker().then(color => {
+                this.setByName(name, color);
+            }).catch(() => { /* noop */ });
         },
         clearCache(type) {
-            return new Promise((resolve, reject) => {
-                const func = CacheClearFunc[type];
-                if (func) {
-                    func(resolve);
-                } else {
-                    reject();
-                }
-            });
+            switch (type) {
+                case 'chrome':
+                    return webContents.session.clearCache();
+                case 'music':
+                    return Api.clearCache('music');
+            }
         },
         promptClearCache(type) {
-            const cacheName = CacheName[type];
-            this.$confirm(
-                `${cacheName}缓存将被清除，确定吗？`,
-                '清除缓存',
-            ).then(msgReturn => {
-                if (msgReturn.result === true) {
-                    return this.clearCache(type);
-                }
-                return Promise.reject();
-            }).then(result => {
-                if (result === true) {
-                    this.$toast.message(`${cacheName}缓存清除完成`);
-                    this.refreshSize();
-                }
-            }).catch(() => { /* ignore */ });
+            let name;
+            switch (type) {
+                case 'chrome': name = '浏览器'; break;
+                case 'music': name = '歌曲'; break;
+            }
+            this.$confirm(`${name}缓存将被清除，确定吗？`, {
+                title: '清除缓存',
+            }).then(({ result }) => {
+                if (!result) throw 0;
+                return this.clearCache(type);
+            }).then(() => {
+                this.$toast.message(`${name}缓存清除完成`);
+                this.refreshSize();
+            }).catch(() => { /* noop */ });
+        },
+        promptClearBrowserCache() {
+            this.promptClearCache('chrome');
+        },
+        promptClearMusicCache() {
+            this.promptClearCache('music');
         },
         promptWipeAppData() {
             this.$confirm(
@@ -313,7 +130,7 @@ export default {
                     window.onbeforeunload = null;
                     Promise.all([
                         Api.updateCookie(),
-                        this.clearStorage(),
+                        webContents.session.clearStorageData(),
                         this.resetSettings(),
                         this.clearCache('music'),
                         this.clearCache('chrome'),
@@ -324,29 +141,66 @@ export default {
         launchDevTools() {
             browserWindow.openDevTools();
         },
-        reloadWindow() {
+        reloadPage() {
             browserWindow.reload();
         },
         recreateWindow() {
-            ipcRenderer.send(TAG, 'recreateWindow');
-        },
-        openBrowser(url) {
-            try {
-                shell.openExternal(url);
-            } catch (err) {
-                this.$alert(`无法打开您的浏览器，请直接访问 ${url}`, '提示');
-            }
+            ipcRenderer.send(IpcTag, 'recreateWindow');
         },
         showVersions() {
-            this.$alert(h => h('pre', { class: 'mono-font' }, ver), '版本号');
+            this.$alert(h => h('pre', { class: 'mono-font' }, Versions), '版本号');
+        },
+        openBrowser(url) {
+            shell.openExternal(url).catch(() => {
+                this.$alert(`无法打开您的浏览器，请直接访问 ${url}`, '提示');
+            });
+        },
+        openRepoInBrowser() {
+            this.openBrowser(RepoURL);
+        },
+        subscribeMutation() {
+            return this.$store.subscribe(({ type, payload }, state) => {
+                if (type !== UPDATE_SETTINGS) return;
+                for (const [key, val] of Object.entries(payload)) {
+                    switch (key) {
+                        case 'themePrimaryColor':
+                        case 'themeSecondaryColor':
+                        case 'themeVariety':
+                            setTheme({
+                                primary: state.settings.themePrimaryColor,
+                                secondary: state.settings.themeSecondaryColor
+                            }, state.settings.themeVariety);
+                            break;
+                        case 'windowBorder':
+                            this.$nextTick(() => this.recreateWindow());
+                            break;
+                        case 'windowZoom':
+                            webContents.setZoomFactor(val || 1);
+                            break;
+                        case 'showTrayIcon':
+                            if (val === false && state.settings.exitOnWindowClose === false) {
+                                this.setByName('exitOnWindowClose', true);
+                            }
+                            // eslint-disable-nextline no-fallthrough
+                        case 'exitOnWindowClose':
+                            ipcRenderer.send(IpcTag, key, val);
+                            break;
+                    }
+                }
+            });
         }
     },
     created() {
-        Api.getVersionName().then(v => this.versionName = v);
-        this.refreshSize();
+        this.initData();
+        this.Option = Option;
+        this.Entries = Entries;
+        this.Platforms = { isDarwin };
+        this.unsub = this.subscribeMutation();
     },
-    components: {
-        ColorPicker
+    beforeDestroy() {
+        if (typeof this.unsub === 'function') {
+            this.unsub();
+        }
     }
 };
 </script>

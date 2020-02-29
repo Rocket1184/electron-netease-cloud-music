@@ -4,29 +4,34 @@
         :width="500"
         :open="open"
         @close="handleClose">
-        <div v-show="activeGroup < 0"
-            class="buttons-wrapper">
-            <mu-button v-for="(group, index) in colorGroups"
-                fab
-                :color="group.primary"
-                :key="group.primary"
-                @click.native="activeGroup = index">
-            </mu-button>
-        </div>
-        <div v-if="activeGroup >= 0"
-            class="buttons-wrapper">
-            <mu-button fab
-                color="transparent"
-                textColor="grey"
-                @click="activeGroup = -1">
-                <mu-icon value="undo"></mu-icon>
-            </mu-button>
-            <mu-button v-for="color in colorGroups[activeGroup].varieties"
-                fab
-                :key="color"
-                :color="color"
-                @click="handleSelect(color)"></mu-button>
-        </div>
+        <transition :name="transitionName"
+            mode="out-in">
+            <div :key="activeGroup"
+                class="buttons-wrapper">
+                <template v-if="activeGroup < 0">
+                    <mu-button v-for="(group, index) in ColorGroups"
+                        fab
+                        :color="group.primary"
+                        :key="group.primary"
+                        @click="handleGroup(index)">
+                    </mu-button>
+                </template>
+                <template v-else>
+                    <mu-button class="color-picker__back"
+                        fab
+                        color="transparent"
+                        textColor="grey"
+                        @click="handleGroup(-1)">
+                        <mu-icon value="arrow_back"></mu-icon>
+                    </mu-button>
+                    <mu-button v-for="color in ColorGroups[activeGroup].varieties"
+                        fab
+                        :key="color"
+                        :color="color"
+                        @click="handleSelect(color)"></mu-button>
+                </template>
+            </div>
+        </transition>
         <template #actions>
             <mu-button flat
                 color="primary"
@@ -38,7 +43,7 @@
 <script>
 import * as Colors from 'muse-ui/lib/theme/colors';
 
-const vainColors = [
+const ColorBlockList = [
     'black',
     'white',
     'darkBlack',
@@ -52,41 +57,44 @@ const vainColors = [
     'transparent'
 ];
 
-const colorEntries = Object.entries(Colors)
-    .filter(p => typeof p[0] === 'string' && !vainColors.includes(p[0]));
+const ColorEntries = Object.entries(Colors)
+    .filter(([key]) => typeof key === 'string' && !ColorBlockList.includes(key));
 
-let colorGroups = colorEntries
-    .filter(p => /^[a-zA-Z]+$/.test(p[0]))
-    .map(p => {
-        const regexp = new RegExp(`^${p[0]}A?[0-9]+$`);
+const ReColorName = /^[a-zA-Z]+$/;
+
+const ColorGroups = ColorEntries
+    .filter(([key]) => ReColorName.test(key))
+    .map(([key, value]) => {
+        const re = new RegExp(`^${key}A?[0-9]+$`);
         return {
-            primary: p[1],
-            varieties: colorEntries.filter(q => regexp.test(q[0])).map(q => q[1])
+            primary: value,
+            varieties: ColorEntries.filter(q => re.test(q[0])).map(q => q[1])
         };
     });
 
 export default {
-    props: {
-        open: {
-            type: Boolean,
-            required: true
-        }
-    },
     data() {
         return {
-            colorGroups,
-            activeGroup: -1
+            open: false,
+            activeGroup: -1,
+            transitionName: ''
         };
     },
     methods: {
+        handleGroup(g) {
+            this.transitionName = g < 0 ? 'slide-right' : 'slide-left';
+            this.activeGroup = g;
+        },
         handleClose() {
-            this.$emit('update:open', false);
+            this.$emit('close');
         },
         handleSelect(color) {
             this.$emit('select', color);
             this.handleClose();
-            this.activeGroup = -1;
         }
+    },
+    created() {
+        this.ColorGroups = ColorGroups;
     }
 };
 </script>
@@ -94,9 +102,11 @@ export default {
 <style lang="less">
 .color-picker {
     .buttons-wrapper {
-        display: flex;
-        flex-wrap: wrap;
-        button {
+        height: 192px;
+        .color-picker__back {
+            vertical-align: top;
+        }
+        .mu-fab-button {
             margin: 0 8px 8px 0;
         }
     }
