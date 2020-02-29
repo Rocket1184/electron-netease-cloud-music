@@ -6,8 +6,8 @@
 <script>
 const Gender = [
     null,
-    { icon: '♀️', class: 'user-gender-1' },
-    { icon: '♂️', class: 'user-gender-2' }
+    { icon: '♂️', class: 'user-gender-1' },
+    { icon: '♀️', class: 'user-gender-2' }
 ];
 
 export default {
