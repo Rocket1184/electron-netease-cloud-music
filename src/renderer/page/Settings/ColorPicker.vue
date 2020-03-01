@@ -41,7 +41,7 @@
 </template>
 
 <script>
-import * as Colors from 'muse-ui/lib/theme/colors';
+import { Colors } from 'muse-ui';
 
 const ColorBlockList = [
     'black',
