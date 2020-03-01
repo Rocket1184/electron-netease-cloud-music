@@ -43,7 +43,7 @@
     "worker-loader": "^2.0.0"
   },
   "dependencies": {
-    "@rocka/muse-ui": "^3.0.3",
+    "@rocka/muse-ui": "^3.0.4",
     "cookiejar": "^2.1.2",
     "dbus-next": "^0.8.2",
     "debug": "^4.1.1",
