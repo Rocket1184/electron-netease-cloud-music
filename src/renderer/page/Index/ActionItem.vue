@@ -1,12 +1,12 @@
-<template>
+<template functional>
     <router-link tag="div"
         class="action-item"
-        :to="to">
+        :to="props.to">
         <div class="item-icon mu-primary-text-color">
-            <mu-icon :value="icon"
+            <mu-icon :value="props.icon"
                 :size="48"></mu-icon>
         </div>
-        <p class="item-desc">{{title}}</p>
+        <p class="item-desc">{{ props.title }}</p>
     </router-link>
 </template>
 
@@ -34,6 +34,7 @@ export default {
     .item-icon {
         width: 72px;
         height: 72px;
+        box-sizing: border-box;
         border: 2px solid currentColor;
         border-radius: 50%;
         display: flex;

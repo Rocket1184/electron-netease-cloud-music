@@ -1,35 +1,32 @@
-<template>
-    <router-link :to="to"
-        :title="title"
+<template functional>
+    <router-link :to="props.to"
+        :title="props.title"
         tag="div"
         class="scroll-item">
         <div class="cover">
             <img class="img"
-                :src="imgSrc"
-                :alt="title"
+                :src="props.img"
+                :alt="props.title"
                 width="160"
                 height="160">
-            <div v-if="maskIcon"
+            <div v-if="props.maskIcon"
                 class="mask">
-                <mu-icon :value="maskIcon"
+                <mu-icon :value="props.maskIcon"
                     :size="16"></mu-icon>
-                <span class="text">{{maskText}}</span>
+                <span class="text">{{ props.maskText }}</span>
             </div>
         </div>
         <div v-if="itemSubTitle"
             class="caption">
-            <div class="title__sup">{{itemTitle}}</div>
-            <div class="title__sub">{{itemSubTitle}}</div>
+            <div class="title__sup">{{ props.itemTitle }}</div>
+            <div class="title__sub">{{ props.itemSubTitle }}</div>
         </div>
         <div class="caption"
-            v-else>{{itemTitle}}</div>
+            v-else>{{ props.itemTitle }}</div>
     </router-link>
 </template>
 
 <script>
-import { sizeImg, HiDpiPx } from '@/util/image';
-import coverDefault from 'assets/img/cover_default.webp';
-
 export default {
     props: {
         to: {
@@ -57,11 +54,6 @@ export default {
         itemSubTitle: {
             type: String,
             required: false
-        }
-    },
-    computed: {
-        imgSrc() {
-            return sizeImg(this.img || coverDefault, HiDpiPx(160));
         }
     }
 };

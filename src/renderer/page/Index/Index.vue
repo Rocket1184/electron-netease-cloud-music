@@ -29,7 +29,7 @@
                     <ScrollerItem v-for="al in album"
                         :key="al.id"
                         :to="{ name: 'album', params: { id: al.id } }"
-                        :img="al.picUrl"
+                        :img="itemImg(al.picUrl)"
                         :title="al.copywriter"
                         :itemTitle="al.name"
                         :itemSubTitle="al.artistName"></ScrollerItem>
@@ -42,7 +42,7 @@
                     <ScrollerItem v-for="v in mv"
                         :key="v.id"
                         :to="{ name: 'video', params: { id: v.id } }"
-                        :img="v.picUrl"
+                        :img="itemImg(v.picUrl)"
                         :title="v.copywriter"
                         :itemTitle="v.name"
                         :itemSubTitle="v.artistName"></ScrollerItem>
@@ -56,9 +56,12 @@
 import { mapState } from 'vuex';
 
 import Api from '@/api/ipc';
+
 import ActionItem from './ActionItem.vue';
 import ScrollerItem from './ScrollerItem.vue';
+
 import { humanCount } from '@/util/formatter';
+import { sizeImg, HiDpiPx } from '@/util/image';
 import { SET_LOGIN_VALID } from '@/store/mutation-types';
 
 const algBlockList = [
@@ -126,6 +129,9 @@ export default {
             this.getAlbums();
             this.getMVs();
         },
+        itemImg(src) {
+            return sizeImg(src, HiDpiPx(160));
+        }
     },
     created() {
         this.fetchData();
