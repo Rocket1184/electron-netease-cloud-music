@@ -102,6 +102,25 @@ export const Entries = [
                 type: 'toggle',
                 title: '自动签到',
                 prop: 'autoSign'
+            },
+            {
+                type: 'toggle',
+                title: '精简个性推荐',
+                prop: 'filterRcmd'
+            },
+            {
+                type: 'select',
+                title: '启动页面',
+                prop: 'startupPage',
+                options: [
+                    { label: '个性推荐', value: 'index' },
+                    { label: '搜索结果', value: 'search' },
+                    { label: '我的收藏', value: 'favorite' },
+                    { label: '音乐云盘', value: 'disk' },
+                    { label: '私人 FM', value: 'radio' },
+                    { label: '每日推荐', value: 'recommend' },
+                    { label: '应用设置', value: 'settings' },
+                ]
             }
         ]
     },
