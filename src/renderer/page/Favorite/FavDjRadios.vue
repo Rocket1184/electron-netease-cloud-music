@@ -15,25 +15,29 @@
                 </AvatarListItem>
             </mu-list>
         </template>
-        <DjRadioDetail :djradio="djradio"></DjRadioDetail>
+        <DjRadioDetail v-if="djradio"
+            :djradio="djradio"></DjRadioDetail>
     </ListDetailLayout>
 </template>
 
 <script>
 import { mapActions, mapState } from 'vuex';
+
 import Api from '@/api/ipc';
 
-import { SET_LOGIN_VALID } from '@/store/mutation-types';
 import DjRadioDetail from '@/components/DjRadioDetail/DjRadioDetail.vue';
 import AvatarListItem from '@/components/AvatarListItem.vue';
 import ListDetailLayout from '@/components/ListDetailLayout.vue';
 
+import { FetchOnLoginMixin } from './fetch-on-login';
+
 export default {
+    mixins: [FetchOnLoginMixin],
     data() {
         return {
             djradio: null,
-            listLoading: true,
-            detailLoading: true
+            listLoading: false,
+            detailLoading: false
         };
     },
     computed: {
@@ -50,9 +54,11 @@ export default {
             this.detailLoading = false;
         },
         async fetchData() {
-            this.listLoading = true;
-            await this.updateUserRadios();
-            this.listLoading = false;
+            if (this.user.djradios.length <= 0) {
+                this.listLoading = true;
+                await this.updateUserRadios();
+                this.listLoading = false;
+            }
             const r = this.user.djradios[0];
             if (r && r.id) {
                 this.loadDjRadio(r.id);
@@ -60,17 +66,6 @@ export default {
         },
         handleClick(id) {
             this.loadDjRadio(id);
-        }
-    },
-    mounted() {
-        if (this.user.loginValid) {
-            this.fetchData();
-        } else {
-            this.$store.subscribe(({ type, payload }) => {
-                if (type === SET_LOGIN_VALID && payload === true) {
-                    this.fetchData();
-                }
-            });
         }
     },
     components: {

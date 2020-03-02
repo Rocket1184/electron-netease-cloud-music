@@ -15,7 +15,7 @@
                 </AvatarListItem>
             </mu-list>
         </template>
-        <VideoDetail :video="video"></VideoDetail>
+        <VideoDetail v-if="video" :video="video"></VideoDetail>
     </ListDetailLayout>
 </template>
 
@@ -23,17 +23,19 @@
 import { mapActions, mapState } from 'vuex';
 import { getVideoDetail } from '@/api/typed';
 
-import { SET_LOGIN_VALID } from '@/store/mutation-types';
 import VideoDetail from '@/components/VideoDetail/VideoDetail.vue';
 import AvatarListItem from '@/components/AvatarListItem.vue';
 import ListDetailLayout from '@/components/ListDetailLayout.vue';
 
+import { FetchOnLoginMixin } from './fetch-on-login';
+
 export default {
+    mixins: [FetchOnLoginMixin],
     data() {
         return {
             video: null,
-            listLoading: true,
-            detailLoading: true,
+            listLoading: false,
+            detailLoading: false,
             pausedWhenEnter: null
         };
     },
@@ -60,9 +62,11 @@ export default {
             });
         },
         async fetchData() {
-            this.listLoading = true;
-            await this.updateUserVideos();
-            this.listLoading = false;
+            if (this.user.videos.length <= 0) {
+                this.listLoading = true;
+                await this.updateUserVideos();
+                this.listLoading = false;
+            }
             const v = this.user.videos[0];
             if (v && v.id) {
                 this.loadVideo(v.id, v.type);
@@ -74,15 +78,6 @@ export default {
     },
     mounted() {
         this.pausedWhenEnter = this.ui.paused;
-        if (this.user.loginValid) {
-            this.fetchData();
-        } else {
-            this.$store.subscribe(({ type, payload }) => {
-                if (type === SET_LOGIN_VALID && payload === true) {
-                    this.fetchData();
-                }
-            });
-        }
     },
     activated() {
         this.pausedWhenEnter = this.ui.paused;

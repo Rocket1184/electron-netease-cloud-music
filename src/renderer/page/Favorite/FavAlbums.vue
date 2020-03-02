@@ -15,7 +15,8 @@
                 </AvatarListItem>
             </mu-list>
         </template>
-        <AlbumDetail :album="album"></AlbumDetail>
+        <AlbumDetail v-if="album"
+            :album="album"></AlbumDetail>
     </ListDetailLayout>
 </template>
 
@@ -23,17 +24,19 @@
 import { mapActions, mapState } from 'vuex';
 import { getAlbumDetail } from '@/api/typed';
 
-import { SET_LOGIN_VALID } from '@/store/mutation-types';
 import AlbumDetail from '@/components/AlbumDetail.vue';
 import AvatarListItem from '@/components/AvatarListItem.vue';
 import ListDetailLayout from '@/components/ListDetailLayout.vue';
 
+import { FetchOnLoginMixin } from './fetch-on-login';
+
 export default {
+    mixins: [FetchOnLoginMixin],
     data() {
         return {
             album: null,
-            listLoading: true,
-            detailLoading: true
+            listLoading: false,
+            detailLoading: false
         };
     },
     computed: {
@@ -49,9 +52,11 @@ export default {
             this.detailLoading = false;
         },
         async fetchData() {
-            this.listLoading = true;
-            await this.updateUserAlbums();
-            this.listLoading = false;
+            if (this.user.albums.length <= 0) {
+                this.listLoading = true;
+                await this.updateUserAlbums();
+                this.listLoading = false;
+            }
             const al = this.user.albums[0];
             if (al && al.id) {
                 this.loadAlbum(al.id);
@@ -59,17 +64,6 @@ export default {
         },
         handleClick(id) {
             this.loadAlbum(id);
-        }
-    },
-    mounted() {
-        if (this.user.loginValid) {
-            this.fetchData();
-        } else {
-            this.$store.subscribe(({ type, payload }) => {
-                if (type === SET_LOGIN_VALID && payload === true) {
-                    this.fetchData();
-                }
-            });
         }
     },
     components: {

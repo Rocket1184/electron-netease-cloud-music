@@ -15,7 +15,8 @@
                 </AvatarListItem>
             </mu-list>
         </template>
-        <ArtistDetail :artist="artist"></ArtistDetail>
+        <ArtistDetail v-if="artist.detail"
+            :artist="artist"></ArtistDetail>
     </ListDetailLayout>
 </template>
 
@@ -23,20 +24,22 @@
 import { mapActions, mapState } from 'vuex';
 import { getArtistDetail } from '@/api/typed';
 
-import { SET_LOGIN_VALID } from '@/store/mutation-types';
 import ArtistDetail from '@/components/ArtistDetail/ArtistDetail.vue';
 import AvatarListItem from '@/components/AvatarListItem.vue';
 import ListDetailLayout from '@/components/ListDetailLayout.vue';
 
+import { FetchOnLoginMixin } from './fetch-on-login';
+
 export default {
+    mixins: [FetchOnLoginMixin],
     data() {
         return {
             artist: {
                 detail: null,
                 hotSongs: []
             },
-            listLoading: true,
-            detailLoading: true
+            listLoading: false,
+            detailLoading: false
         };
     },
     computed: {
@@ -52,9 +55,11 @@ export default {
             this.detailLoading = false;
         },
         async fetchData() {
-            this.listLoading = true;
-            await this.updateUserArtists();
-            this.listLoading = false;
+            if (this.user.artists.length <= 0) {
+                this.listLoading = true;
+                await this.updateUserArtists();
+                this.listLoading = false;
+            }
             const ar = this.user.artists[0];
             if (ar && ar.id) {
                 this.loadArtist(ar.id);
@@ -62,17 +67,6 @@ export default {
         },
         handleClick(id) {
             this.loadArtist(id);
-        }
-    },
-    mounted() {
-        if (this.user.loginValid) {
-            this.fetchData();
-        } else {
-            this.$store.subscribe(({ type, payload }) => {
-                if (type === SET_LOGIN_VALID && payload === true) {
-                    this.fetchData();
-                }
-            });
         }
     },
     components: {

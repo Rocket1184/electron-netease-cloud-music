@@ -5,33 +5,30 @@
         tipText="登录后查看收藏的歌单"
         :showTip="!user.loginValid">
         <template #list>
-            <mu-load-more @refresh="handleListRefresh"
-                :refreshing="listRefreshing">
-                <mu-list toggle-nested
-                    :nested-indent="false">
-                    <mu-list-item v-for="group in listGroups"
-                        button
-                        nested
-                        :key="group.name"
-                        :open="group.open"
-                        @click="group.open = !group.open">
-                        <mu-list-item-title>{{group.name}}</mu-list-item-title>
-                        <mu-list-item-action>
-                            <mu-icon class="toggle-icon"
-                                size="24"
-                                value="keyboard_arrow_down"></mu-icon>
-                        </mu-list-item-action>
-                        <template #nested>
-                            <AvatarListItem v-for="(list, index) in group.lists"
-                                :key="index"
-                                @click="handleClick(list.id)"
-                                :img="list.coverImgUrl"
-                                :title="list.name"
-                                :subTitle="`共 ${list.trackCount} 首`"></AvatarListItem>
-                        </template>
-                    </mu-list-item>
-                </mu-list>
-            </mu-load-more>
+            <mu-list toggle-nested
+                :nested-indent="false">
+                <mu-list-item v-for="group in listGroups"
+                    button
+                    nested
+                    :key="group.name"
+                    :open="group.open"
+                    @click="group.open = !group.open">
+                    <mu-list-item-title>{{group.name}}</mu-list-item-title>
+                    <mu-list-item-action>
+                        <mu-icon class="toggle-icon"
+                            size="24"
+                            value="keyboard_arrow_down"></mu-icon>
+                    </mu-list-item-action>
+                    <template #nested>
+                        <AvatarListItem v-for="(list, index) in group.lists"
+                            :key="index"
+                            @click="loadPlaylist(list.id)"
+                            :img="list.coverImgUrl"
+                            :title="list.name"
+                            :subTitle="`共 ${list.trackCount} 首`"></AvatarListItem>
+                    </template>
+                </mu-list-item>
+            </mu-list>
         </template>
         <PlaylistDetail v-if="playlist"
             :playlist="playlist"></PlaylistDetail>
@@ -39,10 +36,11 @@
 </template>
 
 <script>
-import { mapActions, mapState } from 'vuex';
-import { getPlaylistDetail } from '@/api/typed';
+import { mapState } from 'vuex';
 
+import { getPlaylistDetail } from '@/api/typed';
 import { SET_USER_PLAYLISTS } from '@/store/mutation-types';
+
 import ListDetailLayout from '@/components/ListDetailLayout.vue';
 import AvatarListItem from '@/components/AvatarListItem.vue';
 import PlaylistDetail from '@/components/PlaylistDetail.vue';
@@ -51,8 +49,7 @@ export default {
     data() {
         return {
             playlist: null,
-            detailLoading: false,
-            listRefreshing: false
+            detailLoading: false
         };
     },
     computed: {
@@ -74,34 +71,29 @@ export default {
         }
     },
     methods: {
-        ...mapActions([
-            'updateUserPlaylist'
-        ]),
-        async handleListRefresh() {
-            this.listRefreshing = true;
-            await this.updateUserPlaylist();
-            this.listRefreshing = false;
-        },
         async loadPlaylist(id) {
             this.detailLoading = true;
             this.playlist = await getPlaylistDetail(id);
             this.detailLoading = false;
         },
-        handleClick(id) {
-            this.loadPlaylist(id);
+        async fetchData() {
+            this.loadPlaylist(this.user.playlist[0].id);
         }
     },
-    mounted() {
+    created() {
         if (this.user.loginValid && this.user.playlist.length > 0) {
-            this.loadPlaylist(this.user.playlist[0].id);
+            this.fetchData();
         } else {
-            this.$store.subscribe((mutation) => {
+            this.unsub = this.$store.subscribe((mutation) => {
                 if (mutation.type === SET_USER_PLAYLISTS) {
-                    if (this.$route.name === 'favorite') {
-                        this.loadPlaylist(this.user.playlist[0].id);
-                    }
+                    this.fetchData();
                 }
             });
+        }
+    },
+    beforeDestroy() {
+        if (this.unsub) {
+            this.unsub();
         }
     },
     components: {
