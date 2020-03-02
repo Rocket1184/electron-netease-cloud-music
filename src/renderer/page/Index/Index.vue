@@ -128,15 +128,20 @@ export default {
         },
     },
     created() {
+        this.fetchData();
         this.unsub = this.$store.subscribe(({ type, payload }) => {
-            // clear recommend data when logout
-            if (type === SET_LOGIN_VALID && payload === false) {
+            if (
+                type === SET_LOGIN_VALID &&
+                (
+                    payload === false ||  // clear personalized data on logout
+                    (payload === true && this.playlist.length > 0) // get personalized data on login
+                )
+            ) {
                 this.fetchData();
             }
         });
     },
     mounted() {
-        this.fetchData();
         /** @type {HTMLDivElement[]} */
         const scrollers = Array.from(document.getElementsByClassName('scroller'));
         scrollers.forEach(s => {
@@ -153,7 +158,7 @@ export default {
             });
         });
     },
-    beforeCreate() {
+    beforeDestroy() {
         this.unsub();
     },
     components: {
