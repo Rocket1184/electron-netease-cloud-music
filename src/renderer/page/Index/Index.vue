@@ -22,7 +22,8 @@
                         :itemTitle="p.name"></ScrollerItem>
                 </div>
             </mu-card>
-            <mu-card class="card">
+            <mu-card v-if="!settings.filterRcmd"
+                class="card">
                 <div class="heading">最新音乐</div>
                 <div class="scroller">
                     <ScrollerItem v-for="al in album"
@@ -34,7 +35,8 @@
                         :itemSubTitle="al.artistName"></ScrollerItem>
                 </div>
             </mu-card>
-            <mu-card class="card">
+            <mu-card v-if="!settings.filterRcmd"
+                class="card">
                 <div class="heading">推荐 MV</div>
                 <div class="scroller">
                     <ScrollerItem v-for="v in mv"
