@@ -7,6 +7,7 @@ const DefaultSettings = {
     // @ts-ignore
     bitRate: 'l',
     filterRcmd: false,
+    startupPage: 'index',
     windowBorder: true,
     windowZoom: null,
     showTrayIcon: false,

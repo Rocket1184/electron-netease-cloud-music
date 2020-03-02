@@ -13,6 +13,7 @@ export const defaultSettings = {
     autoSign: false,
     bitRate: 'l',
     filterRcmd: false,
+    startupPage: 'index',
     windowBorder: process.platform !== 'darwin',
     windowZoom: null,
     showTrayIcon: false,
