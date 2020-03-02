@@ -59,6 +59,7 @@ import Api from '@/api/ipc';
 import ActionItem from './ActionItem.vue';
 import ScrollerItem from './ScrollerItem.vue';
 import { humanCount } from '@/util/formatter';
+import { SET_LOGIN_VALID } from '@/store/mutation-types';
 
 const algBlockList = [
     'official_playlist_sceneRank'
@@ -118,9 +119,24 @@ export default {
             if (res.code === 200) {
                 this.mv = res.result;
             }
-        }
+        },
+        fetchData() {
+            this.getPlaylists();
+            if (this.settings.filterRcmd) return;
+            this.getAlbums();
+            this.getMVs();
+        },
+    },
+    created() {
+        this.unsub = this.$store.subscribe(({ type, payload }) => {
+            // clear recommend data when logout
+            if (type === SET_LOGIN_VALID && payload === false) {
+                this.fetchData();
+            }
+        });
     },
     mounted() {
+        this.fetchData();
         /** @type {HTMLDivElement[]} */
         const scrollers = Array.from(document.getElementsByClassName('scroller'));
         scrollers.forEach(s => {
@@ -136,9 +152,9 @@ export default {
                 }
             });
         });
-        this.getPlaylists();
-        this.getAlbums();
-        this.getMVs();
+    },
+    beforeCreate() {
+        this.unsub();
     },
     components: {
         ActionItem,
@@ -150,7 +166,6 @@ export default {
 <style lang="less">
 .wrapper {
     user-select: none;
-    min-height: 100vh;
     max-width: 800px;
     margin: auto;
     .actions {
