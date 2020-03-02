@@ -51,9 +51,14 @@ window.onbeforeunload = () => {
     store.dispatch('storeRadio');
 };
 
+const router = new Router({ routes });
+if (store.state.settings.startupPage !== 'index') {
+    router.replace({ name: store.state.settings.startupPage });
+}
+
 const app = new Vue({
     store,
-    router: new Router({ routes }),
+    router,
     extends: App
 });
 
