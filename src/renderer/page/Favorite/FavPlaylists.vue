@@ -84,8 +84,8 @@ export default {
         if (this.user.loginValid && this.user.playlist.length > 0) {
             this.fetchData();
         } else {
-            this.unsub = this.$store.subscribe((mutation) => {
-                if (mutation.type === SET_USER_PLAYLISTS) {
+            this.unsub = this.$store.subscribe(({ type, payload }) => {
+                if (type === SET_USER_PLAYLISTS && payload.length > 0) {
                     this.fetchData();
                 }
             });
