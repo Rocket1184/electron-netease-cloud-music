@@ -19,7 +19,7 @@ body {
     overflow: hidden;
     font-family: Roboto, 'Noto Sans', 'Segoe UI', 'Noto Sans CJK SC',
         'Source Han Sans CN', 'WenQuanYi Micro Hei', 'WenQuanYi Zen Hei',
-        'Droid Sans Fallback', 'Microsoft Yahei', sans-serif;
+        'Droid Sans Fallback', 'PingFang SC', 'Microsoft Yahei', sans-serif;
     background-color: unset;
 }
 
@@ -27,7 +27,7 @@ body {
     font-family: 'Roboto Mono', 'Noto Sans Mono', 'Droid Sans Mono',
         'Ubuntu Mono', 'Consolas', 'DejaVu Sans Mono', 'Lucida Console', Roboto,
         'Noto Sans', 'Segoe UI', 'Noto Sans CJK SC', 'Source Han Sans CN',
-        'Microsoft Yahei', sans-serif;
+        'PingFang SC', 'Microsoft Yahei', sans-serif;
 }
 
 /* material icons */
