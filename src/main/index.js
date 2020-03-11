@@ -189,36 +189,29 @@ ipcMain.on('showLoginWindow', () => {
         parent: mainWindow,
         modal: !IsDarwin,
         webPreferences: {
-            contextIsolation: true,
             enableRemoteModule: false,
-            nodeIntegration: false,
             nativeWindowOpen: true
         }
     });
     loginWindow.loadURL(LoginURL);
-    const ses = loginWindow.webContents.session;
-    const wr = ses.webRequest;
-    wr.onCompleted({ urls: [`${LoginURL}/weapi/*`] }, details => {
-        if (
-            details.url.includes('login') &&
-            details.statusCode === 200 &&
-            Array.isArray(details.responseHeaders['set-cookie'])
-        ) {
-            ipcMain.once('getLoginCookie', event => {
-                const cookie = {};
-                ses.cookies.get({ url: LoginURL }).then(cookies => {
-                    // TODO: send and save cookies in structured json format
-                    for (const { name, value } of cookies) {
-                        cookie[name] = value;
-                    }
-                    event.sender.send('getLoginCookie', cookie);
-                    ses.clearCache();
-                    ses.clearStorageData({ storages: ['cookies', 'localstorage'] });
-                    loginWindow.destroy();
-                    loginWindow = null;
-                });
+    const { session } = loginWindow.webContents;
+    session.webRequest.onSendHeaders({ urls: [`${LoginURL}/*`] }, details => {
+        const arr = Object.entries(details.requestHeaders)
+            .filter(header => header[0].toLocaleLowerCase() === 'cookie')
+            .map(header => header[1]);
+        if (arr.length <= 0 || arr.every(val => !val.includes('MUSIC_U='))) return;
+        // remove webRequest listener
+        session.webRequest.onSendHeaders(null);
+        ipcMain.once('getLoginCookie', event => {
+            session.cookies.get({ url: LoginURL }).then(cookies => {
+                const cookie = Object.fromEntries(cookies.map(ck => [ck.name, ck.value]));
+                event.sender.send('getLoginCookie', cookie);
+                session.clearCache();
+                session.clearStorageData({ origin: LoginURL });
+                loginWindow.destroy();
+                loginWindow = null;
             });
-            loginWindow.close();
-        }
+        });
+        loginWindow.close();
     });
 });
