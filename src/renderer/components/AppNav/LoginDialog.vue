@@ -19,7 +19,7 @@
                             <div class="web-login-step-1-content">
                                 <mu-button full-width
                                     color="primary"
-                                    @click="openLoginWeb()">点我打开登录页面</mu-button>
+                                    @click="openLoginWeb()">打开登录页面</mu-button>
                             </div>
                         </mu-step-content>
                     </mu-step>
@@ -28,7 +28,7 @@
                         <mu-step-content>
                             <div class="web-login-step-2-content">
                                 <mu-button flat
-                                    @click="webLoginStep--">上一步</mu-button>
+                                    @click="webLoginStep = 0">上一步</mu-button>
                                 <mu-button color="primary"
                                     @click="handleWebLoginComplete()">完成</mu-button>
                             </div>
@@ -171,8 +171,8 @@ export default {
             setTimeout(() => this.$refs.inputUsr.$el.querySelector('input').focus(), 200);
         },
         openLoginWeb() {
-            this.webLoginStep++;
             ipcRenderer.send('showLoginWindow');
+            setTimeout(() => this.webLoginStep = 1, 1000);
         },
         requestLoginCookies() {
             return new Promise((resolve, reject) => {
