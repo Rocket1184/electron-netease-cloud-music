@@ -45,7 +45,6 @@ class Cache {
     async fetchAsFile(url, outputFileName) {
         const res = await fetch(url);
         if (res.status === 200) {
-            // @ts-ignore
             res.body.pipe(this.writeStream(outputFileName));
             return this.fullPath(outputFileName);
         }

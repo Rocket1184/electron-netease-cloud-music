@@ -426,7 +426,6 @@ export async function getMusicLyric(id) {
         let j = 0;
         while (i < mlrc.lyrics.length && j < tlrc.lyrics.length) {
             if (mlrc.lyrics[i].timestamp === tlrc.lyrics[j].timestamp) {
-                // @ts-ignore
                 mlrc.lyrics[i].trans = tlrc.lyrics[j].content;
                 i++; j++;
             } else if (mlrc.lyrics[i].timestamp < tlrc.lyrics[j].timestamp) {

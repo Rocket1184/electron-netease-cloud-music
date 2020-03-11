@@ -1,7 +1,5 @@
 {
     "compilerOptions": {
-        "target": "es5",
-        "checkJs": true,
         "baseUrl": ".",
         "experimentalDecorators": true,
         "paths": {

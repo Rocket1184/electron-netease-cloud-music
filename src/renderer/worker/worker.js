@@ -76,7 +76,6 @@ self.onmessage = async (ev) => {
     if (method) {
         const result = await method.apply(null, ev.data.args);
         const msg = { id: ev.data.id, method: ev.data.method, result };
-        // @ts-ignore
         self.postMessage(msg);
     }
 };

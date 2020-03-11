@@ -1,7 +1,6 @@
 'use strict';
 
 const { resolve, join } = require('path');
-// @ts-ignore
 require('module').globalPaths.push(join(resolve('.'), 'node_modules'));
 
 const arg = '--initial-settings=';

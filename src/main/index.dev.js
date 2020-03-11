@@ -32,7 +32,7 @@ app.on('ready', () => {
     install(VUEJS_DEVTOOLS.id).catch(console.log);
 });
 
-// @ts-ignore App version (non-public api)
+// App version (non-public api)
 app.setVersion(version);
 
 // BrowserWindow URL

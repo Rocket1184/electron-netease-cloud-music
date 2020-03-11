@@ -35,7 +35,6 @@ export class Track {
         } else {
             const al = o.al || o.album;
             this.album = pick(al, 'id', 'name');
-            // @ts-ignore
             this.album.pic = al.pic_str || al.picId_str || al.picId || al.pic;
         }
         // artsit

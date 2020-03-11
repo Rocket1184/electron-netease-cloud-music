@@ -4,7 +4,6 @@ const { remote, ipcRenderer, shell } = require('electron');
 const { EventEmitter } = require('events');
 const { versions, platform } = process;
 
-// @ts-ignore
 window.require = function (id) {
     switch (id) {
         case 'electron':

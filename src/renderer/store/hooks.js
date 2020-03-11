@@ -40,7 +40,6 @@ function autoUpdateSignStatus(mutation, state) {
             }
             nextDue.setUTCHours(16, 0, 5, 0);
             const timeout = nextDue.getTime() - state.user.signStatus.timestamp;
-            // @ts-ignore
             signStatusTimeoutId = setTimeout(() => {
                 signStatusTimeoutId = -1;
                 this.dispatch('updateUserSignStatus');

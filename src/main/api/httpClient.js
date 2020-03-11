@@ -93,7 +93,6 @@ class HttpClient {
      */
     handleResponse(res) {
         /** @type {Record<string, string[]>} */
-        // @ts-ignore
         const headers = res.headers.raw();
         for (const [key, value] of Object.entries(headers)) {
             if (key === 'set-cookie') {
@@ -146,7 +145,6 @@ class HttpClient {
     async post(url, init) {
         init.headers = this.mergeHeaders({
             'Content-Type': 'application/x-www-form-urlencoded',
-            // @ts-ignore
             'Content-Length': Buffer.byteLength(init.body)
         }, init.headers);
 

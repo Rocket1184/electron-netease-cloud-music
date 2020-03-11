@@ -3,8 +3,6 @@ import * as types from '../mutation-types';
 const DefaultSettings = {
     autoPlay: false,
     autoSign: false,
-    /** @type {Types.MusicQuality} */
-    // @ts-ignore
     bitRate: 'l',
     filterRcmd: false,
     startupPage: 'index',

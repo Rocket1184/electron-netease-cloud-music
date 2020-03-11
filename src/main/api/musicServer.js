@@ -81,7 +81,6 @@ class MusicServer {
      * @param {string} quality
      */
     async getMusicUrl(id, quality) {
-        // @ts-ignore
         const res = await getMusicUrlE(id, quality);
         d('res: %o', res);
         if (res.code !== 200 || res.data[0].code !== 200) throw res;

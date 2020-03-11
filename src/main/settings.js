@@ -34,7 +34,6 @@ function trimSettings(value) {
     for (const [k, v] of Object.entries(defaultSettings)) {
         res[k] = Object.prototype.hasOwnProperty.call(value, k) ? value[k] : v;
     }
-    // @ts-ignore
     return res;
 }
 

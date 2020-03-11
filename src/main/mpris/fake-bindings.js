@@ -1,4 +1,3 @@
-// @ts-nocheck
 /* eslint-disable */
 
 const path = require('path');

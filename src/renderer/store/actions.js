@@ -337,7 +337,6 @@ export async function updateUiCoverImgSrc({ commit, getters }) {
     if (getters.queue.list.length !== 0) {
         const id = getters.playing.album.pic;
         if (id === -1) {
-            // @ts-ignore
             img = require('assets/img/cloud_default.webp');
         } else {
             const resp = await Api.getPicUrl(id);

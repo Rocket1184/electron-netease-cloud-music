@@ -270,8 +270,6 @@ namespace Types {
         privilege: Privilege;
         reason: string;
         alg: string;
-        /** just add this so ts-check won't complain */
-        source?: any;
     }
 
     export interface RecommendSongsRes extends ApiRes {

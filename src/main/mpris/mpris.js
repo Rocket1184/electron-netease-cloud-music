@@ -1,4 +1,3 @@
-// @ts-nocheck
 import { EventEmitter } from 'events';
 
 import debug from 'debug';
@@ -8,7 +7,6 @@ const { signal, method, property, Interface, ACCESS_READ, ACCESS_READWRITE } = D
 
 import { Timer } from './timer';
 
-// @ts-ignore
 const bus = sessionBus();
 const d = debug('MPRIS');
 const i = {
