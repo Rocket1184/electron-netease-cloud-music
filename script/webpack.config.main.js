@@ -1,6 +1,5 @@
 'use strict';
 
-const terser = require('terser');
 const webpack = require('webpack');
 const CopyWebpackPlugin = require('copy-webpack-plugin');
 
@@ -50,6 +49,7 @@ if (isProd) {
     // release config
     cfg.mode = 'production';
     cfg.devtool = 'source-map';
+    cfg.entry.preload = absPath('src/main/preload.prod.js');
     cfg.resolve.alias.bindings = absPath('src/main/mpris/fake-bindings.js');
     cfg.plugins = [
         new webpack.DefinePlugin({ 'process.env.NODE_ENV': '"production"' }),
@@ -66,21 +66,10 @@ if (isProd) {
                 }
             },
             {
-                from: absPath('src/main/preload.prod.js'),
-                to: absPath('dist/preload.js'),
-                transform: (content) => {
-                    const out = terser.minify(content.toString('utf8'), {
-                        ecma: 8,
-                        toplevel: true
-                    });
-                    return out.code;
-                }
-            },
-            {
                 from: { glob: absPath('assets/icons/tray*.png') },
                 to: absPath('dist/icons/[name].[ext]'),
                 toType: 'template'
-            },
+            }
         ])
     ];
 } else {
