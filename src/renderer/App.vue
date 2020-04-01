@@ -3,9 +3,9 @@
         <AppNav></AppNav>
         <div class="router-view">
             <transition :name="transitionName">
-                <keep-alive :include="KeepAlive">
+                <keep-alive-patched :include="KeepAlive">
                     <router-view></router-view>
-                </keep-alive>
+                </keep-alive-patched>
             </transition>
         </div>
         <PlayerBar></PlayerBar>
