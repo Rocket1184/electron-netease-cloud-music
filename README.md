@@ -81,18 +81,20 @@
 
 ### Arch Linux
 
-[electron-netease-cloud-music<sup>AUR</sup>](https://aur.archlinux.org/packages/electron-netease-cloud-music/) is avalible in AUR now!
-
-Clone the repo
+Binary releases provided by [archlinuxcn](https://github.com/archlinuxcn/repo). Add the repo, and install by:
 
 ```sh
-git clone https://aur.archlinux.org/electron-netease-cloud-music.git
+sudo pacman -S electron-netease-cloud-music
 ```
 
-or install with your favorite AUR helper
+You can also build [electron-netease-cloud-music<sup>AUR</sup>](https://aur.archlinux.org/packages/electron-netease-cloud-music/) yourself.
+
+### Debian
+
+DebianOpt Repository provided by [@coslyk](https://github.com/coslyk), see [coslyk/debianopt-repo](https://github.com/coslyk/debianopt-repo) for detailed usage. Once added, install by:
 
 ```sh
-yay -S electron-netease-cloud-music
+sudo apt install electron-netease-cloud-music
 ```
 
 ### Other GNU/Linux distro or macOS
