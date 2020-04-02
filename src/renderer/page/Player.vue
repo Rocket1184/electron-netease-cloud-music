@@ -143,19 +143,14 @@
                     class="scroller-wrapper">
                     <div class="scroller"
                         :style="lyricScrollerStyle">
-                        <template v-if="ui.lyric.mlrc">
-                            <div v-for="(line, index) in ui.lyric.mlrc.lyrics"
+                        <template v-if="ui.lyric.mlrc || ui.lyric.lrc">
+                            <div v-for="(line, index) of (ui.lyric.mlrc || ui.lyric.lrc).lyrics"
+                                ref="lyric"
                                 class="line"
                                 :key="index"
-                                :class="{active: index == currentLyricIndex}"
-                                :data-time="line.timestamp">{{ line.content + '\n' + (line.trans || '') }}</div>
-                        </template>
-                        <template v-else-if="ui.lyric.lrc">
-                            <div v-for="(line, index) in ui.lyric.lrc.lyrics"
-                                :key="index"
-                                class="line"
-                                :class="{active: index == currentLyricIndex}"
-                                :data-time="line.timestamp">{{line.content}}</div>
+                                :class="{ active: index == currentLyricIndex }"
+                                :data-time="line.timestamp"
+                                v-text="line.content + '\n' + (line.trans || '')"></div>
                         </template>
                         <template v-else-if="ui.lyric.txtLyric">
                             <pre class="txt">{{ui.lyric.txtLyric}}</pre>
@@ -272,11 +267,11 @@ export default {
                 // non-scrollable lyric
                 return 'height: 100%; overflow: auto;';
             }
-            if (this.lyricElemMap.length === 0 || this.currentLyricIndex === -1) {
+            if (this.currentLyricIndex === -1 || !this.$refs.lyric || this.$refs.lyric.length === 0) {
                 // initial state
                 return 'transform: translateY(164px)';
             }
-            const currentLyricElem = this.lyricElemMap[this.currentLyricIndex];
+            const currentLyricElem = this.$refs.lyric[this.currentLyricIndex];
             const offset = 150 - currentLyricElem.offsetTop - currentLyricElem.clientHeight;
             return `transform: translateY(${offset}px);`;
         }
@@ -287,35 +282,31 @@ export default {
             'toggleCollectPopup'
         ]),
         listenAudioUpdate() {
-            this.audioEl = document.getElementById('playerbar-audio');
-            this.audioEl.addEventListener('timeupdate', ev => {
+            /** @type {HTMLAudioElement} */
+            const audio = document.getElementById('playerbar-audio');
+            audio.addEventListener('timeupdate', ev => {
                 // do nothing if element map is empty or compo not acitve
                 // it's empty in case:
                 // 1. no lyric for this track
                 // 2. the component is mounted but not active yet e.g. it's in <keep-alive/> background
-                if (!this.isActive || !this.lyricElemMap.length) return;
+                if (!this.isActive || !this.$refs.lyric || !this.$refs.lyric.length) return;
                 // do not loop from 0 every time
                 // loop form current index. if current index equals -1, loop from 0
                 let loopStart = this.currentLyricIndex === -1 ? 0 : this.currentLyricIndex;
                 // the process was darged backword, loop from 0
-                if (ev.target.currentTime < +this.lyricElemMap[loopStart].dataset.time) {
+                if (ev.target.currentTime < +this.$refs.lyric[loopStart].dataset.time) {
                     loopStart = 0;
                 }
                 // loop and find the smallest whose time larger than currentTime
-                for (let i = loopStart; i < this.lyricElemMap.length; i++) {
-                    if (ev.target.currentTime < +this.lyricElemMap[i].dataset.time) {
+                for (let i = loopStart; i < this.$refs.lyric.length; i++) {
+                    if (ev.target.currentTime < +this.$refs.lyric[i].dataset.time) {
                         this.currentLyricIndex = i - 1;
                         return;
                     }
                 }
                 // not found any, point to the last element
-                this.currentLyricIndex = this.lyricElemMap.length - 1;
+                this.currentLyricIndex = this.$refs.lyric.length - 1;
             });
-        },
-        createLyricElemMap() {
-            if (this.ui.lyric.lrc) {
-                this.lyricElemMap = Array.from(this.$el.getElementsByClassName('line'));
-            }
         },
         paintBkgCanvas() {
             this.canvasImageId = this.playing.id;
@@ -422,15 +413,12 @@ export default {
         ['ui.lyric']() {
             // reset lyric position
             this.currentLyricIndex = -1;
-            // query lyric elements after they are created
-            this.$nextTick(() => this.createLyricElemMap());
         }
     },
     mounted() {
         this.paintBkgCanvas();
         this.refreshThreadInfo();
         this.listenAudioUpdate();
-        this.createLyricElemMap();
     },
     activated() {
         this.isActive = true;
@@ -439,9 +427,6 @@ export default {
         }
         if (this.threadInfoId !== this.playing.id) {
             this.refreshThreadInfo();
-        }
-        if (!this.lyricElemMap.length) {
-            this.createLyricElemMap();
         }
     },
     deactivated() {
