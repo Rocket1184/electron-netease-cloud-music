@@ -420,7 +420,7 @@ export async function getMusicLyric(id) {
         let mlrc = {
             info: result.lrc.info,
             transInfo: tlrc.info,
-            lyrics: result.lrc.lyrics.slice()
+            lyrics: result.lrc.lyrics.map(l => ({ ...l }))
         };
         let i = 0;
         let j = 0;
