@@ -33,7 +33,10 @@ export default {
     methods: {
         async loadUser() {
             this.detailLoading = true;
-            this.user = await Api.getUserInfo(this.id);
+            const res = await Api.getUserInfo(this.id);
+            if (res.code === 200) {
+                this.user = res;
+            }
             this.detailLoading = false;
         }
     },
