@@ -53,7 +53,7 @@
                     <mu-icon left
                         :size="18"
                         value="comment"></mu-icon>
-                    <span>{{btnCommentText}}</span>
+                    <span>评论 ({{ commentCount }})</span>
                 </mu-button>
                 <mu-button flat
                     small
@@ -68,7 +68,7 @@
         </div>
         <div class="info">
             <div class="title">
-                <span class="name">{{playing.name}}</span>
+                <span class="name">{{ playing.name }}</span>
                 <mu-button v-if="playing.mv"
                     icon
                     small
@@ -85,7 +85,7 @@
                     <span>电台：</span>
                     <router-link class="source-link"
                         :to="{ name: 'djradio', params: { id: playing.source.id } }"
-                        replace>{{playing.source.djradio.radio.name}}</router-link>
+                        replace>{{ playing.source.djradio.radio.name }}</router-link>
                 </template>
                 <template v-else>
                     <span v-if="playing.artists"
@@ -99,9 +99,9 @@
                                 :key="ar.id"
                                 class="source-link"
                                 :to="{ name: 'artist', params: { id: ar.id } }"
-                                replace>{{ar.name}}</router-link>
+                                replace>{{ ar.name }}</router-link>
                             <span v-else
-                                :key="'ar' + index">{{ar.name}}</span>
+                                :key="'ar' + index">{{ ar.name }}</span>
                         </template>
                     </span>
                     <span v-if="playing.album"
@@ -110,16 +110,15 @@
                         <router-link v-if="playing.album.id"
                             class="source-link"
                             :to="{ name: 'album', params: { id: playing.album.id } }"
-                            replace>{{playing.album.name}}</router-link>
-                            <span v-else
-                                >{{playing.album.name}}</span>
+                            replace>{{ playing.album.name }}</router-link>
+                        <span v-else>{{ playing.album.name }}</span>
                     </span>
                 </template>
             </p>
             <div v-if="isDjRadioProgram"
                 class="description">
                 <div class="scroller">
-                    <pre>{{playing.source.djradio.description}}</pre>
+                    <pre>{{ playing.source.djradio.description }}</pre>
                 </div>
             </div>
             <div v-else
@@ -153,7 +152,8 @@
                                 v-text="line.content + '\n' + (line.trans || '')"></div>
                         </template>
                         <template v-else-if="ui.lyric.txtLyric">
-                            <pre class="txt">{{ui.lyric.txtLyric}}</pre>
+                            <pre class="txt"
+                                v-text="ui.lyric.txtLyric"></pre>
                         </template>
                         <template v-else>
                             <p>暂无歌词</p>
@@ -218,9 +218,6 @@ export default {
             threadInfoId: -1,
             threadLiked: false,
             commentCount: '...',
-            /** @type {HTMLAudioElement} */
-            audioEl: null,
-            lyricElemMap: [],
             currentLyricIndex: -1,
             dlgShareOpen: false
         };
@@ -249,9 +246,6 @@ export default {
                     ? { type: 'dj', id: source.djradio.id }
                     : { type: 'song', id }
             };
-        },
-        btnCommentText() {
-            return `评论 (${this.commentCount})`;
         },
         shareText() {
             if (!this.playing.id) return '';
