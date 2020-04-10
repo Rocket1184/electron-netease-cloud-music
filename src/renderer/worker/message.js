@@ -22,8 +22,8 @@ export function workerExecute(method, ...args) {
 
 worker.addEventListener('message', ev => {
     const { id, result } = ev.data;
-    const resolve = ResolveMap.get(id);
-    if (resolve) {
-        resolve.call(null, result);
+    if (ResolveMap.has(id)) {
+        ResolveMap.get(id).call(null, result);
+        ResolveMap.delete(id);
     }
 });
