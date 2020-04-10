@@ -38,7 +38,7 @@
             center
             :value="tab"
             @change="handelTabChange">
-            <mu-tab v-for="tab in  detailTabs"
+            <mu-tab v-for="tab of DetailTabs"
                 :key="tab[0]"
                 :value="tab[0]">{{tab[1]}}</mu-tab>
         </mu-tabs>
@@ -71,10 +71,10 @@ const DetailTabs = [
 ];
 
 const DetailCompo = {
-    hotSongs: HotSongs,
-    albums: AllAlbums,
-    mvs: RelatedMVs,
-    intro: Introduction
+    hotSongs: 'HotSongs',
+    albums: 'AllAlbums',
+    mvs: 'RelatedMVs',
+    intro: 'Introduction'
 };
 
 export default {
@@ -87,7 +87,6 @@ export default {
         return {
             tab: 'hotSongs',
             dynamicDetail: {},
-            detailTabs: DetailTabs,
             transitionName: 'slide-left'
         };
     },
@@ -153,10 +152,12 @@ export default {
             }
         }
     },
-    async created() {
+    created() {
+        this.DetailTabs = DetailTabs;
         this.updateDynamicDetail();
     },
     components: {
+        HotSongs,
         AllAlbums,
         RelatedMVs,
         Introduction

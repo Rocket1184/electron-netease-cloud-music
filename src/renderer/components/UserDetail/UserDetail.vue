@@ -51,7 +51,7 @@
             center
             :value="tab"
             @change="handleTabChange">
-            <mu-tab v-for="tab in  Tabs"
+            <mu-tab v-for="tab of Tabs"
                 :key="tab[0]"
                 :value="tab[0]">{{tab[1]}}</mu-tab>
         </mu-tabs>
@@ -87,10 +87,10 @@ const Tabs = [
 ];
 
 const DetailCompo = {
-    music: Music,
-    record: Record,
-    event: Event,
-    about: About
+    music: 'Music',
+    record: 'Record',
+    event: 'Event',
+    about: 'About'
 };
 
 export default {
@@ -138,9 +138,6 @@ export default {
             return this.dynamicFollows.followed
                 ? { icon: 'done', text: '已关注' }
                 : { icon: 'add', text: '关注' };
-        },
-        Tabs() {
-            return Tabs;
         },
         detailCompo() {
             return DetailCompo[this.tab];
@@ -199,6 +196,7 @@ export default {
         }
     },
     created() {
+        this.Tabs = Tabs;
         this.updateDynamicFollows();
     },
     components: {
