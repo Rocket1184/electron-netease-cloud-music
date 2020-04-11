@@ -74,8 +74,7 @@ export default {
 
 <style lang="less">
 .video-detail {
-    padding: 0 16px;
-    width: 100%;
+    margin: 0 16px;
     display: flex;
     flex-direction: column;
     .desc {
@@ -85,7 +84,7 @@ export default {
         }
         .by,
         .creator {
-            padding-left: 8px;
+            margin-left: 8px;
             font-size: 14px;
         }
         .creator:hover {
