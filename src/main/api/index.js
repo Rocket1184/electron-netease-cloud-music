@@ -621,15 +621,7 @@ export function uncollectTrack(pid, ...tracks) {
     return manipulatePlaylistTracks('del', pid, tracks);
 }
 
-/**
- * @param {string} s keyword
- * @returns {Promise<Types.SearchSuggestRes>}
- */
-export function getSearchSuggest(s) {
-    return client.postE('/search/suggest/web', { s });
-}
-
-const searchTypeMap = {
+const SearchTypes = {
     song: '1',
     album: '10',
     artist: '100',
@@ -642,22 +634,37 @@ const searchTypeMap = {
 };
 
 /**
+ * @param {string} s keyword
+ * @param {keyof SearchTypes} type
+ * @returns {Promise<Types.SearchSuggestERes>}
+ */
+export function getSearchSuggest(s, type = 'song') {
+    return client.postE('/search/suggest/keyword', {
+        lastTime: 0,
+        s,
+        limit: 10,
+        type: SearchTypes[type]
+    });
+}
+
+/**
  * preform search
  * @param {string} s keyword
- * @param {'song'|'album'|'artist'|'playlist'|'user'|'mv'|'lyric'|'radio'|'video'} type
+ * @param {keyof SearchTypes} type
  * @param {number} limit
  * @param {number} offset
  * @returns {Promise<Types.SearchRes>}
  */
 export function search(s, type, limit = 20, offset = 0) {
-    return client.postE('/cloudsearch/get/web', {
-        hlposttag: '</span>',
-        hlpretag: '<span class="s-fc7">',
-        limit,
-        offset,
+    return client.postE('/v1/search/get', {
+        sub: false,
+        q_scene: 'suggest',
         s,
-        total: true,
-        type: searchTypeMap[type],
+        offset,
+        limit,
+        queryCorrect: false,
+        strategy: 5,
+        type: SearchTypes[type]
     });
 }
 

@@ -686,6 +686,17 @@ namespace Types {
         order: ('songs' | 'artists' | 'playlists' | 'albums' | 'mvs')[]
     }
 
+    export interface SearchSuggestERes extends ApiRes {
+        result: {
+            allMatch: {
+                keyword: string;
+                type: number;
+                alg: string;
+                lastKeyword: string;
+            }[];
+        }
+    }
+
     interface SearchAlbumArtist {
         id: number;
         name: string;
