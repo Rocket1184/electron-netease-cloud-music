@@ -94,7 +94,6 @@ export default {
             this.loading = true;
             const ids = this.trackIds.map(i => i.id);
             this.details = await getSongDetail(ids);
-            this.$emit('load', this.details);
             this.loading = false;
         },
         handlePlayMapped(index) {

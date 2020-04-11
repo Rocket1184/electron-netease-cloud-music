@@ -61,8 +61,7 @@
         </div>
         <VirtualTrackList filterable
             :source="trackSource"
-            :trackIds="playlist.trackIds"
-            @load="handleTracksLoad"></VirtualTrackList>
+            :trackIds="playlist.trackIds"></VirtualTrackList>
     </div>
 </template>
 
@@ -83,9 +82,7 @@ export default {
         return {
             shouldSubscribed: null,
             subsCntOffset: 0,
-            descOpen: false,
-            tracksLoaded: false,
-            tracks: []
+            descOpen: false
         };
     },
     computed: {
@@ -125,10 +122,6 @@ export default {
             'subscribePlaylist',
             'unsubscribePlaylist'
         ]),
-        handleTracksLoad(tracks) {
-            this.tracksLoaded = true;
-            this.tracks = tracks;
-        },
         async handleSubscribe() {
             if (!this.user.loginValid) {
                 this.$toast.message('汝还没有登录呀      (눈‸눈)');
