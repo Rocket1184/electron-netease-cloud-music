@@ -209,7 +209,7 @@ import discDefault from 'assets/img/disc_default.webp';
 import defaultCoverImg from 'assets/img/cover_default.webp';
 
 export default {
-    name: 'Player',
+    name: 'player',
     data() {
         return {
             dark: false,

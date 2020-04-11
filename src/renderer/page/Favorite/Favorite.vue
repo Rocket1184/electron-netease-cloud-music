@@ -41,7 +41,7 @@ const FavCompo = {
 };
 
 export default {
-    name: 'Favorite',
+    name: 'favorite',
     data() {
         return {
             tab: 'playlist',
