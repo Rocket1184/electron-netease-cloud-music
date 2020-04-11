@@ -33,8 +33,9 @@
             <mu-text-field ref="findInput"
                 v-model="findInput"
                 placeholder="查找节目 ..."
+                @keydown="handleInputKeyDown"
                 :action-icon="findInput.length > 0 ? 'close' : null"
-                :action-click="clearFind"></mu-text-field>
+                :action-click="handleFindClear"></mu-text-field>
         </div>
         <mu-divider></mu-divider>
         <CenteredTip v-if="programs.length === 0"
@@ -184,9 +185,22 @@ export default {
                 })
             });
         },
-        handleFind() {
-            if (this.findInput.length > 0) {
-                workerExecute('filterDjRadioPrograms', this.findInput, this.programs).then(res => {
+        /** @param {KeyboardEvent} e */
+        handleInputKeyDown(e) {
+            if (e.key === 'Escape') {
+                this.findInput = '';
+                this.$refs.findInput.blur();
+            }
+        },
+        handleFindClear() {
+            this.findInput = '';
+            this.$refs.findInput.focus();
+        }
+    },
+    watch: {
+        findInput(val) {
+            if (val.length > 0) {
+                workerExecute('filterDjRadioPrograms', val, this.programs).then(res => {
                     this.filteredPrograms = res.result;
                     this.indexMap = res.indexMap;
                 });
@@ -194,16 +208,6 @@ export default {
                 this.filteredPrograms = [];
                 this.indexMap.clear();
             }
-        },
-        clearFind() {
-            this.findInput = '';
-            this.indexMap.clear();
-            this.filteredPrograms = [];
-        }
-    },
-    watch: {
-        findInput() {
-            this.handleFind();
         }
     },
     components: {

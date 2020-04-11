@@ -8,8 +8,9 @@
                 <mu-text-field ref="findInput"
                     v-model="findInput"
                     placeholder="查找歌曲 ..."
+                    @keydown="handleInputKeyDown"
                     :action-icon="findInput.length > 0 ? 'close' : null"
-                    :action-click="clearFind"></mu-text-field>
+                    :action-click="handleFindClear"></mu-text-field>
             </TrackListHeaeder>
             <mu-divider></mu-divider>
         </div>
@@ -102,21 +103,16 @@ export default {
         handleQueueMapped(index) {
             return this.handleQueue(this.indexMap.has(index) ? this.indexMap.get(index) : index);
         },
-        handleFind() {
-            if (this.findInput.length > 0) {
-                workerExecute('filterTracks', this.findInput, this.details).then(res => {
-                    this.filteredList = res.result;
-                    this.indexMap = res.indexMap;
-                });
-            } else {
-                this.filteredList = [];
-                this.indexMap.clear();
+        /** @param {KeyboardEvent} e */
+        handleInputKeyDown(e) {
+            if (e.key === 'Escape') {
+                this.findInput = '';
+                this.$refs.findInput.blur();
             }
         },
-        clearFind() {
+        handleFindClear() {
             this.findInput = '';
-            this.indexMap.clear();
-            this.filteredList = [];
+            this.$refs.findInput.focus();
         }
     },
     created() {
@@ -125,17 +121,6 @@ export default {
         } else {
             this.updateTrackDetails();
         }
-    },
-    mounted() {
-        if (!this.$refs.findInput) return;
-        /** @type {HTMLInputElement} */
-        const input = this.$refs.findInput.$el.getElementsByTagName('input')[0];
-        input.addEventListener('keydown', ev => {
-            if (ev.key === 'Escape') {
-                this.clearFind();
-                input.blur();
-            }
-        });
     },
     watch: {
         tracks(val) {
@@ -150,8 +135,16 @@ export default {
             }
             this.handleFind();
         },
-        findInput() {
-            this.handleFind();
+        findInput(val) {
+            if (val.length > 0) {
+                workerExecute('filterTracks', val, this.details).then(res => {
+                    this.filteredList = res.result;
+                    this.indexMap = res.indexMap;
+                });
+            } else {
+                this.filteredList = [];
+                this.indexMap.clear();
+            }
         }
     },
     components: {
