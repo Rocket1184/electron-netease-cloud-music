@@ -17,7 +17,7 @@
                 placeholder="搜索单曲、歌手、专辑、用户 ..."
                 v-model="searchText"
                 :filter="filterData"
-                @select="handleCompleteSelect">
+                @select="handleSearch">
             </mu-auto-complete>
         </template>
     </mu-menu>
@@ -34,60 +34,36 @@ export default {
     },
     methods: {
         focusInput() {
-            setTimeout(() => this.$refs.textField.$el.querySelector('input').focus(), 200);
+            setTimeout(() => this._input.focus(), 200);
         },
         async filterData(query) {
-            if (query <= 0) {
+            if (!query) {
                 return [];
             }
-            const resp = await Api.getSearchSuggest(query);
-            if (resp.code !== 200) {
+            const resp = await Api.getSearchSuggest(query, this.$route.query.type);
+            if (resp.code !== 200 || !resp.result.allMatch) {
                 return [];
             }
-            const tmp = [];
-            for (const [k, v] of Object.entries(resp.result)) {
-                if (k === 'order') {
-                    continue;
-                }
-                for (const item of v) {
-                    const index = item.name.toLowerCase().indexOf(query.toLowerCase());
-                    if (index === -1) {
-                        tmp.push({
-                            value: item.name,
-                            item,
-                            highlight: item.name
-                        });
-                        continue;
-                    }
-                    const before = item.name.substring(0, index);
-                    const highlight = item.name.substring(index, index + query.length);
-                    const after = item.name.substring(index + query.length);
-                    tmp.push({
-                        value: item.name,
-                        item,
-                        highlight: `${before}<span class="mu-secondary-text-color">${highlight}</span>${after}`
-                    });
-                }
-            }
-            return tmp;
+            const re = new RegExp(`(${query.trim()})`, 'i');
+            return resp.result.allMatch.map(item => ({
+                item,
+                value: item.keyword,
+                highlight: item.keyword.replace(re, '<span class="mu-secondary-text-color">$1</span>')
+            }));
         },
         handleSearch() {
             this.$router.push({
                 name: 'search',
                 query: {
+                    ...this.$route.query,
                     keyword: this.searchText
                 }
             }).catch(() => { /* noop */ });
-        },
-        handleCompleteSelect(value, item) {
-            // event 'select' would be triggered by selecting text in textField
-            if (typeof value === 'string' && item.name === value) {
-                this.handleSearch();
-            }
         }
     },
     mounted() {
-        this.$refs.textField.$el.querySelector('input').onkeydown = ev => {
+        this._input = this.$refs.textField.$el.querySelector('input');
+        this._input.onkeydown = ev => {
             if (ev.key === 'Enter') this.handleSearch();
         };
     }
