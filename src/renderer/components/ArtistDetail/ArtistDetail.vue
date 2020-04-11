@@ -42,13 +42,14 @@
                 :key="tab[0]"
                 :value="tab[0]">{{tab[1]}}</mu-tab>
         </mu-tabs>
-        <transition :name="transitionName"
-            mode="out-in">
-            <keep-alive>
+        <transition mode="out-in"
+            :name="transitionName"
+            @after-leave="handleAfterLeave">
+            <keep-alive-patched>
                 <component :is="detailCompo"
                     :artist="artist"
                     @scroll="handleScroll"></component>
-            </keep-alive>
+            </keep-alive-patched>
         </transition>
     </div>
 </template>
@@ -150,6 +151,11 @@ export default {
             if (el) {
                 el.scrollTo({ top: 300, behavior: 'smooth' });
             }
+        },
+        /** @param {HTMLElement} el */
+        handleAfterLeave(el) {
+            // clear DOM nodes to workaround memory leak issue
+            el.textContent = '';
         }
     },
     created() {

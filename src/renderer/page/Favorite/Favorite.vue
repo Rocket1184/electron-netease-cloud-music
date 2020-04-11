@@ -9,8 +9,9 @@
                 :value="tab[0]">{{tab[1]}}</mu-tab>
         </mu-tabs>
         <div class="fav-content">
-            <transition :name="transitionName"
-                mode="out-in">
+            <transition mode="out-in"
+                :name="transitionName"
+                @after-leave="handleAfterLeave">
                 <component :is="favCompo"></component>
             </transition>
         </div>
@@ -66,6 +67,11 @@ export default {
                 this.transitionName = 'slide-left';
             }
             this.tab = val;
+        },
+        /** @param {HTMLElement} el */
+        handleAfterLeave(el) {
+            // clear DOM nodes to workaround memory leak issue
+            el.textContent = '';
         }
     },
     created() {
