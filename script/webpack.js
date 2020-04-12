@@ -1,4 +1,9 @@
+/* eslint-disable no-console */
+
 'use strict';
+
+// yeah! patch packages!
+require('patch-package');
 
 process.env.NODE_ENV = 'production';
 
@@ -65,7 +70,6 @@ async function dist(argv) {
         }
     }
 }
-
 
 if (argv[0] === 'clean') {
     clean();
