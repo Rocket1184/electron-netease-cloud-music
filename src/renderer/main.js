@@ -12,7 +12,6 @@ import routes from './routes';
 import { isLinux } from './util/globals';
 import { initTheme } from './util/theme';
 import DblclickRipple from './util/dblclick-ripple';
-import KeepAlivePatched from './util/keep-alive-patched';
 import './style.css';
 import './transition.css';
 import 'vue-virtual-scroller/dist/vue-virtual-scroller.css';
@@ -22,7 +21,6 @@ Vue.use(MuseUI);
 Vue.use(Toast);
 Vue.use(Message);
 Vue.use(DblclickRipple);
-Vue.use(KeepAlivePatched);
 Vue.component('RecycleScroller', RecycleScroller);
 
 try {

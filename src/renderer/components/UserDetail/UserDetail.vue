@@ -56,13 +56,12 @@
                 :value="tab[0]">{{tab[1]}}</mu-tab>
         </mu-tabs>
         <transition mode="out-in"
-            :name="transitionName"
-            @after-leave="handleAfterLeave">
-            <keep-alive-patched>
+            :name="transitionName">
+            <keep-alive>
                 <component :is="detailCompo"
                     :user="user"
                     :isSelf="isSelf"></component>
-            </keep-alive-patched>
+            </keep-alive>
         </transition>
     </div>
 </template>
@@ -189,11 +188,6 @@ export default {
                 this.transitionName = 'slide-left';
             }
             this.tab = val;
-        },
-        /** @param {HTMLElement} el */
-        handleAfterLeave(el) {
-            // clear DOM nodes to workaround memory leak issue
-            el.textContent = '';
         }
     },
     watch: {

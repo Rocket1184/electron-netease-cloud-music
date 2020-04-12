@@ -17,15 +17,14 @@
         </mu-tabs>
         <div class="list-wrapper">
             <transition mode="out-in"
-                :name="transitionName"
-                @after-leave="handleAfterLeave">
-                <keep-alive-patched>
+                :name="transitionName">
+                <keep-alive>
                     <CommentList :key="tab"
                         :thread="thread"
                         v-bind="comment[tab]"
                         @page="loadComments"
                         @reply="handleReply"></CommentList>
-                </keep-alive-patched>
+                </keep-alive>
             </transition>
         </div>
         <mu-dialog dialog-class="comment-editor-dlg"
@@ -193,11 +192,6 @@ export default {
             } else {
                 this.$toast.message(`发布评论失败 ...  ${resp.code}: ${resp.msg}`);
             }
-        },
-        /** @param {HTMLElement} el */
-        handleAfterLeave(el) {
-            // clear DOM nodes to workaround memory leak issue
-            el.textContent = '';
         }
     },
     watch: {

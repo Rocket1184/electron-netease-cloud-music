@@ -2,11 +2,10 @@
     <div>
         <AppNav></AppNav>
         <div class="router-view">
-            <transition :name="transitionName"
-                @after-leave="handleAfterLeave">
-                <keep-alive-patched :include="KeepAlive">
+            <transition :name="transitionName">
+                <keep-alive :include="KeepAlive">
                     <router-view></router-view>
-                </keep-alive-patched>
+                </keep-alive>
             </transition>
         </div>
         <PlayerBar></PlayerBar>
@@ -30,16 +29,6 @@ export default {
         return {
             transitionName: 'fade-up'
         };
-    },
-    methods: {
-        /** @param {HTMLElement} el */
-        handleAfterLeave(el) {
-            for (const k of this.KeepAlive) {
-                if (el.classList.contains(k)) return;
-            }
-            // clear DOM nodes to workaround memory leak issue
-            el.textContent = '';
-        }
     },
     created() {
         this.KeepAlive = ['index', 'player', 'favorite'];
