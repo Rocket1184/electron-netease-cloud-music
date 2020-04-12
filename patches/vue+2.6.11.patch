@@ -1,0 +1,232 @@
+diff --git a/node_modules/vue/dist/vue.runtime.common.dev.js b/node_modules/vue/dist/vue.runtime.common.dev.js
+index 604657c..5f0b1c8 100644
+--- a/node_modules/vue/dist/vue.runtime.common.dev.js
++++ b/node_modules/vue/dist/vue.runtime.common.dev.js
+@@ -4814,7 +4814,7 @@ function defineComputed (
+ function createComputedGetter (key) {
+   return function computedGetter () {
+     var watcher = this._computedWatchers && this._computedWatchers[key];
+-    if (watcher) {
++    if (watcher && watcher.active) {
+       if (watcher.dirty) {
+         watcher.evaluate();
+       }
+@@ -5251,9 +5251,9 @@ function pruneCache (keepAliveInstance, filter) {
+   var keys = keepAliveInstance.keys;
+   var _vnode = keepAliveInstance._vnode;
+   for (var key in cache) {
+-    var cachedNode = cache[key];
+-    if (cachedNode) {
+-      var name = getComponentName(cachedNode.componentOptions);
++    const entry = cache[key]
++    if (entry) {
++      const name = entry.name
+       if (name && !filter(name)) {
+         pruneCacheEntry(cache, key, keys, _vnode);
+       }
+@@ -5267,9 +5267,9 @@ function pruneCacheEntry (
+   keys,
+   current
+ ) {
+-  var cached$$1 = cache[key];
+-  if (cached$$1 && (!current || cached$$1.tag !== current.tag)) {
+-    cached$$1.componentInstance.$destroy();
++  const entry = cache[key]
++  if (entry && (!current || entry.tag !== current.tag)) {
++    entry.componentInstance.$destroy()
+   }
+   cache[key] = null;
+   remove(keys, key);
+@@ -5300,7 +5300,10 @@ var KeepAlive = {
+ 
+   mounted: function mounted () {
+     var this$1 = this;
+-
++    if (this.putEntry) {
++      this.putEntry()
++      this.putEntry = null
++    }
+     this.$watch('include', function (val) {
+       pruneCache(this$1, function (name) { return matches(val, name); });
+     });
+@@ -5309,6 +5312,13 @@ var KeepAlive = {
+     });
+   },
+ 
++  updated: function updated() {
++    if (this.putEntry) {
++      this.putEntry()
++      this.putEntry = null
++    }
++  },
++
+   render: function render () {
+     var slot = this.$slots.default;
+     var vnode = getFirstComponentChild(slot);
+@@ -5337,16 +5347,25 @@ var KeepAlive = {
+         ? componentOptions.Ctor.cid + (componentOptions.tag ? ("::" + (componentOptions.tag)) : '')
+         : vnode.key;
+       if (cache[key]) {
+-        vnode.componentInstance = cache[key].componentInstance;
++        var { _isDestroyed } = cache[key].componentInstance
++        if (_isDestroyed) cache[key] = vnode
++        else vnode.componentInstance = cache[key].componentInstance
+         // make current key freshest
+         remove(keys, key);
+         keys.push(key);
+       } else {
+-        cache[key] = vnode;
+-        keys.push(key);
+-        // prune oldest entry
+-        if (this.max && keys.length > parseInt(this.max)) {
+-          pruneCacheEntry(cache, keys[0], keys, this._vnode);
++        this.putEntry = () => {
++          const { tag, componentInstance } = vnode
++          cache[key] = {
++            name,
++            tag,
++            componentInstance
++          }
++          keys.push(key)
++          // prune oldest entry
++          if (this.max && keys.length > parseInt(this.max)) {
++            pruneCacheEntry(cache, keys[0], keys, this._vnode)
++          }
+         }
+       }
+ 
+@@ -6924,7 +6943,7 @@ function updateDOMListeners (oldVnode, vnode) {
+   }
+   var on = vnode.data.on || {};
+   var oldOn = oldVnode.data.on || {};
+-  target$1 = vnode.elm;
++  target$1 = vnode.elm || oldVnode.elm
+   normalizeEvents(on);
+   updateListeners(on, oldOn, add$1, remove$2, createOnceHandler$1, vnode.context);
+   target$1 = undefined;
+@@ -6932,7 +6951,8 @@ function updateDOMListeners (oldVnode, vnode) {
+ 
+ var events = {
+   create: updateDOMListeners,
+-  update: updateDOMListeners
++  update: updateDOMListeners,
++  destroy: (vnode) => updateDOMListeners(vnode, emptyNode)
+ };
+ 
+ /*  */
+diff --git a/node_modules/vue/dist/vue.runtime.esm.js b/node_modules/vue/dist/vue.runtime.esm.js
+index e475f27..0681b95 100644
+--- a/node_modules/vue/dist/vue.runtime.esm.js
++++ b/node_modules/vue/dist/vue.runtime.esm.js
+@@ -4831,7 +4831,7 @@ function defineComputed (
+ function createComputedGetter (key) {
+   return function computedGetter () {
+     var watcher = this._computedWatchers && this._computedWatchers[key];
+-    if (watcher) {
++    if (watcher && watcher.active) {
+       if (watcher.dirty) {
+         watcher.evaluate();
+       }
+@@ -5271,9 +5271,9 @@ function pruneCache (keepAliveInstance, filter) {
+   var keys = keepAliveInstance.keys;
+   var _vnode = keepAliveInstance._vnode;
+   for (var key in cache) {
+-    var cachedNode = cache[key];
+-    if (cachedNode) {
+-      var name = getComponentName(cachedNode.componentOptions);
++    const entry = cache[key]
++    if (entry) {
++      const name = entry.name
+       if (name && !filter(name)) {
+         pruneCacheEntry(cache, key, keys, _vnode);
+       }
+@@ -5287,9 +5287,9 @@ function pruneCacheEntry (
+   keys,
+   current
+ ) {
+-  var cached$$1 = cache[key];
+-  if (cached$$1 && (!current || cached$$1.tag !== current.tag)) {
+-    cached$$1.componentInstance.$destroy();
++  const entry = cache[key]
++  if (entry && (!current || entry.tag !== current.tag)) {
++    entry.componentInstance.$destroy()
+   }
+   cache[key] = null;
+   remove(keys, key);
+@@ -5320,7 +5320,10 @@ var KeepAlive = {
+ 
+   mounted: function mounted () {
+     var this$1 = this;
+-
++    if (this.putEntry) {
++      this.putEntry()
++      this.putEntry = null
++    }
+     this.$watch('include', function (val) {
+       pruneCache(this$1, function (name) { return matches(val, name); });
+     });
+@@ -5329,6 +5332,13 @@ var KeepAlive = {
+     });
+   },
+ 
++  updated: function updated() {
++    if (this.putEntry) {
++      this.putEntry()
++      this.putEntry = null
++    }
++  },
++
+   render: function render () {
+     var slot = this.$slots.default;
+     var vnode = getFirstComponentChild(slot);
+@@ -5357,16 +5367,25 @@ var KeepAlive = {
+         ? componentOptions.Ctor.cid + (componentOptions.tag ? ("::" + (componentOptions.tag)) : '')
+         : vnode.key;
+       if (cache[key]) {
+-        vnode.componentInstance = cache[key].componentInstance;
++        var { _isDestroyed } = cache[key].componentInstance
++        if (_isDestroyed) cache[key] = vnode
++        else vnode.componentInstance = cache[key].componentInstance
+         // make current key freshest
+         remove(keys, key);
+         keys.push(key);
+       } else {
+-        cache[key] = vnode;
+-        keys.push(key);
+-        // prune oldest entry
+-        if (this.max && keys.length > parseInt(this.max)) {
+-          pruneCacheEntry(cache, keys[0], keys, this._vnode);
++        this.putEntry = () => {
++          const { tag, componentInstance } = vnode
++          cache[key] = {
++            name,
++            tag,
++            componentInstance
++          }
++          keys.push(key)
++          // prune oldest entry
++          if (this.max && keys.length > parseInt(this.max)) {
++            pruneCacheEntry(cache, keys[0], keys, this._vnode)
++          }
+         }
+       }
+ 
+@@ -6946,7 +6965,7 @@ function updateDOMListeners (oldVnode, vnode) {
+   }
+   var on = vnode.data.on || {};
+   var oldOn = oldVnode.data.on || {};
+-  target$1 = vnode.elm;
++  target$1 = vnode.elm || oldVnode.elm
+   normalizeEvents(on);
+   updateListeners(on, oldOn, add$1, remove$2, createOnceHandler$1, vnode.context);
+   target$1 = undefined;
+@@ -6954,7 +6973,8 @@ function updateDOMListeners (oldVnode, vnode) {
+ 
+ var events = {
+   create: updateDOMListeners,
+-  update: updateDOMListeners
++  update: updateDOMListeners,
++  destroy: (vnode) => updateDOMListeners(vnode, emptyNode)
+ };
+ 
+ /*  */
