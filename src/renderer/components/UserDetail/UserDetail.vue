@@ -161,18 +161,18 @@ export default {
             }
             const id = this.user.profile.userId;
             if (this.dynamicFollows.followed) {
-                try {
-                    await Api.unfollowUser(id);
+                const res = await Api.unfollowUser(id);
+                if (res.code === 200) {
                     this.updateDynamicFollows(false);
-                } catch (e) {
-                    this.$toast.message(`取消关注失败 ●﹏● ： ${e.code}`);
+                } else {
+                    this.$toast.message(res.msg || `取消关注失败 ●﹏● ： ${res.code}`);
                 }
             } else {
-                try {
-                    await Api.followUser(id);
+                const res = await Api.followUser(id);
+                if (res.code === 200) {
                     this.updateDynamicFollows(true);
-                } catch (e) {
-                    this.$toast.message(`关注失败 ●﹏● ： ${e.code}`);
+                } else {
+                    this.$toast.message(res.msg || `关注失败 ●﹏● ： ${res.code}`);
                 }
             }
         },
