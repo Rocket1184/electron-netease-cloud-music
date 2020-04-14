@@ -35,7 +35,7 @@
                 placeholder="查找节目 ..."
                 @keydown="handleInputKeyDown"
                 :action-icon="findInput.length > 0 ? 'close' : null"
-                :action-click="handleFindClear"></mu-text-field>
+                :action-click="handleInputClear"></mu-text-field>
         </div>
         <mu-divider></mu-divider>
         <CenteredTip v-if="programs.length === 0"
@@ -93,14 +93,14 @@ export default {
         return {
             loadingAll: false,
             findInput: '',
-            filteredPrograms: [],
+            filteredPrograms: null,
             indexMap: new Map()
         };
     },
     computed: {
         ...mapState(['ui', 'playlist']),
         programsToShow() {
-            return this.findInput.length > 0 ? this.filteredPrograms : this.programs;
+            return this.filteredPrograms || this.programs;
         },
         btnPlayText() {
             return `播放全部 (${this.total})`;
@@ -185,6 +185,17 @@ export default {
                 })
             });
         },
+        handleFind() {
+            if (this.findInput.length > 0) {
+                workerExecute('filterDjRadioPrograms', this.findInput, this.programs).then(res => {
+                    this.filteredPrograms = res.result;
+                    this.indexMap = res.indexMap;
+                });
+            } else {
+                this.filteredPrograms = null;
+                this.indexMap.clear();
+            }
+        },
         /** @param {KeyboardEvent} e */
         handleInputKeyDown(e) {
             if (e.key === 'Escape') {
@@ -192,22 +203,17 @@ export default {
                 this.$refs.findInput.blur();
             }
         },
-        handleFindClear() {
+        handleInputClear() {
             this.findInput = '';
             this.$refs.findInput.focus();
         }
     },
     watch: {
-        findInput(val) {
-            if (val.length > 0) {
-                workerExecute('filterDjRadioPrograms', val, this.programs).then(res => {
-                    this.filteredPrograms = res.result;
-                    this.indexMap = res.indexMap;
-                });
-            } else {
-                this.filteredPrograms = [];
-                this.indexMap.clear();
-            }
+        programs() {
+            this.handleFind();
+        },
+        findInput() {
+            this.handleFind();
         }
     },
     components: {

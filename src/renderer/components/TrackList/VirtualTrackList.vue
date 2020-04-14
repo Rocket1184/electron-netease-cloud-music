@@ -10,7 +10,7 @@
                     placeholder="查找歌曲 ..."
                     @keydown="handleInputKeyDown"
                     :action-icon="findInput.length > 0 ? 'close' : null"
-                    :action-click="handleFindClear"></mu-text-field>
+                    :action-click="handleInputClear"></mu-text-field>
             </TrackListHeaeder>
             <mu-divider></mu-divider>
         </div>
@@ -71,7 +71,7 @@ export default {
             loading: false,
             details: [],
             findInput: '',
-            filteredList: [],
+            filteredList: null,
             indexMap: new Map()
         };
     },
@@ -80,8 +80,7 @@ export default {
             return this.details;
         },
         tracksToShow() {
-            if (this.findInput.length > 0) return this.filteredList;
-            return this.details;
+            return this.filteredList || this.details;
         },
         trackCount() {
             if (Array.isArray(this.trackIds)) {
@@ -103,6 +102,17 @@ export default {
         handleQueueMapped(index) {
             return this.handleQueue(this.indexMap.has(index) ? this.indexMap.get(index) : index);
         },
+        handleFind() {
+            if (this.findInput.length > 0) {
+                workerExecute('filterTracks', this.findInput, this.details).then(res => {
+                    this.filteredList = res.result;
+                    this.indexMap = res.indexMap;
+                });
+            } else {
+                this.filteredList = null;
+                this.indexMap.clear();
+            }
+        },
         /** @param {KeyboardEvent} e */
         handleInputKeyDown(e) {
             if (e.key === 'Escape') {
@@ -110,7 +120,7 @@ export default {
                 this.$refs.findInput.blur();
             }
         },
-        handleFindClear() {
+        handleInputClear() {
             this.findInput = '';
             this.$refs.findInput.focus();
         }
@@ -124,27 +134,18 @@ export default {
     },
     watch: {
         tracks(val) {
-            if (val) {
-                this.details = val;
-            }
+            this.details = val;
             this.handleFind();
         },
-        trackIds(val) {
-            if (val) {
-                this.updateTrackDetails();
-            }
+        async trackIds() {
+            await this.updateTrackDetails();
             this.handleFind();
         },
-        findInput(val) {
-            if (val.length > 0) {
-                workerExecute('filterTracks', val, this.details).then(res => {
-                    this.filteredList = res.result;
-                    this.indexMap = res.indexMap;
-                });
-            } else {
-                this.filteredList = [];
-                this.indexMap.clear();
-            }
+        details() {
+            this.handleFind();
+        },
+        findInput() {
+            this.handleFind();
         }
     },
     components: {
