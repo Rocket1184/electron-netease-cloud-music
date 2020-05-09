@@ -434,7 +434,7 @@ export function playPreviousTrack({ dispatch, getters }) {
 /**
  * @param {ActionContext} param0
  */
-export async function playPlaylist({ commit, dispatch, state }, { tracks, source, firstIndex = 0 }) {
+export async function playPlaylist({ commit, dispatch, state }, { tracks, source, firstIndex = -1 }) {
     const list = [];
     for (const t of tracks) {
         if (source) {
@@ -446,8 +446,11 @@ export async function playPlaylist({ commit, dispatch, state }, { tracks, source
     if (state.ui.radioMode === true) {
         commit(types.ACTIVATE_RADIO, false);
     }
-    if (state.playlist.loopMode === LOOP_MODE.RANDOM) {
+    if (firstIndex === -1 && state.playlist.loopMode === LOOP_MODE.RANDOM) {
         firstIndex = Math.floor(Math.random() * list.length);
+    }
+    if (firstIndex === -1) {
+        firstIndex = 0;
     }
     dispatch('playTrackIndex', firstIndex);
 }
