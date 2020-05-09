@@ -13,7 +13,8 @@ const DefaultSettings = {
     exitOnWindowClose: true,
     themePrimaryColor: '#7e57c2',
     themeSecondaryColor: '#ff4081',
-    themeVariety: 'light'
+    themeVariety: 'light',
+    autoAddToPlaylist: 'false'
 };
 
 /**

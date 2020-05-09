@@ -60,6 +60,9 @@ export default {
         },
         trackDetails() {
             return this.tracks;
+        },
+        autoAddToPlaylist() {
+            return this.$store.state.settings.autoAddToPlaylist;
         }
     },
     methods: {
@@ -67,7 +70,8 @@ export default {
             'activateRadio',
             'playTrackIndex',
             'toggleCollectPopup',
-            'insertTrackIntoPlaylist'
+            'insertTrackIntoPlaylist',
+            'playPlaylist'
         ]),
         handleCollect(id) {
             if (!this.user.loginValid) {
@@ -125,7 +129,12 @@ export default {
                 this.$toast.message('已退出私人 FM');
                 this.activateRadio(false);
             }
-            this.playTrack(index);
+            if (this.autoAddToPlaylist) {
+                this.playPlaylist({ tracks: this.trackDetails, source: this.source, firstIndex: index });
+            }
+            else {
+                this.playTrack(index);
+            }
         }
     },
     components: {
