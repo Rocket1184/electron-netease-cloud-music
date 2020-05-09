@@ -14,7 +14,7 @@ const DefaultSettings = {
     themePrimaryColor: '#7e57c2',
     themeSecondaryColor: '#ff4081',
     themeVariety: 'light',
-    autoAddToPlaylist: 'false'
+    autoReplacePlaylist: false
 };
 
 /**
