@@ -92,6 +92,11 @@ export const Entries = [
                 type: 'toggle',
                 title: '启动时自动开始播放',
                 prop: 'autoPlay'
+            },
+            {
+                type: 'toggle',
+                title: '自动加入当前歌单至播放列表',
+                prop: 'autoAddToPlaylist'
             }
         ]
     },
