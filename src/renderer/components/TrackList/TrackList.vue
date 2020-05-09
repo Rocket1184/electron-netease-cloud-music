@@ -53,7 +53,7 @@ export default {
         }
     },
     computed: {
-        ...mapState(['ui', 'user', 'playlist']),
+        ...mapState(['ui', 'user', 'playlist', 'settings']),
         ...mapGetters(['queue']),
         shortcuts() {
             return shortcuts;
@@ -61,9 +61,6 @@ export default {
         trackDetails() {
             return this.tracks;
         },
-        autoAddToPlaylist() {
-            return this.$store.state.settings.autoAddToPlaylist;
-        }
     },
     methods: {
         ...mapActions([
@@ -129,7 +126,7 @@ export default {
                 this.$toast.message('已退出私人 FM');
                 this.activateRadio(false);
             }
-            if (this.autoAddToPlaylist) {
+            if (this.settings.autoReplacePlaylist) {
                 this.playPlaylist({ tracks: this.trackDetails, source: this.source, firstIndex: index });
             }
             else {

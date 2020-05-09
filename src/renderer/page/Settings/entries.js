@@ -96,7 +96,7 @@ export const Entries = [
             {
                 type: 'toggle',
                 title: '自动加入当前歌单至播放列表',
-                prop: 'autoAddToPlaylist'
+                prop: 'autoReplacePlaylist'
             }
         ]
     },
