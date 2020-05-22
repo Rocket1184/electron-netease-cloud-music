@@ -460,6 +460,7 @@ export default {
     width: 100%;
     bottom: 0;
     left: 0;
+    z-index: 1;
     .cover {
         height: 64px;
         width: 64px;

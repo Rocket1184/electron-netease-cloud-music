@@ -52,7 +52,6 @@ export default {
 <style lang="less">
 .router-view {
     height: calc(100vh - 128px);
-    overflow: hidden;
     position: relative;
     margin-top: 64px;
     .ncm-page {
