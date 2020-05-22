@@ -106,23 +106,12 @@ app.on('window-all-closed', () => {
 });
 
 app.on('before-quit', () => {
-    if (appTray) {
-        appTray.destroy();
-        appTray = null;
-    }
     if (mainWindow) {
-        mainWindow.removeAllListeners('close');
-        mainWindow.close();
-    }
-    if (loginWindow) {
-        loginWindow.destroy();
+        mainWindow.removeListener('close', preventQuitHandler);
     }
     switch (process.platform) {
         case 'linux':
             require('./mpris/ipc').destroy();
-            break;
-        case 'darwin':
-            mainWindow.removeAllListeners('close');
             break;
     }
 });
