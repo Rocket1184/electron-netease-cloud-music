@@ -128,8 +128,7 @@ export default {
             }
             if (this.settings.autoReplacePlaylist) {
                 this.playPlaylist({ tracks: this.trackDetails, source: this.source, firstIndex: index });
-            }
-            else {
+            } else {
                 this.playTrack(index);
             }
         }
