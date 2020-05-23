@@ -54,23 +54,25 @@ if (isProd) {
     cfg.plugins = [
         new webpack.DefinePlugin({ 'process.env.NODE_ENV': '"production"' }),
         new webpack.DefinePlugin({ 'process.env.MAIN_URL': '`file://${__dirname}/index.html`' }),
-        new CopyWebpackPlugin([
-            {
-                from: absPath('package.json'),
-                to: absPath('dist'),
-                transform: (content) => {
-                    const json = JSON.parse(content.toString('utf8'));
-                    const exclude = ['scripts', 'dependencies', 'devDependencies'];
-                    const replacer = (key, value) => exclude.includes(key) ? undefined : value;
-                    return JSON.stringify(json, replacer, 0);
+        new CopyWebpackPlugin({
+            patterns: [
+                {
+                    from: absPath('package.json'),
+                    to: absPath('dist'),
+                    transform: (content) => {
+                        const json = JSON.parse(content.toString('utf8'));
+                        const exclude = ['scripts', 'dependencies', 'devDependencies'];
+                        const replacer = (key, value) => exclude.includes(key) ? undefined : value;
+                        return JSON.stringify(json, replacer, 0);
+                    }
+                },
+                {
+                    from: absPath('assets/icons/tray*.png'),
+                    to: absPath('dist/icons/[name].[ext]'),
+                    toType: 'template'
                 }
-            },
-            {
-                from: { glob: absPath('assets/icons/tray*.png') },
-                to: absPath('dist/icons/[name].[ext]'),
-                toType: 'template'
-            }
-        ])
+            ]
+        })
     ];
 } else {
     // dev config
