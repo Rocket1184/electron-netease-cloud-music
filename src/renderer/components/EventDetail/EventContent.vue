@@ -44,8 +44,8 @@ import { shortDate } from '@/util/formatter';
 import TypeBadge from '@/components/UserDetail/TypeBadge.vue';
 import EventShare from './EventShare.vue';
 
-const ShareFields = ['song', 'album', 'playlist', 'mv', 'video', 'djRadio', 'program'];
-const ShareFieldNames = ['歌曲', '专辑', '歌单', ' MV', '视频', '电台', '电台节目'];
+const ShareFields = ['song', 'album', 'playlist', 'mv', 'video', 'djRadio', 'program', 'resource'];
+const ShareFieldNames = ['歌曲', '专辑', '歌单', ' MV', '视频', '电台', '电台节目', '评论'];
 
 export default {
     props: {

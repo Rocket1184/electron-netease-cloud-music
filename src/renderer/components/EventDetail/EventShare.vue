@@ -1,13 +1,20 @@
 <template>
-    <router-link class="event-share"
+    <component :is="share.route ? 'router-link' : 'div'"
+        class="event-share"
         :to="share.route">
-        <img class="event-share-img"
+        <img v-if="share.img"
+            class="event-share-img"
             :src="share.img">
         <div>
-            <div class="event-share-title">{{ share.title }}</div>
+            <div class="event-share-title">
+                <router-link v-if="share.author"
+                    class="event-share-author"
+                    :to="{ name: 'user', params: { id: share.author.userId } }">@{{ share.author.nickname }}</router-link>
+                {{ share.title }}
+            </div>
             <div class="event-share-subtitle">{{ share.subTitle }}</div>
         </div>
-    </router-link>
+    </component>
 </template>
 
 <script>
@@ -83,9 +90,17 @@ export default {
                     // TODO: highlight program on radio page, or play it directly?
                     route: { name: 'djradio', params: { id: e.radio.id } }
                 };
+            } else if (j.resource) {
+                const e = j.resource;
+                r = {
+                    author: e.user,
+                    title: e.content,
+                    subTitle: e.resourceName
+                };
             }
-            if (!r.img) return null;
-            r.img = sizeImg(r.img, HiDpiPx(40));
+            if (r.img) {
+                r.img = sizeImg(r.img, HiDpiPx(40));
+            }
             return r;
         }
     }
@@ -95,9 +110,7 @@ export default {
 <style lang="less">
 .event-share {
     display: flex;
-    align-items: center;
-    height: 48px;
-    padding-left: 4px;
+    padding: 4px;
     color: inherit;
     background-color: rgba(0, 0, 0, 0.06);
     .event-share-img {
