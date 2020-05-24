@@ -17,7 +17,8 @@ export const UserType = {
     10: { icon: 'check', class: 'user-type-red', name: '认证的官方帐号' },
     200: { icon: 'star_border', class: 'user-type-yellow', name: '云音乐达人' },
     201: { icon: 'star_border', class: 'user-type-yellow', name: '云音乐达人' },
-    202: { icon: 'star_border', class: 'user-type-yellow', name: '云音乐达人' }
+    202: { icon: 'star_border', class: 'user-type-yellow', name: '云音乐达人' },
+    300: { icon: 'star_border', class: 'user-type-blue', name: '云村委员会' }
 };
 
 export const DefaultUserType = {
@@ -56,6 +57,9 @@ export default {
 }
 .user-type-yellow {
     background-color: #fbc02d; // yellow700
+}
+.user-type-blue {
+    background-color: #2196f3; // blue500
 }
 .user-type-unknown {
     background-color: lightslategrey;;
