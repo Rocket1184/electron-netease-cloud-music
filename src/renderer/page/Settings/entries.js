@@ -83,6 +83,7 @@ export const Entries = [
                 title: '音频码率',
                 prop: 'bitRate',
                 options: [
+                    { label: '最高', value: 'ex' },
                     { label: '极高 (320 kbit/s)', value: 'h' },
                     { label: '较高 (192 kbit/s)', value: 'm' },
                     { label: '标准 (128 kbit/s)', value: 'l' },

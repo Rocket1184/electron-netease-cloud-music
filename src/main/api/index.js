@@ -132,7 +132,7 @@ export function getRecommendSongs() {
     });
 }
 
-/** 
+/**
  * 每日歌曲推荐 -> 不感兴趣
  * @param {number} id
  * @returns {Promise<Types.DislikeRecommendRes>}
@@ -219,6 +219,7 @@ export function getPicUrl(id, cdn = 3) {
 }
 
 const QualityMap = {
+    ex: 999000,
     h: 320000,
     m: 192000,
     l: 128000
@@ -231,7 +232,7 @@ const QualityMap = {
  * @returns {Promise<Types.MusicUrlRes>}
  */
 export function getMusicUrlW(idOrIds, quality) {
-    if (!QualityMap[quality]) throw new Error(`Quality type '${quality}' is not in [h,m,l]`);
+    if (!QualityMap[quality]) throw new Error(`Quality type '${quality}' is not in [ex,h,m,l]`);
     let ids;
     if (Array.isArray(idOrIds)) ids = idOrIds;
     else ids = [idOrIds];
@@ -248,7 +249,7 @@ export function getMusicUrlW(idOrIds, quality) {
  * @returns {Promise<Types.MusicUrlRes>}
  */
 export function getMusicUrlL(idOrIds, quality) {
-    if (!QualityMap[quality]) throw new Error(`Quality type '${quality}' is not in [h,m,l]`);
+    if (!QualityMap[quality]) throw new Error(`Quality type '${quality}' is not in [ex,h,m,l]`);
     let ids;
     if (Array.isArray(idOrIds)) ids = idOrIds;
     else ids = [idOrIds];
@@ -265,7 +266,7 @@ export function getMusicUrlL(idOrIds, quality) {
  * @returns {Promise<Types.MusicUrlRes>}
  */
 export function getMusicUrlE(idOrIds, quality) {
-    if (!QualityMap[quality]) throw new Error(`Quality type '${quality}' is not in [h,m,l]`);
+    if (!QualityMap[quality]) throw new Error(`Quality type '${quality}' is not in [ex,h,m,l]`);
     let ids;
     if (Array.isArray(idOrIds)) ids = idOrIds;
     else ids = [idOrIds];
@@ -1174,7 +1175,7 @@ export function addRadioTrashE(songId, time) {
 
 /**
  * @param {number} limit
- * @param {number} addTime 
+ * @param {number} addTime
  * @returns {Promise<Types.RadioTrashERes>}
  */
 export function getRadioTrashE(limit, addTime) {
