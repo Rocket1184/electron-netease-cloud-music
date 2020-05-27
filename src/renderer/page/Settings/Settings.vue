@@ -185,6 +185,11 @@ export default {
                         case 'exitOnWindowClose':
                             ipcRenderer.send(IpcTag, key, val);
                             break;
+                        case 'bitRate':
+                            if(val === 'ex') {
+                                this.$toast.message('实际播放码率取决于歌曲最高码率和帐号最高可播放码率');
+                            }
+                            break;
                     }
                 }
             });

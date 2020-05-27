@@ -1,6 +1,6 @@
 namespace Types {
     export type CacheType = 'all' | 'music';
-    export type MusicQuality = 'h' | 'm' | 'l';
+    export type MusicQuality = 'ex' | 'h' | 'm' | 'l';
 
     interface ApiRes {
         code: number;
@@ -1115,7 +1115,7 @@ namespace Types {
     }
 
     export interface SubscribeAlbumRes extends ApiRes {
-        /** 
+        /**
          * error message
          * - `200` 该专辑已在用户收藏列表中
          */
@@ -1125,7 +1125,7 @@ namespace Types {
     }
 
     export interface UnsubscribeAlbumRes extends ApiRes {
-        /** 
+        /**
          * error message
          * - `404` 用户未未收藏此专辑
          */
