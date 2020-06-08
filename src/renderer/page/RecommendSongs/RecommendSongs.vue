@@ -78,10 +78,15 @@ export default {
             if (this.recommend.timestamp < 0) return true;
             const now = new Date();
             const lastUpdate = new Date(this.recommend.timestamp);
-            if (now.getUTCDay() >= lastUpdate.getUTCDay() &&
-                now.getUTCHours() >= 22 && lastUpdate.getUTCHours() < 22) {
-                return true;
+            let nextUpdate = new Date(lastUpdate);
+            // 每日 UTC+8 6:00 对应 UTC 22:00
+            nextUpdate.setUTCMinutes(0);
+            nextUpdate.setUTCSeconds(0);
+            nextUpdate.setUTCHours(22);
+            if (lastUpdate.getUTCHours() >= 22) {
+                nextUpdate.setUTCDate(lastUpdate.getUTCDate() + 1);
             }
+            if (now.getTime() >= nextUpdate.getTime()) return true;
             return false;
         },
         fetchData() {
