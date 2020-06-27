@@ -118,7 +118,7 @@
             <div v-if="isDjRadioProgram"
                 class="description">
                 <div class="scroller">
-                    <pre>{{ playing.source.djradio.description }}</pre>
+                    <div>{{ playing.source.djradio.description }}</div>
                 </div>
             </div>
             <div v-else
@@ -152,8 +152,8 @@
                                 v-text="line.content + '\n' + (line.trans || '')"></div>
                         </template>
                         <template v-else-if="ui.lyric.txtLyric">
-                            <pre class="txt"
-                                v-text="ui.lyric.txtLyric"></pre>
+                            <div class="txt"
+                                v-text="ui.lyric.txtLyric"></div>
                         </template>
                         <template v-else>
                             <p>暂无歌词</p>
@@ -550,6 +550,7 @@ export default {
             .scroller {
                 height: 100%;
                 overflow-y: auto;
+                white-space: pre-wrap;
             }
         }
         .lyric {
@@ -583,6 +584,7 @@ export default {
                     }
                     .txt {
                         margin-bottom: 84px;
+                        white-space: pre-wrap;
                     }
                     .contributors {
                         margin-top: 56px;
