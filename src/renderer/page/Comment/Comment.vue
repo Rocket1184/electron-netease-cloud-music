@@ -176,6 +176,7 @@ export default {
         async postComment() {
             if (this.editorContent.length === 0) {
                 this.$toast.message('评论内容不能为空   (￣﹁￣)');
+                return;
             }
             let resp;
             this.posting = true;
