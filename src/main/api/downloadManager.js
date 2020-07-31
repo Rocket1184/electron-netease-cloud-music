@@ -131,37 +131,36 @@ class DownloadManager {
         const filename = `${metadata.id}ex`;
         try {
 
-            if (await this.cache.has(filename)) {
-                const cover = await fakeFetch(getPicUrl(metadata.album.pic).url);
-                const originalFile = fs.readFileSync(this.cache.fullPath(filename));
-                const APIC = createAPICTag(cover);
-                const TIT2 = createTIT2Tag(metadata.name);
-                const TCOM = createTCOMTag(metadata.artistName);
-                const TALB = createTALBTag(metadata.album.name);
-                const originalTagLength = parseTagLength(originalFile.slice(6, 10));
-                const result = Buffer.concat([
-                    originalFile.slice(0, 6),
-                    toTagLength(originalTagLength + TIT2.length + TCOM.length + TALB.length + APIC.length),
-                    TIT2,
-                    TCOM,
-                    TALB,
-                    APIC,
-                    originalFile.slice(10),
-                ]);
-                const distpath = path.join(this.dist, metadata.name + '.mp3');
-                if (!fs.existsSync(this.dist)) {
-                    fs.mkdirSync(this.dist, { recursive: true });
-                }
-                if (fs.existsSync(distpath)) {
-                    throw new Error('好像已经下载过了呀');
-                }
-                fs.writeFileSync(distpath, result);
-                return {
-                    success: true,
-                    url: distpath,
-                }
-            } else {
+            if (!await this.cache.has(filename)) {
                 throw new Error('请先播放一下呀');
+            }
+            const cover = await fakeFetch(getPicUrl(metadata.album.pic).url);
+            const originalFile = fs.readFileSync(this.cache.fullPath(filename));
+            const APIC = createAPICTag(cover);
+            const TIT2 = createTIT2Tag(metadata.name);
+            const TCOM = createTCOMTag(metadata.artistName);
+            const TALB = createTALBTag(metadata.album.name);
+            const originalTagLength = parseTagLength(originalFile.slice(6, 10));
+            const result = Buffer.concat([
+                originalFile.slice(0, 6),
+                toTagLength(originalTagLength + TIT2.length + TCOM.length + TALB.length + APIC.length),
+                TIT2,
+                TCOM,
+                TALB,
+                APIC,
+                originalFile.slice(10),
+            ]);
+            const distpath = path.join(this.dist, metadata.name + '.mp3');
+            if (!fs.existsSync(this.dist)) {
+                fs.mkdirSync(this.dist, { recursive: true });
+            }
+            if (fs.existsSync(distpath)) {
+                throw new Error('好像已经下载过了呀');
+            }
+            fs.writeFileSync(distpath, result);
+            return {
+                success: true,
+                url: distpath,
             }
         } catch (e) {
             return {
