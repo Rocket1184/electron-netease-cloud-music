@@ -62,6 +62,9 @@
                         <mu-checkbox :uncheck-icon="iconLoopMode"
                             @click="handleLoopMode"></mu-checkbox>
                     </div>
+                    <mu-checkbox uncheck-icon="get_app"
+                        title="下载"
+                        @click="handleDownload"></mu-checkbox>
                     <mu-menu :open.sync="currentListShown"
                         placement="top"
                         popover-class="playerbar-current-list"
@@ -156,7 +159,9 @@ export default {
             'nextLoopMode',
             'likeRadio',
             'skipRadio',
-            'trashRadio'
+            'trashRadio',
+            'downloadTrack',
+            'isDownloaded'
         ]),
         handleCoverClick() {
             if (this.$route.name === 'player') {
@@ -282,6 +287,19 @@ export default {
         },
         handleSourceNavigate() {
             this.currentListShown = false;
+        },
+        async handleDownload() {
+            if (!this.playing.id) {
+                this.$toast.message('你在想桃子  (｡･∀･)ﾉﾞ');
+                return;
+            }
+            this.$toast.message('已经开始下载啦');
+            const result = await this.downloadTrack({ metadata: this.playing });
+            if (result.success) {
+                this.$toast.message(`成功下载到 ${result.url} 啦`);
+            } else {
+                this.$toast.message(result.error);
+            }
         }
     },
     computed: {
@@ -521,7 +539,7 @@ export default {
                 }
             }
             .shortcut {
-                flex-basis: calc(36px * 4);
+                flex-basis: calc(36px * 5);
                 flex-shrink: 0;
                 margin-left: 16px;
                 display: flex;

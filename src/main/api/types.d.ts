@@ -2069,6 +2069,12 @@ namespace Types {
         ids: number[];
     }
 
+    export interface DownloadSongRes {
+        success: boolean;
+        error?: string;
+        url?: string;
+    }
+
     export interface PrivateCloudListItem {
         simpleSong: EApi.Song;
         addTime: number;
