@@ -14,6 +14,7 @@ import { encodePicUrl } from './codec';
 import * as Settings from '../settings';
 import MusicServer from './musicServer';
 import { getDiskUsage, clearDirectory } from '../util/fs';
+import DownloadManager from './downloadManager';
 
 const BaseURL = 'https://music.163.com';
 const client = new Client();
@@ -29,6 +30,8 @@ migrate();
 const musicServer = new MusicServer(musicCache);
 let musicServerPort = 0;
 musicServer.listen().then(addr => musicServerPort = addr.port);
+
+const downloadManager = new DownloadManager(musicCache);
 
 /**
  * clear all cookies, and set cookie as given arguments
@@ -195,7 +198,7 @@ export function getSongDetail(ids) {
     return client.postE('/v3/song/detail', {
         c: `[${ids.map(id => JSON.stringify({ id }))}]`,
         // ids: `[${ ids }]`
-    });
+    }, true);
 }
 
 /**
@@ -1197,6 +1200,24 @@ export function removeRadioTrashE(songId) {
  */
 export function likeSongE(trackId, like = true) {
     return client.postE('/song/like', { trackId, like, userid: 0 });
+}
+
+/**
+ * 
+ * @param {number} trackId
+ * @returns {Promise<boolean>}
+ */
+export function downloadSong(trackId, metadata) {
+    return downloadManager.download(trackId, metadata);
+}
+
+/**
+ * 
+ * @param {number} trackId 
+ * @returns {Promise<boolean>}
+ */
+export function isDownloaded(trackId) {
+    return downloadManager.isDownloaded(trackId);
 }
 
 /**

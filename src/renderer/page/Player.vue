@@ -64,6 +64,15 @@
                         value="share"></mu-icon>
                     <span>分享</span>
                 </mu-button>
+                <mu-button flat
+                    small
+                    color="black"
+                    @click="handleDownload">
+                    <mu-icon left
+                        :size="18"
+                        value="get_app"></mu-icon>
+                    <span>下载</span>
+                </mu-button>
             </div>
         </div>
         <div class="info">
@@ -273,7 +282,9 @@ export default {
     methods: {
         ...mapActions([
             'updateUiLyric',
-            'toggleCollectPopup'
+            'toggleCollectPopup',
+            'downloadTrack',
+            'isDownloaded',
         ]),
         listenAudioUpdate() {
             /** @type {HTMLAudioElement} */
@@ -390,6 +401,19 @@ export default {
                 selection.removeAllRanges();
                 this.$toast.message('已复制分享内容到粘贴版');
             });
+        },
+        async handleDownload() {
+            if (!this.playing.id) {
+                this.$toast.message('汝想下载什么呢  ヾ(´･ω･｀)ﾉ')
+                return;
+            }
+            this.$toast.message('已经开始下载啦');
+            const result = await this.downloadTrack({ metadata: this.playing });
+            if (result.success) {
+                this.$toast.message(`成功下载到 ${result.url} 啦`);
+            } else {
+                this.$toast.message(result.error);
+            }
         }
     },
     watch: {

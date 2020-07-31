@@ -546,6 +546,14 @@ export async function favoriteTrack(_, { id, favorite = true }) {
 }
 
 /**
+ * @param {ActionContext} _
+ */
+export async function downloadTrack(_, { metadata }) {
+    const success = await Api.downloadSong(metadata);
+    return success;
+}
+
+/**
  * @param {ActionContext} param0
  */
 export function nextLoopMode({ commit, state }) {
