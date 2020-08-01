@@ -4,30 +4,8 @@ import * as path from 'path';
 import { homedir } from 'os';
 import Cache from './cache';
 import { getPicUrl } from './index';
-import { request } from 'https';
+import fetch from 'electron-fetch';
 import ID3 from './id3';
-
-/**
- * 
- * @param {string} url 
- * @returns {Promise<Buffer>}
- */
-const fakeFetch = (url) => {
-    return new Promise((resolve, reject) => {
-        const data = [];
-        request(url, (res) => {
-            res.on('data', (chuck) => {
-                data.push(chuck);
-            });
-            res.on('end', () => {
-                resolve(Buffer.concat(data));
-            });
-            res.on('error', (err) => {
-                reject(err);
-            });
-        }).end();
-    });
-}
 
 class DownloadManager {
     /**
@@ -51,13 +29,16 @@ class DownloadManager {
                 throw new Error('请先播放一下呀');
             }
 
-            const cover = await fakeFetch(getPicUrl(metadata.album.pic).url);
             const originalFile = fs.readFileSync(this.cache.fullPath(filename));
             const distFile = new ID3(originalFile);
             distFile.addTIT2Tag(metadata.name);
             distFile.addTCOMTag(metadata.artistName);
             distFile.addTALBTag(metadata.album.name);
-            distFile.addAPICTag(cover);
+
+            const coverRes = await fetch(getPicUrl(metadata.album.pic).url);
+            if (coverRes.status === 200) {
+                distFile.addAPICTag(await coverRes.arrayBuffer());
+            }
 
             const distpath = path.join(this.dist, metadata.name + '.mp3');
             if (!fs.existsSync(this.dist)) {
