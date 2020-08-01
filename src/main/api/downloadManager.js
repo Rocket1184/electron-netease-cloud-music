@@ -7,12 +7,12 @@ import { getPicUrl } from './index';
 import fetch from 'electron-fetch';
 import ID3 from './id3';
 
-const getFileName = (metadata) => {
+const getFileName = (metadata, ext) => {
     return `${metadata.artistName
         .split(' / ')
         .map((x) => x.split('/')[0])
         .join(', ')
-    } - ${metadata.name}.mp3`;
+    } - ${metadata.name}.${ext}`;
 }
 
 class DownloadManager {
@@ -40,17 +40,19 @@ class DownloadManager {
             // TODO: flac file
             const originalFile = fs.readFileSync(this.cache.fullPath(filename));
             const distFile = new ID3(originalFile);
-            distFile.addTIT2Tag(metadata.name);
-            distFile.addTCOMTag(metadata.artistName);
-            distFile.addTALBTag(metadata.album.name);
-
-            const coverRes = await fetch(getPicUrl(metadata.album.pic).url);
-            if (coverRes.status === 200) {
-                const buf = await coverRes.buffer();
-                distFile.addAPICTag(buf);
+            if (distFile.valid) {
+                distFile.addTIT2Tag(metadata.name);
+                distFile.addTCOMTag(metadata.artistName);
+                distFile.addTALBTag(metadata.album.name);
+    
+                const coverRes = await fetch(getPicUrl(metadata.album.pic).url);
+                if (coverRes.status === 200) {
+                    const buf = await coverRes.buffer();
+                    distFile.addAPICTag(buf);
+                }
             }
 
-            const distpath = path.join(this.dist, getFileName(metadata));
+            const distpath = path.join(this.dist, getFileName(metadata, distFile.valid ? 'mp3' : 'flac'));
             if (!fs.existsSync(this.dist)) {
                 fs.mkdirSync(this.dist, { recursive: true });
             }
@@ -71,8 +73,9 @@ class DownloadManager {
     }
 
     async isDownloaded(metadata) {
-        const distpath = path.join(this.dist, getFileName(metadata));
-        return fs.existsSync(distpath);
+        const distpath1 = path.join(this.dist, getFileName(metadata, 'mp3'));
+        const distpath2 = path.join(this.dist, getFileName(metadata, 'flac'));
+        return fs.existsSync(distpath1) || fs.existsSync(distpath2);
     }
 }
 

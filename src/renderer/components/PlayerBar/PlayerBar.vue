@@ -62,9 +62,13 @@
                         <mu-checkbox :uncheck-icon="iconLoopMode"
                             @click="handleLoopMode"></mu-checkbox>
                     </div>
-                    <mu-checkbox uncheck-icon="get_app"
-                        title="下载"
-                        @click="handleDownload"></mu-checkbox>
+                    <div :title="ui.downloaded ? '已下载' : '下载'">
+                        <mu-checkbox uncheck-icon="get_app"
+                            checked-icon="done"
+                            color="blue"
+                            :inputValue="ui.downloaded"
+                            @click="handleDownload"></mu-checkbox>
+                    </div>
                     <mu-menu :open.sync="currentListShown"
                         placement="top"
                         popover-class="playerbar-current-list"
@@ -161,7 +165,7 @@ export default {
             'skipRadio',
             'trashRadio',
             'downloadTrack',
-            'isDownloaded'
+            'checkDownloaded'
         ]),
         handleCoverClick() {
             if (this.$route.name === 'player') {
@@ -294,14 +298,17 @@ export default {
             this.currentListShown = false;
         },
         async handleDownload() {
-            if (!this.playing.id) {
-                this.$toast.message('你在想桃子  (｡･∀･)ﾉﾞ');
+            if (this.ui.downloaded) {
                 return;
             }
-            this.$toast.message('已经开始下载啦');
+            if (!this.playing.id) {
+                this.$toast.message('想下载什么呢  ヾ(´･ω･｀)ﾉ');
+                return;
+            }
+            this.$toast.message('正在开始下载...');
             const result = await this.downloadTrack({ metadata: this.playing });
             if (result.success) {
-                this.$toast.message('下载成功啦');
+                this.$toast.message('下载成功');
             } else {
                 this.$toast.message(result.error);
             }
@@ -391,6 +398,8 @@ export default {
             if (this.ui.paused === false && _audioEl.paused) {
                 _audioEl.play();
             }
+
+            this.checkDownloaded({ metadata: this.playing });
         });
 
         // keep audio progress when HMR
