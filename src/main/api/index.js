@@ -1207,8 +1207,8 @@ export function likeSongE(trackId, like = true) {
  * @param {number} trackId
  * @returns {Promise<Types.DownloadSongRes>}
  */
-export function downloadSong(trackId, metadata) {
-    return downloadManager.download(trackId, metadata);
+export function downloadSong(metadata) {
+    return downloadManager.download(metadata);
 }
 
 /**
@@ -1216,8 +1216,8 @@ export function downloadSong(trackId, metadata) {
  * @param {number} trackId 
  * @returns {Promise<boolean>}
  */
-export function isDownloaded(trackId) {
-    return downloadManager.isDownloaded(trackId);
+export function isDownloaded(metadata) {
+    return downloadManager.isDownloaded(metadata);
 }
 
 /**

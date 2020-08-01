@@ -549,8 +549,11 @@ export async function favoriteTrack(_, { id, favorite = true }) {
  * @param {ActionContext} _
  */
 export async function downloadTrack(_, { metadata }) {
-    const success = await Api.downloadSong(metadata);
-    return success;
+    return await Api.downloadSong(metadata);
+}
+
+export async function isDownloaded(_, { metadata }) {
+    return await Api.isDownloaded(metadata);
 }
 
 /**

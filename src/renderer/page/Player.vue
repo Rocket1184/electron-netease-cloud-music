@@ -67,11 +67,12 @@
                 <mu-button flat
                     small
                     color="black"
+                    :disabled="downloaded"
                     @click="handleDownload">
                     <mu-icon left
                         :size="18"
-                        value="get_app"></mu-icon>
-                    <span>下载</span>
+                        :value="downloaded ? 'done' : 'get_app'"></mu-icon>
+                    <span>{{ downloaded ? '已下载' : '下载' }}</span>
                 </mu-button>
             </div>
         </div>
@@ -228,7 +229,8 @@ export default {
             threadLiked: false,
             commentCount: '...',
             currentLyricIndex: -1,
-            dlgShareOpen: false
+            dlgShareOpen: false,
+            downloaded: false,
         };
     },
     computed: {
