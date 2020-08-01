@@ -1,56 +1,75 @@
 
 // see https://id3.org/id3v2.3.0
+// see https://id3.org/id3v2.4.0-structure
 
-import { getMIMEType } from './utils';
+import { getMIMEType, uint32toBuffer, parseUint32, parseUint8, parseUint28, uint28toBuffer } from './utils';
 
-const parseHeaderLength = (buf) => {
-    return buf[0] * (1 << 21)
-         + buf[1] * (1 << 14)
-         + buf[2] * (1 <<  7)
-         + buf[3] * (1      );
+const getEncoding = (text) => {
+    if (/^[\x20-\x7f]*$/.test(text)) {
+        return Buffer.from([ 0x00 ]); // ISO-8859-1
+    } else {
+        return Buffer.from([ 0x03 ]); // utf8
+    }
 }
-const toHeaderLength = (x) => {
-    return Buffer.from([
-        (x >> 21) & 0x7f,
-        (x >> 14) & 0x7f,
-        (x >>  7) & 0x7f,
-        (x      ) & 0x7f,
+const text2buffer = (text) => {
+    return Buffer.concat([
+        Buffer.from(text, 'utf8'),
+        Buffer.from([ 0x00 ]),
     ]);
 }
+
+const parseTag = (version, buf) => {
+    if (!buf.length || buf[0] === 0x00) {
+        // EOF or paddings
+        return [];
+    }
+    const tagname = buf.slice(0, 4).toString();
+
+    // difference btw v2.3 and v2.4
+    const length = version === 3
+        ? parseUint32(buf.slice(4, 8))
+        : parseUint28(buf.slice(4, 8));
+
+    const flags = buf.slice(8, 10);
+    const data = buf.slice(10, 10 + length);
+
+    return [{
+        tagname,
+        length,
+        flags,
+        data,
+    }, ...parseTag(version, buf.slice(10 + length))];
+}
+
 const tag2buffer = (tag) => {
     return Buffer.concat([
-        Buffer.from(tag.tagname, 'ascii'),
-        uint32toBuffer(tag.length),
+        Buffer.from(tag.tagname),
+        uint28toBuffer(tag.length),
         tag.flags,
         tag.data,
     ]);
 }
-const iso2buffer = (text) => {
-    return Buffer.concat([
-        Buffer.from(text, 'ascii'),
-        Buffer.from([ 0x00 ]),
-    ]);
-}
-const utf2buffer = (text) => {
-    return Buffer.concat([
-        Buffer.from([ 0xff, 0xfe ]),
-        Buffer.from(text, 'utf-16le'),
-        Buffer.from([ 0x00, 0x00 ]),
-    ]);
-}
 
+/**
+ * insert extra tags to mp3 file
+ * such as album cover and composer name
+ */
 export default class ID3 {
 
     static validate(buf) {
         // starts with ID3
-        return buf[0] === 0x49 && buf[1] === 0x44 && buf[2] === 0x33;
+        return buf[0] === 0x49 && buf[1] === 0x44 && buf[2] === 0x33 && (
+            // and is ID3 v2.3 or v2.4
+            buf[3] === 0x03 || buf[3] === 0x04
+        );
     }
 
     constructor(buf) {
-        this.header = buf.slice(0, 6);
-        this.length = parseHeaderLength(buf.slice(6, 10));
-        this.tags = [];
-        this.content = buf.slice(10);
+        // 3 -> v2.3; 4 -> v2.4
+        this.version = parseUint8(buf.slice(3, 4));
+        this.length = parseUint28(buf.slice(6, 10));
+        this.tags = parseTag(this.version, buf.slice(10, 10 + this.length));
+        this.content = buf.slice(10 + this.length);
     }
 
     addTag(tagname, data) {
@@ -63,17 +82,10 @@ export default class ID3 {
     }
 
     addTextTag(tagname, text) {
-        if (/^[\x20-\x7f]*$/.test(text)) {
-            this.addTag(tagname, Buffer.concat([
-                Buffer.from([ 0x00 ]),
-                iso2buffer(text),
-            ]));
-        } else {
-            this.addTag(tagname, Buffer.concat([
-                Buffer.from([ 0x01 ]),
-                utf2buffer(text),
-            ]));
-        }
+        this.addTag(tagname, Buffer.concat([
+            getEncoding(text),
+            text2buffer(text),
+        ]));
     }
 
     addTIT2Tag(text) {
@@ -85,6 +97,9 @@ export default class ID3 {
     addTALBTag(text) {
         this.addTextTag('TALB', text);
     }
+    addTPE1Tag(text) {
+        this.addTextTag('TPE1', text);
+    }
 
     addAPICTag(cover) {
         const mime = getMIMEType(cover);
@@ -94,13 +109,13 @@ export default class ID3 {
         }
         return this.addTag('APIC', Buffer.concat([
             // text encoding
-            Buffer.from([ 0x00 ]),
+            getEncoding(mime),
             // MIME type: image/jpeg or image/png
-            iso2buffer(mime),
+            text2buffer(mime),
             // picture type: Cover (front)
             Buffer.from([ 0x03 ]),
             // description: nothing
-            iso2buffer(''),
+            text2buffer(''),
             cover,
         ]));
     }
@@ -108,8 +123,9 @@ export default class ID3 {
     toBuffer() {
         const tagbuf = Buffer.concat(this.tags.map(tag2buffer));
         return Buffer.concat([
-            this.header,
-            toHeaderLength(tagbuf.length + this.length),
+            // convert whatever to ID3v2.4
+            Buffer.from([ 0x49, 0x44, 0x33, 0x04, 0x00, 0x00 ]),
+            uint28toBuffer(tagbuf.length),
             tagbuf,
             this.content,
         ]);

@@ -49,17 +49,32 @@ export const parseUint8 = (buf) => {
     return buf[0];
 }
 export const parseUint16 = (buf) => {
-    return buf[0] * 0x0100 + buf[1] * 0x0001;
+    return (buf[0] << 8) | buf[1];
 }
 export const parseUint32 = (buf) => {
-    return buf[0] * 0x01000000
-         + buf[1] * 0x00010000
-         + buf[2] * 0x00000100
-         + buf[3] * 0x00000001;
+    return (buf[0] << 24)
+         | (buf[1] << 16)
+         | (buf[2] <<  8)
+         | (buf[3]      );
 }
 
 export const uint32toBuffer = (x) => {
     const buf = Buffer.alloc(4);
     buf.writeUInt32BE(x);
     return buf;
+}
+
+export const parseUint28 = (buf) => {
+    return (buf[0] << 21)
+         | (buf[1] << 14)
+         | (buf[2] <<  7)
+         | (buf[3]      );
+}
+export const uint28toBuffer = (x) => {
+    return Buffer.from([
+        (x >> 21) & 0x7f,
+        (x >> 14) & 0x7f,
+        (x >>  7) & 0x7f,
+        (x      ) & 0x7f,
+    ]);
 }
