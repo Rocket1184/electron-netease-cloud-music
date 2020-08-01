@@ -5,7 +5,8 @@ import { homedir } from 'os';
 import Cache from './cache';
 import { getPicUrl } from './index';
 import fetch from 'electron-fetch';
-import ID3 from './id3';
+import ID3 from './media/id3';
+import FLAC from './media/flac';
 
 const getFileName = (metadata, ext) => {
     return `${metadata.artistName
@@ -29,7 +30,7 @@ class DownloadManager {
      * @returns {Types.DownloadSongRes}
      */
     async download(metadata) {
-        // default quality is ex
+        // TODO: support more quality
         const filename = `${metadata.id}ex`;
         try {
 
@@ -37,29 +38,46 @@ class DownloadManager {
                 throw new Error('下载前需要先播放一下啦');
             }
 
-            // TODO: flac file
             const originalFile = fs.readFileSync(this.cache.fullPath(filename));
-            const distFile = new ID3(originalFile);
-            if (distFile.valid) {
+
+            let cover = null;
+            const coverRes = await fetch(getPicUrl(metadata.album.pic).url);
+            if (coverRes.status === 200) {
+                cover = await coverRes.buffer();
+            }
+            
+            let distname = '', distbuffer = null;
+            if (ID3.validate(originalFile)) {
+                const distFile = new ID3(originalFile);
                 distFile.addTIT2Tag(metadata.name);
                 distFile.addTCOMTag(metadata.artistName);
                 distFile.addTALBTag(metadata.album.name);
-    
-                const coverRes = await fetch(getPicUrl(metadata.album.pic).url);
-                if (coverRes.status === 200) {
-                    const buf = await coverRes.buffer();
-                    distFile.addAPICTag(buf);
+                if (cover !== null) {
+                    distFile.addAPICTag(cover);
                 }
+                distbuffer = distFile.toBuffer();
+                distname = getFileName(metadata, 'mp3');
+            } else if (FLAC.validate(originalFile)) {
+                const distFile = new FLAC(originalFile);
+                distFile.insertCover(cover);
+                distbuffer = distFile.toBuffer();
+                distname = getFileName(metadata, 'flac');
+            } else {
+                throw new Error('未知的音乐格式！');
             }
 
-            const distpath = path.join(this.dist, getFileName(metadata, distFile.valid ? 'mp3' : 'flac'));
+            if (!distname || !distbuffer) {
+                throw new Error('解析音乐文件时发生错误！');
+            }
+
+            const distpath = path.join(this.dist, distname);
             if (!fs.existsSync(this.dist)) {
                 fs.mkdirSync(this.dist, { recursive: true });
             }
             if (fs.existsSync(distpath)) {
                 throw new Error('好像已经下载过了呀');
             }
-            fs.writeFileSync(distpath, distFile.toBuffer());
+            fs.writeFileSync(distpath, distbuffer);
             return {
                 success: true,
                 url: distpath,
