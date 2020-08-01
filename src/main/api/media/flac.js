@@ -43,6 +43,10 @@ const length2buffer = (length) => {
     ]);
 }
 
+/**
+ * insert extra metadata to flac file
+ * such as album cover
+ */
 export default class FLAC {
 
     static validate(buf) {
@@ -82,6 +86,7 @@ export default class FLAC {
             uint32toBuffer(colorDepth),
             // color used for indexed-color ???
             uint32toBuffer(0),
+
             uint32toBuffer(cover.length),
             cover,
         ])

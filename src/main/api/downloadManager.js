@@ -8,12 +8,15 @@ import fetch from 'electron-fetch';
 import ID3 from './media/id3';
 import FLAC from './media/flac';
 
+const fsPromises = fs.promises;
+
 const getFileName = (metadata, ext) => {
+    // replace slash to space
     return `${metadata.artistName
         .split(' / ')
-        .map((x) => x.split('/')[0])
+        .map((x) => x.replace(/\//g, ' '))
         .join(', ')
-    } - ${metadata.name}.${ext}`;
+    } - ${metadata.name.replace(/\//g, ' ')}.${ext}`;
 }
 
 class DownloadManager {
@@ -51,6 +54,7 @@ class DownloadManager {
                 const distFile = new ID3(originalFile);
                 distFile.addTIT2Tag(metadata.name);
                 distFile.addTCOMTag(metadata.artistName);
+                distFile.addTPE1Tag(metadata.artistName);
                 distFile.addTALBTag(metadata.album.name);
                 if (cover !== null) {
                     distFile.addAPICTag(cover);
@@ -72,12 +76,12 @@ class DownloadManager {
 
             const distpath = path.join(this.dist, distname);
             if (!fs.existsSync(this.dist)) {
-                fs.mkdirSync(this.dist, { recursive: true });
+                await fsPromises.mkdir(this.dist, { recursive: true });
             }
             if (fs.existsSync(distpath)) {
                 throw new Error('好像已经下载过了呀');
             }
-            fs.writeFileSync(distpath, distbuffer);
+            await fsPromises.writeFile(distpath, distbuffer);
             return {
                 success: true,
                 url: distpath,
