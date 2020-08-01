@@ -1,6 +1,8 @@
 
 // see https://id3.org/id3v2.3.0
 
+import { getMIMEType } from './utils';
+
 const parseHeaderLength = (buf) => {
     return buf[0] * (1 << 21)
          + buf[1] * (1 << 14)
@@ -14,11 +16,6 @@ const toHeaderLength = (x) => {
         (x >>  7) & 0x7f,
         (x      ) & 0x7f,
     ]);
-}
-const uint32toBuffer = (x) => {
-    const buf = Buffer.alloc(4);
-    buf.writeUInt32BE(x);
-    return buf;
 }
 const tag2buffer = (tag) => {
     return Buffer.concat([
@@ -41,30 +38,19 @@ const utf2buffer = (text) => {
         Buffer.from([ 0x00, 0x00 ]),
     ]);
 }
-const getMIMEType = (buf) => {
-    if (buf[0] === 0x89 && buf[1] === 0x50 &&
-        buf[2] === 0x4E && buf[3] === 0x47) {
-        return 'image/png';
-    }
-    if (buf[0] === 0xff && buf[1] === 0xd8) {
-        return 'image/jpeg';
-    }
-    return 'unknown';
-}
 
 export default class ID3 {
 
+    static validate(buf) {
+        // starts with ID3
+        return buf[0] === 0x49 && buf[1] === 0x44 && buf[2] === 0x33;
+    }
+
     constructor(buf) {
-        if (buf[0] === 0x49 && buf[1] === 0x44 && buf[2] === 0x33) {
-            this.valid = true;
-            this.header = buf.slice(0, 6);
-            this.length = parseHeaderLength(buf.slice(6, 10));
-            this.tags = [];
-            this.content = buf.slice(10);
-        } else {
-            this.valid = false;
-            this.content = buf;
-        }
+        this.header = buf.slice(0, 6);
+        this.length = parseHeaderLength(buf.slice(6, 10));
+        this.tags = [];
+        this.content = buf.slice(10);
     }
 
     addTag(tagname, data) {
@@ -81,7 +67,7 @@ export default class ID3 {
             this.addTag(tagname, Buffer.concat([
                 Buffer.from([ 0x00 ]),
                 iso2buffer(text),
-            ]))
+            ]));
         } else {
             this.addTag(tagname, Buffer.concat([
                 Buffer.from([ 0x01 ]),
@@ -120,16 +106,12 @@ export default class ID3 {
     }
 
     toBuffer() {
-        if (this.valid) {
-            const tagbuf = Buffer.concat(this.tags.map(tag2buffer));
-            return Buffer.concat([
-                this.header,
-                toHeaderLength(tagbuf.length + this.length),
-                tagbuf,
-                this.content,
-            ]);
-        } else {
-            return this.content;
-        }
+        const tagbuf = Buffer.concat(this.tags.map(tag2buffer));
+        return Buffer.concat([
+            this.header,
+            toHeaderLength(tagbuf.length + this.length),
+            tagbuf,
+            this.content,
+        ]);
     }
 }
