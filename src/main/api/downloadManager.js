@@ -7,6 +7,14 @@ import { getPicUrl } from './index';
 import fetch from 'electron-fetch';
 import ID3 from './id3';
 
+const getFileName = (metadata) => {
+    return `${metadata.artistName
+        .split(' / ')
+        .map((x) => x.split('/')[0])
+        .join(', ')
+    } - ${metadata.name}.mp3`;
+}
+
 class DownloadManager {
     /**
      * @param {Cache} cache 
@@ -26,9 +34,10 @@ class DownloadManager {
         try {
 
             if (!await this.cache.has(filename)) {
-                throw new Error('请先播放一下呀');
+                throw new Error('下载前需要先播放一下啦');
             }
 
+            // TODO: flac file
             const originalFile = fs.readFileSync(this.cache.fullPath(filename));
             const distFile = new ID3(originalFile);
             distFile.addTIT2Tag(metadata.name);
@@ -37,10 +46,11 @@ class DownloadManager {
 
             const coverRes = await fetch(getPicUrl(metadata.album.pic).url);
             if (coverRes.status === 200) {
-                distFile.addAPICTag(await coverRes.arrayBuffer());
+                const buf = await coverRes.buffer();
+                distFile.addAPICTag(buf);
             }
 
-            const distpath = path.join(this.dist, metadata.name + '.mp3');
+            const distpath = path.join(this.dist, getFileName(metadata));
             if (!fs.existsSync(this.dist)) {
                 fs.mkdirSync(this.dist, { recursive: true });
             }
@@ -60,9 +70,9 @@ class DownloadManager {
         }
     }
 
-    // TODO
-    async isDownloaded(trackId) {
-        return false;
+    async isDownloaded(metadata) {
+        const distpath = path.join(this.dist, getFileName(metadata));
+        return fs.existsSync(distpath);
     }
 }
 
