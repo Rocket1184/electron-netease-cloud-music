@@ -67,12 +67,11 @@
                 <mu-button flat
                     small
                     color="black"
-                    :disabled="downloaded"
                     @click="handleDownload">
                     <mu-icon left
                         :size="18"
-                        :value="downloaded ? 'done' : 'get_app'"></mu-icon>
-                    <span>{{ downloaded ? '已下载' : '下载' }}</span>
+                        :value="ui.downloaded ? 'done' : 'get_app'"></mu-icon>
+                    <span>{{ ui.downloaded ? '已下载' : '下载' }}</span>
                 </mu-button>
             </div>
         </div>
@@ -229,8 +228,7 @@ export default {
             threadLiked: false,
             commentCount: '...',
             currentLyricIndex: -1,
-            dlgShareOpen: false,
-            downloaded: false,
+            dlgShareOpen: false
         };
     },
     computed: {
@@ -286,7 +284,6 @@ export default {
             'updateUiLyric',
             'toggleCollectPopup',
             'downloadTrack',
-            'isDownloaded',
         ]),
         listenAudioUpdate() {
             /** @type {HTMLAudioElement} */
@@ -405,14 +402,17 @@ export default {
             });
         },
         async handleDownload() {
-            if (!this.playing.id) {
-                this.$toast.message('汝想下载什么呢  ヾ(´･ω･｀)ﾉ')
+            if (this.ui.downloaded) {
                 return;
             }
-            this.$toast.message('已经开始下载啦');
+            if (!this.playing.id) {
+                this.$toast.message('想下载什么呢  ヾ(´･ω･｀)ﾉ');
+                return;
+            }
+            this.$toast.message('正在开始下载...');
             const result = await this.downloadTrack({ metadata: this.playing });
             if (result.success) {
-                this.$toast.message('下载成功啦');
+                this.$toast.message('下载成功');
             } else {
                 this.$toast.message(result.error);
             }

@@ -41,14 +41,30 @@ const utf2buffer = (text) => {
         Buffer.from([ 0x00, 0x00 ]),
     ]);
 }
+const getMIMEType = (buf) => {
+    if (buf[0] === 0x89 && buf[1] === 0x50 &&
+        buf[2] === 0x4E && buf[3] === 0x47) {
+        return 'image/png';
+    }
+    if (buf[0] === 0xff && buf[1] === 0xd8) {
+        return 'image/jpeg';
+    }
+    return 'unknown';
+}
 
 export default class ID3 {
 
     constructor(buf) {
-        this.header = buf.slice(0, 6);
-        this.length = parseHeaderLength(buf.slice(6, 10));
-        this.tags = [];
-        this.content = buf.slice(10);
+        if (buf[0] === 0x49 && buf[1] === 0x44 && buf[2] === 0x33) {
+            this.valid = true;
+            this.header = buf.slice(0, 6);
+            this.length = parseHeaderLength(buf.slice(6, 10));
+            this.tags = [];
+            this.content = buf.slice(10);
+        } else {
+            this.valid = false;
+            this.content = buf;
+        }
     }
 
     addTag(tagname, data) {
@@ -85,11 +101,16 @@ export default class ID3 {
     }
 
     addAPICTag(cover) {
+        const mime = getMIMEType(cover);
+        if (mime === 'unknown') {
+            // invalid image
+            return;
+        }
         return this.addTag('APIC', Buffer.concat([
             // text encoding
             Buffer.from([ 0x00 ]),
-            // MIME type: image/jpeg
-            iso2buffer('image/jpeg'),
+            // MIME type: image/jpeg or image/png
+            iso2buffer(mime),
             // picture type: Cover (front)
             Buffer.from([ 0x03 ]),
             // description: nothing
@@ -99,12 +120,16 @@ export default class ID3 {
     }
 
     toBuffer() {
-        const tagbuf = Buffer.concat(this.tags.map(tag2buffer));
-        return Buffer.concat([
-            this.header,
-            toHeaderLength(tagbuf.length + this.length),
-            tagbuf,
-            this.content,
-        ]);
+        if (this.valid) {
+            const tagbuf = Buffer.concat(this.tags.map(tag2buffer));
+            return Buffer.concat([
+                this.header,
+                toHeaderLength(tagbuf.length + this.length),
+                tagbuf,
+                this.content,
+            ]);
+        } else {
+            return this.content;
+        }
     }
 }

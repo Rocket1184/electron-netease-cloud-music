@@ -548,12 +548,20 @@ export async function favoriteTrack(_, { id, favorite = true }) {
 /**
  * @param {ActionContext} _
  */
-export async function downloadTrack(_, { metadata }) {
-    return await Api.downloadSong(metadata);
+export async function downloadTrack({ commit }, { metadata }) {
+    const result = await Api.downloadSong(metadata);
+    if (result.success) {
+        commit(types.UPDATE_DOWNLOAD_STATE, true);
+    }
+    return result;
 }
 
-export async function isDownloaded(_, { metadata }) {
-    return await Api.isDownloaded(metadata);
+/**
+ * @param {ActionContext} _
+ */
+export async function checkDownloaded({ commit }, { metadata }) {
+    const result = await Api.isDownloaded(metadata);
+    commit(types.UPDATE_DOWNLOAD_STATE, result);
 }
 
 /**
