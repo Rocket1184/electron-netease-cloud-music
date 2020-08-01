@@ -296,7 +296,7 @@ export default {
             this.$toast.message('已经开始下载啦');
             const result = await this.downloadTrack({ metadata: this.playing });
             if (result.success) {
-                this.$toast.message(`成功下载到 ${result.url} 啦`);
+                this.$toast.message('下载成功啦');
             } else {
                 this.$toast.message(result.error);
             }
