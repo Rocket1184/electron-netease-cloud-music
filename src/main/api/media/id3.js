@@ -1,24 +1,42 @@
 
-// see https://id3.org/id3v2.3.0
-// see https://id3.org/id3v2.4.0-structure
+import {
+    getMIMEType,
+    parseUint8,
+    parseUint28,
+    parseUint32,
+    uint28toBuffer
+} from './utils';
 
-import { getMIMEType, uint32toBuffer, parseUint32, parseUint8, parseUint28, uint28toBuffer } from './utils';
-
-const getEncoding = (text) => {
+function getEncoding(text) {
     if (/^[\x20-\x7f]*$/.test(text)) {
         return Buffer.from([ 0x00 ]); // ISO-8859-1
     } else {
         return Buffer.from([ 0x03 ]); // utf8
     }
 }
-const text2buffer = (text) => {
+
+function text2buffer(text) {
     return Buffer.concat([
         Buffer.from(text, 'utf8'),
         Buffer.from([ 0x00 ]),
     ]);
 }
 
-const parseTag = (version, buf) => {
+/**
+ * @typedef ID3Tag
+ * @type {object}
+ * @property {string} tagname
+ * @property {number} length
+ * @property {Buffer} flags
+ * @property {Buffer} data
+ */
+
+/**
+ * @param {number} version 
+ * @param {Buffer} buf 
+ * @returns {ID3Tag[]}
+ */
+function parseTag(version, buf) {
     if (!buf.length || buf[0] === 0x00) {
         // EOF or paddings
         return [];
@@ -41,7 +59,11 @@ const parseTag = (version, buf) => {
     }, ...parseTag(version, buf.slice(10 + length))];
 }
 
-const tag2buffer = (tag) => {
+/**
+ * @param {ID3Tag} tag 
+ * @returns {Buffer}
+ */
+function tag2buffer(tag) {
     return Buffer.concat([
         Buffer.from(tag.tagname),
         uint28toBuffer(tag.length),
@@ -51,11 +73,19 @@ const tag2buffer = (tag) => {
 }
 
 /**
- * insert extra tags to mp3 file
- * such as album cover and composer name
+ * @see https://id3.org/id3v2.3.0
+ * @see https://id3.org/id3v2.4.0-structure
+ * 
+ * Capable with both ID3v2.3 and ID3v2.4 standards,
+ * but output with ID3v2.4 standards only.
  */
 export default class ID3 {
 
+    /**
+     * Check if the given file is a ID3 file
+     * @param {Buffer} buf 
+     * @returns {boolean}
+     */
     static validate(buf) {
         // starts with ID3
         return buf[0] === 0x49 && buf[1] === 0x44 && buf[2] === 0x33 && (
@@ -64,6 +94,9 @@ export default class ID3 {
         );
     }
 
+    /**
+     * @param {Buffer} buf 
+     */
     constructor(buf) {
         // 3 -> v2.3; 4 -> v2.4
         this.version = parseUint8(buf.slice(3, 4));
@@ -72,6 +105,11 @@ export default class ID3 {
         this.content = buf.slice(10 + this.length);
     }
 
+    /**
+     * Add a new tag
+     * @param {string} tagname 
+     * @param {Buffer} data 
+     */
     addTag(tagname, data) {
         this.tags.push({
             tagname,
@@ -81,6 +119,11 @@ export default class ID3 {
         });
     }
 
+    /**
+     * Add a text tag (which tagname starts with `T`)
+     * @param {string} tagname 
+     * @param {string} text 
+     */
     addTextTag(tagname, text) {
         this.addTag(tagname, Buffer.concat([
             getEncoding(text),
@@ -88,34 +131,57 @@ export default class ID3 {
         ]));
     }
 
-    // track title
+    /**
+     * Add track title
+     * @param {string} text 
+     */
     addTIT2Tag(text) {
         this.addTextTag('TIT2', text);
     }
-    // composer
+
+    /**
+     * Add composer name(s)
+     * @param {string} text 
+     */
     addTCOMTag(text) {
         this.addTextTag('TCOM', text);
     }
-    // album title
+
+    /**
+     * Add album title
+     * @param {string} text 
+     */
     addTALBTag(text) {
         this.addTextTag('TALB', text);
     }
-    // artists
+
+    /**
+     * Add artist name(s)
+     * @param {string} text 
+     */
     addTPE1Tag(text) {
         this.addTextTag('TPE1', text);
     }
-    // track number in album
+
+    /**
+     * Add track number of the album
+     * @param {number} no 
+     */
     addTRCKTag(no) {
         this.addTextTag('TRCK', String(no));
     }
 
+    /**
+     * Attach a picture
+     * @param {Buffer} cover 
+     */
     addAPICTag(cover) {
         const mime = getMIMEType(cover);
         if (mime === 'unknown') {
             // invalid image
             return;
         }
-        return this.addTag('APIC', Buffer.concat([
+        this.addTag('APIC', Buffer.concat([
             // text encoding
             getEncoding(mime),
             // MIME type: image/jpeg or image/png
@@ -128,6 +194,10 @@ export default class ID3 {
         ]));
     }
 
+    /**
+     * Output to buffer
+     * @returns {Buffer}
+     */
     toBuffer() {
         const tagbuf = Buffer.concat(this.tags.map(tag2buffer));
         return Buffer.concat([

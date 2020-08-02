@@ -560,7 +560,7 @@ export async function downloadTrack({ commit }, { metadata }) {
  * @param {ActionContext} _
  */
 export async function checkDownloaded({ commit }, { metadata }) {
-    const result = await Api.isDownloaded(metadata);
+    const result = await Api.checkDownloaded(metadata);
     commit(types.UPDATE_DOWNLOAD_STATE, result);
 }
 
