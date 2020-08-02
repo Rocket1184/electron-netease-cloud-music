@@ -26,7 +26,8 @@ const state = {
     /** @type {number[]} */
     collectTrackIds: [],
     radioMode: false,
-    downloaded: false
+    downloaded: false,
+    downloading: false
 };
 
 /**
@@ -43,8 +44,9 @@ const mutations = {
     [types.UPDATE_PLAYING_URL](state, /** @type {string} */ payload) {
         state.audioSrc = payload;
     },
-    [types.UPDATE_DOWNLOAD_STATE](state, /** @type {boolean} */ payload) {
-        state.downloaded = payload;
+    [types.UPDATE_DOWNLOAD_STATE](state, /** @type {boolean[]} */ payload) {
+        state.downloaded = payload[0];
+        state.downloading = payload[1];
     },
     [types.SET_AUDIO_VOLUME](state, { mute, volume }) {
         if (typeof mute === 'boolean') state.audioMute = mute;
