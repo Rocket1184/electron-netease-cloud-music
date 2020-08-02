@@ -63,6 +63,11 @@ export const uint32toBuffer = (x) => {
     buf.writeUInt32BE(x);
     return buf;
 }
+export const uint32toBufferR = (x) => {
+    const buf = Buffer.alloc(4);
+    buf.writeUInt32LE(x);
+    return buf;
+}
 
 export const parseUint28 = (buf) => {
     return (buf[0] << 21)
@@ -77,4 +82,16 @@ export const uint28toBuffer = (x) => {
         (x >>  7) & 0x7f,
         (x      ) & 0x7f,
     ]);
+}
+export const uint24toBuffer = (length) => {
+    return Buffer.from([
+        (length >> 16) & 0xff,
+        (length >>  8) & 0xff,
+        (length      ) & 0xff,
+    ]);
+}
+export const parseUint24 = (buf) => {
+    return (buf[0] << 16)
+         | (buf[1] <<  8)
+         | (buf[2]      );
 }

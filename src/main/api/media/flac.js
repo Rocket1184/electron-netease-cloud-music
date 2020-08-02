@@ -1,12 +1,12 @@
 
 // see https://xiph.org/flac/format.html
 
-import { uint32toBuffer, getMIMEType, getJPEGSize, getPNGSize, getJPEGColorDepth, getPNGColorDepth } from "./utils";
+import { uint32toBuffer, uint32toBufferR, getMIMEType, getJPEGSize, getPNGSize, getJPEGColorDepth, getPNGColorDepth, uint24toBuffer, parseUint24 } from "./utils";
 
 const parseMetadataBlock = (buf) => {
     const isLast = Boolean(buf[0] & 0x80);
     const type = buf[0] & 0x7f;
-    const length = parseMetadataSize(buf.slice(1, 4));
+    const length = parseUint24(buf.slice(1, 4));
     const data = buf.slice(4, 4 + length);
     const result = {
         type,
@@ -21,26 +21,35 @@ const parseMetadataBlock = (buf) => {
     }
 }
 
-const parseMetadataSize = (buf) => {
-    return buf[0] * 0x010000
-         + buf[1] * 0x000100
-         + buf[2] * 0x000001;
-}
-
 const metadata2buffer = (metadata) => {
     return Buffer.concat([
         Buffer.from([ (metadata.isLast ? 0x80 : 0) | metadata.type ]),
-        length2buffer(metadata.length),
+        uint24toBuffer(metadata.length),
         metadata.data,
-    ])
+    ]);
 }
 
-const length2buffer = (length) => {
-    return Buffer.from([
-        (length >> 16) & 0xff,
-        (length >>  8) & 0xff,
-        (length      ) & 0xff,
+const encodeVorbisComment = (comments) => {
+    const vendor = Buffer.from('Xiph.Org libVorbis I 20020717');
+    const data = Buffer.concat([
+        uint32toBufferR(vendor.length),
+        vendor,
+        uint32toBufferR(comments.length),
+        ...comments.map((comment) => {
+            const buf = Buffer.from(comment, 'utf8');
+            return Buffer.concat([
+                uint32toBufferR(buf.length),
+                buf,
+            ]);
+        }),
     ]);
+
+    return {
+        type: 4,
+        length: data.length,
+        data,
+        isLast: false,
+    }
 }
 
 /**
@@ -56,11 +65,29 @@ export default class FLAC {
     }
 
     constructor(buf) {
-        this.header = buf.slice(0, 4);
+        this.header = buf.slice(0, 4); // always "fLaC"
         this.metadata = parseMetadataBlock(buf.slice(4));
         this.content = buf.slice(this.metadata.reduce((total, { length }) => {
             return total + length + 4;
         }, 4));
+        this.comments = [];
+    }
+
+    addComment(name, text) {
+        this.comments.push(`${name}=${text}`);
+    }
+
+    addTITLEcomment(text) {
+        this.addComment('TITLE', text);
+    }
+    addARTISTcomment(text) {
+        this.addComment('ARTIST', text);
+    }
+    addALBUMcomment(text) {
+        this.addComment('ALBUM', text);
+    }
+    addTRACKNUMBERcomment(text) {
+        this.addComment('TRACKNUMBER', text);
     }
 
     insertCover(cover) {
@@ -99,6 +126,8 @@ export default class FLAC {
     }
 
     toBuffer() {
+        this.metadata.push(encodeVorbisComment(this.comments));
+
         const metadata = this.metadata.map((x, index) => {
             x.isLast = index === this.metadata.length - 1;
             return x;

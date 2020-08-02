@@ -56,6 +56,7 @@ class DownloadManager {
                 distFile.addTCOMTag(metadata.artistName);
                 distFile.addTPE1Tag(metadata.artistName);
                 distFile.addTALBTag(metadata.album.name);
+                distFile.addTRCKTag(metadata.no);
                 if (cover !== null) {
                     distFile.addAPICTag(cover);
                 }
@@ -63,7 +64,15 @@ class DownloadManager {
                 distname = getFileName(metadata, 'mp3');
             } else if (FLAC.validate(originalFile)) {
                 const distFile = new FLAC(originalFile);
-                distFile.insertCover(cover);
+                distFile.addTITLEcomment(metadata.name);
+                metadata.artists.forEach(({ name }) => {
+                    distFile.addARTISTcomment(name);
+                });
+                distFile.addTRACKNUMBERcomment(metadata.no);
+                distFile.addALBUMcomment(metadata.album.name);
+                if (cover !== null) {
+                    distFile.insertCover(cover);
+                }
                 distbuffer = distFile.toBuffer();
                 distname = getFileName(metadata, 'flac');
             } else {
