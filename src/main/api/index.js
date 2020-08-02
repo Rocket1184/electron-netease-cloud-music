@@ -198,7 +198,7 @@ export function getSongDetail(ids) {
     return client.postE('/v3/song/detail', {
         c: `[${ids.map(id => JSON.stringify({ id }))}]`,
         // ids: `[${ ids }]`
-    }, true);
+    });
 }
 
 /**
