@@ -14,7 +14,7 @@ import { encodePicUrl } from './codec';
 import * as Settings from '../settings';
 import MusicServer from './musicServer';
 import { getDiskUsage, clearDirectory } from '../util/fs';
-import DownloadManager from './downloadManager';
+import Downloader from './downloader';
 
 const BaseURL = 'https://music.163.com';
 const client = new Client();
@@ -31,7 +31,7 @@ const musicServer = new MusicServer(musicCache);
 let musicServerPort = 0;
 musicServer.listen().then(addr => musicServerPort = addr.port);
 
-const downloadManager = new DownloadManager(musicCache);
+const downloader = new Downloader(musicCache);
 
 /**
  * clear all cookies, and set cookie as given arguments
@@ -1203,21 +1203,21 @@ export function likeSongE(trackId, like = true) {
 }
 
 /**
- * 
- * @param {number} trackId
+ * 下载歌曲
+ * @param {?} metadata
  * @returns {Promise<Types.DownloadSongRes>}
  */
 export function downloadSong(metadata) {
-    return downloadManager.download(metadata);
+    return downloader.download(metadata);
 }
 
 /**
- * 
- * @param {number} trackId 
- * @returns {Promise<boolean>}
+ * 检查是否已经下载
+ * @param {?} metadata 
+ * @returns {boolean}
  */
-export function isDownloaded(metadata) {
-    return downloadManager.isDownloaded(metadata);
+export function checkDownloaded(metadata) {
+    return downloader.check(metadata);
 }
 
 /**

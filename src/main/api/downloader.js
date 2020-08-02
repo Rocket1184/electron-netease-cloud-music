@@ -1,47 +1,72 @@
 
-import * as fs from 'fs';
+import fs, { promises as fsp } from 'fs';
 import * as path from 'path';
 import { homedir } from 'os';
-import Cache from './cache';
 import { getPicUrl } from './index';
 import fetch from 'electron-fetch';
 import ID3 from './media/id3';
 import FLAC from './media/flac';
 
-const fsPromises = fs.promises;
-
-const getFileName = (metadata, ext) => {
-    // replace slash to space
-    return `${metadata.artistName
-        .split(' / ')
-        .map((x) => x.replace(/\//g, ' '))
-        .join(', ')
-    } - ${metadata.name.replace(/\//g, ' ')}.${ext}`;
+/**
+ * Replace all slashes to spaces
+ * @param {string} text 
+ */
+function escapeSlash(text) {
+    return text.replace(/\//g, ' ');
 }
 
-class DownloadManager {
+/**
+ * Get a valid output file name
+ * @param {?} metadata 
+ * @param {string} ext 
+ * @returns {string}
+ */
+function getFileName(metadata, ext) {
+    // replace slash to space
+    const artists = metadata.artists
+        .map(({ name }) => escapeSlash(name))
+        .join(', ');
+    const title = escapeSlash(metadata.name);
+
+    return `${artists} - ${title}.${ext}`;
+}
+
+class Downloader {
     /**
-     * @param {Cache} cache 
+     * @param {import('./cache').default} cache 
      * @param {string} dist
      */
-    constructor(cache, dist = path.join(homedir(), 'Music', 'ElectronNCM')) {
+    constructor(cache, dist) {
         this.cache = cache;
-        this.dist = dist;
+        this.dist = dist || path.join(homedir(), 'Music', 'ElectronNCM');
     }
 
     /**
-     * @returns {Types.DownloadSongRes}
+     * Download track to `this.dist` directory
+     * @param {?} metadata
+     * @returns {Promise<Types.DownloadSongRes>}
      */
     async download(metadata) {
-        // TODO: support more quality
-        const filename = `${metadata.id}ex`;
         try {
-
-            if (!await this.cache.has(filename)) {
-                throw new Error('下载前需要先播放一下啦');
+            const filenames = [
+                `${metadata.id}ex`,
+                `${metadata.id}h`,
+                `${metadata.id}m`,
+                `${metadata.id}l`,
+            ];
+    
+            let filename = null;
+            for (const name of filenames) {
+                if (await this.cache.has(name)) {
+                    filename = name;
+                    break;
+                }
+            }
+            if (filename === null) {
+                throw new Error('歌曲还没有缓存！');
             }
 
-            const originalFile = fs.readFileSync(this.cache.fullPath(filename));
+            const originalFile = await fsp.readFile(this.cache.fullPath(filename));
 
             let cover = null;
             const coverRes = await fetch(getPicUrl(metadata.album.pic).url);
@@ -85,29 +110,34 @@ class DownloadManager {
 
             const distpath = path.join(this.dist, distname);
             if (!fs.existsSync(this.dist)) {
-                await fsPromises.mkdir(this.dist, { recursive: true });
+                await fsp.mkdir(this.dist, { recursive: true });
             }
             if (fs.existsSync(distpath)) {
                 throw new Error('好像已经下载过了呀');
             }
-            await fsPromises.writeFile(distpath, distbuffer);
+            await fsp.writeFile(distpath, distbuffer);
             return {
                 success: true,
                 url: distpath,
-            }
+            };
         } catch (e) {
             return {
                 success: false,
                 error: e.message,
-            }
+            };
         }
     }
 
-    async isDownloaded(metadata) {
+    /**
+     * Check if the track is downloaded
+     * @param {?} metadata 
+     * @returns {boolean}
+     */
+    check(metadata) {
         const distpath1 = path.join(this.dist, getFileName(metadata, 'mp3'));
         const distpath2 = path.join(this.dist, getFileName(metadata, 'flac'));
         return fs.existsSync(distpath1) || fs.existsSync(distpath2);
     }
 }
 
-export default DownloadManager;
+export default Downloader;
