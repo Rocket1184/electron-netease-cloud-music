@@ -54,7 +54,7 @@ class Downloader {
                 `${metadata.id}m`,
                 `${metadata.id}l`,
             ];
-    
+
             let filename = null;
             for (const name of filenames) {
                 if (await this.cache.has(name)) {
@@ -68,12 +68,30 @@ class Downloader {
 
             const originalFile = await fsp.readFile(this.cache.fullPath(filename));
 
+            // Q: Why shood we fetch serval times here?
+            // A: Some pictures are too large. (~25MB)
+            //    And FLAC only support pictures smaller than 16MB
+            // e.g. https://p3.music.126.net/5Ox3BiabKcaHFTcQCXN1yA==/109951164249692467.jpg
             let cover = null;
-            const coverRes = await fetch(getPicUrl(metadata.album.pic).url);
-            if (coverRes.status === 200) {
-                cover = await coverRes.buffer();
+            const picUrl = getPicUrl(metadata.album.pic).url;
+            const possiblePicUrl = [
+                `${picUrl}`,
+                `${picUrl}?param=1000y1000`,
+                `${picUrl}?param=500y500`,
+                `${picUrl}?param=200y200`,
+            ];
+            for (const url of possiblePicUrl) {
+                const response = await fetch(url);
+                if (response.status === 200) {
+                    const buf = await response.buffer();
+                    if (buf.length <= 0xffff00) {
+                        // is capable to put inside
+                        cover = buf;
+                        break;
+                    }
+                }
             }
-            
+
             let distname = '', distbuffer = null;
             if (ID3.validate(originalFile)) {
                 const distFile = new ID3(originalFile);
