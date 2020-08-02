@@ -68,7 +68,7 @@ class Downloader {
 
             const originalFile = await fsp.readFile(this.cache.fullPath(filename));
 
-            // Q: Why shood we fetch serval times here?
+            // Q: Why should we fetch several times here?
             // A: Some pictures are too large. (~25MB)
             //    And FLAC only support pictures smaller than 16MB
             // e.g. https://p3.music.126.net/5Ox3BiabKcaHFTcQCXN1yA==/109951164249692467.jpg
