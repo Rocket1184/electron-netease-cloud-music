@@ -549,10 +549,9 @@ export async function favoriteTrack(_, { id, favorite = true }) {
  * @param {ActionContext} _
  */
 export async function downloadTrack({ commit }, { metadata }) {
+    commit(types.UPDATE_DOWNLOAD_STATE, [ false, true ]);
     const result = await Api.downloadSong(metadata);
-    if (result.success) {
-        commit(types.UPDATE_DOWNLOAD_STATE, true);
-    }
+    commit(types.UPDATE_DOWNLOAD_STATE, [ result.success, false ]);
     return result;
 }
 
@@ -561,7 +560,7 @@ export async function downloadTrack({ commit }, { metadata }) {
  */
 export async function checkDownloaded({ commit }, { metadata }) {
     const result = await Api.checkDownloaded(metadata);
-    commit(types.UPDATE_DOWNLOAD_STATE, result);
+    commit(types.UPDATE_DOWNLOAD_STATE, [ result, false ]);
 }
 
 /**

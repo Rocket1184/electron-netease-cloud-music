@@ -301,16 +301,17 @@ export default {
             if (this.ui.downloaded) {
                 return;
             }
+            if (this.ui.downloading) {
+                this.$toast.message('已经在下载了呢  (*/ω＼*)');
+                return;
+            }
             if (!this.playing.id) {
                 this.$toast.message('想下载什么呢  ヾ(´･ω･｀)ﾉ');
                 return;
             }
-            this.$toast.message('正在开始下载...');
             const result = await this.downloadTrack({ metadata: this.playing });
-            if (result.success) {
-                this.$toast.message('下载成功');
-            } else {
-                this.$toast.message(result.error);
+            if (!result.success) {
+                this.$toast.error(result.error);
             }
         }
     },
