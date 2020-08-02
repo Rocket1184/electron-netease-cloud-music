@@ -88,17 +88,25 @@ export default class ID3 {
         ]));
     }
 
+    // track title
     addTIT2Tag(text) {
         this.addTextTag('TIT2', text);
     }
+    // composer
     addTCOMTag(text) {
         this.addTextTag('TCOM', text);
     }
+    // album title
     addTALBTag(text) {
         this.addTextTag('TALB', text);
     }
+    // artists
     addTPE1Tag(text) {
         this.addTextTag('TPE1', text);
+    }
+    // track number in album
+    addTRCKTag(no) {
+        this.addTextTag('TRCK', String(no));
     }
 
     addAPICTag(cover) {
