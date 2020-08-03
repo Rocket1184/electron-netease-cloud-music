@@ -17,7 +17,7 @@ function escapeSlash(text) {
 
 /**
  * Get a valid output file name
- * @param {?} metadata 
+ * @param {Models.Track} metadata 
  * @param {string} ext 
  * @returns {string}
  */
@@ -43,7 +43,7 @@ class Downloader {
 
     /**
      * Download track to `this.dist` directory
-     * @param {?} metadata
+     * @param {Models.Track} metadata
      * @returns {Promise<Types.DownloadSongRes>}
      */
     async download(metadata) {
@@ -107,16 +107,16 @@ class Downloader {
                 distname = getFileName(metadata, 'mp3');
             } else if (FLAC.validate(originalFile)) {
                 const distFile = new FLAC(originalFile);
-                distFile.addTITLEcomment(metadata.name);
+                distFile.addTITLEComment(metadata.name);
                 metadata.artists.forEach(({ name }) => {
-                    distFile.addARTISTcomment(name);
+                    distFile.addARTISTComment(name);
                 });
-                distFile.addTRACKNUMBERcomment(metadata.no);
-                distFile.addALBUMcomment(metadata.album.name);
+                distFile.addTRACKNUMBERComment(metadata.no);
+                distFile.addALBUMComment(metadata.album.name);
                 if (cover !== null) {
-                    distFile.insertCover(cover);
+                    distFile.attachPicture(cover);
                 }
-                distbuffer = distFile.toBuffer();
+                distbuffer = await distFile.toBuffer();
                 distname = getFileName(metadata, 'flac');
             } else {
                 throw new Error('未知的音乐格式！');
@@ -148,7 +148,7 @@ class Downloader {
 
     /**
      * Check if the track is downloaded
-     * @param {?} metadata 
+     * @param {Models.Track} metadata 
      * @returns {boolean}
      */
     check(metadata) {

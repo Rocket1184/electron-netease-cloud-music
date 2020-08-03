@@ -10,6 +10,7 @@ import {
     uint32toBuffer,
     uint32toBufferR
 } from "./utils";
+import { getVersionName } from "..";
 
 /**
  * @typedef FLACMetadataBlock
@@ -57,11 +58,10 @@ function metadata2buffer(metadata) {
 /**
  * @see https://www.xiph.org/vorbis/doc/v-comment.html
  * @param {string[]} comments
- * @returns {FLACMetadataBlock}
+ * @returns {Promise<FLACMetadataBlock>}
  */
-function encodeVorbisComment(comments) {
-    // I'm not really sure what `vendor` indicates.
-    const vendor = Buffer.from('Xiph.Org libVorbis I 20020717');
+async function encodeVorbisComment(comments) {
+    const vendor = Buffer.from(`ElectronNCM v${await getVersionName()}`);
     const data = Buffer.concat([
         uint32toBufferR(vendor.length),
         vendor,
@@ -124,7 +124,7 @@ export default class FLAC {
      * Add track title
      * @param {string} text 
      */
-    addTITLEcomment(text) {
+    addTITLEComment(text) {
         this.addComment('TITLE', text);
     }
 
@@ -132,7 +132,7 @@ export default class FLAC {
      * Add artist name
      * @param {string} text 
      */
-    addARTISTcomment(text) {
+    addARTISTComment(text) {
         this.addComment('ARTIST', text);
     }
 
@@ -140,7 +140,7 @@ export default class FLAC {
      * Add album title
      * @param {string} text 
      */
-    addALBUMcomment(text) {
+    addALBUMComment(text) {
         this.addComment('ALBUM', text);
     }
 
@@ -148,7 +148,7 @@ export default class FLAC {
      * Add track number of the album
      * @param {string} text 
      */
-    addTRACKNUMBERcomment(text) {
+    addTRACKNUMBERComment(text) {
         this.addComment('TRACKNUMBER', text);
     }
 
@@ -156,7 +156,7 @@ export default class FLAC {
      * Attach a picture
      * @param {Buffer} cover 
      */
-    insertCover(cover) {
+    attachPicture(cover) {
         const mime = getMIMEType(cover);
         if (mime === 'unknown') {
             return;
@@ -193,10 +193,10 @@ export default class FLAC {
 
     /**
      * Output to buffer
-     * @returns {Buffer}
+     * @returns {Promise<Buffer>}
      */
-    toBuffer() {
-        this.metadata.push(encodeVorbisComment(this.comments));
+    async toBuffer() {
+        this.metadata.push(await encodeVorbisComment(this.comments));
 
         const metadata = this.metadata.map((x, index) => {
             x.isLast = index === this.metadata.length - 1;
