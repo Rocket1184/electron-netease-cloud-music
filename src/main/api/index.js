@@ -1204,7 +1204,7 @@ export function likeSongE(trackId, like = true) {
 
 /**
  * 下载歌曲
- * @param {?} metadata
+ * @param {Models.Track} metadata
  * @returns {Promise<Types.DownloadSongRes>}
  */
 export function downloadSong(metadata) {
@@ -1213,7 +1213,7 @@ export function downloadSong(metadata) {
 
 /**
  * 检查是否已经下载
- * @param {?} metadata 
+ * @param {Models.Track} metadata 
  * @returns {boolean}
  */
 export function checkDownloaded(metadata) {

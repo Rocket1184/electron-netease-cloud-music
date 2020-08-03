@@ -201,7 +201,7 @@ export default class ID3 {
     toBuffer() {
         const tagbuf = Buffer.concat(this.tags.map(tag2buffer));
         return Buffer.concat([
-            // convert whatever to ID3v2.4
+            // output with ID3v2.4
             Buffer.from([ 0x49, 0x44, 0x33, 0x04, 0x00, 0x00 ]),
             uint28toBuffer(tagbuf.length),
             tagbuf,
