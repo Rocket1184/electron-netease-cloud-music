@@ -65,7 +65,7 @@ async function dist(argv) {
             const stats = await webpackCompile(cfg);
             console.log(stats);
         } catch (e) {
-            console.err(e);
+            console.error(e);
             process.exitCode = 1;
         }
     }
