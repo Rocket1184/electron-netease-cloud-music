@@ -56,8 +56,18 @@ qshell_upload() {
     "$QSHELL_BIN" rput "$BUCKET_NAME" "$1" "build/$1"
 }
 
+transfer_sh_upload() {
+    curl --upload-file "build/$1" "https://transfer.sh/$1"
+}
+
 # entrypoint
-if [ "$TRAVIS_BRANCH" == "$TRAVIS_TAG" ]; then
+if [ "$TRAVIS_PULL_REQUEST" != "false" ]; then
+    # build is triggered by a pull request
+    build_dist
+    describe_version
+    build_asar
+    transfer_sh_upload "${PKG_NAME}_${PKG_VER}.asar"
+elif [ "$TRAVIS_BRANCH" == "$TRAVIS_TAG" ]; then
     # build is triggered by a git tag
     PKG_VER="$TRAVIS_TAG"
     build_dist
