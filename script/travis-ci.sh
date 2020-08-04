@@ -57,7 +57,14 @@ qshell_upload() {
 }
 
 transfer_sh_upload() {
-    curl --upload-file "build/$1" "https://transfer.sh/$1"
+    local TRANSFER_TMP
+    TRANSFER_TMP=$(mktemp)
+    echo "Uploading '$1' to transfer.sh ..."
+    curl --upload-file "build/$1" "https://transfer.sh/$1" -o "$TRANSFER_TMP"
+    echo "Got URL:"
+    cat "$TRANSFER_TMP"
+    echo ""
+    rm -r "$TRANSFER_TMP"
 }
 
 # entrypoint
