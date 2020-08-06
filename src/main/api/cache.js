@@ -124,7 +124,7 @@ class Cache {
     /**
      * whether music id with quality exists
      * @param {string} fileName
-     * @returns {Promise<string | false>}
+     * @returns {Promise<boolean>}
      */
     async has(fileName) {
         try {
