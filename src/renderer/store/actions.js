@@ -548,9 +548,9 @@ export async function favoriteTrack(_, { id, favorite = true }) {
 /**
  * @param {ActionContext} _
  */
-export async function downloadTrack({ commit }, { metadata }) {
+export async function downloadTrack({ commit }, { metadata, quality }) {
     commit(types.UPDATE_DOWNLOAD_STATE, [ false, true ]);
-    const result = await Api.downloadSong(metadata);
+    const result = await Api.downloadSong(metadata, quality);
     commit(types.UPDATE_DOWNLOAD_STATE, [ result.success, false ]);
     return result;
 }

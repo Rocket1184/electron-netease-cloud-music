@@ -2,7 +2,7 @@
 import fs, { promises as fsp } from 'fs';
 import * as path from 'path';
 import { homedir } from 'os';
-import { getPicUrl } from './index';
+import { getPicUrl, getMusicUrlE } from './index';
 import fetch from 'electron-fetch';
 import ID3 from './media/id3';
 import FLAC from './media/flac';
@@ -44,30 +44,24 @@ class Downloader {
     /**
      * Download track to `this.dist` directory
      * @param {Models.Track} metadata
+     * @param {Types.MusicQuality} quality
      * @returns {Promise<Types.DownloadSongRes>}
      */
-    async download(metadata) {
+    async download(metadata, quality) {
         try {
-            const filenames = [
-                `${metadata.id}ex`,
-                `${metadata.id}h`,
-                `${metadata.id}m`,
-                `${metadata.id}l`,
-            ];
 
-            let filename = null;
-            for (const name of filenames) {
-                if (await this.cache.has(name)) {
-                    filename = name;
-                    break;
-                }
+            const urlRes = await getMusicUrlE(metadata.id, quality);
+            if (urlRes.code !== 200 || urlRes.data[0].code !== 200) {
+                throw new Error('获取下载链接失败');
             }
-            if (filename === null) {
-                throw new Error('歌曲还没有缓存！');
+            const dlUrl = urlRes.data[0].url.replace(/^http:/, 'https:');
+            const dlRes = await fetch(dlUrl);
+            if (dlRes.status !== 200) {
+                throw new Error(`下载失败 ${dlRes.status}`);
             }
+            const originalFile = await dlRes.buffer();
 
-            const originalFile = await fsp.readFile(this.cache.fullPath(filename));
-
+            // fetch cover
             // Q: Why should we fetch several times here?
             // A: Some pictures are too large. (~25MB)
             //    And FLAC only support pictures smaller than 16MB
@@ -84,7 +78,7 @@ class Downloader {
                 const response = await fetch(url);
                 if (response.status === 200) {
                     const buf = await response.buffer();
-                    if (buf.length <= 0xffff00) {
+                    if (buf.length <= 0xff0000) {
                         // is capable to put inside
                         cover = buf;
                         break;
@@ -119,11 +113,11 @@ class Downloader {
                 distbuffer = await distFile.toBuffer();
                 distname = getFileName(metadata, 'flac');
             } else {
-                throw new Error('未知的音乐格式！');
+                throw new Error('未知的音乐格式');
             }
 
             if (!distname || !distbuffer) {
-                throw new Error('解析音乐文件时发生错误！');
+                throw new Error('解析音乐文件时发生错误');
             }
 
             const distpath = path.join(this.dist, distname);
@@ -131,9 +125,12 @@ class Downloader {
                 await fsp.mkdir(this.dist, { recursive: true });
             }
             if (fs.existsSync(distpath)) {
-                throw new Error('好像已经下载过了呀');
+                throw new Error('下载地址被占用');
             }
             await fsp.writeFile(distpath, distbuffer);
+
+            this.cache.attachExternalCache(`${metadata.id}${quality}`, distpath);
+
             return {
                 success: true,
                 url: distpath,

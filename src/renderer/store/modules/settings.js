@@ -4,6 +4,7 @@ const DefaultSettings = {
     autoPlay: false,
     autoSign: false,
     bitRate: 'l',
+    bitRateDownload: 'ex',
     filterRcmd: false,
     startupPage: 'index',
     windowBorder: true,

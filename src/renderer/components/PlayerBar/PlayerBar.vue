@@ -304,7 +304,7 @@ export default {
                 this.$toast.message('想下载什么呢  ヾ(´･ω･｀)ﾉ');
                 return;
             }
-            const result = await this.downloadTrack({ metadata: this.playing });
+            const result = await this.downloadTrack({ metadata: this.playing, quality: this.settings.bitRateDownload });
             if (!result.success) {
                 this.$toast.error(result.error);
             }

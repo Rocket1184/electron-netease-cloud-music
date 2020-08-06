@@ -190,6 +190,11 @@ export default {
                                 this.$toast.message('实际播放码率取决于歌曲最高码率和帐号最高可播放码率');
                             }
                             break;
+                        case 'bitRateDownload':
+                            if(val === 'ex') {
+                                this.$toast.message('实际下载码率取决于歌曲最高码率和帐号最高可播放码率');
+                            }
+                            break;
                     }
                 }
             });
