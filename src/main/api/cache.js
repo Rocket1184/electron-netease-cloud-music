@@ -4,13 +4,6 @@ import { Readable } from 'stream';
 
 import fetch from 'electron-fetch';
 
-const qualityMap = {
-    'ex': 3,
-    'h': 2,
-    'm': 1,
-    'l': 0,
-};
-
 class Cache {
     /**
      * @param {string} path cache directory path
@@ -25,7 +18,7 @@ class Cache {
             }
 
             // map of downloaded files
-            this.mapPath = join(configPath, 'cache.json');
+            this.mapPath = join(configPath, 'musicCache.json');
             try {
                 if (!fs.existsSync(this.mapPath)) {
                     fs.writeFileSync(this.mapPath, '[]');
@@ -113,30 +106,38 @@ class Cache {
     }
 
     /**
-     * wether music id with quality(or higher) exists
-     * @param {number} id Music id
-     * @param {Types.MusicQuality} quality
-     * @returns {Promise<string | false>}
+     * 
+     * @param {number} id 
+     * @param {Types.MusicQuality} quality 
+     * @returns {Promise<Types.MusicQuality | false>}
      */
-    async has(id, quality) {
-        for (const dlQuality of [ 'ex', 'h', 'm', 'l' ]) {
-            if (qualityMap[dlQuality] < qualityMap[quality]) {
-                break;
-            }
-            const filePath = this.fullPath(`${id}${dlQuality}`);
-            try {
-                await fsp.access(filePath);
-                return filePath;
-            } catch (e) {
-                // nothing happened
-                // just continue.
-            }
-        }
+    async hasHigherQuality(id, quality) {
+        if (quality === 'ex') return false;
+        if (await this.has(`${id}ex`)) return 'ex';
+        if (quality === 'h') return false;
+        if (await this.has(`${id}h`)) return 'h';
+        if (quality === 'm') return false;
+        if (await this.has(`${id}m`)) return 'm';
         return false;
     }
 
     /**
+     * whether music id with quality exists
+     * @param {string} fileName
+     * @returns {Promise<string | false>}
+     */
+    async has(fileName) {
+        try {
+            await fsp.access(this.fullPath(fileName));
+            return true;
+        } catch (e) {
+            return false;
+        }
+    }
+
+    /**
      * delete file name from cache
+     * would not delete downloaded file
      * @param {string} fileName
      * @returns {Promise<void>}
      */
