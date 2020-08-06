@@ -107,16 +107,28 @@ class MusicServer {
         const quality = Array.isArray(params.quality) ? params.quality[0] : params.quality || 'l';
         const ignoreCache = params.ignoreCache === 'true';
         const fileName = `${id}${quality}`;
-        // check cache first
-        const cachePath = await this.cache.has(id, quality);
-        if (cachePath !== false) {
+
+        // check higher first
+        const higherQuality = await this.cache.hasHigherQuality(id, quality);
+        const isFromStart = req.headers.range === 'bytes=0-';
+
+        if (higherQuality !== false && isFromStart) {
+            d('Higher quality found, redirect %s -> %s', quality, higherQuality);
+            const location = req.url.replace(/quality=\w+/, `quality=${higherQuality}`);
+            res.statusCode = 302;
+            res.setHeader('Location', location);
+            res.end();
+            return;
+        }
+
+        if (await this.cache.has(fileName)) {
             if (ignoreCache) {
                 d('ignoreCache set, delete cache for music id=%d', id);
                 try {
                     await this.cache.rm(fileName);
                 } catch (e) { /* nothing happened */ }
             } else {
-                const filePath = cachePath;
+                const filePath = this.cache.fullPath(fileName);
                 d('Hit cache for music id=%d', id);
                 let stat = await fsPromises.stat(filePath);
                 let range = MusicServer.getRange(req, stat.size);

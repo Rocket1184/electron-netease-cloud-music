@@ -7,6 +7,10 @@ import fetch from 'electron-fetch';
 import ID3 from './media/id3';
 import FLAC from './media/flac';
 
+import debug from 'debug';
+
+const d = debug('Downloader');
+
 /**
  * Replace all slashes to spaces
  * @param {string} text 
@@ -48,6 +52,7 @@ class Downloader {
      * @returns {Promise<Types.DownloadSongRes>}
      */
     async download(metadata, quality) {
+        d('Started to download id=%d, quality=%s', metadata.id, quality);
         try {
 
             const urlRes = await getMusicUrlE(metadata.id, quality);
@@ -131,11 +136,15 @@ class Downloader {
 
             this.cache.attachExternalCache(`${metadata.id}${quality}`, distpath);
 
+            d('Download success, id=%d, quality=%s, distpath=%s', metadata.id, quality, distpath);
+
             return {
                 success: true,
                 url: distpath,
             };
         } catch (e) {
+            d('What a terrible failure. %s', e.message);
+
             return {
                 success: false,
                 error: e.message,

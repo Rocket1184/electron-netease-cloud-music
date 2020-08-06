@@ -7,6 +7,7 @@ process.env.DEBUG = [
     'MPRIS',
     'MPRIS:IPC',
     'HTTP',
+    'Downloader',
     'Tray'
 ].join(',');
 process.env.DEBUG_COLORS = 'true';
