@@ -12,6 +12,7 @@ export const defaultSettings = {
     autoPlay: false,
     autoSign: false,
     bitRate: 'l',
+    bitRateDownload: 'ex',
     filterRcmd: false,
     startupPage: 'index',
     windowBorder: process.platform !== 'darwin',

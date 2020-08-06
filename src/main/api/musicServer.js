@@ -107,15 +107,16 @@ class MusicServer {
         const quality = Array.isArray(params.quality) ? params.quality[0] : params.quality || 'l';
         const ignoreCache = params.ignoreCache === 'true';
         const fileName = `${id}${quality}`;
-        const filePath = this.cache.fullPath(fileName);
         // check cache first
-        if (await this.cache.has(fileName)) {
+        const cachePath = await this.cache.has(id, quality);
+        if (cachePath !== false) {
             if (ignoreCache) {
                 d('ignoreCache set, delete cache for music id=%d', id);
                 try {
                     await this.cache.rm(fileName);
                 } catch (e) { /* nothing happened */ }
             } else {
+                const filePath = cachePath;
                 d('Hit cache for music id=%d', id);
                 let stat = await fsPromises.stat(filePath);
                 let range = MusicServer.getRange(req, stat.size);
@@ -140,7 +141,7 @@ class MusicServer {
             d('Got URL for music id=%d', id);
             const musicRes = await this.cache.fetch(music.url.replace(/^http:/, 'https:'));
             // TODO: write file only md5 matches
-            musicRes.body.pipe(fs.createWriteStream(filePath));
+            musicRes.body.pipe(fs.createWriteStream(this.cache.internalPath(fileName)));
 
             const range = MusicServer.getRange(req, +musicRes.headers.get('content-length'));
             res.writeHead(206, MusicServer.buildHeaders(range));

@@ -24,7 +24,7 @@ const CachePath = {
     all: dataPath,
     music: path.join(dataPath, 'musicCache')
 };
-const musicCache = new Cache(CachePath.music);
+const musicCache = new Cache(CachePath.music, dataPath);
 migrate();
 
 const musicServer = new MusicServer(musicCache);
@@ -1205,10 +1205,11 @@ export function likeSongE(trackId, like = true) {
 /**
  * 下载歌曲
  * @param {Models.Track} metadata
+ * @param {Types.MusicQuality} quality
  * @returns {Promise<Types.DownloadSongRes>}
  */
-export function downloadSong(metadata) {
-    return downloader.download(metadata);
+export function downloadSong(metadata, quality) {
+    return downloader.download(metadata, quality);
 }
 
 /**
