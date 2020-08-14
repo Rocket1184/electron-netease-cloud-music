@@ -5,6 +5,9 @@
 </template>
 
 <script>
+import { mapActions } from 'vuex';
+import { SET_AUDIO_PAUSED } from '@/store/mutation-types';
+
 import MV from './MV.vue';
 import Video from './Video.vue';
 
@@ -16,36 +19,35 @@ export default {
     },
     computed: {
         compoName() {
-            if (this.video.type === 0) return 'MV';
-            return 'Video';
+            return this.video.type === 0 ? 'MV' : 'Video';
         },
         bindProp() {
-            if (this.video.type === 0) return { mv: this.video };
-            return { video: this.video };
+            return this.video.type === 0 ? { mv: this.video } : { video: this.video };
         }
     },
     methods: {
-        togglePlayPause() {
-            const vid = this.$refs.detailCompo.$refs.videoEl;
-            if (vid) vid.paused ? vid.play() : vid.pause();
+        ...mapActions([
+            'pauseAudio'
+        ]),
+        /**
+         * @param {MouseEvent} e
+         */
+        toggleMute(e) {
+            /** @type {HTMLVideoElement} */
+            const v = e.target;
+            v.muted = !v.muted;
+        },
+        onVideoPlay() {
+            this.pauseAudio();
         },
         /**
-         * @param {KeyboardEvent} ev
+         * @param {MouseEvent} e
          */
-        handlePlayPause(ev) {
-            if (ev.keyCode === 32 /* space */) {
-                this.togglePlayPause();
-            }
-        }
-    },
-    mounted() {
-        /** @type {HTMLVideoElement} */
-        const vid = this.$refs.detailCompo.$refs.videoEl;
-        vid.addEventListener('click', () => vid.paused ? vid.play() : vid.pause());
-        vid.addEventListener('auxclick', () => vid.muted = !vid.muted);
-        vid.addEventListener('wheel', ev => {
+        onMouseWheel(e) {
+            /** @type {HTMLVideoElement} */
+            const vid = e.target;
             let volume = vid.volume;
-            if (ev.deltaY > 0) {
+            if (e.deltaY > 0) {
                 volume -= 0.05;
                 if (volume < 0) volume = 0;
             } else {
@@ -53,17 +55,31 @@ export default {
                 if (volume > 1) volume = 1;
             }
             vid.volume = volume;
-        }, { passive: true });
-        document.addEventListener('keydown', this.handlePlayPause);
+        }
     },
-    activated() {
-        document.addEventListener('keydown', this.handlePlayPause);
-    },
-    deactivated() {
-        document.removeEventListener('keydown', this.handlePlayPause);
+    mounted() {
+        /** @type {HTMLVideoElement} */
+        const vid = this.$refs.detailCompo.$refs.videoEl;
+        this._vid = vid;
+        // audio play pauses video
+        this._unsub = this.$store.subscribe(({ type, payload }) => {
+            if (type === SET_AUDIO_PAUSED && payload === false) {
+                if (!vid.paused) {
+                    vid.pause();
+                }
+            }
+        });
+        // video play pauses audio
+        vid.addEventListener('play', this.onVideoPlay);
+        vid.addEventListener('auxclick', this.toggleMute);
+        vid.addEventListener('wheel', this.onMouseWheel, { passive: true });
     },
     beforeDestroy() {
-        document.removeEventListener('keydown', this.handlePlayPause);
+        this._unsub();
+        this._vid.removeEventListener('play', this.onVideoPlay);
+        this._vid.removeEventListener('auxclick', this.toggleMute);
+        this._vid.removeEventListener('wheel', this.onMouseWheel);
+        this._vid = null;
     },
     components: {
         MV,

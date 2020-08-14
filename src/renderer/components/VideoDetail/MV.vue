@@ -56,7 +56,6 @@ export default {
     },
     data() {
         return {
-            startPlay: false,
             internalShouldSub: null,
             subCntOffset: 0,
             threadInfo: {
@@ -100,9 +99,6 @@ export default {
             'subscribeVideo',
             'unsubscribeVideo'
         ]),
-        handlePlay() {
-            this.startPlay = true;
-        },
         refreshThreadInfo() {
             Api.getCommentThreadInfoE(this.mv.commentThreadId)
                 .then(res => this.threadInfo = res);

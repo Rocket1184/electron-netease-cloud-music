@@ -15,7 +15,8 @@
                 </AvatarListItem>
             </mu-list>
         </template>
-        <VideoDetail v-if="video" :video="video"></VideoDetail>
+        <VideoDetail v-if="video"
+            :video="video"></VideoDetail>
     </ListDetailLayout>
 </template>
 
@@ -35,31 +36,20 @@ export default {
         return {
             video: null,
             listLoading: false,
-            detailLoading: false,
-            pausedWhenEnter: null
+            detailLoading: false
         };
     },
     computed: {
-        ...mapState(['ui', 'user']),
+        ...mapState(['user']),
     },
     methods: {
         ...mapActions([
-            'updateUserVideos',
-            'pauseAudio',
-            'playAudio'
+            'updateUserVideos'
         ]),
         async loadVideo(id, type) {
             this.detailLoading = true;
             this.video = await getVideoDetail(id, type);
             this.detailLoading = false;
-            this.$nextTick(() => {
-                const vid = this.$el.querySelector('video');
-                if (vid) {
-                    vid.addEventListener('play', () => {
-                        if (!this.ui.paused) this.pauseAudio();
-                    });
-                }
-            });
         },
         async fetchData() {
             if (this.user.videos.length <= 0) {
@@ -75,18 +65,6 @@ export default {
         handleClick(id, type) {
             this.loadVideo(id, type);
         }
-    },
-    mounted() {
-        this.pausedWhenEnter = this.ui.paused;
-    },
-    activated() {
-        this.pausedWhenEnter = this.ui.paused;
-    },
-    deactivated() {
-        if (!this.pausedWhenEnter) {
-            this.playAudio();
-        }
-        this.pausedWhenEnter = null;
     },
     components: {
         VideoDetail,
