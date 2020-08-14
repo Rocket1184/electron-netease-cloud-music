@@ -419,7 +419,11 @@ export default {
             }
             this.hasRetried = false;
             this.$toast.message('这首歌听不了了，换下一首吧   (￣△￣;) ');
-            setTimeout(i => i === this.playing.id && this.playNextTrack(), 3000, this.playing.id);
+            setTimeout(i => {
+                if (!this.ui.paused && i === this.playing.id) {
+                    this.playNextTrack();
+                }
+            }, 3000, this.playing.id);
         });
 
         this.$store.subscribe(mutation => {
