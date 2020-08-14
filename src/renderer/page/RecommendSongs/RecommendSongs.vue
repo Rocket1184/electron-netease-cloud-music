@@ -106,7 +106,8 @@ export default {
                     this.$toast.message('已标记为不感兴趣');
                 }
             } else {
-                this.$toast.message(`${resp.code}: ${resp.msg}`);
+                const msg = resp.msg || resp.message;
+                this.$toast.message(msg ? `${resp.code}: ${msg}` : JSON.stringify(resp));
             }
         }
     },
