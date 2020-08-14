@@ -29,10 +29,7 @@ let cfg = {
             {
                 test: /worker\.js$/,
                 use: {
-                    loader: 'worker-loader',
-                    options: {
-                        name: '[name].js'
-                    }
+                    loader: 'worker-loader'
                 }
             },
             {
