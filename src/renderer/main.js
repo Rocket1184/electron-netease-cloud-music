@@ -31,6 +31,8 @@ try {
     }, settings.themeVariety);
 } catch (e) { sessionStorage.removeItem('settings'); }
 
+require('@/util/tray').injectStore(store);
+
 store.dispatch('restoreUserInfo');
 store.dispatch('restoreUiState').then(() => {
     Promise.all([
@@ -69,8 +71,6 @@ if (isLinux) {
         m.bindAudioElement(audio);
     });
 }
-
-require('@/util/tray').injectStore(store);
 
 const el = document.createElement('div');
 document.body.appendChild(el);

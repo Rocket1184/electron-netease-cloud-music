@@ -236,14 +236,18 @@ export default {
                 volume = 0;
             }
             if (volume === this.ui.audioVolume) return;
-            this.setAudioVolume({ volume });
+            let payload = { volume };
+            const mute = volume === 0;
+            if (this.ui.audioMute !== mute) {
+                payload.mute = mute;
+            }
+            this.setAudioVolume(payload);
         },
         handleVolumeWheel(ev) {
             if (this.volumeShown === false) {
                 this.volumeShown = true;
             }
             this.scheduleHideVolume();
-            if (this.ui.audioMute === true) this.ui.audioMute = false;
             if (ev.deltaY > 0) {
                 this.handleVolumeChange(this.ui.audioVolume - 5);
             } else {

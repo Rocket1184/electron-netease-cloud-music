@@ -57,6 +57,13 @@ function sendTrackMeta(state, track) {
 }
 
 /**
+ * @param {State} state 
+ */
+function sendMute(state) {
+    send('mute', state.ui.audioMute === true ? true : state.ui.audioVolume === 0);
+}
+
+/**
  * Vuex mutation subscribe handler
  * @param {import('vuex').MutationPayload} mutation
  * @param {State} state
@@ -72,14 +79,18 @@ function subscribeHandler(mutation, state) {
             sendTrackMeta(state, track);
             break;
         case SET_AUDIO_VOLUME:
-            if (typeof mutation.payload.mute === 'boolean') {
-                send('mute', state.ui.audioMute);
-            } else if (typeof mutation.payload.volume === 'number') {
-                send('mute', mutation.payload.volume === 0);
+            const { mute, volume } = mutation.payload;
+            if (typeof mute === 'boolean') {
+                send('mute', mute);
+            } else if (typeof volume === 'number') {
+                const shouldMute = volume === 0;
+                if (shouldMute !== state.ui.audioMute) {
+                    send('mute', shouldMute);
+                }
             }
             break;
         case RESTORE_UI_STATE:
-            send('mute', state.ui.audioMute);
+            sendMute(state);
             break;
     }
 }
@@ -122,11 +133,11 @@ export function injectStore(store) {
         if (audioVolume !== 0) {
             store.dispatch('setAudioVolume', { mute: !audioMute });
         } else {
-            store.dispatch('setAudioVolume', { volume: 50 });
+            store.dispatch('setAudioVolume', { volume: 50, mute: false });
         }
     });
     TrayEmitter.on('get', () => {
         sendTrackMeta(store.state, store.getters.playing);
-        send('mute', store.state.ui.audioMute);
+        sendMute(store.state);
     });
 }
