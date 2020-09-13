@@ -206,7 +206,8 @@ export default {
                         like: this.shouldFavorite
                     });
                 } else {
-                    this.favoriteTrack({ id: this.playing.id, favorite: this.shouldFavorite });
+                    this.favoriteTrack({ id: this.playing.id, favorite: this.shouldFavorite })
+                        .catch(e => this.$toast.message(e.msg));
                 }
                 // it would take some time for NetEase to update playlist cover
                 // img, so we just wait 200 ms
