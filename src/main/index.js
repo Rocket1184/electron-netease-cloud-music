@@ -47,6 +47,7 @@ function createMainWindow(settings, url = MainURL) {
             preload: join(__dirname, 'preload.js'),
             nodeIntegration: IsDev,
             nodeIntegrationInWorker: IsDev,
+            enableRemoteModule: true,
             contextIsolation: false,
             autoplayPolicy: 'no-user-gesture-required',
             disableBlinkFeatures: 'MediaSession,MediaSessionPosition,MediaSessionSeeking', // this disables `navigator.mediaSession`
@@ -92,6 +93,7 @@ if (app.requestSingleInstanceLock()) {
         require('./api/ipc');
     });
     app.on('second-instance', () => {
+        if (!mainWindow) return;
         mainWindow.show();
         mainWindow.focus();
     });
