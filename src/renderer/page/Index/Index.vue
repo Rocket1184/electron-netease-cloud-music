@@ -134,7 +134,15 @@ export default {
         }
     },
     created() {
-        this.fetchData();
+        if (navigator.onLine) {
+            this.fetchData();
+        } else {
+            navigator.addEventListener('online', () => {
+                if (navigator.onLine) {
+                    this.fetchData();
+                }
+            }, { once: true });
+        }
         this.unsub = this.$store.subscribe(({ type, payload }) => {
             if (
                 type === SET_LOGIN_VALID &&

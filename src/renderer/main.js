@@ -33,7 +33,20 @@ try {
 
 require('@/util/tray').injectStore(store);
 
-store.dispatch('restoreUserInfo');
+function restoreUserInfoOnline() {
+    store.dispatch('restoreUserInfo');
+}
+
+if (navigator.onLine) {
+    restoreUserInfoOnline();
+} else {
+    window.addEventListener('online', () => {
+        if (navigator.onLine) {
+            restoreUserInfoOnline();
+        }
+    }, { once: true });
+}
+
 store.dispatch('restoreUiState').then(() => {
     Promise.all([
         store.dispatch('restoreRadio'),
