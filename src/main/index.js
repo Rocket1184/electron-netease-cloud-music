@@ -55,6 +55,10 @@ function createMainWindow(settings, url = MainURL) {
         }
     });
 
+    if (settings.showTrayIcon && settings.minimizeOnStartup) {
+        win.hide();
+    }
+
     if (settings.exitOnWindowClose === false) {
         win.on('close', preventQuitHandler);
     }
