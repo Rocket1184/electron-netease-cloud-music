@@ -12,6 +12,7 @@ const DefaultSettings = {
     showTrayIcon: false,
     trayIconVariety: 'light',
     exitOnWindowClose: true,
+    minimizeOnStartup: false,
     themePrimaryColor: '#7e57c2',
     themeSecondaryColor: '#ff4081',
     themeVariety: 'light',

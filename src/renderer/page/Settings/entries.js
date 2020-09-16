@@ -52,6 +52,12 @@ export const Entries = [
                 prop: 'showTrayIcon'
             },
             {
+                type: 'toggle',
+                title: '启动时最小化到托盘',
+                prop: 'minimizeOnStartup',
+                depends: ['showTrayIcon']
+            },
+            {
                 type: 'select',
                 title: '托盘图标颜色',
                 prop: 'trayIconVariety',
