@@ -65,7 +65,7 @@
                     <div :title="ui.downloaded ? '已下载' : '下载'">
                         <mu-checkbox uncheck-icon="get_app"
                             checked-icon="done"
-                            color="blue"
+                            color="secondary"
                             :inputValue="ui.downloaded"
                             @click="handleDownload"></mu-checkbox>
                     </div>
