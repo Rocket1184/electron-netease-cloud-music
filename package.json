@@ -48,7 +48,7 @@
     "dbus-next": "^0.9.1",
     "debug": "^4.1.1",
     "dexie": "^3.0.2",
-    "electron": "^10.1.1",
+    "electron": "^10.1.2",
     "electron-fetch": "^1.7.1",
     "entities": "^2.0.3",
     "lodash": "^4.17.20",
