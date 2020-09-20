@@ -2,6 +2,14 @@
 
 'use strict';
 
+// cleanup process.argv before patch-package
+let argv = process.argv.slice(2);
+if (argv.length === 0) {
+    argv = ['main', 'renderer'];
+} else {
+    process.argv = process.argv.slice(0, 2);
+}
+
 // yeah! patch packages!
 require('patch-package');
 
@@ -10,9 +18,6 @@ process.env.NODE_ENV = 'production';
 const webpack = require('webpack');
 
 const { absPath, removeRecursive } = require('./util');
-
-let argv = process.argv.slice(2);
-if (!argv.length) argv = ['main', 'renderer'];
 
 async function clean() {
     removeRecursive(absPath('dist'));
