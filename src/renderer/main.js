@@ -34,7 +34,9 @@ try {
 require('@/util/tray').injectStore(store);
 
 function restoreUserInfoOnline() {
-    store.dispatch('restoreUserInfo');
+    store.dispatch('restoreUserInfo').catch(e => {
+        Message.alert(e.msg, '登录失败');
+    });
 }
 
 if (navigator.onLine) {

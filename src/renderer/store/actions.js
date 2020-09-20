@@ -100,10 +100,9 @@ export async function restoreUserInfo({ commit, dispatch }, payload) {
             dispatch('getUserInfo').then(() => {
                 dispatch('setLoginValid');
             });
-            return true;
         } else {
             Api.updateCookie();
-            return false;
+            throw resp;
         }
     }
 }

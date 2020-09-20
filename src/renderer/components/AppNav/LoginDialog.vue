@@ -186,13 +186,10 @@ export default {
         async handleWebLoginComplete() {
             try {
                 const cookie = await this.requestLoginCookies();
-                const valid = await this.restoreUserInfo(cookie);
-                if (!valid) {
-                    throw new Error('restoreUserInfo failed');
-                }
+                await this.restoreUserInfo(cookie);
                 this.$emit('update:show', false);
             } catch (e) {
-                this.$toast.message('根本没有登录成功啊喂 (╯‵□′)╯︵┻━┻');
+                this.$toast.message(e.msg || '根本没有登录成功啊喂 (╯‵□′)╯︵┻━┻');
             }
             this.webLoginStep = 0;
         }
