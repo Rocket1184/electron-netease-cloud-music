@@ -137,7 +137,7 @@ export default {
         if (navigator.onLine) {
             this.fetchData();
         } else {
-            navigator.addEventListener('online', () => {
+            window.addEventListener('online', () => {
                 if (navigator.onLine) {
                     this.fetchData();
                 }
