@@ -1,6 +1,5 @@
 import { URL } from 'url';
 import qs from 'querystring';
-import { randomFillSync } from 'crypto';
 
 import debug from 'debug';
 import fetch from 'electron-fetch';
@@ -23,18 +22,10 @@ class HttpClient {
     }
 
     initCookieJar() {
-        const now = Date.now();
-        const nuid = randomFillSync(Buffer.alloc(16)).toString('hex');
-        const wyyy = randomFillSync(Buffer.alloc(132)).toString('base64');
         this.cookieJar = new CookieJar();
         this.cookieJar.setCookies([
-            `JSESSIONID-WYYY=${wyyy}:${now}`,
-            `_iuqxldmzr=32`,
+            'os=pc',
         ], '.music.163.com', '/');
-        this.cookieJar.setCookies([
-            `_ntes_nnid=${nuid},${now}`,
-            `_ntes_nuid=${nuid}`
-        ], '.163.com', '/');
     }
 
     /**

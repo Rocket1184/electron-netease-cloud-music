@@ -52,16 +52,17 @@ export function getCookie(key) {
 /**
  * @param {string} acc email, username or phone
  * @param {string} pwd password
+ * @param {string} countrycode phone country code, default to `'86'`
  * @returns {Promise<Types.LoginRes>}
  */
-export function login(acc, pwd) {
+export function login(acc, pwd, countrycode = '86') {
     const password = crypto.createHash('md5').update(pwd).digest('hex');
     const postBody = {
         password,
         rememberLogin: true,
     };
-    if (/^1\d{10}$/.test(acc)) {
-        return client.postW('/login/cellphone', { phone: acc, ...postBody });
+    if (/^\d*$/.test(acc)) {
+        return client.postW('/login/cellphone', { phone: acc, countrycode, ...postBody });
     } else {
         return client.postW('/login', { username: acc, ...postBody });
     }
