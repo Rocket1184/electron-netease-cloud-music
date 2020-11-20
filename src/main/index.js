@@ -190,13 +190,17 @@ ipcMain.on('showLoginWindow', () => {
     });
     loginWindow.loadURL(LoginURL);
     const { session } = loginWindow.webContents;
-    session.webRequest.onSendHeaders({ urls: [`${LoginURL}/*`] }, details => {
-        const arr = Object.entries(details.requestHeaders)
-            .filter(header => header[0].toLocaleLowerCase() === 'cookie')
-            .map(header => header[1]);
-        if (arr.length <= 0 || arr.every(val => !val.includes('MUSIC_U='))) return;
+    session.webRequest.onHeadersReceived({ urls: [`${LoginURL}/*`] }, (details, callback) => {
+        const values = Object.entries(details.responseHeaders)
+            .filter(header => header[0].toLocaleLowerCase() === 'set-cookie')
+            .map(header => header[1])
+            .flat();
+        if (values.length <= 0 || values.every(v => !v.includes('MUSIC_U='))) {
+            // no `set-cookie: MUSIC_U=...`, skip this response
+            return callback({ cancel: false });
+        }
         // remove webRequest listener
-        session.webRequest.onSendHeaders(null);
+        session.webRequest.onHeadersReceived(null);
         ipcMain.once('getLoginCookie', event => {
             session.cookies.get({ url: LoginURL }).then(cookies => {
                 const cookie = Object.fromEntries(cookies.map(ck => [ck.name, ck.value]));
@@ -207,6 +211,7 @@ ipcMain.on('showLoginWindow', () => {
                 loginWindow = null;
             });
         });
+        callback({ cancel: false });
         loginWindow.close();
     });
 });
