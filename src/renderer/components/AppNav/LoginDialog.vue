@@ -140,7 +140,14 @@ export default {
                 }
                 this.needCaptcha = false;
             }
-            let resp = await this.login({ acc: this.inputUsr, pwd: this.inputPwd });
+            let phone = '';
+            let countrycode = '86';
+            const match = this.inputUsr.match(/^\+?(?<countrycode>\d*)\s(?<phone>\d*)$/);
+            if (match) {
+                phone = match.groups.phone;
+                countrycode = match.groups.countrycode;
+            }
+            let resp = await this.login({ acc: phone || this.inputUsr, pwd: this.inputPwd, countrycode });
             switch (resp.code) {
                 case 200:
                     this.$emit('update:show', false);
@@ -189,7 +196,8 @@ export default {
                 await this.restoreUserInfo(cookie);
                 this.$emit('update:show', false);
             } catch (e) {
-                this.$toast.message(e.msg || '根本没有登录成功啊喂 (╯‵□′)╯︵┻━┻');
+                const msg = e ? e.msg : '';
+                this.$toast.message(msg || '根本没有登录成功啊喂 (╯‵□′)╯︵┻━┻');
             }
             this.webLoginStep = 0;
         }

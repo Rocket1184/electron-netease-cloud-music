@@ -214,7 +214,7 @@ export function setLoginValid({ commit, dispatch }, payload) {
  */
 export async function login({ commit, dispatch }, payload) {
     commit(types.SET_LOGIN_PENDING, true);
-    const resp = await Api.login(payload.acc, payload.pwd);
+    const resp = await Api.login(payload.acc, payload.pwd, payload.countrycode);
     if (resp.code === 200) {
         commit(types.SET_USER_INFO, resp);
         dispatch('setLoginValid', true);
