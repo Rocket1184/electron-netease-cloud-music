@@ -1,5 +1,5 @@
 import { join } from 'path';
-import { app, BrowserWindow, ipcMain, Menu } from 'electron';
+import { app, BrowserWindow, ipcMain, Menu, nativeTheme } from 'electron';
 
 import { IsDev, IsDarwin, MainURL, LoginURL } from './util/constants';
 import * as Settings from './settings';
@@ -32,6 +32,10 @@ app.commandLine.appendSwitch('disable-features', 'HardwareMediaKeyHandling,Media
  * @returns {import('electron').BrowserWindow}
  */
 function createMainWindow(settings, url = MainURL) {
+    const windowBackgroundType = settings.themeVariety === 'auto'
+        ? (nativeTheme.shouldUseDarkColors ? 'dark' : 'light')
+        : settings.themeVariety;
+
     const win = new BrowserWindow({
         height: 700,
         width: 1000,
@@ -40,7 +44,7 @@ function createMainWindow(settings, url = MainURL) {
         minHeight: 640,
         frame: settings.windowBorder,
         titleBarStyle: settings.windowBorder ? 'default' : 'hidden',
-        backgroundColor: MainBkgColor[settings.themeVariety],
+        backgroundColor: MainBkgColor[windowBackgroundType],
         title: Settings.productName,
         webPreferences: {
             zoomFactor: settings.windowZoom || 1,

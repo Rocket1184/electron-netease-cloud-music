@@ -23,7 +23,7 @@ export const defaultSettings = {
     minimizeOnStartup: false,
     themePrimaryColor: '#7e57c2',
     themeSecondaryColor: '#ff4081',
-    themeVariety: 'light',
+    themeVariety: 'auto',
     autoReplacePlaylist: false
 };
 
