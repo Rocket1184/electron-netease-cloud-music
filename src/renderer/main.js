@@ -10,7 +10,7 @@ import App from './App.vue';
 import store from './store';
 import routes from './routes';
 import { isLinux } from './util/globals';
-import { initTheme } from './util/theme';
+import { initTheme, setTheme } from './util/theme';
 import DblclickRipple from './util/dblclick-ripple';
 import './style.css';
 import './transition.css';
@@ -23,12 +23,17 @@ Vue.use(Message);
 Vue.use(DblclickRipple);
 Vue.component('RecycleScroller', RecycleScroller);
 
+const darkMediaQuery = window.matchMedia('(prefers-color-scheme: dark)');
+
 try {
     const settings = JSON.parse(sessionStorage.getItem('settings'));
+    const themeVariety = settings.themeVariety === 'auto'
+        ? (darkMediaQuery.matches ? 'dark' : 'light')
+        : settings.themeVariety;
     initTheme({
         primary: settings.themePrimaryColor,
         secondary: settings.themeSecondaryColor
-    }, settings.themeVariety);
+    }, themeVariety);
 } catch (e) { sessionStorage.removeItem('settings'); }
 
 require('@/util/tray').injectStore(store);
@@ -76,7 +81,19 @@ if (store.state.settings.startupPage !== 'index') {
 const app = new Vue({
     store,
     router,
+    provide: {
+        darkMediaQuery
+    },
     extends: App
+});
+
+darkMediaQuery.addEventListener('change', e => {
+    if (store.state.settings.themeVariety !== 'auto') return;
+    const variety = e.matches ? 'dark' : 'light';
+    setTheme({
+        primary: store.state.settings.themePrimaryColor,
+        secondary: store.state.settings.themeSecondaryColor
+    }, variety);
 });
 
 if (isLinux) {

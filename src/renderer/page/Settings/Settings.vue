@@ -51,6 +51,9 @@ export default {
             versionName: ''
         };
     },
+    inject: [
+        'darkMediaQuery'
+    ],
     computed: {
         ...mapState(['settings'])
     },
@@ -166,10 +169,13 @@ export default {
                         case 'themePrimaryColor':
                         case 'themeSecondaryColor':
                         case 'themeVariety':
+                            const variety = state.settings.themeVariety === 'auto'
+                                ? (this.darkMediaQuery.matches ? 'dark' : 'light')
+                                : state.settings.themeVariety;
                             setTheme({
                                 primary: state.settings.themePrimaryColor,
                                 secondary: state.settings.themeSecondaryColor
-                            }, state.settings.themeVariety);
+                            }, variety);
                             break;
                         case 'windowBorder':
                             this.$nextTick(() => this.recreateWindow());
@@ -186,12 +192,12 @@ export default {
                             ipcRenderer.send(IpcTag, key, val);
                             break;
                         case 'bitRate':
-                            if(val === 'ex') {
+                            if (val === 'ex') {
                                 this.$toast.message('实际播放码率取决于歌曲最高码率和帐号最高可播放码率');
                             }
                             break;
                         case 'bitRateDownload':
-                            if(val === 'ex') {
+                            if (val === 'ex') {
                                 this.$toast.message('实际下载码率取决于歌曲最高码率和帐号最高可播放码率');
                             }
                             break;
