@@ -21,8 +21,7 @@ let cfg = {
     output: {
         filename: '[name].js',
         path: absPath('dist'),
-        // https://github.com/webpack/webpack/issues/6642
-        globalObject: 'this'
+        publicPath: ''
     },
     module: {
         rules: [
@@ -101,13 +100,15 @@ if (isProd) {
             ]
         }
     );
-    // what a heck!
-    // ref: https://github.com/jantimon/html-webpack-plugin/blob/v3.2.0/index.js#L34
-    // ref: https://github.com/jantimon/html-webpack-plugin/blob/v3.2.0/index.js#L479
-    cfg.plugins.find(p => p instanceof HtmlWebpackPlugin).options.meta = [{
-        'http-equiv': 'Content-Security-Policy',
-        content: `script-src 'self'; media-src http://localhost:* https://*.vod.126.net; img-src 'self' https://*.music.126.net https://music.163.com`
-    }];
+    // https://github.com/jantimon/html-webpack-plugin/blob/v4.5.0/index.js#L74
+    // https://github.com/jantimon/html-webpack-plugin/blob/v4.5.0/index.js#L766
+    cfg.plugins.find(p => p instanceof HtmlWebpackPlugin).userOptions.meta = {
+        viewport: false,
+        csp: {
+            'http-equiv': 'Content-Security-Policy',
+            content: `script-src 'self'; media-src http://localhost:* https://*.vod.126.net; img-src 'self' https://*.music.126.net https://music.163.com`
+        }
+    };
     cfg.plugins.push(
         new MiniCSSExtractPlugin()
     );
@@ -118,7 +119,7 @@ if (isProd) {
         { test: /\.css$/, use: ['style-loader', 'css-loader'] },
         { test: /\.less$/, use: ['style-loader', 'css-loader', 'less-loader'] }
     );
-    cfg.devtool = 'cheap-module-eval-source-map';
+    cfg.devtool = 'eval-cheap-module-source-map';
     cfg.output.libraryTarget = 'commonjs2';
     cfg.externals = Object.keys(packageJson.dependencies);
     cfg.resolve.modules = [

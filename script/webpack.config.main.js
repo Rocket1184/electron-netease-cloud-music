@@ -77,7 +77,7 @@ if (isProd) {
 } else {
     // dev config
     cfg.mode = 'development';
-    cfg.devtool = 'cheap-module-eval-source-map';
+    cfg.devtool = 'eval-cheap-module-source-map';
     cfg.externals = Object.keys(packageJson.dependencies);
     cfg.resolve = {
         modules: [
