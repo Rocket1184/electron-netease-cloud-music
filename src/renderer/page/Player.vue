@@ -562,7 +562,7 @@ export default {
                 margin: 0 4px;
             }
             .source-link {
-                .ellipsis-text;
+                .ellipsis-text();
                 color: unset;
                 user-select: text;
                 &:hover {
