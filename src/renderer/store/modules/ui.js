@@ -36,7 +36,11 @@ const state = {
  */
 const mutations = {
     [types.RESTORE_UI_STATE](state, payload) {
-        Object.entries(payload).forEach(([key, val]) => state[key] = val);
+        Object.entries(payload).forEach(([key, val]) => {
+            if (Object.prototype.hasOwnProperty.call(state, key) && typeof state[key] === typeof val) {
+                state[key] = val;
+            }
+        });
     },
     [types.SET_AUDIO_PAUSED](state, /** @type {boolean} */ payload) {
         state.paused = payload;
