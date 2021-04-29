@@ -18,6 +18,13 @@
                     :key="'ar' + index">{{ar.name}}</span>
             </template>
         </div>
+        <div class="track-col album">
+          <router-link v-if="track.album !== null && track.album.id !== 0"
+                       class="link"
+                       :to="{ name: 'album', params: { id: track.album.id } }"
+                       :key="track.album.id">{{track.album.name}}</router-link>
+          <span v-else :key="'album' + track.album.name">{{ track.album.name }}</span>
+        </div>
         <div class="track-col duration">{{duration}}</div>
         <div class="track-col buttons">
             <mu-button v-for="act in shortcuts"
@@ -83,6 +90,7 @@ export default {
         text-align: center;
     }
     .name,
+    .album,
     .artist {
         flex-grow: 1;
         flex-basis: 0;
