@@ -160,10 +160,7 @@ export default {
             browserWindow.minimize();
         },
         handleMaximize() {
-            if (browserWindow.isMaximized())
-                browserWindow.unmaximize();
-            else
-                browserWindow.maximize();
+            browserWindow.maximize();
         },
         handleSideNav(route) {
             this.drawerOpen = false;

@@ -1,25 +1,21 @@
 'use strict';
 
-const { remote, ipcRenderer, shell } = require('electron');
+const { ipcRenderer } = require('electron');
 const { EventEmitter } = require('events');
 const { versions, platform } = process;
 
-window.require = function (id) {
-    switch (id) {
-        case 'electron':
-            return {
-                remote: {
-                    getGlobal: name => name === 'process' ? { versions, platform } : null,
-                    getCurrentWindow: remote.getCurrentWindow,
-                    getCurrentWebContents: remote.getCurrentWebContents
-                },
-                ipcRenderer: ipcRenderer,
-                shell: { openExternal: shell.openExternal }
-            };
-        case 'events':
-            return { EventEmitter };
-    }
-};
+process.once('loaded', () => {
+    globalThis.process = { versions, platform };
+
+    globalThis.require = function (id) {
+        switch (id) {
+            case 'electron':
+                return { ipcRenderer };
+            case 'events':
+                return { EventEmitter };
+        }
+    };
+});
 
 const arg = '--initial-settings=';
 let settings = {};

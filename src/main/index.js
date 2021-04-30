@@ -1,5 +1,5 @@
 import { join } from 'path';
-import { app, BrowserWindow, ipcMain, Menu, nativeTheme } from 'electron';
+import { app, BrowserWindow, ipcMain, Menu, nativeTheme, shell } from 'electron';
 
 import { IsDev, IsDarwin, MainURL, LoginURL } from './util/constants';
 import * as Settings from './settings';
@@ -51,7 +51,6 @@ function createMainWindow(settings, url = MainURL) {
             preload: join(__dirname, 'preload.js'),
             nodeIntegration: IsDev,
             nodeIntegrationInWorker: IsDev,
-            enableRemoteModule: true,
             contextIsolation: false,
             autoplayPolicy: 'no-user-gesture-required',
             disableBlinkFeatures: 'MediaSession,MediaSessionPosition,MediaSessionSeeking', // this disables `navigator.mediaSession`
@@ -188,7 +187,7 @@ ipcMain.on('showLoginWindow', () => {
         parent: mainWindow,
         modal: !IsDarwin,
         webPreferences: {
-            enableRemoteModule: false,
+            sandbox: true,
             nativeWindowOpen: true
         }
     });
@@ -218,4 +217,49 @@ ipcMain.on('showLoginWindow', () => {
         callback({ cancel: false });
         loginWindow.close();
     });
+});
+
+ipcMain.handle('controlMainWindow', (event, method) => {
+    switch (method) {
+        case 'maximize':
+            if (mainWindow.isMaximized()) {
+                mainWindow.unmaximize();
+            } else {
+                mainWindow.maximize();
+            }
+            break;
+        case 'minimize':
+            mainWindow.minimize();
+            break;
+        case 'close':
+            mainWindow.close();
+            break;
+        case 'reload':
+            mainWindow.reload();
+            break;
+        default:
+            break;
+    }
+});
+
+ipcMain.handle('controlWebContents', async (event, method, ...args) => {
+    const { webContents } = mainWindow;
+    switch (method) {
+        case 'setZoomFactor':
+            webContents.setZoomFactor(args[0]);
+            break;
+        case 'openDevTools':
+            webContents.openDevTools();
+            break;
+        case 'sessionGetCacheSize':
+            return webContents.session.getCacheSize();
+        case 'sessionClearCache':
+            return webContents.session.clearCache();
+        case 'sessionClearStorage':
+            return webContents.session.clearStorageData();
+    }
+});
+
+ipcMain.handle('openExternal', (event, url) => {
+    return shell.openExternal(url);
 });

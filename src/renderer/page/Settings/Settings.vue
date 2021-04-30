@@ -17,7 +17,7 @@
 </template>
 
 <script>
-import { ipcRenderer, shell } from 'electron';
+import { ipcRenderer } from 'electron';
 import { mapState, mapActions } from 'vuex';
 
 import Api from '@/api/ipc';
@@ -77,7 +77,7 @@ export default {
             return true;
         },
         refreshSize() {
-            webContents.session.getCacheSize().then(s => this.cacheSize = humanSize(s));
+            webContents.sessionGetCacheSize().then(s => this.cacheSize = humanSize(s));
             Api.getDataSize('all').then(s => this.dataSize = humanSize(s.size));
             Api.getDataSize('music').then(s => this.musicSize = humanSize(s.size));
         },
@@ -97,7 +97,7 @@ export default {
         clearCache(type) {
             switch (type) {
                 case 'chrome':
-                    return webContents.session.clearCache();
+                    return webContents.sessionClearCache();
                 case 'music':
                     return Api.clearCache('music');
             }
@@ -133,7 +133,7 @@ export default {
                     window.onbeforeunload = null;
                     Promise.all([
                         Api.updateCookie(),
-                        webContents.session.clearStorageData(),
+                        webContents.sessionClearStorage(),
                         this.resetSettings(),
                         this.clearCache('music'),
                         this.clearCache('chrome'),
@@ -142,7 +142,7 @@ export default {
             });
         },
         launchDevTools() {
-            browserWindow.openDevTools();
+            webContents.openDevTools();
         },
         reloadPage() {
             browserWindow.reload();
@@ -154,7 +154,7 @@ export default {
             this.$alert(h => h('pre', { class: 'mono-font' }, Versions), '版本号');
         },
         openBrowser(url) {
-            shell.openExternal(url).catch(() => {
+            ipcRenderer.invoke('openExternal', url).catch(() => {
                 this.$alert(`无法打开您的浏览器，请直接访问 ${url}`, '提示');
             });
         },
@@ -187,7 +187,7 @@ export default {
                             if (val === false && state.settings.exitOnWindowClose === false) {
                                 this.setByName('exitOnWindowClose', true);
                             }
-                            // eslint-disable-nextline no-fallthrough
+                        // eslint-disable-nextline no-fallthrough
                         case 'exitOnWindowClose':
                             ipcRenderer.send(IpcTag, key, val);
                             break;
