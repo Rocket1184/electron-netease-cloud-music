@@ -36,6 +36,7 @@ let cfg = {
     },
     resolve: {
         alias: {
+            'x11': false,
             'jsbi': 'jsbi/dist/jsbi-cjs.js'
         }
     },
@@ -68,7 +69,7 @@ if (isProd) {
                 },
                 {
                     from: absPath('assets/icons/tray*.png'),
-                    to: absPath('dist/icons/[name].[ext]'),
+                    to: absPath('dist/icons/[name][ext]'),
                     toType: 'template'
                 }
             ]
