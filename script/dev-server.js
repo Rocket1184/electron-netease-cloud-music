@@ -37,28 +37,18 @@ electron.on('close', code => {
 const compileCfg = require('./webpack.config.renderer');
 
 /** @type {import('webpack-dev-server').Configuration} */
-const wdsOpt = {
-    // serve '/login/html'
-    contentBase: absPath('/src/renderer'),
-    publicPath: '/',
-    // `hot` must be true when using HMR
+const wdsConf = {
+    static: {
+        // serve '/login/html'
+        directory: absPath('/src/renderer'),
+        publicPath: '/',
+    },
     hot: true,
-    // https://github.com/webpack/webpack-dev-server/pull/1775
-    // fixed by https://github.com/webpack/webpack-dev-server/pull/1935 , but not released yet
-    // inject 'webpack/hot/dev-server'
-    injectHot: true,
-    // inject 'webpack-dev-server/client?http://<host>:<port>'
-    injectClient: true,
-    stats: 'minimal',
-    // `port` must be specified when using `addDevServerEntrypoints`
-    // https://github.com/webpack/webpack-dev-server/blob/v3.4.1/lib/utils/addEntries.js#L12-L18
-    // https://github.com/webpack/webpack-dev-server/blob/v3.4.1/lib/utils/createDomain.js
+    liveReload: false,
     port: config.devPort,
-    overlay: true
+    client: {
+        overlay: true
+    }
 };
 
-// enable HMR.
-// see https://webpack.js.org/guides/hot-module-replacement/#via-the-node-js-api
-WebpackDevServer.addDevServerEntrypoints(compileCfg, wdsOpt);
-
-new WebpackDevServer(webpack(compileCfg), wdsOpt).listen(config.devPort);
+new WebpackDevServer(webpack(compileCfg), wdsConf).listen(config.devPort);

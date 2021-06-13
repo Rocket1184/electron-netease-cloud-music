@@ -23,14 +23,8 @@ async function clean() {
     removeRecursive(absPath('dist'));
 }
 
-/** @type {import('webpack').Stats.ToStringOptions} */
 const toStrOpt = {
-    all: false,
-    assets: true,
-    colors: true,
-    errors: true,
-    timings: true,
-    version: true
+    colors: true
 };
 
 /**
