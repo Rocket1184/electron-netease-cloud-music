@@ -1,15 +1,15 @@
 <template>
     <div class="player ncm-page"
-        :class="{ dark: this.dark }">
+        :class="{ dark: dark }">
         <div class="bkg">
             <canvas ref="cvs"
                 width="1000"
                 height="600"></canvas>
         </div>
         <div class="phonograph"
-            :class="{ play: !this.ui.paused }">
-            <img class="stylus"
-                src="~assets/img/needle.webp"
+            :class="{ play: !ui.paused }">
+            <img :src="needleImg"
+                class="stylus"
                 width="100"
                 height="142.5">
             <div class="vinyl">
@@ -17,7 +17,7 @@
                     class="cover"
                     width="220"
                     height="220">
-                <img src="~assets/img/disc.webp"
+                <img :src="discImg"
                     class="border"
                     width="350"
                     height="350">
@@ -214,6 +214,8 @@ import Api from '@/api/ipc';
 import { workerExecute } from '@/worker/message';
 import { sizeImg, HiDpiPx } from '@/util/image';
 
+import discImg from 'assets/img/disc.webp';
+import needleImg from 'assets/img/needle.webp';
 import discDefault from 'assets/img/disc_default.webp';
 import defaultCoverImg from 'assets/img/cover_default.webp';
 
@@ -436,6 +438,10 @@ export default {
             this.currentLyricIndex = -1;
         }
     },
+    created() {
+        this.discImg = discImg;
+        this.needleImg = needleImg;
+    },
     mounted() {
         this.paintBkgCanvas();
         this.refreshThreadInfo();
@@ -506,7 +512,6 @@ export default {
         }
         .vinyl {
             position: relative;
-            will-change: transform;
             animation: disk-playing 25s linear infinite;
             animation-play-state: paused;
             .cover {
