@@ -5,6 +5,9 @@ import { IsDev, IsDarwin, MainURL, LoginURL } from './util/constants';
 import * as Settings from './settings';
 import { AppTray } from './tray';
 
+// workaround https://bugs.chromium.org/p/chromium/issues/detail?id=1213347
+process.env.GDK_SCALE = '';
+
 let shouldAppQuit = true;
 /** @type {(ev: import('electron').Event) => any} */
 const preventQuitHandler = ev => {
