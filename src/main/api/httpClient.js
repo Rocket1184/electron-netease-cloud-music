@@ -24,7 +24,12 @@ class HttpClient {
     initCookieJar() {
         this.cookieJar = new CookieJar();
         this.cookieJar.setCookies([
+            'appver=4.3.1',
+            'buildver=1513567509',
+            'channel=google',
+            'mobilename=linux',
             'os=pc',
+            'osver=10.0.0',
         ], '.music.163.com', '/');
     }
 
