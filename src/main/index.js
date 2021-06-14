@@ -6,7 +6,10 @@ import * as Settings from './settings';
 import { AppTray } from './tray';
 
 // workaround https://bugs.chromium.org/p/chromium/issues/detail?id=1213347
-process.env.GDK_SCALE = '';
+if (process.versions.chrome.startsWith('91.0')) {
+    delete process.env.GDK_SCALE;
+    delete process.env.GDK_DPI_SCALE;
+}
 
 let shouldAppQuit = true;
 /** @type {(ev: import('electron').Event) => any} */
