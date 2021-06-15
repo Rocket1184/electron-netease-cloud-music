@@ -16,6 +16,9 @@ const d = debug('Downloader');
  * @param {string} text 
  */
 function escapeSlash(text) {
+    if (process.platform === 'win32') {
+        return text.replace(/[<>:"\/\\\|\?\*]/g, ' ');
+    }
     return text.replace(/\//g, ' ');
 }
 
