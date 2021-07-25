@@ -36,27 +36,22 @@ let cfg = {
                 use: {
                     loader: 'vue-loader',
                     options: {
-                        compilerOptions: { preserveWhitespace: false }
+                        compilerOptions: { whitespace: 'condense' }
                     }
                 },
             },
             {
                 test: /\.(png|jpe?g|gif|svg|webp)(\?.*)?$/,
-                use: {
-                    loader: 'file-loader',
-                    options: {
-                        name: 'imgs/[name].[ext]',
-                        esModule: false
-                    }
+                type: 'asset/resource',
+                generator: {
+                    filename: 'imgs/[name][ext]'
                 }
             },
             {
                 test: /\.(woff2?|eot|ttf|otf)(\?.*)?$/,
-                use: {
-                    loader: 'file-loader',
-                    options: {
-                        name: 'fonts/[name].[ext]'
-                    }
+                type: 'asset/resource',
+                generator: {
+                    filename: 'fonts/[name][ext]'
                 }
             }
         ]
