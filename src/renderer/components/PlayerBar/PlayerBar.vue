@@ -375,7 +375,6 @@ export default {
         /** @type {HTMLAudioElement} */
         const _audioEl = this.$refs.audio;
         this.$root.$emit('audio-ready', _audioEl);
-        let _playingIntervalId;
 
         if (this.ui.audioMute === true) {
             _audioEl.volume = 0;
@@ -384,13 +383,24 @@ export default {
         }
 
         const _updateTime = () => this.timeCurrent = _audioEl.currentTime * 1000;
-        const _setUpdateTimeInterval = () => {
-            if (_playingIntervalId) {
-                clearInterval(_playingIntervalId);
-            }
-            _playingIntervalId = setInterval(() => _updateTime(), 1000);
+        let _shouldUpdateTime = false;
+        const _frame = () => {
+            if (!_shouldUpdateTime) return;
+            _updateTime();
+            _scheduleFrame();
         };
-        const _unsetUpdateTimeInterval = () => _playingIntervalId = clearInterval(_playingIntervalId);
+        const _scheduleFrame = () => {
+            const delay =  Math.ceil((1 - _audioEl.currentTime % 1) * 1000);
+            setTimeout(() => requestAnimationFrame(_frame), delay);
+            // this is not perfect. sometimes `_frame` happens few milliseconds
+            // before next second arrives, although `delay` was right.
+        };
+        const _setUpdateTimeInterval = () => {
+            if (_shouldUpdateTime) return;
+            _shouldUpdateTime = true;
+            _scheduleFrame();
+        };
+        const _unsetUpdateTimeInterval = () => _shouldUpdateTime = false;
 
         _audioEl.addEventListener('loadedmetadata', () => {
             _unsetUpdateTimeInterval();
@@ -403,28 +413,11 @@ export default {
             this.checkDownloaded({ metadata: this.playing });
         });
 
-        // keep audio progress when HMR
-        if (process.env.NODE_ENV === 'development') {
-            if (_audioEl.readyState >= HTMLMediaElement.HAVE_METADATA) {
-                this.timeTotal = _audioEl.duration * 1000;
-                this.timeCurrent = _audioEl.currentTime * 1000;
-                if (!this.ui.paused) _setUpdateTimeInterval();
-            }
-        }
-
         _audioEl.addEventListener('seeking', _updateTime);
 
         _audioEl.addEventListener('playing', () => {
             _updateTime();
-            // update playing process time after the time reaches a 'integer' second
-            // why use 1.15 not 1 ? maybe there is a little lag in event loop... I don't know
-            // maybe the value should be different on every device?
-            const timeOut = (1.15 - _audioEl.currentTime % 1) * 1000;
-            _unsetUpdateTimeInterval();
-            setTimeout(() => {
-                _updateTime();
-                _setUpdateTimeInterval();
-            }, timeOut);
+            _setUpdateTimeInterval();
         });
 
         _audioEl.addEventListener('pause', () => {
@@ -480,6 +473,9 @@ export default {
             }
         });
     },
+    // TODO: unset `updateTimeInterval` created in `mounted()` hook
+    // destroy `_audioEl` and so on ...
+    // beforeDestroy() {},
     components: {
         CurrentPlaylist
     }
