@@ -12,7 +12,7 @@ class Cache {
     constructor(path, configPath) {
         if (typeof path === 'string') {
             if (!fs.existsSync(path)) {
-                fs.mkdirSync(path);
+                fs.mkdirSync(path, {recursive: true});
             } else if (!fs.statSync(path).isDirectory()) {
                 throw new Error(`[Cache] '${path} was token by unknown file. Please remove it manually.'`);
             }
