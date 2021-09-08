@@ -14,7 +14,7 @@ class Cache {
             if (!fs.existsSync(path)) {
                 fs.mkdirSync(path);
             } else if (!fs.statSync(path).isDirectory()) {
-                throw new Error(`[Cache] '${path} was token by unknown file. Please remove it manually.'`);
+                throw new Error(`[Cache] '${path}' was taken by unknown file. Please remove it manually.`);
             }
 
             // map of downloaded files
