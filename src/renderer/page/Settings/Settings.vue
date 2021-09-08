@@ -81,6 +81,10 @@ export default {
             Api.getDataSize('all').then(s => this.dataSize = humanSize(s.size));
             Api.getDataSize('music').then(s => this.musicSize = humanSize(s.size));
         },
+        setMusicCacheLimit(size) {
+            Api.setMusicCacheLimit(size);
+            Api.getDataSize('music').then(s => this.musicSize = humanSize(s.size));
+        },
         initData() {
             this.refreshSize();
             Api.getVersionName().then(v => this.versionName = v);
@@ -200,6 +204,9 @@ export default {
                             if (val === 'ex') {
                                 this.$toast.message('实际下载码率取决于歌曲最高码率和帐号最高可播放码率');
                             }
+                            break;
+                        case 'musicCacheLimit':
+                            this.setMusicCacheLimit(val*1024*1024);
                             break;
                     }
                 }

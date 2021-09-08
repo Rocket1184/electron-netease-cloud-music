@@ -164,6 +164,18 @@ export const Entries = [
                 handler: 'promptClearMusicCache'
             },
             {
+                type: 'select',
+                title: '歌曲缓存空间限制',
+                prop: 'musicCacheLimit',
+                options: [
+                    { label: '无限制', value: 0 },
+                    { label: '128 MiB', value: 128 },
+                    { label: '256 MiB', value: 256 },
+                    { label: '512 MiB', value: 512 },
+                    { label: '1 GiB', value: 1024 },
+                ]
+            },
+            {
                 type: 'plain',
                 title: '所有应用数据',
                 data: 'dataSize',
