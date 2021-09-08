@@ -153,7 +153,7 @@ class MusicServer {
             d('Got URL for music id=%d', id);
             const musicRes = await this.cache.fetch(music.url.replace(/^http:/, 'https:'));
             // TODO: write file only md5 matches
-            musicRes.body.pipe(fs.createWriteStream(this.cache.internalPath(fileName)));
+            musicRes.body.pipe(this.cache.writeStream(fileName));
 
             const range = MusicServer.getRange(req, +musicRes.headers.get('content-length'));
             res.writeHead(206, MusicServer.buildHeaders(range));

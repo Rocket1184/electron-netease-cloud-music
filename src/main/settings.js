@@ -24,7 +24,8 @@ export const defaultSettings = {
     themePrimaryColor: '#7e57c2',
     themeSecondaryColor: '#ff4081',
     themeVariety: 'auto',
-    autoReplacePlaylist: false
+    autoReplacePlaylist: false,
+    musicCacheLimit: 512,
 };
 
 /**
@@ -44,8 +45,16 @@ function writeFile(target) {
     return fsp.writeFile(configPath, JSON.stringify(target, null, 4), 'utf8');
 }
 
+function writeFileSync(target) {
+    return fs.writeFileSync(configPath, JSON.stringify(target, null, 4), 'utf8');
+}
+
 function readFile() {
     return fsp.readFile(configPath, 'utf8');
+}
+
+function readFileSync() {
+    return fs.readFileSync(configPath, 'utf8');
 }
 
 export async function set(target) {
@@ -57,6 +66,15 @@ export async function set(target) {
     return writeFile(target);
 }
 
+export function setSync(target) {
+    try {
+        fs.accessSync(configDir);
+    } catch (e) {
+        fs.mkdirSync(configDir);
+    }
+    return writeFileSync(target);
+}
+
 export async function get() {
     let settings = defaultSettings;
     try {
@@ -65,6 +83,18 @@ export async function get() {
         settings = trimSettings(json);
     } catch (e) {
         set(defaultSettings);
+    }
+    return settings;
+}
+
+export function getSync() {
+    let settings = defaultSettings;
+    try {
+        fs.accessAsync(configPath);
+        const json = JSON.parse(readFileSync());
+        settings = trimSettings(json);
+    } catch (e) {
+        setSync(defaultSettings);
     }
     return settings;
 }

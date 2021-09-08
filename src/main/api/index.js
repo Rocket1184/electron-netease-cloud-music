@@ -24,7 +24,7 @@ const CachePath = {
     all: dataPath,
     music: path.join(dataPath, 'musicCache')
 };
-const musicCache = new Cache(CachePath.music, dataPath);
+const musicCache = new Cache(CachePath.music, dataPath, Settings.getSync().musicCacheLimit*1024*1024);
 migrate();
 
 const musicServer = new MusicServer(musicCache);
@@ -521,6 +521,22 @@ export async function getDataSize(type) {
 export async function clearCache(type) {
     try {
         await clearDirectory(CachePath[type]);
+    } catch (e) {
+        return {
+            ok: false,
+            msg: e.stack
+        };
+    }
+    return { ok: true };
+}
+
+/**
+ * @param {Types.CacheType} size cache limit in bytes
+ * @returns {Promise<{ok: boolean; msg?: string}>}
+ */
+export async function setMusicCacheLimit(size) {
+    try {
+        await musicServer.cache.setCacheLimit(size);
     } catch (e) {
         return {
             ok: false,
