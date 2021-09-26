@@ -15,9 +15,11 @@ export const UserType = {
     3: { icon: 'check', class: 'user-type-red', name: '认证的官方帐号' },
     4: { icon: 'music_note', class: 'user-type-red', name: '网易音乐人' },
     10: { icon: 'check', class: 'user-type-red', name: '认证的官方帐号' },
-    200: { icon: 'star_border', class: 'user-type-yellow', name: '云音乐达人' },
+    200: { icon: 'star_border', class: 'user-type-yellow', name: '歌单达人' },
     201: { icon: 'star_border', class: 'user-type-yellow', name: '云音乐达人' },
     202: { icon: 'star_border', class: 'user-type-yellow', name: '云音乐达人' },
+    205: { icon: 'star_border', class: 'user-type-yellow', name: '声音达人' },
+    207: { icon: 'star_border', class: 'user-type-yellow', name: '图文达人' },
     300: { icon: 'star_border', class: 'user-type-blue', name: '云村委员会' }
 };
 

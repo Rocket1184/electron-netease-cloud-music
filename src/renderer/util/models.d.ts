@@ -11,6 +11,11 @@ namespace Models {
         signature: string;
         province: number;
         city: number;
+        identify?: {
+            actionUrl?: string;
+            imageDesc: string;
+            imageUrl: string;
+        }
         // blew are raw data from netease login api
         account: any;
         profile: any;

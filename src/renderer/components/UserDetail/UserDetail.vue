@@ -124,6 +124,8 @@ export default {
             return sizeImg(this.user.profile.avatarUrl, HiDpiPx(75));
         },
         description() {
+            const i = this.user.identify;
+            if (i && i.imageDesc) return i.imageDesc;
             const p = this.user.profile;
             if (!p.userType) return null;
             return p.description || (UserType[p.userType] || DefaultUserType).name;

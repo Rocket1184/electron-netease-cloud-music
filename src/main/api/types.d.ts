@@ -1947,6 +1947,11 @@ namespace Types {
         bindings: Binding[];
         createDays: number;
         createTime: number;
+        identify?: {
+            actionUrl?: string;
+            imageDesc: string;
+            imageUrl: string;
+        }
         level: number;
         listenSongs: number;
         mobileSign: boolean;
