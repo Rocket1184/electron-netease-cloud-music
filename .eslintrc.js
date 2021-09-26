@@ -4,9 +4,16 @@ module.exports = {
         'dist/',
         'build/'
     ],
+    parser: '@babel/eslint-parser',
     parserOptions: {
-        parser: 'babel-eslint',
-        sourceType: 'module'
+        sourceType: 'module',
+        requireConfigFile: false,
+        babelOptions: {
+            plugins: [
+                '@babel/plugin-proposal-class-properties',
+                ['@babel/plugin-proposal-decorators', { decoratorsBeforeExport: true }]
+            ]
+        }
     },
     env: {
         browser: true,
