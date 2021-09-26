@@ -86,6 +86,7 @@ export async function getDjRadioProgram(radioId, limit = 100, offset = 0, asc = 
         const r = new DjRadio(resp.programs[0].radio);
         return resp.programs.map(p => new DjRadioProgram(p, r));
     }
+    return [];
 }
 
 export async function getMusicLyric(id, ignoreCache = false) {

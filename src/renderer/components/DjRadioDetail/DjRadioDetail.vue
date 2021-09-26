@@ -55,7 +55,7 @@
             <CenteredLoading v-if="programs.length === 0 && programsLoading"></CenteredLoading>
             <DjRadioProgramList v-else
                 :programs="programs"
-                :total="djradio.programCount"
+                :total="realProgramsCount || djradio.programCount"
                 @loadAll="loadAllPrograms"></DjRadioProgramList>
         </div>
     </div>
@@ -83,6 +83,7 @@ export default {
             shouldSubscribed: null,
             subsCntOffset: 0,
             descOpen: false,
+            realProgramsCount: null,
             programsLoading: false,
             programs: []
         };
@@ -115,12 +116,20 @@ export default {
         async getPrograms(offset = 0, limit = 100) {
             this.programsLoading = true;
             const programs = await getDjRadioProgram(this.djradio.id, limit, offset);
-            this.programs.push(...programs);
+            if (programs.length > 0) {
+                this.programs = this.programs.concat(programs);
+            }
             this.programsLoading = false;
+            return programs.length;
         },
         async loadAllPrograms(resolve) {
             while (this.programs.length < this.djradio.programCount) {
-                await this.getPrograms(this.programs.length, 500);
+                const cnt = await this.getPrograms(this.programs.length, 500);
+                if (cnt <= 0) break;
+            }
+            // real `programs.length` is smaller than `programCount` sometimes
+            if (this.djradio.programCount !== this.programs.length) {
+                this.realProgramsCount = this.programs.length;
             }
             resolve();
         },
