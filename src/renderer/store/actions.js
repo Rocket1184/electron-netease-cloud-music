@@ -258,7 +258,7 @@ export async function search({ state, commit }, { keyword, type, limit = 20, off
         switch (type) {
             case 'song':
                 const { songCount, songs } = resp.result;
-                result.total = songCount || songs.length || 0;
+                result.total = songCount ?? songs?.length ?? 0;
                 if (result.total > 0) {
                     const source = { name: 'search', id: state.ui.search.keyword };
                     result.items = songs.map(i => new Track(i, { source }));
@@ -266,7 +266,7 @@ export async function search({ state, commit }, { keyword, type, limit = 20, off
                 break;
             case 'artist':
                 const { artistCount, artists } = resp.result;
-                result.total = artistCount || artists.length || 0;
+                result.total = artistCount ?? artists?.length ?? 0;
                 if (result.total > 0) {
                     result.items = artists;
                 }
@@ -274,28 +274,28 @@ export async function search({ state, commit }, { keyword, type, limit = 20, off
             case 'album':
                 const { albumCount, albums } = resp.result;
                 // sometimes, albumCount is `0` but album.length != 0
-                result.total = albumCount || albums.length || 0;
+                result.total = albumCount ?? albums?.length ?? 0;
                 if (result.total > 0) {
                     result.items = albums;
                 }
                 break;
             case 'playlist':
                 const { playlistCount, playlists } = resp.result;
-                result.total = playlistCount || playlists.length || 0;
+                result.total = playlistCount ?? playlists?.length ?? 0;
                 if (result.total > 0) {
                     result.items = playlists;
                 }
                 break;
             case 'video':
                 const { videoCount, videos } = resp.result;
-                result.total = videoCount || videos.length || 0;
+                result.total = videoCount ?? videos?.length ?? 0;
                 if (result.total > 0) {
                     result.items = videos.map(v => new Video(v));
                 }
                 break;
             case 'user':
                 const { userprofileCount, userprofiles } = resp.result;
-                result.total = userprofileCount || userprofiles.length || 0;
+                result.total = userprofileCount ?? userprofiles?.length ?? 0;
                 if (result.total > 0) {
                     result.items = userprofiles;
                 }
