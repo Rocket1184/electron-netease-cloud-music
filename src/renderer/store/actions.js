@@ -351,11 +351,13 @@ export async function updateUiCoverImgSrc({ commit, getters }) {
 export async function updateUiLyric({ commit, getters }, { ignoreCache = false } = {}) {
     const track = getters.playing;
     if (track && track.id) {
+        document.title = `${track.name} | Electron NCM`;
         commit(types.SET_LYRIC_LOADING, true);
         const lyric = await ApiTyped.getMusicLyric(track.id, ignoreCache);
         commit(types.SET_ACTIVE_LYRIC, lyric);
         commit(types.SET_LYRIC_LOADING, false);
     } else {
+        document.title = 'Electron NCM';
         commit(types.SET_ACTIVE_LYRIC, {});
     }
 }
