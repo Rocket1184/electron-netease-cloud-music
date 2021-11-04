@@ -96,10 +96,10 @@ import { isDarwin, browserWindow } from '@/util/globals';
 import { UPDATE_SETTINGS, SET_USER_SIGN_STATUS } from '@/store/mutation-types';
 
 const SignIcon = {
-    0: 'looks_5',
-    2: 'looks_3',
-    3: 'looks_two',
-    5: 'check_circle'
+    [0b00]: 'radio_button_unchecked',
+    [0b01]: 'contrast',
+    [0b10]: 'contrast',
+    [0b11]: 'check_circle'
 };
 
 export default {
@@ -133,16 +133,16 @@ export default {
             return this.user.info.bkgUrl && bkgImg(sizeImg(this.user.info.bkgUrl, HiDpiPx(300), HiDpiPx(200)));
         },
         signLevel() {
-            let res = 0;
-            if (this.user.signStatus.pcSign) res += 2;
-            if (this.user.signStatus.mobileSign) res += 3;
+            let res = 0b00;
+            if (this.user.signStatus.pcSign) res += 0b01;
+            if (this.user.signStatus.mobileSign) res += 0b10;
             return res;
         },
         btnSignDisabled() {
-            return this.user.signPending || this.signLevel === 5;
+            return this.user.signPending || this.signLevel === 0b11;
         },
         btnSignText() {
-            if (this.signLevel === 5) return '已签到';
+            if (this.signLevel === 0b11) return '已签到';
             return '未签到';
         },
         btnSignIcon() {

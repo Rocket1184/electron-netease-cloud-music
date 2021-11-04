@@ -51,6 +51,7 @@
     "entities": "^3.0.1",
     "lodash": "^4.17.21",
     "lrc-kit": "^1.1.1",
+    "material-design-icons-iconfont": "^6.1.1",
     "muse-ui-message": "^0.2.1",
     "muse-ui-toast": "^0.3.0",
     "v-distpicker": "^1.2.12",
