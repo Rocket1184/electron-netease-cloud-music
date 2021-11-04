@@ -8,8 +8,12 @@ import {
     RESTORE_UI_STATE,
     RESTORE_PLAYLIST,
     SET_AUDIO_VOLUME,
-    SET_AUDIO_PAUSED
+    SET_AUDIO_PAUSED,
+    SET_LOOP_MODE_LIST,
+    SET_LOOP_MODE_SINGLE,
+    SET_LOOP_MODE_RANDOM
 } from '@/store/mutation-types';
+import { LOOP_MODE } from '@/store/modules/playlist';
 
 const MPRISEmitter = new EventEmitter();
 const TAG = 'MPRIS:IPC';
@@ -43,7 +47,6 @@ export function bindAudioElement(audioEl) {
     });
     MPRISEmitter.on('stop', () => audioEl.currentTime = 0);
     ipcSend('renderer-ready');
-    // TODO: MPRIS `LoopStatus` and `Shuffle` support; which DE support those props?
 }
 
 const debounceVolume = debounce(volume => ipcSend('volume', volume), 100);
@@ -66,6 +69,24 @@ function trimMetadata(track, picUrl) {
     };
 }
 
+function sendLoopMode(mode) {
+    let shuffle = false;
+    let loop = 'Playlist';
+    switch (mode) {
+        case LOOP_MODE.LIST:
+            shuffle = false;
+            break;
+        case LOOP_MODE.SINGLE:
+            loop = 'Track';
+            break;
+        case LOOP_MODE.RANDOM:
+            shuffle = true;
+            break;
+    }
+    ipcSend('shuffle', shuffle);
+    ipcSend('loop', loop);
+}
+
 /**
  * Vuex mutation subscribe handler
  * @param {import('vuex').MutationPayload} mutation 
@@ -83,6 +104,7 @@ function subscribeHandler(mutation, state) {
                 ipcSend('metadata', null);
                 ipcSend('stop');
             }
+            sendLoopMode(queue.loopMode);
             break;
         case SET_AUDIO_PAUSED:
             ipcSend(mutation.payload === true ? 'pause' : 'play');
@@ -98,6 +120,11 @@ function subscribeHandler(mutation, state) {
                 volume = state.ui.audioVolume;
             }
             debounceVolume(volume);
+            break;
+        case SET_LOOP_MODE_LIST:
+        case SET_LOOP_MODE_SINGLE:
+        case SET_LOOP_MODE_RANDOM:
+            sendLoopMode(queue.loopMode);
             break;
     }
 }
@@ -126,5 +153,34 @@ export function injectStore(store) {
             mute = false;
         }
         store.dispatch('setAudioVolume', { volume, mute });
+    });
+    MPRISEmitter.on('loop', loop => {
+        switch (loop) {
+            case 'None':
+                // TODO: add 'None' loop mode
+                store.commit(SET_LOOP_MODE_LIST);
+                break;
+            case 'Track':
+                store.commit(SET_LOOP_MODE_SINGLE);
+                break;
+            case 'Playlist':
+                store.commit(SET_LOOP_MODE_LIST);
+                break;
+        }
+    });
+    MPRISEmitter.on('shuffle', shuffle => {
+        const { loopMode } = store.getters.queue;
+        switch (shuffle) {
+            case true:
+                if (loopMode !== LOOP_MODE.RANDOM) {
+                    store.commit(SET_LOOP_MODE_RANDOM);
+                }
+                break;
+            case false:
+                if (loopMode === LOOP_MODE.RANDOM) {
+                    store.commit(SET_LOOP_MODE_LIST);
+                }
+                break;
+        }
     });
 }
