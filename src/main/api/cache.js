@@ -8,8 +8,9 @@ class Cache {
     /**
      * @param {string} path cache directory path
      * @param {string} configPath config directory path
+     * @param {number} cacheLimitcache size limit in bytes. 0 means unlimited
      */
-    constructor(path, configPath) {
+    constructor(path, configPath, cacheLimit) {
         if (typeof path === 'string') {
             if (!fs.existsSync(path)) {
                 fs.mkdirSync(path);
@@ -34,6 +35,7 @@ class Cache {
         } else {
             throw new Error('Cache path unvalid');
         }
+        this.cacheLimit = cacheLimit;
     }
 
     attachExternalCache(fileName, filePath) {
@@ -56,7 +58,35 @@ class Cache {
         return path.join(this.path, String(fileName));
     }
 
+    async setCacheLimit(newSize) {
+        this.cacheLimit = newSize;
+        this.spareSpace();
+    }
+
+    /**
+     * delete cache until cache size <= limit
+     */
+    spareSpace() {
+        if (this.cacheLimit === 0) return;
+
+        const stats = fs.readdirSync(this.path)
+                        .map(f => ({name: f, attr: fs.statSync(path.join(this.path, f))}))
+                        .filter(f => f.attr.isFile());
+        let diskUsage = stats.reduce((x, y)=> x + y.attr.size, 0);
+        if (diskUsage <= this.cacheLimit)
+            return;
+        stats.sort((a, b)=> a.attr.atime < b.attr.atime);
+        for (const st of stats) {
+            const size = st.attr.size;
+            diskUsage -= size;
+            fs.unlinkSync(path.join(this.path, st.name));
+            if (diskUsage <= this.cacheLimit)
+                break;
+        }
+    }
+
     writeStream(fileName) {
+        this.spareSpace();
         return fs.createWriteStream(this.internalPath(fileName));
     }
 
