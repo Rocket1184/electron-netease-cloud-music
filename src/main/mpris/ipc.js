@@ -9,7 +9,7 @@ const d = debug(TAG);
 let msgId = 0;
 //      method/setter      ipc
 // DBus ------------> Main --> Renderer
-const DBusEvents = ['raise', 'quit', 'next', 'prev', 'play', 'pause', 'stop', 'seek', 'volume', 'position'];
+const DBusEvents = ['raise', 'quit', 'next', 'prev', 'play', 'pause', 'stop', 'seek', 'volume', 'position', 'shuffle', 'loop'];
 
 ipcMain.on(TAG, (_, /** @type {string} */ type, ...args) => {
     d('↓ %s', type);

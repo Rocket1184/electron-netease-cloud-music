@@ -22,7 +22,7 @@ const i = {
 
 let serviceName = 'ElectronNCM';
 if (process.env.NODE_ENV === 'development') {
-    serviceName += '.debug';
+    serviceName += '.dev';
 }
 
 class MediaPlayer2 extends Interface {
@@ -170,25 +170,44 @@ class MediaPlayer2Player extends Interface {
             Track: 'Track',
             Playlist: 'Playlist'
         }
+    };
+
+    @property({ signature: 's', access: ACCESS_READWRITE })
+    get LoopStatus() {
+        return this._LoopStatus.value;
     }
 
-    // @property({ signature: 's', access: ACCESS_READWRITE })
-    // get LoopStatus() {
-    //     return this._LoopStatus.value;
-    // }
+    set LoopStatus(value) {
+        this.setLoopStatus(value);
+        this.emitter.emit('dbus:loop', value);
+    }
 
-    // set LoopStatus(value) {
-    //     this._LoopStatus.value = value;
-    //     Interface.emitPropertiesChanged(this, {
-    //         Metadata: this._LoopStatus.value
-    //     });
-    // }
+    setLoopStatus(value) {
+        this._LoopStatus.value = value;
+        Interface.emitPropertiesChanged(this, {
+            LoopStatus: this._LoopStatus.value
+        });
+    }
 
-    // @property({ signature: 'b', access: ACCESS_READWRITE })
-    // Shuffle = false;
+    _Shuffle = false;
+
+    @property({ signature: 'b', access: ACCESS_READWRITE })
+    get Shuffle() { return this._Shuffle; }
+
+    set Shuffle(value) {
+        this.setShuffle(value);
+        this.emitter.emit('dbus:shuffle', value);
+    }
+
+    setShuffle(value) {
+        this._Shuffle = value;
+        Interface.emitPropertiesChanged(this, {
+            Shuffle: this._Shuffle
+        });
+    }
 
     _Volume = 1.0;
-    _ThrottledVloume = throttle(value => this.emitter.emit('dbus:volume', Math.trunc(value * 100)), 100)
+    _ThrottledVloume = throttle(value => this.emitter.emit('dbus:volume', Math.trunc(value * 100)), 100);
 
     @property({ signature: 'd', access: ACCESS_READWRITE })
     get Volume() { return this._Volume; }
@@ -277,6 +296,12 @@ class MediaPlayer2Player extends Interface {
         this.timer.offset(offset * 1e3);
     }
 
+    @method({ inSignature: 's' })
+    OpenUri(Uri) {
+        d('method: OpenUri, %s', Uri);
+        // TODO: fit something here
+    }
+
     @method({ inSignature: 'ox' })
     SetPosition(TrackId, Position) {
         d('method: SetPosition %s %d', TrackId, Position);
@@ -311,8 +336,8 @@ class MPRISEmitter extends EventEmitter {
         this.on('play', () => this.mp2Player.setPlaybackStatus(this.mp2Player._PlaybackStatus.types.Playing));
         this.on('pause', () => this.mp2Player.setPlaybackStatus(this.mp2Player._PlaybackStatus.types.Paused));
         this.on('stop', () => this.mp2Player.setPlaybackStatus(this.mp2Player._PlaybackStatus.types.Stopped));
-        this.on('loopStatus', val => this.mp2Player.LoopStatus = val);
-        this.on('shuffle', shuf => this.mp2Player.Shuffle = shuf);
+        this.on('loop', loop => this.mp2Player.setLoopStatus(loop));
+        this.on('shuffle', shuffle => this.mp2Player.setShuffle(shuffle));
         this.on('metadata', meta => this.mp2Player.setMetadata(meta));
         this.on('volume', vol => this.mp2Player.setVolume(vol));
         this.on('seeked', seconds => this.mp2Player.Seeked(seconds));
