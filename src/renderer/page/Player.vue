@@ -58,21 +58,42 @@
                 <mu-button flat
                     small
                     color="black"
-                    @click="toggleShare">
-                    <mu-icon left
-                        :size="18"
-                        value="share"></mu-icon>
-                    <span>分享</span>
-                </mu-button>
-                <mu-button flat
-                    small
-                    color="black"
                     @click="handleDownload">
                     <mu-icon left
                         :size="18"
                         :value="ui.downloaded ? 'done' : 'get_app'"></mu-icon>
                     <span>{{ ui.downloading ? '下载中' : ui.downloaded ? '已下载' : '下载' }}</span>
                 </mu-button>
+                <mu-menu cover
+                    placement="top-end"
+                    :open.sync="moreMenuOpen">
+                    <mu-button flat
+                        small
+                        color="black">
+                        <mu-icon left
+                            :size="18"
+                            value="more_horiz"></mu-icon>
+                        <span>更多</span>
+                    </mu-button>
+                    <template #content>
+                        <mu-list dense>
+                            <mu-list-item button
+                                @click="saveCoverImage">
+                                <mu-list-item-action>
+                                    <mu-icon value="image"></mu-icon>
+                                </mu-list-item-action>
+                                <mu-list-item-title>保存封面</mu-list-item-title>
+                            </mu-list-item>
+                            <mu-list-item button
+                                @click="toggleShare">
+                                <mu-list-item-action>
+                                    <mu-icon value="share"></mu-icon>
+                                </mu-list-item-action>
+                                <mu-list-item-title>分享</mu-list-item-title>
+                            </mu-list-item>
+                        </mu-list>
+                    </template>
+                </mu-menu>
             </div>
         </div>
         <div class="info">
@@ -230,6 +251,7 @@ export default {
             threadLiked: false,
             commentCount: '...',
             currentLyricIndex: -1,
+            moreMenuOpen: false,
             dlgShareOpen: false
         };
     },
@@ -389,6 +411,8 @@ export default {
             this.toggleCollectPopup(this.playing.id);
         },
         toggleShare() {
+            this.moreMenuOpen = false;
+            if (!this.shareText) return;
             this.dlgShareOpen = !this.dlgShareOpen;
             if (this.dlgShareOpen) this.$nextTick(() => {
                 /** @type {HTMLDivElement} */
@@ -419,6 +443,21 @@ export default {
             if (!result.success) {
                 this.$toast.error(result.error);
             }
+        },
+        async saveCoverImage() {
+            this.moreMenuOpen = false;
+            const src = this.ui.coverImgSrc;
+            if (!src) return;
+            const image = await fetch(src);
+            const blob = await image.blob();
+            const href = URL.createObjectURL(blob);
+            let a = document.createElement('a');
+            a.setAttribute('download', `${this.playing.album.name}.${blob.type.replace('image/', '')}`);
+            a.setAttribute('href', href);
+            a.click();
+            URL.revokeObjectURL(href);
+            a.remove();
+            a = null;
         }
     },
     watch: {
