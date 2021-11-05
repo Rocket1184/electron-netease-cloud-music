@@ -172,8 +172,8 @@
                     class="scroller-wrapper">
                     <div class="scroller"
                         :style="lyricScrollerStyle">
-                        <template v-if="ui.lyric.mlrc || ui.lyric.lrc">
-                            <div v-for="(line, index) of (ui.lyric.mlrc || ui.lyric.lrc).lyrics"
+                        <template v-if="lyricToShow">
+                            <div v-for="(line, index) of lyricToShow.lyrics"
                                 ref="lyric"
                                 class="line"
                                 :key="index"
@@ -270,6 +270,17 @@ export default {
                 return sizeImg(this.ui.coverImgSrc, HiDpiPx(220));
             }
             return discDefault;
+        },
+        lyricToShow() {
+            switch (this.settings.lyricTranslation) {
+                case 'translation':
+                    return this.ui.lyric.mlrc || this.ui.lyric.lrc;
+                case 'romaji':
+                    return this.ui.lyric.romalrc || this.ui.lyric.lrc;
+                case 'off':
+                default:
+                    return this.ui.lyric.lrc;
+            }
         },
         commentRoute() {
             const { id, source = {} } = this.playing;

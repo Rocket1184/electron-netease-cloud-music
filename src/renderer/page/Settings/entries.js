@@ -116,6 +116,16 @@ export const Entries = [
                 type: 'toggle',
                 title: '自动替换播放列表为当前歌单',
                 prop: 'autoReplacePlaylist'
+            },
+            {
+                type: 'select',
+                title: '外文歌词翻译',
+                prop: 'lyricTranslation',
+                options: [
+                    { label: '关闭', value: 'no' },
+                    { label: '翻译', value: 'translation' },
+                    { label: '罗马音', value: 'romaji' }
+                ]
             }
         ]
     },
