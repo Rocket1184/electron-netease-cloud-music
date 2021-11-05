@@ -398,6 +398,28 @@ export function replyCommentE(threadId, commentId, content) {
 const MusicLyric = {
     byTimestamp(a, b) {
         return a.timestamp - b.timestamp;
+    },
+    /**
+     * merge extra lyric to base
+     * @param {Lrc} base 
+     * @param {Lrc} extra
+     */
+    merge(base, extra) {
+        extra.lyrics.sort(MusicLyric.byTimestamp);
+        const r = base.clone();
+        let i = 0;
+        let j = 0;
+        while (i < r.lyrics.length && j < extra.lyrics.length) {
+            if (r.lyrics[i].timestamp === extra.lyrics[j].timestamp) {
+                r.lyrics[i].trans = extra.lyrics[j].content;
+                i++; j++;
+            } else if (r.lyrics[i].timestamp < extra.lyrics[j].timestamp) {
+                i++;
+            } else {
+                j++;
+            }
+        }
+        return r;
     }
 };
 
@@ -406,40 +428,26 @@ const MusicLyric = {
  * @returns {Promise<Types.MusicLyricRes>}
  */
 export async function getMusicLyric(id) {
-    const tmp = await client.postE('/song/lyric', { id, lv: 0, tv: 0, kv: 0 });
+    const res = await client.postE('/song/lyric', { id, cp: false, lv: 0, tv: 0, kv: 0, rv: 0 });
     let result = {};
-    if (tmp.lrc && tmp.lrc.lyric) {
-        const lrc = Lrc.parse(tmp.lrc.lyric);
+    if (res.lrc && res.lrc.lyric) {
+        result.lyricUser = res.lyricUser;
+        const lrc = Lrc.parse(res.lrc.lyric);
         if (lrc.lyrics.length > 0) {
             lrc.lyrics.sort(MusicLyric.byTimestamp);
             result.lrc = lrc;
         } else {
-            result.txtLyric = tmp.lrc.lyric;
+            result.txtLyric = res.lrc.lyric;
         }
-        result.lyricUser = tmp.lyricUser;
     }
-    if (tmp.tlyric && tmp.tlyric.lyric) {
-        result.transUser = tmp.transUser;
-        let tlrc = Lrc.parse(tmp.tlyric.lyric);
-        tlrc.lyrics.sort(MusicLyric.byTimestamp);
-        let mlrc = {
-            info: result.lrc.info,
-            transInfo: tlrc.info,
-            lyrics: result.lrc.lyrics.map(l => ({ ...l }))
-        };
-        let i = 0;
-        let j = 0;
-        while (i < mlrc.lyrics.length && j < tlrc.lyrics.length) {
-            if (mlrc.lyrics[i].timestamp === tlrc.lyrics[j].timestamp) {
-                mlrc.lyrics[i].trans = tlrc.lyrics[j].content;
-                i++; j++;
-            } else if (mlrc.lyrics[i].timestamp < tlrc.lyrics[j].timestamp) {
-                i++;
-            } else {
-                j++;
-            }
-        }
-        result.mlrc = mlrc;
+    if (res.tlyric && res.tlyric.lyric) {
+        result.transUser = res.transUser;
+        const tlrc = Lrc.parse(res.tlyric.lyric);
+        result.mlrc = MusicLyric.merge(result.lrc, tlrc);
+    }
+    if (res.romalrc && res.romalrc.lyric) {
+        const romalrc = Lrc.parse(res.romalrc.lyric);
+        result.romalrc = MusicLyric.merge(result.lrc, romalrc);
     }
     return result;
 }
