@@ -3,7 +3,10 @@
         :class="dynamicClassName"
         @dblclick="handleDblClick">
         <div v-if="index"
-            class="track-col index">{{index}}</div>
+            class="track-col index">
+            <i v-if="isPlaying" class="material-icons">volume_up</i>
+            <template v-else>{{ index }}</template>
+        </div>
         <div class="track-col name">{{track.name}}</div>
         <div class="track-col artist">
             <template v-for="(ar, index) in track.artists">
@@ -57,6 +60,9 @@ export default {
         }
     },
     computed: {
+        isPlaying() {
+            return this.$store.getters.playing.id === this.track.id;
+        },
         dynamicClassName() {
             return {
                 'track--grey': (this.track.privilege && this.track.privilege.st !== 0)
@@ -88,6 +94,12 @@ export default {
     .index {
         width: 46px;
         text-align: center;
+        color: var(--secondary-text-color);
+        .material-icons {
+            line-height: 40px;
+            font-size: 18px;
+            color: var(--accent-color);
+        }
     }
     .name,
     .album,
