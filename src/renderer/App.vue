@@ -55,6 +55,7 @@ export default {
     position: relative;
     margin-top: 64px;
     .ncm-page {
+        background-color: var(--background-color);
         width: 100%;
         height: 100%;
         overflow: auto;

@@ -11,10 +11,14 @@ const overrides = {
  */
 export function initTheme(theme, extendName) {
     MuseUI.theme.addCreateTheme((theme) => {
-        return `
-.player-bar,.ncm-page{background-color:${theme.background.default}}
-.action-item:hover .mu-icon{color:${theme.background.default}}
-`.trim();
+        return `body{
+--primary-color:${theme.primary};
+--accent-color:${theme.secondary};
+--text-color:${theme.text.primary};
+--secondary-text-color:${theme.text.secondary};
+--hint-text-color:${theme.text.hint};
+--background-color:${theme.background.default};
+}`;
     });
     setTheme(theme, extendName);
 }

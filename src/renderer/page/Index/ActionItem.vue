@@ -49,8 +49,10 @@ export default {
     }
     &:hover {
         .item-icon {
-            // icon color set in @/main.js `MuseUI.theme.addCreateTheme`
-            background-color: currentColor;
+            background-color: var(--primary-color);
+            .mu-icon {
+                color: var(--background-color);
+            }
         }
     }
 }

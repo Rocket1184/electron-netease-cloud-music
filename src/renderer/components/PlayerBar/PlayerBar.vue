@@ -484,6 +484,7 @@ export default {
 
 <style lang="less">
 .player-bar {
+    background-color: var(--background-color);
     box-shadow: 0 2px 12px rgba(0, 0, 0, 0.4);
     display: flex;
     user-select: none;
