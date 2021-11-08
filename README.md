@@ -3,8 +3,7 @@
 **UNOFFICIAL** client for music.163.com . Powered by [Electron](https://electronjs.org), [Vue](https://vuejs.org), and [Muse-UI](https://muse-ui.org).
 
 [![build status](https://api.travis-ci.com/Rocket1184/electron-netease-cloud-music.svg?branch=master)](https://app.travis-ci.com/github/Rocket1184/electron-netease-cloud-music/builds)
-[![dependencies staus](https://david-dm.org/rocket1184/electron-netease-cloud-music/status.svg)](https://david-dm.org/rocket1184/electron-netease-cloud-music)
-[![devDependencies staus](https://david-dm.org/rocket1184/electron-netease-cloud-music/dev-status.svg)](https://david-dm.org/rocket1184/electron-netease-cloud-music?type=dev)
+[![GitHub release (latest SemVer)](https://img.shields.io/github/v/release/Rocket1184/electron-netease-cloud-music)](https://github.com/Rocket1184/electron-netease-cloud-music/releases/latest)
 
 ## ScreenShots
 
