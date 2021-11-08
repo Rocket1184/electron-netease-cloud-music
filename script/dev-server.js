@@ -51,4 +51,4 @@ const wdsConf = {
     }
 };
 
-new WebpackDevServer(webpack(compileCfg), wdsConf).listen(config.devPort);
+new WebpackDevServer(wdsConf, webpack(compileCfg)).start();
