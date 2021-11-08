@@ -257,6 +257,7 @@ export default {
 }
 
 .appbar-drawer {
+    border-radius: 0;
     user-select: none;
     .header {
         display: flex;
