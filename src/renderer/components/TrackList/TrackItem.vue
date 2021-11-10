@@ -136,13 +136,10 @@ export default {
 .track--grey {
     .name,
     .artist,
-    .duration {
-        opacity: 0.4;
-    }
-    .buttons {
-        .mu-icon {
-            opacity: 0.3;
-        }
+    .album,
+    .duration,
+    .buttons .mu-icon {
+        color: var(--disabled-text-color);
     }
 }
 </style>

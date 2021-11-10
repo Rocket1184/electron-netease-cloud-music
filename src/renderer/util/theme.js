@@ -17,6 +17,7 @@ export function initTheme(theme, extendName) {
 --text-color:${theme.text.primary};
 --secondary-text-color:${theme.text.secondary};
 --hint-text-color:${theme.text.hint};
+--disabled-text-color:${theme.text.disabled};
 --background-color:${theme.background.default};
 }`;
     });
