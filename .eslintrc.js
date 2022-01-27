@@ -4,8 +4,9 @@ module.exports = {
         'dist/',
         'build/'
     ],
-    parser: '@babel/eslint-parser',
+    parser: 'vue-eslint-parser',
     parserOptions: {
+        parser: '@babel/eslint-parser',
         sourceType: 'module',
         requireConfigFile: false,
         babelOptions: {
@@ -25,12 +26,14 @@ module.exports = {
     ],
     extends: [
         'eslint:recommended',
+        'plugin:vue/base',
         'plugin:vue/essential'
     ],
     rules: {
         'semi': 'error',
         'no-console': 'error',
         'no-case-declarations': 'off',
-        'require-atomic-updates': 'off'
+        'require-atomic-updates': 'off',
+        'vue/multi-word-component-names': 'off'
     }
 };
