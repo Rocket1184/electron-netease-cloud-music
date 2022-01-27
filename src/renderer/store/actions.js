@@ -124,7 +124,7 @@ export async function updateUserSignStatus({ commit }) {
 /**
  * @param {ActionContext} param0
  */
-export async function signDailyTask({ commit }, { type }) {
+export async function postDailyTask({ commit }, { type }) {
     commit(types.SET_USER_SIGN_PENDING, true);
     let resp;
     switch (type) {
@@ -151,13 +151,15 @@ export async function signDailyTask({ commit }, { type }) {
 export async function checkin({ state, dispatch }) {
     let points = 0;
     if (!state.user.signStatus.mobileSign) {
-        const resp = await dispatch('signDailyTask', { type: 0 });
+        const resp = await dispatch('postDailyTask', { type: 0 });
         if (resp.code === 200) points += resp.point;
     }
     if (!state.user.signStatus.pcSign) {
-        const resp = await dispatch('signDailyTask', { type: 1 });
+        const resp = await dispatch('postDailyTask', { type: 1 });
         if (resp.code === 200) points += resp.point;
     }
+    // maybe netease have merged 2 daily task types?
+    await dispatch('updateUserSignStatus');
     return points;
 }
 
