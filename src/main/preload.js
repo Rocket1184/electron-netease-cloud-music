@@ -8,11 +8,10 @@ let settings = {};
 try {
     settings = JSON.parse(process.argv.find(v => v.startsWith(arg)).slice(arg.length));
 } finally {
-    if (!sessionStorage.getItem('settings')) {
-        sessionStorage.setItem('settings', JSON.stringify(settings));
-    }
-}
-
-if (!localStorage.getItem('debug')) {
-    localStorage.setItem('debug', 'API');
+    Object.defineProperty(globalThis, '__initial_settings', {
+        configurable: false,
+        enumerable: false,
+        writable: false,
+        value: settings
+    });
 }

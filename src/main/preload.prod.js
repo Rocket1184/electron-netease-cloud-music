@@ -22,7 +22,10 @@ let settings = {};
 try {
     settings = JSON.parse(process.argv.find(v => v.startsWith(arg)).slice(arg.length));
 } finally {
-    if (!sessionStorage.getItem('settings')) {
-        sessionStorage.setItem('settings', JSON.stringify(settings));
-    }
+    Object.defineProperty(globalThis, '__initial_settings', {
+        configurable: false,
+        enumerable: false,
+        writable: false,
+        value: settings
+    });
 }
