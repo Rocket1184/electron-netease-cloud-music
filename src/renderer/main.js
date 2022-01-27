@@ -8,6 +8,7 @@ import { RecycleScroller } from 'vue-virtual-scroller/dist/vue-virtual-scroller.
 
 import App from './App.vue';
 import store from './store';
+import { UPDATE_SETTINGS } from './store/mutation-types';
 import routes from './routes';
 import { isLinux } from './util/globals';
 import { initTheme, setTheme } from './util/theme';
@@ -23,10 +24,23 @@ Vue.use(Message);
 Vue.use(DblclickRipple);
 Vue.component('RecycleScroller', RecycleScroller);
 
+if (process.env.NODE_ENV === 'development') {
+    if (!localStorage.getItem('debug')) {
+        localStorage.setItem('debug', 'API');
+    }
+}
+
 const darkMediaQuery = window.matchMedia('(prefers-color-scheme: dark)');
 
 try {
-    const settings = JSON.parse(sessionStorage.getItem('settings'));
+    let settings;
+    const previousSettings = settings = sessionStorage.getItem('settings');
+    if (previousSettings) {
+        settings = JSON.parse(previousSettings);
+    } else {
+        settings = globalThis.__initial_settings;
+    }
+    store.commit(UPDATE_SETTINGS, settings);
     const themeVariety = settings.themeVariety === 'auto'
         ? (darkMediaQuery.matches ? 'dark' : 'light')
         : settings.themeVariety;

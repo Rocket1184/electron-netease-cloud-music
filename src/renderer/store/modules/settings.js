@@ -23,17 +23,7 @@ const DefaultSettings = {
  * @typedef {typeof DefaultSettings} State
  * @type {State}
  */
-let state;
-
-try {
-    const str = sessionStorage.getItem('settings');
-    if (str) {
-        state = JSON.parse(str);
-    }
-} catch (e) {
-    sessionStorage.removeItem('settings');
-    state = Object.assign({}, DefaultSettings);
-}
+const state = Object.assign({}, DefaultSettings);
 
 /**
  * @type {{ [x: string]: (state: State, payload: any) => void }}
