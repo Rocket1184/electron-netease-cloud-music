@@ -81,8 +81,7 @@ export default {
             const resp = await Api.deleteComment(this.thread, commentId);
             if (resp.code === 200) {
                 this.$toast.message('删除评论成功');
-                const index = this.comments.findIndex(cmt => cmt.commentId === commentId);
-                this.comments.splice(index, 1);
+                this.$emit('update:comments', this.comments.filter(c => c.commentId !== commentId));
             } else {
                 this.$toast.message(`删除评论失败 ... ${resp.code}: ${resp.msg}`);
             }

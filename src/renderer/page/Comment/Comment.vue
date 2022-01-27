@@ -21,7 +21,7 @@
                 <keep-alive>
                     <CommentList :key="tab"
                         :thread="thread"
-                        v-bind="comment[tab]"
+                        v-bind.sync="comment[tab]"
                         @page="loadComments"
                         @reply="handleReply"></CommentList>
                 </keep-alive>
@@ -185,14 +185,15 @@ export default {
             } else {
                 resp = await Api.addComment(this.thread, this.editorContent);
             }
-            this.posting = false;
             if (resp.code === 200) {
                 this.editorOpen = false;
                 this.tab = 'all';
+                await new Promise(_ => setTimeout(_, 500));
                 this.loadComments();
             } else {
                 this.$toast.message(`发布评论失败 ...  ${resp.code}: ${resp.msg}`);
             }
+            this.posting = false;
         }
     },
     watch: {
