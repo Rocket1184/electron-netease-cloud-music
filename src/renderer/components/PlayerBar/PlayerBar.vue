@@ -19,7 +19,11 @@
                     <span class="artist">{{playing.artistName}}</span>
                 </div>
                 <div class="shortcut">
-                    <div title="喜欢">
+                    <div v-if="isDjRadioProgram">
+                        <!-- hide like button for now -->
+                        <div class="icon-placeholder"></div>
+                    </div>
+                    <div v-else title="喜欢">
                         <mu-checkbox uncheck-icon="favorite_border"
                             checked-icon="favorite"
                             color="red"
@@ -331,6 +335,10 @@ export default {
         songProgress() {
             return 100 * this.timeCurrent / this.timeTotal || 0;
         },
+        isDjRadioProgram() {
+            const { source = {} } = this.playing;
+            return (source && source.djradio);
+        },
         isFavorite() {
             if (!this.user.loginValid || !this.playing) {
                 return false;
@@ -561,6 +569,10 @@ export default {
                 display: flex;
                 justify-content: space-between;
                 font-size: 0;
+                .icon-placeholder {
+                    width: 24px;
+                    height: 24px;
+                }
             }
         }
         .progress {
