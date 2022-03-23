@@ -109,6 +109,8 @@ function subscribeHandler(mutation, state) {
         case SET_AUDIO_PAUSED:
             ipcSend(mutation.payload === true ? 'pause' : 'play');
             break;
+        // since mpris is injected after Vue instance creation, it may not be
+        // able to receive `RESTORE_UI_STATE` mutation. keep it here anyway.
         case RESTORE_UI_STATE:
             ipcSend('volume', mutation.payload.audioVolume);
             break;
@@ -135,6 +137,8 @@ function subscribeHandler(mutation, state) {
 export function injectStore(store) {
     // ensure 'PlaybackStatus' is 'Stopped' when this module loads
     ipcSend('stop');
+    // send volume once on inject
+    ipcSend('volume', store.state.ui.audioVolume);
     store.subscribe(subscribeHandler);
     MPRISEmitter.on('play', () => store.dispatch('playAudio'));
     MPRISEmitter.on('stop', () => store.dispatch('pauseAudio'));
