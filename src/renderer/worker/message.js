@@ -1,8 +1,6 @@
-import Worker from './worker';
-
 let resolveId = 0;
 const ResolveMap = new Map();
-const worker = new Worker();
+const worker = new Worker(new URL('./worker', import.meta.url));
 
 /**
  * @typedef {keyof import('./worker')} WorkerMethodNames
@@ -22,8 +20,9 @@ export function workerExecute(method, ...args) {
 
 worker.addEventListener('message', ev => {
     const { id, result } = ev.data;
-    if (ResolveMap.has(id)) {
-        ResolveMap.get(id).call(null, result);
+    const resolve = ResolveMap.get(id);
+    if (resolve) {
+        resolve.call(null, result);
         ResolveMap.delete(id);
     }
 });

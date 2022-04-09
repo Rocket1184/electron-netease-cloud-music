@@ -36,8 +36,7 @@ let cfg = {
     },
     resolve: {
         alias: {
-            'x11': false,
-            'jsbi': 'jsbi/dist/jsbi-cjs.js'
+            'x11': false
         }
     },
     node: {
@@ -51,7 +50,6 @@ if (isProd) {
     cfg.mode = 'production';
     cfg.devtool = 'source-map';
     cfg.entry.preload = absPath('src/main/preload.prod.js');
-    cfg.resolve.alias.bindings = absPath('src/main/mpris/fake-bindings.js');
     cfg.plugins = [
         new webpack.DefinePlugin({ 'process.env.NODE_ENV': '"production"' }),
         new webpack.DefinePlugin({ 'process.env.MAIN_URL': '`file://${__dirname}/index.html`' }),
@@ -62,9 +60,8 @@ if (isProd) {
                     to: absPath('dist'),
                     transform: (content) => {
                         const json = JSON.parse(content.toString('utf8'));
-                        const exclude = ['scripts', 'dependencies', 'devDependencies'];
-                        const replacer = (key, value) => exclude.includes(key) ? undefined : value;
-                        return JSON.stringify(json, replacer, 0);
+                        const include = ['name', 'version', 'description', 'main', 'author', 'license', 'repository'];
+                        return JSON.stringify(json, include, 0);
                     }
                 },
                 {
