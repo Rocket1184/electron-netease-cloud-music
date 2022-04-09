@@ -1,5 +1,7 @@
 'use strict';
 
+const path = require('path');
+
 const { VueLoaderPlugin } = require('vue-loader');
 const HtmlWebpackPlugin = require('html-webpack-plugin');
 const MiniCSSExtractPlugin = require('mini-css-extract-plugin');
@@ -21,7 +23,17 @@ let cfg = {
     output: {
         filename: '[name].js',
         path: absPath('dist'),
-        publicPath: ''
+        // fix source map directory structure
+        // https://github.com/vuejs/vue-cli/issues/2978#issuecomment-473240405
+        // https://webpack.js.org/configuration/output/#outputdevtoolmodulefilenametemplate
+        devtoolModuleFilenameTemplate: (info) => {
+            const isGeneratedDuplicate = info.resourcePath.match(/\.vue$/) && info.allLoaders;
+            if (isGeneratedDuplicate) {
+                return `webpack-generated:///${info.resourcePath}?${info.hash}`;
+            }
+            return `webpack:///${path.normalize(info.resourcePath)}`;
+        },
+        devtoolFallbackModuleFilenameTemplate: 'webpack:///[resource-path]?[hash]'
     },
     module: {
         rules: [
