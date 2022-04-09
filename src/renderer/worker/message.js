@@ -1,6 +1,9 @@
 let resolveId = 0;
 const ResolveMap = new Map();
-const worker = new Worker(new URL('./worker', import.meta.url));
+const worker = new Worker(new URL('./worker', import.meta.url), {
+    name: 'worker', // also used as webpack entry name
+    type: 'module'
+});
 
 /**
  * @typedef {keyof import('./worker')} WorkerMethodNames
