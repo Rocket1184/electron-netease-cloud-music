@@ -353,13 +353,11 @@ export async function updateUiCoverImgSrc({ commit, getters }) {
 export async function updateUiLyric({ commit, getters }, { ignoreCache = false } = {}) {
     const track = getters.playing;
     if (track && track.id) {
-        document.title = `${track.name} | Electron NCM`;
         commit(types.SET_LYRIC_LOADING, true);
         const lyric = await ApiTyped.getMusicLyric(track.id, ignoreCache);
         commit(types.SET_ACTIVE_LYRIC, lyric);
         commit(types.SET_LYRIC_LOADING, false);
     } else {
-        document.title = 'Electron NCM';
         commit(types.SET_ACTIVE_LYRIC, {});
     }
 }
@@ -367,7 +365,20 @@ export async function updateUiLyric({ commit, getters }, { ignoreCache = false }
 /**
  * @param {ActionContext} param0
  */
+export function updateDocumentTitle({ getters }) {
+    const track = getters.playing;
+    if (track && track.id) {
+        document.title = `${track.name} | Electron NCM`;
+    } else {
+        document.title = 'Electron NCM';
+    }
+}
+
+/**
+ * @param {ActionContext} param0
+ */
 export function updateUiTrack({ dispatch }) {
+    dispatch('updateDocumentTitle');
     dispatch('updateUiLyric');
     dispatch('updateUiCoverImgSrc');
     return dispatch('updateUiAudioSrc');
@@ -552,9 +563,9 @@ export async function favoriteTrack(_, { id, favorite = true }) {
  * @param {ActionContext} _
  */
 export async function downloadTrack({ commit }, { metadata, quality }) {
-    commit(types.UPDATE_DOWNLOAD_STATE, [ false, true ]);
+    commit(types.UPDATE_DOWNLOAD_STATE, [false, true]);
     const result = await Api.downloadSong(metadata, quality);
-    commit(types.UPDATE_DOWNLOAD_STATE, [ result.success, false ]);
+    commit(types.UPDATE_DOWNLOAD_STATE, [result.success, false]);
     return result;
 }
 
@@ -563,7 +574,7 @@ export async function downloadTrack({ commit }, { metadata, quality }) {
  */
 export async function checkDownloaded({ commit }, { metadata }) {
     const result = await Api.checkDownloaded(metadata);
-    commit(types.UPDATE_DOWNLOAD_STATE, [ result, false ]);
+    commit(types.UPDATE_DOWNLOAD_STATE, [result, false]);
 }
 
 /**
