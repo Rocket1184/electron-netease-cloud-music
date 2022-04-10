@@ -88,6 +88,9 @@ window.onbeforeunload = () => {
 };
 
 const router = new Router({ routes });
+router.afterEach(() => {
+    store.dispatch('updateDocumentTitle');
+});
 if (store.state.settings.startupPage !== 'index') {
     router.replace({ name: store.state.settings.startupPage });
 }
