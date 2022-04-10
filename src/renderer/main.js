@@ -10,7 +10,7 @@ import App from './App.vue';
 import store from './store';
 import { UPDATE_SETTINGS } from './store/mutation-types';
 import routes from './routes';
-import { isLinux } from './util/globals';
+import { encm, isLinux } from './util/globals';
 import { initTheme, setTheme } from './util/theme';
 import DblclickRipple from './util/dblclick-ripple';
 import './style.css';
@@ -38,7 +38,7 @@ try {
     if (previousSettings) {
         settings = JSON.parse(previousSettings);
     } else {
-        settings = globalThis.__initial_settings;
+        settings = encm.initialSettings;
     }
     store.commit(UPDATE_SETTINGS, settings);
     const themeVariety = settings.themeVariety === 'auto'

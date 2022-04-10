@@ -1,7 +1,7 @@
-import { ipcRenderer } from 'electron';
-
 import debug from 'debug';
 import { EventEmitter } from 'eventemitter3';
+
+import { encm } from '@/util/globals';
 
 import {
     SET_LOGIN_VALID,
@@ -21,7 +21,7 @@ const TrayEmitter = new EventEmitter();
 const TAG = 'Tray';
 const d = debug(TAG);
 
-ipcRenderer.on(TAG, (event, /** @type {string} */ type, ...args) => {
+encm.on(TAG, (event, /** @type {string} */ type, ...args) => {
     d('🔻 %s %o', type, args);
     TrayEmitter.emit(type, ...args);
 });
@@ -32,7 +32,7 @@ ipcRenderer.on(TAG, (event, /** @type {string} */ type, ...args) => {
  */
 function send(type, ...args) {
     d('🔺 %s %o', type, args);
-    ipcRenderer.send(TAG, type, ...args);
+    encm.send(TAG, type, ...args);
 }
 
 /**

@@ -8,13 +8,12 @@ const MiniCSSExtractPlugin = require('mini-css-extract-plugin');
 
 const config = require('./config');
 const { isProd, absPath } = require('./util');
-const packageJson = require('../package.json');
 
 /** @type {import('webpack').Configuration} */
 let cfg = {
     performance: { hints: false },
     context: absPath('src/renderer'),
-    target: 'electron-renderer',
+    target: 'web',
     entry: {
         renderer: [
             './main.js'
@@ -121,11 +120,6 @@ if (isProd) {
         { test: /\.less$/, use: ['style-loader', 'css-loader', 'less-loader'] }
     );
     cfg.devtool = 'eval-cheap-module-source-map';
-    cfg.output.libraryTarget = 'commonjs2';
-    cfg.externals = Object.keys(packageJson.dependencies).filter(i => i !== 'dexie');
-    cfg.resolve.modules = [
-        absPath('node_modules')
-    ];
 }
 
 module.exports = cfg;

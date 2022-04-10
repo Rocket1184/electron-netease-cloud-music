@@ -49,7 +49,7 @@ if (isProd) {
     // release config
     cfg.mode = 'production';
     cfg.devtool = 'source-map';
-    cfg.entry.preload = absPath('src/main/preload.prod.js');
+    cfg.entry.preload = absPath('src/main/preload.js');
     cfg.plugins = [
         new webpack.DefinePlugin({ 'process.env.NODE_ENV': '"production"' }),
         new webpack.DefinePlugin({ 'process.env.MAIN_URL': '`file://${__dirname}/index.html`' }),

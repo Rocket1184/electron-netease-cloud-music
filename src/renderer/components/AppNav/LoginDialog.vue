@@ -71,8 +71,8 @@
 
 <script>
 import Api from '@/api/ipc';
+import { encm } from '@/util/globals';
 
-import { ipcRenderer } from 'electron';
 import { mapActions } from 'vuex';
 
 function initData() {
@@ -178,21 +178,15 @@ export default {
             setTimeout(() => this.$refs.inputUsr.$el.querySelector('input').focus(), 200);
         },
         openLoginWeb() {
-            ipcRenderer.send('showLoginWindow');
+            encm.send('showLoginWindow');
             setTimeout(() => this.webLoginStep = 1, 1000);
-        },
-        requestLoginCookies() {
-            return new Promise((resolve, reject) => {
-                ipcRenderer.send('getLoginCookie');
-                ipcRenderer.once('getLoginCookie', (event, cookie) => {
-                    resolve(cookie);
-                });
-                setTimeout(reject, 1000);
-            });
         },
         async handleWebLoginComplete() {
             try {
-                const cookie = await this.requestLoginCookies();
+                const cookie = await Promise.race([
+                    new Promise((_, reject) => setTimeout(reject, 1000)),
+                    encm.invoke('getLoginCookie')
+                ]);
                 await this.restoreUserInfo(cookie);
                 this.$emit('update:show', false);
             } catch (e) {

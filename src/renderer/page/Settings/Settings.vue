@@ -17,10 +17,10 @@
 </template>
 
 <script>
-import { ipcRenderer } from 'electron';
 import { mapState, mapActions } from 'vuex';
 
 import Api from '@/api/ipc';
+import { encm } from '@/util/globals';
 import { setTheme } from '@/util/theme';
 import { humanSize } from '@/util/formatter';
 import { UPDATE_SETTINGS } from '@/store/mutation-types';
@@ -148,13 +148,13 @@ export default {
             browserWindow.reload();
         },
         recreateWindow() {
-            ipcRenderer.send(IpcTag, 'recreateWindow');
+            encm.send(IpcTag, 'recreateWindow');
         },
         showVersions() {
             this.$alert(h => h('pre', { class: 'mono-font' }, Versions), '版本号');
         },
         openBrowser(url) {
-            ipcRenderer.invoke('openExternal', url).catch(() => {
+            encm.invoke('openExternal', url).catch(() => {
                 this.$alert(`无法打开您的浏览器，请直接访问 ${url}`, '提示');
             });
         },
@@ -189,7 +189,7 @@ export default {
                             }
                         // eslint-disable-nextline no-fallthrough
                         case 'exitOnWindowClose':
-                            ipcRenderer.send(IpcTag, key, val);
+                            encm.send(IpcTag, key, val);
                             break;
                         case 'bitRate':
                             if (val === 'ex') {

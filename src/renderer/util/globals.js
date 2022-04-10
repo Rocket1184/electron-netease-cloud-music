@@ -1,11 +1,10 @@
-import { ipcRenderer } from 'electron';
+export const encm = window.encm;
 
-/** @type {NodeJS.Process}*/
-export const process = globalThis.process;
+export const process = encm.nodejsProcess;
 export const isDarwin = process.platform === 'darwin';
 export const isLinux = process.platform === 'linux';
 
-const controlMainWindow = ipcRenderer.invoke.bind(null, 'controlMainWindow');
+const controlMainWindow = encm.invoke.bind(null, 'controlMainWindow');
 
 export const browserWindow = {
     maximize: controlMainWindow.bind(null, 'maximize'),
@@ -14,7 +13,7 @@ export const browserWindow = {
     reload: controlMainWindow.bind(null, 'reload')
 };
 
-const controlWebContents = ipcRenderer.invoke.bind(null, 'controlWebContents');
+const controlWebContents = encm.invoke.bind(null, 'controlWebContents');
 
 export const webContents = {
     setZoomFactor: controlWebContents.bind(null, 'setZoomFactor'),

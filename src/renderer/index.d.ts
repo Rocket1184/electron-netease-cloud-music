@@ -1,3 +1,19 @@
+type IpcRendererEventListener = (event: Electron.IpcRendererEvent, ...args: any[]) => void;
+
+export interface EncmContextBridgeAPI {
+    nodejsProcess: Pick<NodeJS.Process, ['platform', 'versions']>;
+    initialSettings: any;
+    on: (tag: string, callback: IpcRendererEventListener) => void;
+    send: (tag: string, ...args: any[]) => void;
+    invoke: (channel: string, ...args: any[]) => Promise<any>;
+}
+
+declare global {
+    interface Window {
+        encm: EncmContextBridgeAPI;
+    }
+}
+
 declare module '*.vue' {
     import Vue from 'vue';
     export default Vue;

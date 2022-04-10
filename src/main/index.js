@@ -55,9 +55,10 @@ function createMainWindow(settings, url = MainURL) {
         webPreferences: {
             zoomFactor: settings.windowZoom || 1,
             preload: join(__dirname, 'preload.js'),
-            nodeIntegration: IsDev,
-            nodeIntegrationInWorker: IsDev,
-            contextIsolation: false,
+            sandbox: true,
+            nodeIntegration: false,
+            contextIsolation: true,
+            spellcheck: false,
             autoplayPolicy: 'no-user-gesture-required',
             disableBlinkFeatures: 'MediaSession,MediaSessionPosition,MediaSessionSeeking', // this disables `navigator.mediaSession`
             additionalArguments: [`--initial-settings=${JSON.stringify(settings)}`]
@@ -194,6 +195,9 @@ ipcMain.on('showLoginWindow', () => {
         modal: !IsDarwin,
         webPreferences: {
             sandbox: true,
+            nodeIntegration: false,
+            contextIsolation: true,
+            spellcheck: false,
             nativeWindowOpen: true
         }
     });
@@ -210,15 +214,14 @@ ipcMain.on('showLoginWindow', () => {
         }
         // remove webRequest listener
         session.webRequest.onHeadersReceived(null);
-        ipcMain.once('getLoginCookie', event => {
-            session.cookies.get({ url: LoginURL }).then(cookies => {
-                const cookie = Object.fromEntries(cookies.map(ck => [ck.name, ck.value]));
-                event.sender.send('getLoginCookie', cookie);
-                session.clearCache();
-                session.clearStorageData({ origin: LoginURL });
-                loginWindow.destroy();
-                loginWindow = null;
-            });
+        ipcMain.handleOnce('getLoginCookie', async () => {
+            const cookies = await session.cookies.get({ url: LoginURL });
+            session.clearCache();
+            session.clearStorageData({ origin: LoginURL });
+            loginWindow.destroy();
+            loginWindow = null;
+            const cookie = Object.fromEntries(cookies.map(ck => [ck.name, ck.value]));
+            return cookie;
         });
         callback({ cancel: false });
         loginWindow.close();

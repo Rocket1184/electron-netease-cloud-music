@@ -1,7 +1,8 @@
 import debug from 'debug';
-import { ipcRenderer } from 'electron';
 import debounce from 'lodash/debounce';
 import { EventEmitter } from 'eventemitter3';
+
+import { encm } from '@/util/globals';
 
 import {
     SET_COVER_IMG_SRC,
@@ -22,13 +23,13 @@ const d = debug(TAG);
 //          ipc                         PropertiesChanged signal
 // Renderer --> Main(emit MPRIS events) -----------------------> DBus
 
-ipcRenderer.on(TAG, (event, type, id, ...args) => {
+encm.on(TAG, (event, type, id, ...args) => {
     d('🔻 %s %d %o', type, id, args);
     MPRISEmitter.emit(type, ...args);
 });
 
 function ipcSend(type, ...args) {
-    ipcRenderer.send(TAG, type, ...args);
+    encm.send(TAG, type, ...args);
     d('🔺 %s %o', type, args);
 }
 
