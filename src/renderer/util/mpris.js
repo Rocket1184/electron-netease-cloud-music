@@ -1,7 +1,7 @@
 import debug from 'debug';
-import { EventEmitter } from 'events';
 import { ipcRenderer } from 'electron';
 import debounce from 'lodash/debounce';
+import { EventEmitter } from 'eventemitter3';
 
 import {
     SET_COVER_IMG_SRC,

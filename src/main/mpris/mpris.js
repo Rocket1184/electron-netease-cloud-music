@@ -1,4 +1,4 @@
-import { EventEmitter } from 'events';
+import { EventEmitter } from 'eventemitter3';
 
 import debug from 'debug';
 import throttle from 'lodash/throttle';

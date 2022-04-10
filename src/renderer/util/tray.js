@@ -1,7 +1,7 @@
-import { EventEmitter } from 'events';
 import { ipcRenderer } from 'electron';
 
 import debug from 'debug';
+import { EventEmitter } from 'eventemitter3';
 
 import {
     SET_LOGIN_VALID,
