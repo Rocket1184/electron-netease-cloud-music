@@ -3,13 +3,6 @@
     "configurations": [
         {
             "type": "node",
-            "request": "launch",
-            "name": "Development",
-            "program": "${workspaceFolder}/script/dev-server.js",
-            "outputCapture": "std",
-        },
-        {
-            "type": "node",
             "request": "attach",
             "name": "Attach Main",
             "protocol": "inspector",
@@ -25,7 +18,7 @@
             "showAsyncStacks": true,
             "sourceMaps": true,
             "sourceMapPathOverrides": {
-                "webpack:///./*": "${workspaceRoot}/src/renderer/*"
+                "webpack:///*": "${workspaceRoot}/src/renderer/*"
             }
         }
     ]
