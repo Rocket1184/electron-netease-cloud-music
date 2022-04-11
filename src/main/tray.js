@@ -26,7 +26,7 @@ function requireIcon(name) {
  */
 function ellipsisText(str, length) {
     if (str.length <= length) return str;
-    return str.substr(0, length) + '...';
+    return str.substring(0, length) + '...';
 }
 
 function doDesktopHacks() {
