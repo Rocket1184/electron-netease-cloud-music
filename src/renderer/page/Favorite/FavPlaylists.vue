@@ -36,8 +36,6 @@
 </template>
 
 <script>
-import { mapState } from 'vuex';
-
 import { getPlaylistDetail } from '@/api/typed';
 import { SET_USER_PLAYLISTS } from '@/store/mutation-types';
 
@@ -48,12 +46,15 @@ import PlaylistDetail from '@/components/PlaylistDetail.vue';
 export default {
     data() {
         return {
+            /** @type {Models.PlayList} */
             playlist: null,
             detailLoading: false
         };
     },
     computed: {
-        ...mapState(['user']),
+        /** @returns {import('@/store/modules/user').State} */
+        user() { return this.$store.state.user; },
+        /** @returns {{ name: string, open: boolean, lists: Models.PlayList[] }[]} */
         listGroups() {
             if (!this.user.loginValid) return [];
             return [

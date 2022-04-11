@@ -115,36 +115,44 @@ export default {
         validRoutes() {
             return Routes.filter(r => r.title);
         },
+        /** @returns {string} */
         appbarDynamicClassName() {
             return {
                 'is-darwin': this.isDarwin,
                 'is-frameless': this.settings.windowBorder === false
             };
         },
+        /** @returns {string} */
         avatarUrl() {
             return sizeImg(this.user.info.avatarUrl, HiDpiPx(80));
         },
+        /** @returns {string} */
         username() {
             if (this.user.loginPending) return '登录中 ...';
             if (this.user.loginValid) return this.user.info.nickname;
             return '点击登录';
         },
+        /** @returns {string} */
         backgroundUrlStyle() {
             return this.user.info.bkgUrl && bkgImg(sizeImg(this.user.info.bkgUrl, HiDpiPx(300), HiDpiPx(200)));
         },
+        /** @returns {number} */
         signLevel() {
             let res = 0b00;
             if (this.user.signStatus.pcSign) res += 0b01;
             if (this.user.signStatus.mobileSign) res += 0b10;
             return res;
         },
+        /** @returns {number} */
         btnSignDisabled() {
             return this.user.signPending || this.signLevel === 0b11;
         },
+        /** @returns {string} */
         btnSignText() {
             if (this.signLevel === 0b11) return '已签到';
             return '未签到';
         },
+        /** @returns {string} */
         btnSignIcon() {
             return SignIcon[this.signLevel];
         }

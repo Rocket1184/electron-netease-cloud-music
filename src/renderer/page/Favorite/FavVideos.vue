@@ -21,7 +21,7 @@
 </template>
 
 <script>
-import { mapActions, mapState } from 'vuex';
+import { mapActions } from 'vuex';
 import { getVideoDetail } from '@/api/typed';
 
 import VideoDetail from '@/components/VideoDetail/VideoDetail.vue';
@@ -34,13 +34,15 @@ export default {
     mixins: [FetchOnLoginMixin],
     data() {
         return {
+            /** @type {Models.Video} */
             video: null,
             listLoading: false,
             detailLoading: false
         };
     },
     computed: {
-        ...mapState(['user']),
+        /** @returns {import('@/store/modules/user').State} */
+        user() { return this.$store.state.user; },
     },
     methods: {
         ...mapActions([

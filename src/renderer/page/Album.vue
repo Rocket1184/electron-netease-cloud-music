@@ -41,7 +41,9 @@ export default {
     },
     data() {
         return {
+            /** @type {Models.Album} */
             album: null,
+            /** @type {Types.RelatedAlbum[]} */
             related: [],
             detailLoading: true,
             relatedLoading: true

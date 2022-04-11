@@ -16,7 +16,8 @@ const DefaultSettings = {
     themePrimaryColor: '#7e57c2',
     themeSecondaryColor: '#ff4081',
     themeVariety: 'auto',
-    autoReplacePlaylist: false
+    autoReplacePlaylist: false,
+    lyricTranslation: 'translation'
 };
 
 /**

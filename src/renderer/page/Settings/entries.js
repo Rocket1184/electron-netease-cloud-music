@@ -1,3 +1,22 @@
+/** 
+ * @typedef SettingItem
+ * @property {'plain'|'toggle'|'select'|'color'} type
+ * @property {string} title
+ * @property {string} prop property name of settings value
+ * @property {string[]} depends show this options when **ALL** depended properties are true
+ * @property { ('isLinux'|'isDarwin')[] } exclude hide this options on specified platform
+ * @property {{ label: string, value: any }[]} options type `select`: options
+ * @property {string} data type `plain`: text
+ * @property {string} handler type `plain`: onclick handler
+ */
+
+/**
+ * @typedef SettingsCategory
+ * @property {string} name
+ * @property {SettingItem[]} items
+ */
+
+/** @type {SettingsCategory[]} */
 export const Entries = [
     {
         name: '主题',

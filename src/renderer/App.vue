@@ -30,8 +30,12 @@ export default {
             transitionName: 'fade-up'
         };
     },
+    computed: {
+        KeepAlive() {
+            return ['index', 'player', 'favorite'];
+        }
+    },
     created() {
-        this.KeepAlive = ['index', 'player', 'favorite'];
         this.$router.beforeEach((to, from, next) => {
             if (to.name === 'player') {
                 this.transitionName = 'player-in';

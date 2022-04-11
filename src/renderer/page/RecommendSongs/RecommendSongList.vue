@@ -24,6 +24,7 @@ import TrackItem from '@/components/TrackList/TrackItem.vue';
 import TrackList from '@/components/TrackList/TrackList.vue';
 import CenteredTip from '@/components/CenteredTip.vue';
 
+/** @type {import('@/components/TrackList/TrackList.vue').TrackListShortcut} */
 const shortcuts = [
     {
         event: 'collect',

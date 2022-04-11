@@ -21,7 +21,7 @@
 </template>
 
 <script>
-import { mapActions, mapState } from 'vuex';
+import { mapActions } from 'vuex';
 import { getAlbumDetail } from '@/api/typed';
 
 import AlbumDetail from '@/components/AlbumDetail.vue';
@@ -34,13 +34,15 @@ export default {
     mixins: [FetchOnLoginMixin],
     data() {
         return {
+            /** @type {Models.Album} */
             album: null,
             listLoading: false,
             detailLoading: false
         };
     },
     computed: {
-        ...mapState(['user']),
+        /** @returns {import('@/store/modules/user').State} */
+        user() { return this.$store.state.user; },
     },
     methods: {
         ...mapActions([

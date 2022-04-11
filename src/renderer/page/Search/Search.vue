@@ -53,7 +53,7 @@
 </template>
 
 <script>
-import { mapActions, mapState } from 'vuex';
+import { mapActions } from 'vuex';
 
 import TrackList from '@/components/TrackList/TrackList.vue';
 import CenteredTip from '@/components/CenteredTip.vue';
@@ -73,10 +73,13 @@ export default {
         };
     },
     computed: {
-        ...mapState(['ui']),
+        /** @returns {import('@/store/modules/ui').State} */
+        ui() { return this.$store.state.ui; },
+        /** @returns {number} */
         searchOffset() {
             return (this.currentPage - 1) * this.pageSize;
         },
+        /** @returns {boolean} */
         paginationShow() {
             const { result: { total } } = this.ui.search;
             return total > this.pageSize;

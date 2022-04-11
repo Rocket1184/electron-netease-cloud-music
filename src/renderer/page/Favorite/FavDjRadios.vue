@@ -21,7 +21,7 @@
 </template>
 
 <script>
-import { mapActions, mapState } from 'vuex';
+import { mapActions } from 'vuex';
 
 import Api from '@/api/ipc';
 
@@ -35,13 +35,15 @@ export default {
     mixins: [FetchOnLoginMixin],
     data() {
         return {
+            /** @type {Types.DjDetailData} */
             djradio: null,
             listLoading: false,
             detailLoading: false
         };
     },
     computed: {
-        ...mapState(['user']),
+        /** @returns {import('@/store/modules/user').State} */
+        user() { return this.$store.state.user; },
     },
     methods: {
         ...mapActions([

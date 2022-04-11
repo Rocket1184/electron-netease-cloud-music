@@ -50,8 +50,6 @@
 </template>
 
 <script>
-import { mapState } from 'vuex';
-
 import Api from '@/api/ipc';
 import CommentList from './CommentList.vue';
 import ListDetailLayout from '@/components/ListDetailLayout.vue';
@@ -81,8 +79,18 @@ export default {
         return {
             tab: 'hot',
             comment: {
-                all: { comments: [], total: 0, loading: false },
-                hot: { comments: [], total: 0, loading: false }
+                all: {
+                    /** @type {Types.CommentItem[]} */
+                    comments: [],
+                    total: 0,
+                    loading: false
+                },
+                hot: {
+                    /** @type {Types.CommentItem[]} */
+                    comments: [],
+                    total: 0,
+                    loading: false
+                }
             },
             transitionName: '',
             replyTo: -1,
@@ -93,7 +101,9 @@ export default {
         };
     },
     computed: {
-        ...mapState(['user']),
+        /** @returns {import('@/store/modules/user').State} */
+        user() { return this.$store.state.user; },
+        /** @returns {string} */
         thread() {
             return ThreadPrefix[this.type] + this.id;
         }

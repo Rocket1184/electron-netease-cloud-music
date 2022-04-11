@@ -50,7 +50,7 @@
 </template>
 
 <script>
-import { mapActions, mapState } from 'vuex';
+import { mapActions } from 'vuex';
 
 import { SET_LOGIN_VALID } from '@/store/mutation-types';
 
@@ -66,7 +66,10 @@ export default {
         };
     },
     computed: {
-        ...mapState(['recommend', 'user'])
+        /** @returns {import('@/store/modules/user').State} */
+        user() { return this.$store.state.user; },
+        /** @returns {import('@/store/modules/recommend').State} */
+        recommend() { return this.$store.state.recommend; },
     },
     methods: {
         ...mapActions([

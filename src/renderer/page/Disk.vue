@@ -23,8 +23,6 @@
 </template>
 
 <script>
-import { mapState } from 'vuex';
-
 import Api from '@/api/ipc';
 import { Track } from '@/util/models';
 import { humanSize } from '@/util/formatter';
@@ -43,12 +41,14 @@ export default {
             size: 0,
             maxSize: 0,
             count: 0,
+            /** @type {Models.Track[]} */
             tracks: [],
             detailLoading: true
         };
     },
     computed: {
-        ...mapState(['user'])
+        /** @returns {import('@/store/modules/user').State} */
+        user() { return this.$store.state.user; },
     },
     methods: {
         humanSize,

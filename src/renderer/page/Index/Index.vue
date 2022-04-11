@@ -17,7 +17,7 @@
                         :to="{ name: 'playlist', params: { id: p.id } }"
                         :img="p.picUrl"
                         maskIcon="headset"
-                        :maskText="humanCount(p.playcount || p.playCount)"
+                        :maskText="humanCount(p.playcount)"
                         :title="p.copywriter"
                         :itemTitle="p.name"></ScrollerItem>
                 </div>
@@ -53,8 +53,6 @@
 </template>
 
 <script>
-import { mapState } from 'vuex';
-
 import Api from '@/api/ipc';
 
 import ActionItem from './ActionItem.vue';
@@ -72,22 +70,26 @@ export default {
     name: 'index',
     data() {
         return {
+            /** @type {{ title: string, icon: string, to: import('vue-router').RawLocation }[]} */
             action: [
                 { title: '私人 FM', icon: 'radio', to: { name: 'radio' } },
                 { title: '每日推荐', icon: 'audiotrack', to: { name: 'recommend' } },
                 { title: '歌单', icon: 'playlist_play', to: { path: '/goodie' } },
                 { title: '排行榜', icon: 'equalizer', to: { path: '/top' } }
             ],
+            /** @type {Types.RecommendPlaylist[]} */
             playlist: [],
+            /** @type {Types.NewAlbumAlbum[]} */
             album: [],
+            /** @type {Types.RecommendMVResult[]} */
             mv: []
         };
     },
     computed: {
-        ...mapState([
-            'user',
-            'settings'
-        ])
+        /** @returns {import('@/store/modules/user').State} */
+        user() { return this.$store.state.user; },
+        /** @returns {import('@/store/modules/settings').State} */
+        settings() { return this.$store.state.settings; }
     },
     methods: {
         humanCount,

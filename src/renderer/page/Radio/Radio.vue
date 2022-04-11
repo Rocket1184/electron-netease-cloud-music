@@ -23,7 +23,7 @@
 </template>
 
 <script>
-import { mapActions, mapState } from 'vuex';
+import { mapActions } from 'vuex';
 
 import RadioSongList from './RadioSongList.vue';
 import CenteredTip from '@/components/CenteredTip.vue';
@@ -31,7 +31,12 @@ import ListDetailLayout from '@/components/ListDetailLayout.vue';
 
 export default {
     computed: {
-        ...mapState(['ui', 'radio', 'user'])
+        /** @returns {import('@/store/modules/ui').State} */
+        ui() { return this.$store.state.ui; },
+        /** @returns {import('@/store/modules/radio').State} */
+        radio() { return this.$store.state.radio; },
+        /** @returns {import('@/store/modules/user').State} */
+        user() { return this.$store.state.user; }
     },
     methods: {
         ...mapActions([

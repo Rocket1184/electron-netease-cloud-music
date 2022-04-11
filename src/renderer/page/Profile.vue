@@ -17,7 +17,7 @@
 </template>
 
 <script>
-import { mapActions, mapState } from 'vuex';
+import { mapActions } from 'vuex';
 
 import Api from '@/api/ipc';
 
@@ -31,7 +31,9 @@ export default {
         };
     },
     computed: {
-        ...mapState(['user']),
+        /** @returns {import('@/store/modules/user').State} */
+        user() { return this.$store.state.user; },
+        /** @returns {Types.UserInfoRes} */
         profileToShow() {
             return this.profile || this.user.info;
         }

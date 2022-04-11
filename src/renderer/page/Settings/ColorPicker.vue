@@ -57,6 +57,7 @@ const ColorBlockList = [
     'transparent'
 ];
 
+/** @type { [string, string][] }  */
 const ColorEntries = Object.entries(Colors)
     .filter(([key]) => typeof key === 'string' && !ColorBlockList.includes(key));
 
@@ -80,6 +81,9 @@ export default {
             transitionName: ''
         };
     },
+    computed: {
+        ColorGroups() { return ColorGroups; }
+    },
     methods: {
         handleGroup(g) {
             this.transitionName = g < 0 ? 'slide-right' : 'slide-left';
@@ -92,9 +96,6 @@ export default {
             this.$emit('select', color);
             this.handleClose();
         }
-    },
-    created() {
-        this.ColorGroups = ColorGroups;
     }
 };
 </script>

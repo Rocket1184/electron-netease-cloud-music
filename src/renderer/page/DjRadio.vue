@@ -21,6 +21,7 @@ export default {
     },
     data() {
         return {
+            /** @type {Models.DjRadio} */
             djradio: null,
             detailLoading: true
         };

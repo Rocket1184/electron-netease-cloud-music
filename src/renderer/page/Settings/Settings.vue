@@ -17,14 +17,14 @@
 </template>
 
 <script>
-import { mapState, mapActions } from 'vuex';
+import { mapActions } from 'vuex';
 
 import Api from '@/api/ipc';
 import { encm } from '@/util/globals';
 import { setTheme } from '@/util/theme';
 import { humanSize } from '@/util/formatter';
 import { UPDATE_SETTINGS } from '@/store/mutation-types';
-import { isDarwin, browserWindow, webContents } from '@/util/globals';
+import { isLinux, isDarwin, browserWindow, webContents } from '@/util/globals';
 
 import OptionColor from './OptionColor.vue';
 import OptionPlain from './OptionPlain.vue';
@@ -55,7 +55,11 @@ export default {
         'darkMediaQuery'
     ],
     computed: {
-        ...mapState(['settings'])
+        /** @returns {import('@/store/modules/settings').State} */
+        settings() { return this.$store.state.settings; },
+        /** @returns {{ [key: string]: Vue }} */
+        Option() { return Option; },
+        Entries() { return Entries; }
     },
     methods: {
         ...mapActions([
@@ -210,7 +214,7 @@ export default {
         this.initData();
         this.Option = Option;
         this.Entries = Entries;
-        this.Platforms = { isDarwin };
+        this.Platforms = { isLinux, isDarwin };
         this.unsub = this.subscribeMutation();
     },
     beforeDestroy() {

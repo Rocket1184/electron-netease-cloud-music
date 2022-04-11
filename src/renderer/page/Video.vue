@@ -21,6 +21,7 @@ export default {
     },
     data() {
         return {
+            /** @type {Models.Video} */
             video: null,
             detailLoading: true
         };

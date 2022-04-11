@@ -26,6 +26,7 @@ export default {
     },
     data() {
         return {
+            /** @type {{ artist: Models.Artist, hotSongs: Models.Track[] }} */
             artist: null,
             detailLoading: true
         };

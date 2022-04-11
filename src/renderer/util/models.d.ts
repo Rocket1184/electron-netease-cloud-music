@@ -38,6 +38,7 @@ namespace Models {
         artistName: string;
         duration: number;
         cd: string;
+        mv: number;
         no: number;
         fee: any;
         copyright: any;
@@ -54,6 +55,8 @@ namespace Models {
         tags: string[];
         commentThreadId: number;
         playCount: number;
+        cloudTrackCount: number;
+        trackCount: number;
         coverImgId: number;
         coverImgUrl: string;
         createTime: string;
@@ -125,8 +128,8 @@ namespace Models {
         type: number;
         picUrl: string;
         creator?: {
-            userId: number;
-            userName: string;
+            id: number;
+            name: string;
         }[];
         /** MV only */
         brs?: { [key: number]: string; }

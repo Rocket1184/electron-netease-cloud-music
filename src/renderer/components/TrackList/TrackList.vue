@@ -19,11 +19,14 @@
 </template>
 
 <script>
-import { mapActions, mapGetters, mapState } from 'vuex';
+import { mapActions } from 'vuex';
 
 import TrackItem from './TrackItem.vue';
 import CenteredTip from '@/components/CenteredTip.vue';
 
+/** @typedef {{ event: string, icon: string, title: string }} TrackListShortcut */
+
+/** @type {TrackListShortcut[]} */
 const shortcuts = [
     {
         event: 'collect',
@@ -39,6 +42,7 @@ const shortcuts = [
 
 export default {
     props: {
+        /** @type {Vue.PropType<Models.Track[]>} */
         tracks: {
             type: Array,
             required: true
@@ -53,11 +57,21 @@ export default {
         }
     },
     computed: {
-        ...mapState(['ui', 'user', 'playlist', 'settings']),
-        ...mapGetters(['queue']),
+        /** @returns {import('@/store/modules/ui').State} */
+        ui() { return this.$store.state.ui; },
+        /** @returns {import('@/store/modules/user').State} */
+        user() { return this.$store.state.user; },
+        /** @returns {import('@/store/modules/playlist').State} */
+        playlist() { return this.$store.state.playlist; },
+        /** @returns {import('@/store/modules/settings').State} */
+        settings() { return this.$store.state.settings; },
+        /** @returns {{ index: number, loopMode: number, list: Models.Track[] }} */
+        queue() { return this.$store.getters.queue; },
+        /** @returns {TrackListShortcut[]} */
         shortcuts() {
             return shortcuts;
         },
+        /** @returns {Models.Track[]} */
         trackDetails() {
             return this.tracks;
         },

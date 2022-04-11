@@ -43,6 +43,7 @@ export default {
             type: String,
             required: true
         },
+        /** @type {Vue.PropType<Types.CommentItem[]>} */
         comments: {
             type: Array,
             default: () => []

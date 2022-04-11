@@ -229,7 +229,7 @@
 </template>
 
 <script>
-import { mapActions, mapGetters, mapState } from 'vuex';
+import { mapActions } from 'vuex';
 
 import Api from '@/api/ipc';
 import { workerExecute } from '@/worker/message';
@@ -256,21 +256,31 @@ export default {
         };
     },
     computed: {
-        ...mapState(['ui', 'user', 'settings']),
-        ...mapGetters(['playing']),
+        discImg() { return discImg; },
+        needleImg() { return needleImg; },
+        /** @returns {import('@/store/modules/ui').State} */
+        ui() { return this.$store.state.ui; },
+        /** @returns {import('@/store/modules/user').State} */
+        user() { return this.$store.state.user; },
+        /** @returns {import('@/store/modules/settings').State} */
+        settings() { return this.$store.state.settings; },
+        /** @returns {Models.Track} */
+        playing() { return this.$store.getters.playing; },
         themeCompensation() {
             return this.settings.themeVariety === 'light' ? 25 : 4.8;
         },
+        /** @returns {Boolean} */
         isDjRadioProgram() {
-            const { source = {} } = this.playing;
-            return (source && source.djradio);
+            return this.playing?.source?.djradio !== undefined;
         },
+        /** @returns {string} */
         albumImgSrc() {
             if (this.ui.coverImgSrc) {
                 return sizeImg(this.ui.coverImgSrc, HiDpiPx(220));
             }
             return discDefault;
         },
+        /** @returns {Types.LyricObjectItem} */
         lyricToShow() {
             switch (this.settings.lyricTranslation) {
                 case 'translation':
@@ -487,10 +497,6 @@ export default {
             // reset lyric position
             this.currentLyricIndex = -1;
         }
-    },
-    created() {
-        this.discImg = discImg;
-        this.needleImg = needleImg;
     },
     mounted() {
         this.paintBkgCanvas();

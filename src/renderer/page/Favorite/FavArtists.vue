@@ -21,7 +21,7 @@
 </template>
 
 <script>
-import { mapActions, mapState } from 'vuex';
+import { mapActions } from 'vuex';
 import { getArtistDetail } from '@/api/typed';
 
 import ArtistDetail from '@/components/ArtistDetail/ArtistDetail.vue';
@@ -35,7 +35,9 @@ export default {
     data() {
         return {
             artist: {
+                /** @type {Models.Artist} */
                 detail: null,
+                /** @type {Models.Track[]} */
                 hotSongs: []
             },
             listLoading: false,
@@ -43,7 +45,8 @@ export default {
         };
     },
     computed: {
-        ...mapState(['user']),
+        /** @returns {import('@/store/modules/user').State} */
+        user() { return this.$store.state.user; },
     },
     methods: {
         ...mapActions([

@@ -28,6 +28,7 @@ import CenteredTip from '@/components/CenteredTip.vue';
 export default {
     extends: TrackList,
     computed: {
+        /** @returns {Models.Track[]} */
         tracksToShow() {
             return this.tracks.slice().reverse();
         }

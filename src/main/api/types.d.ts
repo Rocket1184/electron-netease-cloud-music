@@ -495,7 +495,9 @@ namespace Types {
     }
 
     export interface CommentReplied {
+        beRepliedCommentId: number;
         content: string;
+        expressionUrl?: string;
         status: number;
         user: CommentUser;
     }
@@ -572,6 +574,7 @@ namespace Types {
         lrc?: LyricObjectItem;
         lyricUser?: LyricAuthor;
         mlrc?: LyricObjectItem;
+        romalrc?: LyricObjectItem;
         transUser: LyricAuthor;
         txtLyric?: string;
     }

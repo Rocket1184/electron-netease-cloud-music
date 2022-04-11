@@ -32,7 +32,7 @@ const FavTabs = [
     ['djradio', '电台']
 ];
 
-const FavCompo = {
+const FavCompos = {
     album: 'FavAlbums',
     video: 'FavVideos',
     artist: 'FavArtists',
@@ -49,8 +49,10 @@ export default {
         };
     },
     computed: {
+        FavTabs() { return FavTabs; },
+        /** @returns {string} */
         favCompo() {
-            return FavCompo[this.tab];
+            return FavCompos[this.tab];
         }
     },
     methods: {

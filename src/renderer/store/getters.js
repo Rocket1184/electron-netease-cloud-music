@@ -5,6 +5,7 @@
 
 /**
  * @param {State} state
+ * @returns {{ index: number, loopMode: number, list: Models.Track[] }}
  */
 export function queue(state) {
     if (state.ui.radioMode === true) {

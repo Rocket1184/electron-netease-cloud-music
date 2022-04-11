@@ -73,19 +73,20 @@
 </template>
 
 <script>
-import { mapState } from 'vuex';
-
 import { longDate } from '@/util/formatter';
 import { sizeImg, HiDpiPx } from '@/util/image';
 
 export default {
     props: {
+        /** @type {Vue.PropType<Types.CommentItem>} */
         comment: {
             required: true
         }
     },
     computed: {
-        ...mapState(['user']),
+        /** @returns {import('@/store/modules/user').State} */
+        user() { return this.$store.state.user; },
+        /** @returns {boolean} */
         canDelete() {
             return this.user.loginValid && this.comment.user.userId === this.user.info.id;
         }
