@@ -11,6 +11,9 @@ const state = {
     loopMode: LOOP_MODE.LIST,
     /** @type {Models.Track[]} */
     list: [],
+    /** @type {[number]} */
+    randomHeardList: [],
+    randomHeardListPointer: 0,
 };
 
 /**
@@ -35,6 +38,24 @@ const mutations = {
     },
     [types.SET_LOOP_MODE_RANDOM](state) {
         state.loopMode = LOOP_MODE.RANDOM;
+    },
+    [types.GENERATE_RANDOM_HEARD_LIST](state, payload) {
+        state.randomHeardList = Array(payload).fill(1).map((v, i) => i);
+        for (let i = state.randomHeardList.length - 1; i > 0; i--) {
+            const j = Math.floor(Math.random() * (i + 1));
+            [state.randomHeardList[i], state.randomHeardList[j]] = [state.randomHeardList[j], state.randomHeardList[i]];
+        }//生成一个0-(length-1)的乱序不重复随机数组
+        state.randomHeardListPointer = 0;//初始化指针
+    },
+    [types.SET_RANDOMLIST_POINTER](state, payload) {
+        state.randomHeardListPointer = payload;
+    },
+    [types.INSERT_TRACK_INTO_RANDOM_PLAYLIST](state, { index, offset }) {
+        state.randomHeardList.splice(state.randomHeardListPointer + offset, 0, index)
+        for (let i = 0; i < state.randomHeardList.length; i++)
+            if (state.randomHeardList[i] >= index)
+                if (i != state.randomHeardListPointer + offset)
+                    state.randomHeardList[i]++;
     },
     [types.RESTORE_PLAYLIST](state, { index, loopMode, list }) {
         state.index = index || 0;

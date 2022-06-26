@@ -23,6 +23,7 @@ import { mapActions } from 'vuex';
 
 import TrackItem from './TrackItem.vue';
 import CenteredTip from '@/components/CenteredTip.vue';
+import { LOOP_MODE } from '@/store/modules/playlist';
 
 /** @typedef {{ event: string, icon: string, title: string }} TrackListShortcut */
 
@@ -82,6 +83,8 @@ export default {
             'playTrackIndex',
             'toggleCollectPopup',
             'insertTrackIntoPlaylist',
+            'insertTrackIntoRandomPlaylist',
+            'generateRandomHeardList',
             'playPlaylist'
         ]),
         handleCollect(id) {
@@ -103,6 +106,11 @@ export default {
         queueTrack(index) {
             if (this.findTrackInPlaylist(index) > -1) {
                 // track exists in playlist
+                if (this.playlist.loopMode == LOOP_MODE.RANDOM) {
+                    this.insertTrackIntoRandomPlaylist({index,offset: 1});
+                    this.$toast.message('已添加下一首播放  _(:з」∠)_');
+                    return;
+                }
                 this.$toast.message('已经在播放列表中了  ( >﹏<。)～');
                 return;
             }
@@ -111,6 +119,13 @@ export default {
                 source: this.source,
                 index: this.playlist.index + 1
             });
+            if (this.playlist.loopMode == LOOP_MODE.RANDOM) {
+                if (this.playlist.randomHeardList.length == 0) {//若列表为空，直接生成
+                    this.generateRandomHeardList(this.playlist.list.length);
+                }
+                else //否则插入
+                    this.insertTrackIntoRandomPlaylist({ index:this.playlist.index + 1 ,offset:1});
+            }
             this.$toast.message('已添加下一首播放  _(:з」∠)_');
         },
         handleQueue(index) {
@@ -122,6 +137,26 @@ export default {
         },
         playTrack(index) {
             const i = this.findTrackInPlaylist(index);
+            if (this.playlist.loopMode == LOOP_MODE.RANDOM) {
+                if (i > -1) {
+                    // track exists in playlist
+                    this.insertTrackIntoRandomPlaylist({index: i,offset: 0});
+                    this.playTrackIndex(i);
+                    return;
+                }
+                if (this.playlist.randomHeardList.length == 0) {
+                    this.generateRandomHeardList(this.playlist.list.length);
+                }
+                this.insertTrackIntoPlaylist({
+                    tracks: [this.trackDetails[index]],
+                    source: this.source,
+                    index: this.playlist.index,
+                });
+                const newIndex = this.findTrackInPlaylist(index);
+                this.insertTrackIntoRandomPlaylist({ index:newIndex, offset: 0 });
+                this.playTrackIndex(newIndex);
+                return;
+            }
             if (i > -1) {
                 // track exists in playlist
                 this.playTrackIndex(i);

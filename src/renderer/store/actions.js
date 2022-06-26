@@ -433,12 +433,23 @@ export async function playTrackIndex({ state, commit, dispatch }, index) {
 /**
  * @param {ActionContext} param0
  */
-export function playNextTrack({ dispatch, getters }) {
-    const { index, list, loopMode } = getters.queue;
+export function playNextTrack({ commit, dispatch, getters }) {
+    let { index, list, loopMode, randomHeardList, randomHeardListPointer } = getters.queue;
     let nextIndex;
     switch (loopMode) {
         case LOOP_MODE.RANDOM:
-            nextIndex = Math.floor(Math.random() * list.length);
+            if (randomHeardList.length == 0) {
+                commit(types.GENERATE_RANDOM_HEARD_LIST, list.length);
+                randomHeardList = getters.queue.randomHeardList;
+            }
+            if (randomHeardListPointer == randomHeardList.length - 1) {
+                commit(types.SET_RANDOMLIST_POINTER, 0);
+                nextIndex = randomHeardList[0];
+            }
+            else {
+                nextIndex = randomHeardList[randomHeardListPointer + 1];
+                commit(types.SET_RANDOMLIST_POINTER, randomHeardListPointer + 1);
+            }
             break;
         default:
             nextIndex = (index + 1) % list.length;
@@ -450,12 +461,23 @@ export function playNextTrack({ dispatch, getters }) {
 /**
  * @param {ActionContext} param0
  */
-export function playPreviousTrack({ dispatch, getters }) {
-    const { index, list, loopMode } = getters.queue;
+export function playPreviousTrack({ commit, dispatch, getters }) {
+    let { index, list, loopMode, randomHeardList, randomHeardListPointer } = getters.queue;
     let nextIndex;
     switch (loopMode) {
         case LOOP_MODE.RANDOM:
-            nextIndex = Math.floor(Math.random() * list.length);
+            if (randomHeardList.length == 0) {
+                commit(types.GENERATE_RANDOM_HEARD_LIST, list.length);
+                randomHeardList = getters.queue.randomHeardList;
+            }
+            if (randomHeardListPointer == 0) {
+                commit(types.SET_RANDOMLIST_POINTER, randomHeardList.length - 1);
+                nextIndex = randomHeardList[randomHeardList.length - 1];
+            }
+            else {
+                nextIndex = randomHeardList[randomHeardListPointer - 1];
+                commit(types.SET_RANDOMLIST_POINTER, randomHeardListPointer - 1);
+            }
             break;
         default:
             nextIndex = (index + list.length - 1) % list.length;
@@ -480,7 +502,9 @@ export async function playPlaylist({ commit, dispatch, state }, { tracks, source
         commit(types.ACTIVATE_RADIO, false);
     }
     if (firstIndex === -1 && state.playlist.loopMode === LOOP_MODE.RANDOM) {
-        firstIndex = Math.floor(Math.random() * list.length);
+        //firstIndex = Math.floor(Math.random() * list.length);
+        commit(types.GENERATE_RANDOM_HEARD_LIST, list.length);//换歌单了，重置随机队列
+        firstIndex = state.playlist.randomHeardList[0];
     }
     if (firstIndex === -1) {
         firstIndex = 0;
@@ -494,6 +518,7 @@ export async function playPlaylist({ commit, dispatch, state }, { tracks, source
 export function clearPlaylist({ commit, dispatch }) {
     commit(types.SET_PLAY_LIST, []);
     commit(types.SET_CURRENT_INDEX, 0);
+    commit(types.GENERATE_RANDOM_HEARD_LIST, 0);
     dispatch('updateUiTrack');
 }
 
@@ -606,6 +631,7 @@ export function nextLoopMode({ commit, state }) {
             commit(types.SET_LOOP_MODE_SINGLE);
             break;
         case LOOP_MODE.SINGLE:
+            commit(types.GENERATE_RANDOM_HEARD_LIST, state.playlist.list.length);//换播放方式了，重置随机队列
             commit(types.SET_LOOP_MODE_RANDOM);
             break;
         case LOOP_MODE.RANDOM:
@@ -630,10 +656,23 @@ export function insertTrackIntoPlaylist({ commit, state }, payload) {
 
 /**
  * @param {ActionContext} param0
+ * @param {number} payload
+ */
+export function insertTrackIntoRandomPlaylist({ commit, state }, payload) {
+    commit(types.INSERT_TRACK_INTO_RANDOM_PLAYLIST, payload);
+}
+
+export function generateRandomHeardList({ commit, state }, payload) {
+    commit(types.GENERATE_RANDOM_HEARD_LIST, payload);
+}
+
+/**
+ * @param {ActionContext} param0
  */
 export function removeTrackFromPlaylist({ getters, commit, dispatch }, payload) {
     const playingId = getters.playing.id;
     commit(types.REMOVE_TRACK_FROM_PLAYLIST, payload);
+    commit(types.GENERATE_RANDOM_HEARD_LIST, getters.queue.list.length);//删歌了，重置随机队列
     if (playingId !== getters.playing.id) {
         dispatch('updateUiTrack');
     }
