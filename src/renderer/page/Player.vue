@@ -568,19 +568,28 @@ export default {
         }
         .vinyl {
             position: relative;
+            width: 350px;
+            height: 350px;
             animation: disk-playing 25s linear infinite;
             animation-play-state: paused;
             .cover {
+                position: absolute;
+                display: block;
+                width: 220px;
+                height: 220px;
                 margin: 65px;
             }
             .border {
                 position: absolute;
+                display: block;
+                width: 350px;
+                height: 350px;
                 top: 0;
                 left: 0;
             }
         }
         .action {
-            margin-top: 16px;
+            margin-top: 22px;
             display: flex;
         }
         &.play {
