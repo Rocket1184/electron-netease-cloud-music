@@ -85,6 +85,13 @@ Binary releases provided by [archlinuxcn](https://github.com/archlinuxcn/repo). 
 ```sh
 sudo pacman -S electron-netease-cloud-music
 ```
+#### 也许你可能遇到无法播放的事情，连带浏览器和VLC，可以看看是不是因为这个
+
+https://archlinux.org/news/undone-replacement-of-pipewire-media-session-with-wireplumber/
+
+中文翻译：
+
+https://www.archlinuxcn.org/undone-replacement-of-pipewire-media-session-with-wireplumber/
 
 You can also build [electron-netease-cloud-music<sup>AUR</sup>](https://aur.archlinux.org/packages/electron-netease-cloud-music/) yourself.
 
