@@ -1,9 +1,11 @@
 import { join } from 'path';
-import { app, BrowserWindow, ipcMain, Menu, nativeTheme, shell } from 'electron';
+import { app, BrowserWindow, ipcMain, Menu, nativeTheme, shell, powerSaveBlocker } from 'electron';
 
 import { IsDev, IsDarwin, MainURL, LoginURL } from './util/constants';
 import * as Settings from './settings';
 import { AppTray } from './tray';
+
+powerSaveBlocker.start('prevent-app-suspension')
 
 // workaround https://bugs.chromium.org/p/chromium/issues/detail?id=1213347
 if (process.versions.chrome.startsWith('91.0')) {
