@@ -16,7 +16,7 @@ class HttpClient {
             'Accept-Language': 'zh',
             'Accept-Encoding': 'gzip',
             Referer: 'https://music.163.com/',
-            'User-Agent': 'Mozilla/5.0 (X11; Linux x86_64; rv:61.0) Gecko/20100101 Firefox/61.0'
+            'User-Agent': 'Mozilla/5.0 (Linux; Android 10; K) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/104.0.0.0 Mobile Safari/537.36'
         };
         this.initCookieJar();
     }
@@ -24,11 +24,9 @@ class HttpClient {
     initCookieJar() {
         this.cookieJar = new CookieJar();
         this.cookieJar.setCookies([
-            'appver=4.3.1',
-            'buildver=1513567509',
-            'channel=google',
+            'appver=8.8.12',
             'mobilename=linux',
-            'os=pc',
+            'os=android',
             'osver=10.0.0',
         ], '.music.163.com', '/');
     }
