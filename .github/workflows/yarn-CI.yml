@@ -34,5 +34,11 @@ jobs:
     - name: Upload outs
       uses: actions/upload-artifact@v2
       with:
-          name: app-debug ${{ matrix.node-version }}
+          name: app-debug-linux ${{ matrix.node-version }}
+          path: build/Electron NCM-linux-x64
+     
+    - name: Upload outs
+      uses: actions/upload-artifact@v2
+      with:
+          name: app-debug-darwin ${{ matrix.node-version }}
           path: build/Electron NCM-darwin-x64
