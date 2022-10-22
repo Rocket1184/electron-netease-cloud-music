@@ -30,7 +30,7 @@ jobs:
     - run: yarn dist
     - run: yarn build linux
     - run: yarn build darwin
-    - run: yarn build asar
+    - run: yarn build win32
 
     - name: Upload Linux outs
       uses: actions/upload-artifact@v2
@@ -46,5 +46,5 @@ jobs:
     - name: Upload Asar outs
       uses: actions/upload-artifact@v2
       with:
-          name: app-debug-asar ${{ matrix.node-version }}
-          path: build/Electron NCM-darwin-x64
+          name: app-debug-win32 ${{ matrix.node-version }}
+          path: build/Electron NCM-win32
