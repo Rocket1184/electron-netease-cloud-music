@@ -30,3 +30,9 @@ jobs:
     - run: yarn dist
     - run: yarn build linux
     - run: yarn build darwin
+
+name: Upload outs
+      uses: actions/upload-artifact@v2
+      with:
+          name: app-debug ${{ matrix.node-version }}
+          path: build/Electron NCM-darwin-x64
