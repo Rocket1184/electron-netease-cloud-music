@@ -30,6 +30,7 @@ jobs:
     - run: yarn dist
     - run: yarn build linux
     - run: yarn build darwin
+    - run: yarn build asar
 
     - name: Upload Linux outs
       uses: actions/upload-artifact@v2
