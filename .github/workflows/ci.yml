@@ -1,0 +1,45 @@
+name: CI
+
+on:
+  push:
+    branches: [master]
+  release:
+    types: [created]
+
+defaults:
+  run:
+    shell: bash
+
+jobs:
+  build:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout source code
+        uses: actions/checkout@v3
+        with:
+          fetch-depth: 0
+
+      - name: Setup Node.js
+        uses: actions/setup-node@v3
+        with:
+          node-version: latest
+          cache: yarn
+
+      - name: Build
+        env:
+          BUCKET_NAME: ${{ secrets.BUCKET_NAME }}
+          QINIU_AK: ${{ secrets.QINIU_AK }}
+          QINIU_SK: ${{ secrets.QINIU_SK }}
+        run: |
+          yarn install
+          BUILD_MODE=push
+          if [[ "$GITHUB_REF_TYPE" == "tag" ]]; then
+            BUILD_TYPE=tag
+          fi
+          script/ci-build.sh "$BUILD_MODE"
+
+      - name: Upload asar
+        uses: actions/upload-artifact@v3
+        with:
+          name: asar
+          path: build/*.asar

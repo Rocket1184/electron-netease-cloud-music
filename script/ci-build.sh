@@ -1,16 +1,23 @@
 #!/bin/bash
 
+# environment variables needed:
+# BUCKET_NAME QINIU_AK QINIU_SK
+
+# arguments: 
+# - mode: pull_request, push, tag
+
+BUILD_MODE="${1:-push}"
+
 # variables
 APP_NAME="Electron NCM"
 PKG_NAME="electron-netease-cloud-music"
 ARTIFACT_NAME="electron-ncm"
 PLATFORMS=(linux darwin)
-BUCKET_NAME="electron-ncm-ci"
-VERSION_HASH="${TRAVIS_COMMIT:0:7}"
+VERSION_HASH=$(git rev-parse --short HEAD)
 PKG_VER="$VERSION_HASH"
-QSHELL_VER="v2.4.1"
-QSHELL_DIR="node_modules/.cache/qshell/$QSHELL_VER"
-QSHELL_BIN="$QSHELL_DIR/bin/qshell-linux-x64-$QSHELL_VER"
+QSHELL_VER="v2.12.0"
+QSHELL_DIR="node_modules/.cache/qshell"
+QSHELL_BIN="$QSHELL_DIR/qshell"
 
 # functions
 build_dist() {
@@ -33,7 +40,7 @@ build_asar() {
 }
 
 build_tar() {
-    for PLAT in ${PLATFORMS[*]}; do
+    for PLAT in "${PLATFORMS[@]}"; do
         yarn run build "$PLAT"
         tar zcf "build/${ARTIFACT_NAME}_${PKG_VER}_${PLAT}.tar.gz" -C build "${APP_NAME}-${PLAT}-x64"
     done
@@ -41,8 +48,8 @@ build_tar() {
 
 qshell_init() {
     if [ ! -x "$QSHELL_BIN" ] ; then
-        curl -Lo "$QSHELL_DIR/qshell.zip" --create-dirs "http://devtools.qiniu.com/qshell-linux-x64-${QSHELL_VER}.zip"
-        unzip "$QSHELL_DIR/qshell.zip" -d "$QSHELL_DIR/bin"
+        curl -Lo "$QSHELL_DIR/qshell.tar.gz" --create-dirs "https://github.com/qiniu/qshell/releases/download/${QSHELL_VER}/qshell-${QSHELL_VER}-linux-amd64.tar.gz"
+        tar xf "$QSHELL_DIR/qshell.tar.gz" --directory="$QSHELL_DIR"
         chmod +x "$QSHELL_BIN"
     fi
     # Usage: qshell account [--overwrite | -w]<Your AccessKey> <Your SecretKey> <Your Account Name>
@@ -56,37 +63,32 @@ qshell_upload() {
     "$QSHELL_BIN" rput "$BUCKET_NAME" "$1" "build/$1"
 }
 
-transfer_sh_upload() {
-    local TRANSFER_TMP
-    TRANSFER_TMP=$(mktemp)
-    echo "Uploading '$1' to transfer.sh ..."
-    curl --upload-file "build/$1" "https://transfer.sh/$1" -o "$TRANSFER_TMP"
-    echo "Got URL:"
-    cat "$TRANSFER_TMP"
-    echo ""
-    rm -r "$TRANSFER_TMP"
-}
+echo "BUILD_MODE=$BUILD_MODE"
 
-# entrypoint
-if [ "$TRAVIS_PULL_REQUEST" != "false" ]; then
-    # build is triggered by a pull request
+case "$BUILD_MODE" in
+pull_request)
     build_dist
     describe_version
     build_asar
-    transfer_sh_upload "${PKG_NAME}_${PKG_VER}.asar"
-elif [ "$TRAVIS_BRANCH" == "$TRAVIS_TAG" ]; then
-    # build is triggered by a git tag
-    PKG_VER="$TRAVIS_TAG"
+;;
+tag)
+    PKG_VER=$(git describe --tags --abbrev=0)
     build_dist
     build_asar
-else
+;;
+push)
     build_dist
     describe_version
     build_asar
     build_tar
     qshell_init
     qshell_upload "${PKG_NAME}_${PKG_VER}.asar"
-    for PLAT in ${PLATFORMS[*]}; do
+    for PLAT in "${PLATFORMS[@]}"; do
         qshell_upload "${ARTIFACT_NAME}_${PKG_VER}_${PLAT}.tar.gz"
     done
-fi
+;;
+*)
+    echo "unknown build mode: '$BUILD_MODE'"
+    exit 1
+;;
+esac

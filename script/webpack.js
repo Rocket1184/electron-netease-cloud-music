@@ -12,8 +12,8 @@ if (argv.length === 0) {
     process.argv = process.argv.slice(0, 2);
 }
 
-// yeah! patch packages!
-cp.execSync('patch-packages');
+// yeah! patch package!
+cp.execSync('patch-package');
 
 process.env.NODE_ENV = 'production';
 
