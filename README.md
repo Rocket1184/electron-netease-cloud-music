@@ -2,8 +2,8 @@
 
 **UNOFFICIAL** client for music.163.com . Powered by [Electron](https://electronjs.org), [Vue](https://vuejs.org), and [Muse-UI](https://muse-ui.org).
 
-[![build status](https://api.travis-ci.com/Rocket1184/electron-netease-cloud-music.svg?branch=master)](https://app.travis-ci.com/github/Rocket1184/electron-netease-cloud-music/builds)
-[![GitHub release (latest SemVer)](https://img.shields.io/github/v/release/Rocket1184/electron-netease-cloud-music)](https://github.com/Rocket1184/electron-netease-cloud-music/releases/latest)
+[![CI status](https://github.com/Rocket1184/electron-netease-cloud-music/actions/workflows/ci.yml/badge.svg)](https://github.com/Rocket1184/electron-netease-cloud-music/actions/workflows/ci.yml)
+[![release (latest SemVer)](https://img.shields.io/github/v/release/Rocket1184/electron-netease-cloud-music)](https://github.com/Rocket1184/electron-netease-cloud-music/releases/latest)
 
 ## ScreenShots
 
@@ -98,13 +98,13 @@ sudo apt install electron-netease-cloud-music
 
 ### Other GNU/Linux distro or macOS
 
-Download prebuilt binary packages (include bundled electron) there -> [![hreoku status](https://heroku-badge.herokuapp.com/?app=ncm-releases&style=flat&svg=1)](https://ncm-releases.herokuapp.com/)
+Download prebuilt binary packages (include bundled electron) here -> [https://dl.encm.cf](https://dl.encm.cf)
 
 ### asar archive without electron
 
 Install electron with `npm` or your distro's package manager first.
 
-Jump to [release page](https://ncm-releases.herokuapp.com/) and download `asar` package, then run with
+Jump to [release page](https://dl.encm.cf) and download `asar` package, then run with
 
 ```sh
 electron /path/to/electron-netease-cloud-music_*.asar
