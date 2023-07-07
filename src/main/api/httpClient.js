@@ -9,14 +9,18 @@ import { encodeWeb, encodeLinux, encodeEApi, decodeEApi, getCacheKey } from './c
 
 const d = debug('HTTP');
 
-class HttpClient {
+export default class HttpClient {
+
+    static DesktopUserAgent = 'Mozilla/5.0 (Linux) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/110.0.0.0 Safari/537.36';
+    static MobileUserAgent = 'Mozilla/5.0 (Linux; Android 10) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/110.0.0.0 Mobile Safari/537.36';
+
     constructor() {
         this.clientHeaders = {
             Accept: '*/*',
             'Accept-Language': 'zh',
             'Accept-Encoding': 'gzip',
             Referer: 'https://music.163.com/',
-            'User-Agent': 'Mozilla/5.0 (Linux; Android 10; K) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/104.0.0.0 Mobile Safari/537.36'
+            'User-Agent': HttpClient.MobileUserAgent
         };
         this.initCookieJar();
     }
@@ -24,7 +28,7 @@ class HttpClient {
     initCookieJar() {
         this.cookieJar = new CookieJar();
         this.cookieJar.setCookies([
-            'appver=8.8.12',
+            'appver=8.10.20',
             'mobilename=linux',
             'os=android',
             'osver=10.0.0',
@@ -234,5 +238,3 @@ class HttpClient {
         return json;
     }
 }
-
-export default HttpClient;

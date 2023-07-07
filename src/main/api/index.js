@@ -1,4 +1,3 @@
-import url from 'url';
 import path from 'path';
 import crypto from 'crypto';
 import qs from 'querystring';
@@ -9,7 +8,7 @@ import { decodeHTML } from 'entities';
 
 import Cache from './cache';
 import migrate from './migrate';
-import Client from './httpClient';
+import HttpClient from './httpClient';
 import { encodePicUrl } from './codec';
 import * as Settings from '../settings';
 import MusicServer from './musicServer';
@@ -17,7 +16,7 @@ import { getDiskUsage, clearDirectory } from '../util/fs';
 import Downloader from './downloader';
 
 const BaseURL = 'https://music.163.com';
-const client = new Client();
+const client = new HttpClient();
 
 const dataPath = app.getPath('userData');
 const CachePath = {
@@ -288,14 +287,12 @@ export function getMusicUrlE(idOrIds, quality) {
  * @returns {Promise<Types.MusicUrlLocalRes>}
  */
 export async function getMusicUrlLocal(id, quality, ignoreCache = false) {
+    const search = new URLSearchParams({ id, quality });
+    if (ignoreCache) {
+        search.append(ignoreCache, 'true');
+    }
     return {
-        url: url.format({
-            protocol: 'http:',
-            hostname: 'localhost',
-            port: musicServerPort,
-            pathname: '/music',
-            query: ignoreCache ? { id, quality, ignoreCache } : { id, quality }
-        })
+        url: `http://localhost:${musicServerPort}/music?${search.toString()}`
     };
 }
 
@@ -782,20 +779,17 @@ const RelatedPlaylists = {
      * @param {string} u
      */
     trimSrc(u) {
-        const o = url.parse(u);
-        return url.format({
-            protocol: 'https',
-            host: o.host,
-            pathname: o.pathname
-        });
+        const url = new URL(u);
+        url.search = '';
+        return url.href;
     },
     /**
      * @param {string} u
      */
     trimId(u) {
-        const o = url.parse(u);
-        const { id } = qs.parse(o.query);
-        return Array.isArray(id) ? id[0] : id;
+        const i = u.indexOf('?');
+        const s = new URLSearchParams(i > 0 ? u.slice(i) : u);
+        return s.get('id');
     }
 };
 
@@ -806,7 +800,12 @@ const RelatedPlaylists = {
  */
 export async function getRelatedPlaylists(id) {
     try {
-        const html = await client.get(`${BaseURL}/playlist?id=${id}`);
+        const html = await client.get({
+            url: `${BaseURL}/playlist?id=${id}`,
+            headers: {
+                'User-Agent': HttpClient.DesktopUserAgent
+            }
+        });
         const data = [];
         let match;
         while ((match = RelatedPlaylists.regexp.exec(html)) !== null) {
@@ -835,7 +834,12 @@ const RecommendStatistics = {
  */
 export async function getRecommendStatistics() {
     try {
-        const html = await client.get(`${BaseURL}/discover/recommend/taste`);
+        const html = await client.get({
+            url: `${BaseURL}/discover/recommend/taste`,
+            headers: {
+                'User-Agent': HttpClient.DesktopUserAgent
+            }
+        });
         const match = RecommendStatistics.regexp.exec(html);
         return {
             code: 200,
@@ -861,7 +865,12 @@ const RelatedAlbums = {
  */
 export async function getRelatedAlbums(id) {
     try {
-        const html = await client.get(`${BaseURL}/album?id=${id}`);
+        const html = await client.get({
+            url: `${BaseURL}/album?id=${id}`,
+            headers: {
+                'User-Agent': HttpClient.DesktopUserAgent
+            }
+        });
         const data = [];
         let match;
         while ((match = RelatedAlbums.regexp.exec(html)) !== null) {
