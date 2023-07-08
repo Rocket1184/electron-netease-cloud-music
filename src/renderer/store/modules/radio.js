@@ -1,3 +1,5 @@
+// @ts-check
+
 import * as types from '../mutation-types';
 import { LOOP_MODE } from './playlist';
 
@@ -8,7 +10,9 @@ const state = {
     loopMode: LOOP_MODE.LIST
 };
 
-const trackIdMap = new Map();
+const RADIO_MAX_SIZE = 150;
+
+const trackIdSet = new Set();
 
 /**
  * @typedef {typeof state} State
@@ -19,7 +23,7 @@ const mutations = {
         state.index = index;
         state.list = list;
         for (const t of list) {
-            trackIdMap.set(t.id, true);
+            trackIdSet.add(t.id);
         }
     },
     [types.CLEAR_RADIO](state) {
@@ -29,16 +33,18 @@ const mutations = {
     [types.APPEND_RADIO](state, /** @type {{ tracks: Models.Track[] }} */ { tracks }) {
         const toAppend = [];
         for (const t of tracks) {
-            if (!trackIdMap.has(t.id)) {
-                trackIdMap.set(t.id, true);
+            if (!trackIdSet.has(t.id)) {
+                trackIdSet.add(t.id);
                 toAppend.push(t);
             }
         }
-        const MaxLength = 150;
         state.list.push.apply(state.list, toAppend);
-        if (state.list.length > MaxLength) {
-            const removeCount = state.list.length - MaxLength;
-            state.list.splice(0, removeCount);
+        if (state.list.length > RADIO_MAX_SIZE) {
+            const removeCount = state.list.length - RADIO_MAX_SIZE;
+            const removed = state.list.splice(0, removeCount);
+            for (const r of removed) {
+                trackIdSet.delete(r.id);
+            }
             state.index -= removeCount;
         }
     },
@@ -50,7 +56,7 @@ const mutations = {
                 state.index--;
             }
             state.list.splice(i, 1);
-            trackIdMap.delete(id);
+            trackIdSet.delete(id);
         }
     },
     [types.SET_RADIO_INDEX](state, payload) {
