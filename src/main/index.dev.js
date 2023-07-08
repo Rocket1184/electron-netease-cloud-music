@@ -1,5 +1,7 @@
 'use strict';
 
+const srcMainDir = __dirname;
+
 // 'debug' TAG
 process.env.DEBUG = [
     'MusicServer',
@@ -15,7 +17,9 @@ process.env.NODE_ENV = 'development';
 require('@babel/register')({
     babelrc: false,
     sourceMaps: 'inline',
-    only: [/src\/main\//],
+    only: [
+        (filename) => filename.startsWith(srcMainDir)
+    ],
     plugins: [
         '@babel/plugin-proposal-class-properties',
         '@babel/plugin-transform-modules-commonjs',
