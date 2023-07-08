@@ -212,8 +212,6 @@ export default {
     },
     created() {
         this.initData();
-        this.Option = Option;
-        this.Entries = Entries;
         this.Platforms = { isLinux, isDarwin };
         this.unsub = this.subscribeMutation();
     },

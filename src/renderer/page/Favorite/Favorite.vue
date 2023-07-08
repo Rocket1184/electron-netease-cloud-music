@@ -70,9 +70,6 @@ export default {
             this.tab = val;
         }
     },
-    created() {
-        this.FavTabs = FavTabs;
-    },
     components: {
         FavAlbums,
         FavVideos,
