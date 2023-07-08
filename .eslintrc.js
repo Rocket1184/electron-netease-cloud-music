@@ -1,6 +1,7 @@
 module.exports = {
     root: true,
     ignorePatterns: [
+        '**/*.d.ts',
         'dist/',
         'build/'
     ],
