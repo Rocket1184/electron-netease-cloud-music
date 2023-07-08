@@ -175,6 +175,17 @@ export async function updateUserPlaylists({ state, commit }) {
 
 /**
  * @param {ActionContext} context
+ * @param {Models.PlayList} payload
+ */
+export function updateUserPlaylistDetail({ commit }, payload) {
+    const list = {};
+    Object.assign(list, payload);
+    delete list.trackIds;
+    commit(types.UPDATE_USER_PLAYLIST, payload);
+}
+
+/**
+ * @param {ActionContext} context
  * @param {number} payload
  */
 export async function updatePlaylistDetailById({ state, commit }, payload) {
@@ -202,7 +213,7 @@ export function setLoginValid({ commit, dispatch }, payload) {
     if (payload === undefined || payload === true) {
         commit(types.SET_LOGIN_VALID, true);
         dispatch('updateUserSignStatus');
-        dispatch('updateUserPlaylist').then(() => {
+        dispatch('updateUserPlaylists').then(() => {
             dispatch('updateFavoriteTrackIds');
         });
     } else {

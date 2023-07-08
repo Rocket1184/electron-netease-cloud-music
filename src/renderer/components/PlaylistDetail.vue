@@ -5,7 +5,10 @@
                 class="cover">
             <div class="side">
                 <div class="info">
-                    <div class="name">{{playlist.name}}</div>
+                    <div class="name">
+                        <span>{{ playlist.name }}</span>
+                        <span v-if="playlist.updateFrequency" class="small">{{ playlist.updateFrequency }}</span>
+                    </div>
                     <div class="creation-info">
                         <router-link class="creator"
                             tag="div"
@@ -66,7 +69,7 @@
 </template>
 
 <script>
-import { mapActions, mapState } from 'vuex';
+import { mapActions } from 'vuex';
 
 import VirtualTrackList from './TrackList/VirtualTrackList.vue';
 import { shortDate } from '@/util/formatter';
@@ -74,6 +77,7 @@ import { sizeImg, HiDpiPx } from '@/util/image';
 
 export default {
     props: {
+        /** @type {Vue.PropOptions<Models.PlayList>} */
         playlist: {
             required: true
         }
@@ -86,30 +90,38 @@ export default {
         };
     },
     computed: {
-        ...mapState(['user']),
+        /** @returns {import('@/store/modules/user').State}*/
+        user() { return this.$store.state.user; },
+        /** @returns {string} */
         creatorAvatarSrc() {
             return sizeImg(this.playlist.creator.avatarUrl, HiDpiPx(40));
         },
+        /** @returns {string} */
         coverSrc() {
             return sizeImg(this.playlist.coverImgUrl, HiDpiPx(160));
         },
+        /** @returns {string} */
         createTime() {
             return shortDate(this.playlist.createTime);
         },
+        /** @returns {string} */
         btnSubscribeText() {
             const t = this.shouldSubscribed ? '已收藏' : '收藏';
             const n = this.playlist.subscribedCount + this.subsCntOffset;
             return `${t} (${n})`;
         },
+        /** @returns {string} */
         btnCommentText() {
             const n = this.playlist.commentCount;
             return `评论 (${n})`;
         },
+        /** @returns {string} */
         playlistDesc() {
             const t = this.playlist.tags.join('，') || '无';
             const d = this.playlist.description || '暂无歌单介绍';
             return `标签：${t}\n\n${d}`;
         },
+        /** @returns {{ name: 'list', id: number }} */
         trackSource() {
             return {
                 name: 'list',
@@ -154,3 +166,21 @@ export default {
     }
 };
 </script>
+
+<style lang="less">
+.album-detail {
+    .header {
+        .side {
+            .info {
+                .name {
+                    .small {
+                        margin-left: 8px;
+                        font-size: 14px;
+                        opacity: 0.7;
+                    }
+                }
+            }
+        }
+    }
+}
+</style>

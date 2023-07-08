@@ -36,6 +36,8 @@
 </template>
 
 <script>
+import { mapActions } from 'vuex';
+
 import { getPlaylistDetail } from '@/api/typed';
 import { SET_USER_PLAYLISTS } from '@/store/mutation-types';
 
@@ -72,10 +74,14 @@ export default {
         }
     },
     methods: {
+        ...mapActions([
+            'updateUserPlaylistDetail'
+        ]),
         async loadPlaylist(id) {
             this.detailLoading = true;
             this.playlist = await getPlaylistDetail(id);
             this.detailLoading = false;
+            this.updateUserPlaylistDetail(this.playlist);
         },
         async fetchData() {
             this.loadPlaylist(this.user.playlist[0].id);

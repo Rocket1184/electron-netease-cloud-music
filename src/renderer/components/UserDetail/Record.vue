@@ -48,15 +48,19 @@ export default {
         };
     },
     computed: {
+        /** @returns {boolean} */
         recordVisible() {
             return this.isSelf || this.user.peopleCanSeeMyPlayRecord;
         },
+        /** @returns {{ active: boolean }} */
         allClass() {
             return { active: this.type === 'all' };
         },
+        /** @returns {{ active: boolean }} */
         weekClass() {
             return { active: this.type === 'week' };
         },
+        /** @returns {Models.Track[]} */
         tracks() {
             return this[this.type];
         }

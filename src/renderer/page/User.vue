@@ -26,7 +26,7 @@ export default {
     },
     data() {
         return {
-            /** @type {Models.User} */
+            /** @type {Types.UserInfoRes} */
             user: null,
             detailLoading: true
         };

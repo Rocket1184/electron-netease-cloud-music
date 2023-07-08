@@ -5,7 +5,7 @@
                 class="cover">
             <div class="side">
                 <div class="info">
-                    <div class="name">{{album.name}}</div>
+                    <div class="name">{{ album.name }}</div>
                     <div class="creation-info">
                         <router-link tag="div"
                             class="creator"
@@ -65,7 +65,7 @@
         </template>
         <template v-else
             v-for="(tracks, name) of tracksToShow">
-            <div :key="name + 'd'"
+            <div :key="'disk_' + name"
                 class="disk-divider mu-divider">Disk {{name}}</div>
             <TrackList :key="name"
                 :source="trackSource"
@@ -75,7 +75,7 @@
 </template>
 
 <script>
-import { mapActions, mapState } from 'vuex';
+import { mapActions } from 'vuex';
 
 import Api from '@/api/ipc';
 import { shortDate } from '@/util/formatter';
@@ -86,6 +86,7 @@ import TrackListHeader from '@/components/TrackList/TrackListHeader.vue';
 
 export default {
     props: {
+        /** @type {Vue.PropOptions<Models.Album>} */
         album: {
             required: true
         }
@@ -97,16 +98,21 @@ export default {
         };
     },
     computed: {
-        ...mapState(['user']),
+        /** @returns {import('@/store/modules/user').State}*/
+        user() { return this.$store.state.user; },
+        /** @returns {string} */
         creatorAvatarSrc() {
             return sizeImg(this.album.artist.picUrl, HiDpiPx(40));
         },
+        /** @returns {string} */
         coverSrc() {
             return sizeImg(this.album.picUrl, HiDpiPx(160));
         },
+        /** @returns {string} */
         createTime() {
             return shortDate(this.album.publishTime);
         },
+        /** @returns {string} */
         btnSubscribeText() {
             const t = this.dynamicDetail.isSub ? '已收藏' : '收藏';
             let n = '...';
@@ -115,6 +121,7 @@ export default {
             }
             return `${t} (${n})`;
         },
+        /** @returns {string} */
         btnCommentText() {
             let n = '...';
             if (typeof this.dynamicDetail.commentCount === 'number') {
@@ -122,16 +129,19 @@ export default {
             }
             return `评论 (${n})`;
         },
+        /** @returns {string} */
         albumDesc() {
             const d = this.album.description || '暂无专辑介绍';
             return `类型：${this.album.subType}\n\n${d}`;
         },
+        /** @returns {{ name: 'album', id: number }} */
         trackSource() {
             return {
                 name: 'album',
                 id: this.album.id
             };
         },
+        /** @returns {Record<string, Models.Track[]>} */
         tracksToShow() {
             if (!this.album || !this.album.songs) return {};
             let cd = {};

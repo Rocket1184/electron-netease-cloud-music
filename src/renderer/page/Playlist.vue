@@ -25,6 +25,8 @@
 </template>
 
 <script>
+import { mapActions } from 'vuex';
+
 import Api from '@/api/ipc';
 import { getPlaylistDetail } from '@/api/typed';
 
@@ -48,12 +50,16 @@ export default {
         };
     },
     methods: {
+        ...mapActions([
+            'updateUserPlaylistDetail'
+        ]),
         loadPlaylist() {
             this.detailLoading = true;
             this.relatedLoading = true;
             getPlaylistDetail(this.id).then(playlist => {
                 this.playlist = playlist;
                 this.detailLoading = false;
+                this.updateUserPlaylistDetail(playlist);
             });
             Api.getRelatedPlaylists(this.id).then(resp => {
                 if (resp.code === 200) {
