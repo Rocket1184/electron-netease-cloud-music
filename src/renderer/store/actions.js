@@ -164,10 +164,10 @@ export async function checkin({ state, dispatch }) {
 }
 
 /**
- * @param {ActionContext} param0
+ * @param {ActionContext} context
  */
-export async function updateUserPlaylist({ state, commit }) {
-    const resp = await Api.getUserPlaylist(state.user.info.id);
+export async function updateUserPlaylists({ state, commit }) {
+    const resp = await Api.getUserPlaylists(state.user.info.id);
     if (resp.code === 200) {
         commit(types.SET_USER_PLAYLISTS, resp.playlist);
     }

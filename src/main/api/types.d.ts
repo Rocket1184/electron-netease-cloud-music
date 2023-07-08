@@ -125,7 +125,7 @@ namespace Types {
         /** empty array */
         subscribers: any[];
         subscribed: boolean;
-        creator: Creator;
+        creator: PlaylistCreator;
         artists: null;
         tracks: null;
         ordered: boolean;
@@ -416,7 +416,7 @@ namespace Types {
     export interface PlaylistDetail {
         subscribers: any[];
         subscribed: boolean;
-        creator: Creator;
+        creator: PlaylistCreator;
         tracks: TrackDetail[];
         trackIds: {
             id: number;
@@ -447,6 +447,9 @@ namespace Types {
         id: number;
         shareCount: number;
         commentCount: number;
+        updateFrequency?: string;
+        officialPlaylistType?: string;
+        specialType: number;
     }
 
     export interface ListDetailRes extends ApiRes {

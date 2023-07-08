@@ -75,6 +75,7 @@ export class PlayList {
         this.subscribedCount = o.subscribedCount;
         this.commentCount = o.commentCount;
         this.trackIds = o.trackIds || [];
+        this.updateFrequency = o.updateFrequency;
     }
 }
 

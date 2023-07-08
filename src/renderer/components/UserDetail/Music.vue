@@ -72,7 +72,7 @@ export default {
                     this.radios = r.djRadios;
                 }
             });
-            const p2 = Api.getUserPlaylist(id).then(r => {
+            const p2 = Api.getUserPlaylists(id).then(r => {
                 if (r.code === 200) {
                     this.playlists = r.playlist;
                 }

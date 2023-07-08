@@ -68,6 +68,7 @@ namespace Models {
             id: number;
             v: number;
         }[]
+        updateFrequency?: string;
     }
 
     export class Artist {

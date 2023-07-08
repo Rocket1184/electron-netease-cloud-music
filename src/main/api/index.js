@@ -99,7 +99,7 @@ export function getMyProfile() {
  * @param {number} uid
  * @returns {Promise<Types.UserPlaylistRes>}
  */
-export function getUserPlaylist(uid) {
+export function getUserPlaylists(uid) {
     return client.postE('/user/playlist', {
         uid,
         offset: 0,
