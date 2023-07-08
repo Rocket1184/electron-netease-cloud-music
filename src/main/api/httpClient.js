@@ -66,8 +66,12 @@ export default class HttpClient {
         return c.value;
     }
 
-    getCookieString() {
+    getCookieString(excludeMobile = false) {
         const cookies = this.cookieJar.getCookies(CookieAccessInfo.All);
+        if (excludeMobile) {
+            const excluded = ['appver', 'mobilename', 'os', 'osver'];
+            return cookies.filter(c => !excluded.includes(c.name)).map(c => c.toValueString()).join('; ');
+        }
         return cookies.map(c => c.toValueString()).join('; ');
     }
 
@@ -81,6 +85,20 @@ export default class HttpClient {
             hd.Cookie += ('; ' + this.getCookieString());
         } else {
             hd.Cookie = this.getCookieString();
+        }
+        return hd;
+    }
+
+    /**
+     * merge provided header key-value maps with pre-defined headers, excluding mobile client headers
+     * @param  {...any} headers headers to append
+     */
+    mergeHeadersWeb(...headers) {
+        let hd = Object.assign({}, this.clientHeaders, ...headers);
+        if (hd.Cookie) {
+            hd.Cookie += ('; ' + this.getCookieString(true));
+        } else {
+            hd.Cookie = this.getCookieString(true);
         }
         return hd;
     }
@@ -139,12 +157,22 @@ export default class HttpClient {
      * wrapper of electron-fetch function
      * @param {string} url
      * @param {import('electron-fetch').RequestInit} init
+     * @param {boolean} excludeMobile
      */
-    async post(url, init) {
-        init.headers = this.mergeHeaders({
-            'Content-Type': 'application/x-www-form-urlencoded',
-            'Content-Length': Buffer.byteLength(init.body)
-        }, init.headers);
+    async post(url, init, excludeMobile = false) {
+        let headers;
+        if (excludeMobile) {
+            headers = this.mergeHeadersWeb({
+                'Content-Type': 'application/x-www-form-urlencoded',
+                'Content-Length': Buffer.byteLength(init.body)
+            }, init.headers);
+        } else {
+            headers = this.mergeHeaders({
+                'Content-Type': 'application/x-www-form-urlencoded',
+                'Content-Length': Buffer.byteLength(init.body)
+            }, init.headers);
+        }
+        init.headers = headers;
 
         const res = await fetch(url, init);
         this.handleResponse(res);
@@ -172,7 +200,7 @@ export default class HttpClient {
             body.csrf_token = __csrf;
         }
         init.body = qs.stringify(encodeWeb(body));
-        return this.post(url, init);
+        return this.post(url, init, true);
     }
 
     /**

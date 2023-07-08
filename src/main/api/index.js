@@ -474,19 +474,36 @@ export function submitCount() {
 }
 
 /**
+ * tell netease I've started listening a song;
+ * it's not necessary, for now ...
+ * @param {number} id
+ * @param {number} userId
+ */
+export function submitSongStartPlay(id, userId) {
+    let json = {
+        id,
+        type: 'song',
+        content: `id=${userId}`
+    };
+    return sumbitFeedback([{ action: 'startplay', json }]);
+}
+
+/**
  * tell netease I've finished listening a song
  * @param {number} id
  * @param {number} time song duration, in seconds
  * @param {{name: string; id: string}} source
+ * @param {number} userId
  */
-export function submitListened(id, time, source) {
+export function submitSongPlayed(id, time, source, userId) {
     let json = {
         type: 'song',
         wifi: 0,
         download: 0,
         id,
-        time: Math.floor(time),
-        end: 'ui'
+        time: Math.round(time),
+        end: 'ui',
+        content: `id=${userId}`
     };
     if (source && source.id && source.name) {
         json.source = source.name;

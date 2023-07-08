@@ -5,7 +5,8 @@
 
 /**
  * @param {State} state
- * @returns {{ index: number, loopMode: number, list: Models.Track[] }}
+ * @typedef {{ index: number, loopMode: number, list: Models.Track[] }} QueueGetter
+ * @returns {QueueGetter}
  */
 export function queue(state) {
     if (state.ui.radioMode === true) {
@@ -17,7 +18,8 @@ export function queue(state) {
 /**
  * @param {State} _
  * @param {Getters} getters
- * @returns {Models.Track | Partial<Models.Track>}
+ * @typedef {Models.Track} PlayingGetter
+ * @returns {PlayingGetter}
  */
 export function playing(_, getters) {
     const { index, list } = getters.queue;

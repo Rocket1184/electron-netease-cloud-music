@@ -119,7 +119,7 @@
 </template>
 
 <script>
-import { mapActions, mapGetters, mapState } from 'vuex';
+import { mapActions } from 'vuex';
 
 import Api from '@/api/ipc';
 import CurrentPlaylist from './VirtualCurrentPlaylist.vue';
@@ -199,9 +199,14 @@ export default {
         handleProgressDrag(value) {
             this.$refs.audio.currentTime = (this.timeTotal / 1000) * (value / 100);
         },
-        submitListened() {
+        submitSongStartPlay() {
             if (this.user.loginValid) {
-                Api.submitListened(this.playing.id, this.timeTotal, this.playing.source);
+                Api.submitSongStartPlay(this.playing.id, this.user.info.id);
+            }
+        },
+        submitSongPlayed() {
+            if (this.user.loginValid) {
+                Api.submitSongPlayed(this.playing.id, Math.round(this.timeTotal / 1000), this.playing.source, this.user.info.id);
             }
         },
         async handleFavorite() {
@@ -320,8 +325,16 @@ export default {
         }
     },
     computed: {
-        ...mapState(['ui', 'user', 'settings']),
-        ...mapGetters(['playing', 'queue']),
+        /** @returns {import('@/store/modules/ui').State}*/
+        ui() { return this.$store.state.ui; },
+        /** @returns {import('@/store/modules/user').State}*/
+        user() { return this.$store.state.user; },
+        /** @returns {import('@/store/modules/settings').State}*/
+        settings() { return this.$store.state.settings; },
+        /** @returns {import('@/store/getters').PlayingGetter}*/
+        playing() { return this.$store.getters.playing; },
+        /** @returns {import('@/store/getters').QueueGetter}*/
+        queue() { return this.$store.getters.queue; },
         coverImgSrc() {
             if (this.ui.coverImgSrc) {
                 return sizeImg(this.ui.coverImgSrc, HiDpiPx(64));
@@ -435,7 +448,7 @@ export default {
 
         _audioEl.addEventListener('ended', () => {
             _unsetUpdateTimeInterval();
-            this.submitListened();
+            this.submitSongPlayed();
             if (this.queue.loopMode === LOOP_MODE.SINGLE) {
                 _audioEl.play();
             } else {
