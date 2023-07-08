@@ -108,6 +108,8 @@ export default {
                 }
             } else {
                 const res = await Api.getPersonalizedPlaylists();
+                // PersonalizedPlaylist is slightly different from RecommendPlaylist
+                res.result.forEach(p => p.playcount = p.playCount);
                 if (res.code === 200) {
                     this.playlist = res.result;
                 }
