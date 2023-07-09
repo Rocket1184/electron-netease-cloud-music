@@ -1,6 +1,6 @@
 <template>
     <div class="v-list">
-        <router-link v-for="v in videos"
+        <router-link v-for="v in list"
             :key="v.id"
             :to="{ name:'video', params:{ id: v.id } }"
             tag="div"
@@ -34,7 +34,8 @@ import { bkgImg, sizeImg, HiDpiPx } from '@/util/image';
 
 export default {
     props: {
-        videos: {
+        /** @type {Vue.PropOptions<Models.Video[]>} */
+        list: {
             type: Array,
             required: true
         },

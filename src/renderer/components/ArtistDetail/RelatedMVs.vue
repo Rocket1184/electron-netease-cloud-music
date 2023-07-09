@@ -2,7 +2,7 @@
     <div class="related-mvs resource">
         <CenteredLoading v-if="loading"></CenteredLoading>
         <VideoList v-else
-            :videos="mvs"></VideoList>
+            :list="mvs"></VideoList>
         <div class="pagination"
             v-if="showPagination">
             <mu-pagination :total="total"
@@ -22,6 +22,7 @@ import CenteredLoading from '@/components/CenteredLoading.vue';
 
 export default {
     props: {
+        /** @type {Vue.PropOptions<Models.Artist>} */
         artist: {
             required: true
         }
@@ -36,6 +37,7 @@ export default {
         };
     },
     computed: {
+        /** @returns {boolean} */
         showPagination() {
             return this.total > this.pageSize;
         }

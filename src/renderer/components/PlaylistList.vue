@@ -23,6 +23,7 @@ import { bkgImg, sizeImg, HiDpiPx } from '@/util/image';
 
 export default {
     props: {
+        /** @type {Vue.PropOptions<Models.PlayList>} */
         list: {
             type: Array
         }

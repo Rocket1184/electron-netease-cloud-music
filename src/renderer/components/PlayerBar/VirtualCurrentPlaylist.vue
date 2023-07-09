@@ -80,7 +80,7 @@
 </template>
 
 <script>
-import { mapActions, mapGetters, mapState } from 'vuex';
+import { mapActions } from 'vuex';
 
 import { workerExecute } from '@/worker/message';
 import CenteredTip from '@/components/CenteredTip.vue';
@@ -117,8 +117,12 @@ export default {
         };
     },
     computed: {
-        ...mapState(['ui']),
-        ...mapGetters(['playing', 'queue']),
+        /** @returns {import('@/store/modules/ui').State} */
+        ui() { return this.$store.state.ui; },
+        /** @returns {import('@/store/getters').PlayingGetter}*/
+        playing() { return this.$store.getters.playing; },
+        /** @returns {import('@/store/getters').QueueGetter}*/
+        queue() { return this.$store.getters.queue; },
         queueEmpty() {
             return this.queue.list.length === 0;
         },

@@ -36,7 +36,7 @@
                 :list="ui.search.result.items"></PlaylistList>
             <VideoList v-else-if="tab === 'video'"
                 showBadge
-                :videos="ui.search.result.items"></VideoList>
+                :list="ui.search.result.items"></VideoList>
             <CenteredTip v-else
                 icon="bug_report"
                 tip="为什么会这样呢 ..."></CenteredTip>

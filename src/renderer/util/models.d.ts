@@ -123,7 +123,7 @@ namespace Models {
     export class Video {
         constructor(o: any);
         id: string;
-        name: number;
+        name: string;
         alias: string[];
         /** type `0` MV, `1` UGC */
         type: number;
