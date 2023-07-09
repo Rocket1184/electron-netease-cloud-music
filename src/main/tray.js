@@ -87,9 +87,7 @@ export class AppTray {
         const restore = doDesktopHacks();
         this.tray = new Tray(requireIcon(`tray.${color}`));
         restore();
-        // doesn't work when using 'appindicator'
-        this.tray.on('click', () => this.send('raise'));
-        // doesn't work on KDE Plasma
+        this.tray.on('click', () => this.raise() );
         this.tray.setToolTip('Electron NCM');
         /**
          * @type {import('electron').MenuItemConstructorOptions[]}
