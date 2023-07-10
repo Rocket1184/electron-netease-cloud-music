@@ -68,6 +68,11 @@ export const Entries = [
             },
             {
                 type: 'toggle',
+                title: '标题栏显示歌曲名称',
+                prop: 'titleBarShowsTrackName'
+            },
+            {
+                type: 'toggle',
                 title: '显示托盘图标',
                 prop: 'showTrayIcon'
             },

@@ -7,6 +7,7 @@ export const isLinux = process.platform === 'linux';
 const controlMainWindow = encm.invoke.bind(null, 'controlMainWindow');
 
 export const browserWindow = {
+    setTitle: controlMainWindow.bind(null, 'setTitle'),
     maximize: controlMainWindow.bind(null, 'maximize'),
     minimize: controlMainWindow.bind(null, 'minimize'),
     close: controlMainWindow.bind(null, 'close'),

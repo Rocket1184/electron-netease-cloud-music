@@ -25,7 +25,8 @@ export const defaultSettings = {
     themeSecondaryColor: '#ff4081',
     themeVariety: 'auto',
     autoReplacePlaylist: false,
-    lyricTranslation: 'translation'
+    lyricTranslation: 'translation',
+    titleBarShowsTrackName: true
 };
 
 /**

@@ -2,8 +2,11 @@ import Api from '@/api/ipc';
 import * as ApiTyped from '@/api/typed';
 import * as DbPlaylist from '@/api/database/playlist';
 import * as DbRadio from '@/api/database/radio';
-import * as types from './mutation-types';
+
 import { Track, Video } from '@/util/models';
+import { browserWindow } from '@/util/globals';
+
+import * as types from './mutation-types';
 import { LOOP_MODE } from './modules/playlist';
 
 /**
@@ -375,21 +378,26 @@ export async function updateUiLyric({ commit, getters }, { ignoreCache = false }
 
 /**
  * @param {ActionContext} param0
+ * @param {boolean} payload show track name in window title
  */
-export function updateDocumentTitle({ getters }) {
+export function updateMainWindowTitle({ getters }, payload = true) {
+    let title;
     const track = getters.playing;
-    if (track && track.id) {
-        document.title = `${track.name} | Electron NCM`;
+    if (payload && track && track.id) {
+        title = `${track.name} | Electron NCM`;
     } else {
-        document.title = 'Electron NCM';
+        title = 'Electron NCM';
     }
+    browserWindow.setTitle(title);
 }
 
 /**
  * @param {ActionContext} param0
  */
-export function updateUiTrack({ dispatch }) {
-    dispatch('updateDocumentTitle');
+export function updateUiTrack({ state, dispatch }) {
+    if (state.settings.titleBarShowsTrackName) {
+        dispatch('updateMainWindowTitle');
+    }
     dispatch('updateUiLyric');
     dispatch('updateUiCoverImgSrc');
     return dispatch('updateUiAudioSrc');

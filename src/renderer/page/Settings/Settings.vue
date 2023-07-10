@@ -64,7 +64,8 @@ export default {
     methods: {
         ...mapActions([
             'updateSettings',
-            'resetSettings'
+            'resetSettings',
+            'updateMainWindowTitle'
         ]),
         shouldShowOption(item) {
             if (!item.depends && !item.exclude) return true;
@@ -183,6 +184,9 @@ export default {
                             break;
                         case 'windowBorder':
                             this.$nextTick(() => this.recreateWindow());
+                            break;
+                        case 'titleBarShowsTrackName':
+                            this.updateMainWindowTitle(val);
                             break;
                         case 'windowZoom':
                             webContents.setZoomFactor(val || 1);

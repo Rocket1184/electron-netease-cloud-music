@@ -86,7 +86,7 @@
 </template>
 
 <script>
-import { mapActions, mapState } from 'vuex';
+import { mapActions } from 'vuex';
 
 import Routes from '@/routes';
 import SearchBox from './SearchBox.vue';
@@ -111,7 +111,11 @@ export default {
         };
     },
     computed: {
-        ...mapState(['settings', 'user']),
+        /** @returns {import('@/store/modules/user').State}*/
+        user() { return this.$store.state.user; },
+        /** @returns {import('@/store/modules/settings').State}*/
+        settings() { return this.$store.state.settings; },
+        /** @returns {import('@/routes').Route[]} */
         validRoutes() {
             return Routes.filter(r => r.title);
         },

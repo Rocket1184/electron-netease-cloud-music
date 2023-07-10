@@ -65,6 +65,11 @@ function createMainWindow(settings, url = MainURL) {
         }
     });
 
+    win.on('page-title-updated', (ev) => {
+        // prevent window title update from document.title
+        ev.preventDefault();
+    });
+
     if (settings.showTrayIcon && settings.minimizeOnStartup) {
         win.hide();
     }
@@ -228,8 +233,15 @@ ipcMain.on('showLoginWindow', () => {
     });
 });
 
-ipcMain.handle('controlMainWindow', (event, method) => {
+ipcMain.handle('controlMainWindow', (event, method, ...args) => {
     switch (method) {
+        case 'setTitle': {
+            const title = args[0];
+            if (typeof title === 'string') {
+                mainWindow.setTitle(title);
+            }
+            break;
+        }
         case 'maximize':
             if (mainWindow.isMaximized()) {
                 mainWindow.unmaximize();
