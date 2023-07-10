@@ -28,11 +28,11 @@ let cfg = {
         devtoolModuleFilenameTemplate: (info) => {
             const isGeneratedDuplicate = info.resourcePath.match(/\.vue$/) && info.allLoaders;
             if (isGeneratedDuplicate) {
-                return `webpack-generated:///${info.resourcePath}?${info.hash}`;
+                return `webpack-generated:///${info.resourcePath}?${info.loaders}`;
             }
-            return `webpack:///${path.normalize(info.resourcePath)}`;
+            return `webpack://${info.namespace}/${path.normalize(info.resourcePath)}`;
         },
-        devtoolFallbackModuleFilenameTemplate: 'webpack:///[resource-path]?[hash]'
+        devtoolFallbackModuleFilenameTemplate: 'webpack://[namespace]/[resource-path]?[loaders]'
     },
     module: {
         rules: [
