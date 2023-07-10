@@ -5,7 +5,7 @@
 
 /**
  * @param {State} state
- * @typedef {{ index: number, loopMode: number, list: Models.Track[], randomHeardList: number[], randomHeardListPointer: number }} QueueGetter
+ * @typedef {{ index: number, loopMode: number, list: Models.Track[] }} QueueGetter
  * @returns {QueueGetter}
  */
 export function queue(state) {

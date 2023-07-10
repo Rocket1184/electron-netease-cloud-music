@@ -84,7 +84,6 @@ import { mapActions } from 'vuex';
 
 import { workerExecute } from '@/worker/message';
 import CenteredTip from '@/components/CenteredTip.vue';
-import { LOOP_MODE } from '@/store/modules/playlist';
 
 const SourceName = {
     list: '歌单',
@@ -137,9 +136,7 @@ export default {
             if (this.ui.radioMode) return '私人 FM';
             if (this.showFindInput && this.findInput) return `找到 ${this.filteredList.length} 首`;
             return `共 ${this.queue.list.length} 首`;
-        },
-        /** @returns {import('@/store/modules/playlist').State} */
-        playlist() { return this.$store.state.playlist; },
+        }
     },
     methods: {
         ...mapActions([
@@ -148,8 +145,7 @@ export default {
             'clearPlaylist',
             'playTrackIndex',
             'toggleCollectPopup',
-            'removeTrackFromPlaylist',
-            'insertTrackIntoRandomPlaylist',
+            'removeTrackFromPlaylist'
         ]),
         toggleFindInput() {
             this.showFindInput = !this.showFindInput;
@@ -183,9 +179,6 @@ export default {
             let i = index;
             if (this.indexMap.size > 0 && this.indexMap.has(index)) {
                 i = this.indexMap.get(index);
-            }
-            if (this.playlist.loopMode == LOOP_MODE.RANDOM) {
-                this.insertTrackIntoRandomPlaylist({ index: i, offset: 0 });
             }
             this.playTrackIndex(i);
         },
