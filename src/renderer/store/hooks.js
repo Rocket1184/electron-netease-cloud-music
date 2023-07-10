@@ -77,14 +77,16 @@ function updatePlaylistTable(mutation) {
         case SET_PLAY_LIST:
             PlaylistDb.replace(mutation.payload);
             break;
-        case INSERT_TRACK_INTO_PLAYLIST:
-            const { index, tracks } = mutation.payload;
-            PlaylistDb.insert(index, tracks);
+        case INSERT_TRACK_INTO_PLAYLIST: {
+            const { start, tracks } = mutation.payload;
+            PlaylistDb.insert(start, tracks);
             break;
-        case REMOVE_TRACK_FROM_PLAYLIST:
+        }
+        case REMOVE_TRACK_FROM_PLAYLIST: {
             const { start, count } = mutation.payload;
             PlaylistDb.remove(start, count);
             break;
+        }
     }
 }
 

@@ -20,6 +20,7 @@ import { mapActions } from 'vuex';
 export default {
     inheritAttrs: false,
     props: {
+        /** @type {Vue.PropOptions<Models.Track[]>} */
         tracks: {
             type: Array,
             required: true
@@ -32,6 +33,7 @@ export default {
         }
     },
     computed: {
+        /** @returns {string} */
         btnPlayText() {
             return `播放全部 (${this.count || this.tracks.length})`;
         }

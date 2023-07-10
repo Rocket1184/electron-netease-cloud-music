@@ -141,7 +141,7 @@ export default {
                 this.activateRadio(false);
             }
             if (this.settings.autoReplacePlaylist) {
-                this.playPlaylist({ tracks: this.trackDetails, source: this.source, firstIndex: index });
+                this.playPlaylist({ tracks: this.trackDetails, source: this.source, start: index });
             } else {
                 this.playTrack(index);
             }

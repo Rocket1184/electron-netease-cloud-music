@@ -424,7 +424,34 @@ export async function playTrackIndex({ state, commit, dispatch }, index) {
     if (state.ui.radioMode === true) {
         commit(types.SET_RADIO_INDEX, index);
     } else {
-        commit(types.SET_CURRENT_INDEX, index);
+        commit(types.SET_PLAYLIST_INDEX, index);
+        if (state.playlist.loopMode === LOOP_MODE.RANDOM) {
+            commit(types.GENERATE_RANDOM_PLAYLIST, index);
+        }
+    }
+    await dispatch('updateUiTrack');
+    dispatch('playAudio');
+}
+
+/**
+ * @param {ActionContext} param0
+ * @param {number} number
+ */
+export async function playTrackOffset({ commit, dispatch, state, getters }, payload) {
+    const { index, list, loopMode } = getters.queue;
+    let nextIndex;
+    if (loopMode === LOOP_MODE.RANDOM) {
+        const { randomIndex, randomList } = state.playlist;
+        const nextRandomIndex = (randomIndex + randomList.length + payload) % randomList.length;
+        commit(types.SET_RANDOM_PLAYLIST_INDEX, nextRandomIndex);
+        nextIndex = randomList[nextRandomIndex];
+    } else {
+        nextIndex = (index + list.length + payload) % list.length;
+    }
+    if (state.ui.radioMode === true) {
+        commit(types.SET_RADIO_INDEX, nextIndex);
+    } else {
+        commit(types.SET_PLAYLIST_INDEX, nextIndex);
     }
     await dispatch('updateUiTrack');
     dispatch('playAudio');
@@ -433,41 +460,22 @@ export async function playTrackIndex({ state, commit, dispatch }, index) {
 /**
  * @param {ActionContext} param0
  */
-export function playNextTrack({ dispatch, getters }) {
-    const { index, list, loopMode } = getters.queue;
-    let nextIndex;
-    switch (loopMode) {
-        case LOOP_MODE.RANDOM:
-            nextIndex = Math.floor(Math.random() * list.length);
-            break;
-        default:
-            nextIndex = (index + 1) % list.length;
-            break;
-    }
-    dispatch('playTrackIndex', nextIndex);
+export function playNextTrack({ dispatch }) {
+    dispatch('playTrackOffset', 1);
 }
 
 /**
  * @param {ActionContext} param0
  */
-export function playPreviousTrack({ dispatch, getters }) {
-    const { index, list, loopMode } = getters.queue;
-    let nextIndex;
-    switch (loopMode) {
-        case LOOP_MODE.RANDOM:
-            nextIndex = Math.floor(Math.random() * list.length);
-            break;
-        default:
-            nextIndex = (index + list.length - 1) % list.length;
-            break;
-    }
-    dispatch('playTrackIndex', nextIndex);
+export function playPreviousTrack({ dispatch }) {
+    dispatch('playTrackOffset', -1);
 }
 
 /**
  * @param {ActionContext} param0
+ * @param {{ tracks: Models.Track[], source?: any, start?: number }}
  */
-export async function playPlaylist({ commit, dispatch, state }, { tracks, source, firstIndex = -1 }) {
+export async function playPlaylist({ commit, dispatch, state }, { tracks, source, start = -1 }) {
     const list = [];
     for (const t of tracks) {
         if (source) {
@@ -479,21 +487,25 @@ export async function playPlaylist({ commit, dispatch, state }, { tracks, source
     if (state.ui.radioMode === true) {
         commit(types.ACTIVATE_RADIO, false);
     }
-    if (firstIndex === -1 && state.playlist.loopMode === LOOP_MODE.RANDOM) {
-        firstIndex = Math.floor(Math.random() * list.length);
+    let nextIndex;
+    if (start === -1) {
+        if (state.playlist.loopMode === LOOP_MODE.RANDOM) {
+            nextIndex = Math.floor(Math.random() * list.length);
+            commit(types.GENERATE_RANDOM_PLAYLIST, nextIndex);
+        } else {
+            nextIndex = 0;
+        }
+    } else {
+        nextIndex = start;
     }
-    if (firstIndex === -1) {
-        firstIndex = 0;
-    }
-    dispatch('playTrackIndex', firstIndex);
+    dispatch('playTrackIndex', nextIndex);
 }
 
 /**
  * @param {ActionContext} context
  */
 export function clearPlaylist({ commit, dispatch }) {
-    commit(types.SET_PLAY_LIST, []);
-    commit(types.SET_CURRENT_INDEX, 0);
+    commit(types.CLEAR_PLAY_LIST);
     dispatch('updateUiTrack');
 }
 
@@ -523,6 +535,9 @@ export async function restorePlaylist({ commit }) {
                 }
             }
             commit(types.RESTORE_PLAYLIST, { index, list, loopMode });
+            if (loopMode === LOOP_MODE.RANDOM) {
+                commit(types.GENERATE_RANDOM_PLAYLIST, index);
+            }
         }
     } catch (e) {
         console.error('restorePlaylist failed:', e); // eslint-disable-line no-console
@@ -600,12 +615,13 @@ export async function checkDownloaded({ commit }, { metadata }) {
  * @param {ActionContext} param0
  */
 export function nextLoopMode({ commit, state }) {
-    const { loopMode } = state.playlist;
+    const { index, loopMode } = state.playlist;
     switch (loopMode) {
         case LOOP_MODE.LIST:
             commit(types.SET_LOOP_MODE_SINGLE);
             break;
         case LOOP_MODE.SINGLE:
+            commit(types.GENERATE_RANDOM_PLAYLIST, index);
             commit(types.SET_LOOP_MODE_RANDOM);
             break;
         case LOOP_MODE.RANDOM:
@@ -618,23 +634,30 @@ export function nextLoopMode({ commit, state }) {
  * @param {ActionContext} param0
  * @param {{ tracks: Models.Track[]; source?: any; index?: number }} payload
  */
-export function insertTrackIntoPlaylist({ commit, state }, payload) {
+export function insertTrackIntoPlaylist({ commit, state, getters }, payload) {
     if (payload.source) {
         for (const t of payload.tracks) {
             t.source = payload.source;
         }
     }
-    const index = payload.index || state.playlist.index;
-    commit(types.INSERT_TRACK_INTO_PLAYLIST, { tracks: payload.tracks, index });
+    const start = payload.index || state.playlist.index;
+    commit(types.INSERT_TRACK_INTO_PLAYLIST, { tracks: payload.tracks, start });
+    if (getters.queue.loopMode === LOOP_MODE.RANDOM) {
+        commit(types.INSERT_TRACK_INTO_RANDOM_PLAYLIST, { start, count: payload.tracks.length });
+    }
 }
 
 /**
  * @param {ActionContext} param0
+ * @param {{ start: number; count: number }} payload
  */
 export function removeTrackFromPlaylist({ getters, commit, dispatch }, payload) {
-    const playingId = getters.playing.id;
+    const { index, loopMode } = getters.queue;
     commit(types.REMOVE_TRACK_FROM_PLAYLIST, payload);
-    if (playingId !== getters.playing.id) {
+    if (loopMode === LOOP_MODE.RANDOM) {
+        commit(types.REMOVE_TRACK_FROM_RANDOM_PLAYLIST, payload);
+    }
+    if (index >= payload.start) {
         dispatch('updateUiTrack');
     }
 }
