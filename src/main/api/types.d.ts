@@ -56,6 +56,10 @@ namespace Types {
         eventCount: number;
         playlistCount: number;
         playlistBeSubscribedCount: number;
+        // 歌手的官方账号才有？
+        artistId?: number;
+        artistName?: string;
+        artistIdentity?: number[];
         // 以下只有电台主播才有？
         brand?: string;
         canReward?: boolean;

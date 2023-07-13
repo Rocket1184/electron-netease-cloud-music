@@ -10,7 +10,7 @@
                 :img="list.coverImgUrl"
                 :title="list.name"
                 :subTitle="`共 ${list.trackCount} 首`"
-                @click="handleCollect(list, index)">
+                @click="handleCollect(list)">
             </AvatarListItem>
         </mu-list>
         <template #actions>
@@ -21,13 +21,17 @@
 </template>
 
 <script>
-import { mapActions, mapState } from 'vuex';
+import { mapActions } from 'vuex';
 
 import AvatarListItem from '@/components/AvatarListItem.vue';
 
 export default {
     computed: {
-        ...mapState(['ui', 'user']),
+        /** @returns {import('@/store/modules/ui').State}*/
+        ui() { return this.$store.state.ui; },
+        /** @returns {import('@/store/modules/user').State}*/
+        user() { return this.$store.state.user; },
+        /** @returns {Models.playlist[]} */
         listToShow() {
             return this.user.playlist.filter(l => l.creator.id === this.user.info.id);
         }

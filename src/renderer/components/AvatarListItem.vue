@@ -44,6 +44,7 @@ export default {
         }
     },
     computed: {
+        /** @returns {string} */
         imgSrc() {
             return sizeImg(this.img, HiDpiPx(40));
         }
