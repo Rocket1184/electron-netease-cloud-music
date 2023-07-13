@@ -39,22 +39,23 @@
             :value="tab"
             @change="handelTabChange">
             <mu-tab v-for="tab of DetailTabs"
-                :key="tab[0]"
-                :value="tab[0]">{{tab[1]}}</mu-tab>
+                :key="tab.key"
+                :value="tab.key">{{ tab.title }}</mu-tab>
         </mu-tabs>
-        <transition mode="out-in"
-            :name="transitionName">
-            <keep-alive>
-                <component :is="detailCompo"
-                    :artist="artist"
-                    @scroll="handleScroll"></component>
-            </keep-alive>
-        </transition>
+        <div class="slide-anim-container">
+            <transition :name="transitionName">
+                <keep-alive>
+                    <component :is="detailCompo"
+                        :artist="artist"
+                        @scroll="handleScroll"></component>
+                </keep-alive>
+            </transition>
+        </div>
     </div>
 </template>
 
 <script>
-import { mapActions, mapState } from 'vuex';
+import { mapActions } from 'vuex';
 
 import Api from '@/api/ipc';
 import { bkgImg, sizeImg } from '@/util/image';
@@ -64,10 +65,10 @@ import RelatedMVs from './RelatedMVs.vue';
 import Introduction from './Introduction.vue';
 
 const DetailTabs = [
-    ['hotSongs', '热门单曲'],
-    ['albums', '所有专辑'],
-    ['mvs', '相关 MV'],
-    ['intro', '艺人介绍']
+    { key: 'hotSongs', title: '热门单曲' },
+    { key: 'albums', title: '所有专辑' },
+    { key: 'mvs', title: '相关 MV' },
+    { key: 'intro', title: '艺人介绍' }
 ];
 
 const DetailCompo = {
@@ -77,8 +78,11 @@ const DetailCompo = {
     intro: 'Introduction'
 };
 
+/** @typedef {{ detail: Models.Artist, hotSongs: Models.Track[] }} ArtistDetails */
+
 export default {
     props: {
+        /** @type {Vue.PropOptions<ArtistDetails>} */
         artist: {
             required: true
         }
@@ -91,14 +95,20 @@ export default {
         };
     },
     computed: {
-        ...mapState(['user']),
+        /** @returns {{ key: string, title: string }[]} */
+        DetailTabs() { return DetailTabs; },
+        /** @returns {import('@/store/modules/user').State} */
+        user() { return this.$store.state.user; },
+        /** @returns {string} */
         bkgImgStyle() {
             return bkgImg(sizeImg(this.artist.detail.picUrl, 640, 300));
         },
+        /** @returns {import('vue-router').Route} */
         accountRoute() {
             const id = this.artist.detail.accountId;
             return id ? { name: 'user', params: { id } } : null;
         },
+        /** @returns {string} */
         detailCompo() {
             return DetailCompo[this.tab];
         }
@@ -135,8 +145,8 @@ export default {
         handelTabChange(val) {
             let oldIndex, newIndex;
             DetailTabs.forEach((tab, index) => {
-                if (tab[0] === this.tab) oldIndex = index;
-                if (tab[0] === val) newIndex = index;
+                if (tab.key === this.tab) oldIndex = index;
+                if (tab.key === val) newIndex = index;
             });
             if (newIndex < oldIndex) {
                 this.transitionName = 'slide-right';
@@ -153,7 +163,6 @@ export default {
         }
     },
     created() {
-        this.DetailTabs = DetailTabs;
         this.updateDynamicDetail();
     },
     components: {
@@ -167,6 +176,7 @@ export default {
 
 <style lang="less">
 .artist-detail {
+    height: 100%;
     overflow-x: hidden;
     .header {
         width: 100%;

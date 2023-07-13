@@ -13,8 +13,8 @@
                     v-text="tab.title"></span>
             </mu-tab>
         </mu-tabs>
-        <div class="fav-content">
-            <transition mode="out-in"
+        <div class="fav-content slide-anim-container">
+            <transition
                 :name="transitionName"
                 @after-enter="handleTabPageEnter">
                 <component ref="tabPage"

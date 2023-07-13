@@ -121,7 +121,7 @@ export default {
 
 <style lang="less">
 .user-event {
-    margin: 8px 24px;
+    padding: 8px 24px;
     .event-item:not(:first-child) {
         border-top: 1px solid rgba(0, 0, 0, 0.1);
     }

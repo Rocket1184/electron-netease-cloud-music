@@ -103,6 +103,7 @@ export default {
             ]).then(() => this.loading = false);
         },
         tabActivated() {
+            if (!this.user.loginValid) return;
             this.fetchData();
             this.focusSearchInput();
         },

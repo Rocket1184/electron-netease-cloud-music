@@ -11,8 +11,8 @@
                 <span class="statistics">累计听歌 {{ user.listenSongs }} 首</span>
             </mu-sub-header>
             <CenteredLoading v-if="loading"></CenteredLoading>
-            <VirtualTrackList v-else
-                :tracks="tracks"></VirtualTrackList>
+            <TrackList v-else
+                :tracks="tracks"></TrackList>
         </template>
         <CenteredTip v-else
             icon="cloud_off"
@@ -24,7 +24,7 @@
 import Api from '@/api/ipc';
 import { Track } from '@/util/models';
 
-import VirtualTrackList from '@/components/TrackList/VirtualTrackList.vue';
+import TrackList from '@/components/TrackList/TrackList.vue';
 import CenteredLoading from '@/components/CenteredLoading.vue';
 import CenteredTip from '@/components/CenteredTip.vue';
 
@@ -86,7 +86,7 @@ export default {
         this.getPlayRecord();
     },
     components: {
-        VirtualTrackList,
+        TrackList,
         CenteredLoading,
         CenteredTip
     }
