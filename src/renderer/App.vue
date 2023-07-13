@@ -36,7 +36,7 @@ export default {
         }
     },
     created() {
-        this.$router.beforeEach((to, from, next) => {
+        const _removeGuard = this.$router.beforeEach((to, from, next) => {
             if (to.name === 'player') {
                 this.transitionName = 'player-in';
             } else if (from.name === 'player') {
@@ -49,6 +49,26 @@ export default {
             window.__NAV_BACK__ = false;
             next();
         });
+        this._removeGuard = _removeGuard;
+        /** @type {(this: Document, ev: MouseEvent) => void} */
+        const _onmousedown = ev => {
+            // "Browser Back" button
+            if (ev.button === 3) {
+                window.__NAV_BACK__ = true;
+            }
+        };
+        document.addEventListener('mousedown', _onmousedown);
+        this._onmousedown = _onmousedown;
+    },
+    beforeDestroy() {
+        if (typeof this._removeGuard === 'function') {
+            this._removeGuard();
+            this._removeGuard = null;
+        }
+        if (typeof this._onmousedown === 'function') {
+            document.removeEventListener('mousedown', this._onmousedown);
+            this._onmousedown = null;
+        }
     }
 };
 </script>

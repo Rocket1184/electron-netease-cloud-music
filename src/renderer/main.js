@@ -98,7 +98,9 @@ const app = new Vue({
     provide: {
         darkMediaQuery
     },
-    extends: App
+    // workaround HMR issues
+    // https://github.com/vuejs/vue-hot-reload-api/issues/61#issuecomment-433654600
+    render: h => h(App) 
 });
 
 darkMediaQuery.addEventListener('change', e => {
