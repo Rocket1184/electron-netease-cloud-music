@@ -208,17 +208,17 @@ ipcMain.on('showLoginWindow', () => {
     });
     loginWindow.loadURL(LoginURL);
     const { session } = loginWindow.webContents;
-    session.webRequest.onHeadersReceived({ urls: [`${LoginURL}/*`] }, (details, callback) => {
+    session.webRequest.onCompleted({ urls: [`${LoginURL}/*`] }, (details) => {
         const values = Object.entries(details.responseHeaders)
             .filter(header => header[0].toLocaleLowerCase() === 'set-cookie')
             .map(header => header[1])
             .flat();
         if (values.length <= 0 || values.every(v => !v.includes('MUSIC_U='))) {
             // no `set-cookie: MUSIC_U=...`, skip this response
-            return callback({ cancel: false });
+            return;
         }
         // remove webRequest listener
-        session.webRequest.onHeadersReceived(null);
+        session.webRequest.onCompleted(null);
         ipcMain.handleOnce('getLoginCookie', async () => {
             const cookies = await session.cookies.get({ url: LoginURL });
             session.clearCache();
@@ -228,7 +228,6 @@ ipcMain.on('showLoginWindow', () => {
             const cookie = Object.fromEntries(cookies.map(ck => [ck.name, ck.value]));
             return cookie;
         });
-        callback({ cancel: false });
         loginWindow.close();
     });
 });

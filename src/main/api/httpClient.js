@@ -27,25 +27,18 @@ export default class HttpClient {
 
     initCookieJar() {
         this.cookieJar = new CookieJar();
-        this.cookieJar.setCookies([
-            'appver=8.10.20',
-            'mobilename=linux',
-            'os=android',
-            'osver=10.0.0',
-        ], '.music.163.com', '/');
     }
 
     /**
      * clear all cookies, and set cookie as given arguments
-     * @param {string | string[] | Record<string, string>} [arg=''] 
+     * @param {Record<string, string>} [arg] 
      */
-    updateCookie(arg = '') {
+    updateCookie(arg = {}) {
         this.initCookieJar();
-        if (typeof arg === 'string' || Array.isArray(arg)) {
-            this.cookieJar.setCookies(arg);
-            return;
-        }
-        const cookies = Object.entries(arg).map(([k, v]) => `${k}=${v}`);
+        const ignoredMobileCookie = ['os', 'osver', 'appver', 'mobilename'];
+        const cookies = Object.entries(arg)
+            .filter(([k]) => !ignoredMobileCookie.includes(k))
+            .map(([k, v]) => `${k}=${v}`);
         this.cookieJar.setCookies(cookies);
     }
 
@@ -62,16 +55,11 @@ export default class HttpClient {
             cookies.forEach(c => result[c.name] = c.value);
             return result;
         }
-        const c = cookies.find(c => c.name === key) || { value: '' };
-        return c.value;
+        return cookies.find(c => c.name === key)?.value ?? '';
     }
 
-    getCookieString(excludeMobile = false) {
+    getCookieString() {
         const cookies = this.cookieJar.getCookies(CookieAccessInfo.All);
-        if (excludeMobile) {
-            const excluded = ['appver', 'mobilename', 'os', 'osver'];
-            return cookies.filter(c => !excluded.includes(c.name)).map(c => c.toValueString()).join('; ');
-        }
         return cookies.map(c => c.toValueString()).join('; ');
     }
 
@@ -85,20 +73,6 @@ export default class HttpClient {
             hd.Cookie += ('; ' + this.getCookieString());
         } else {
             hd.Cookie = this.getCookieString();
-        }
-        return hd;
-    }
-
-    /**
-     * merge provided header key-value maps with pre-defined headers, excluding mobile client headers
-     * @param  {...any} headers headers to append
-     */
-    mergeHeadersWeb(...headers) {
-        let hd = Object.assign({}, this.clientHeaders, ...headers);
-        if (hd.Cookie) {
-            hd.Cookie += ('; ' + this.getCookieString(true));
-        } else {
-            hd.Cookie = this.getCookieString(true);
         }
         return hd;
     }
@@ -157,22 +131,12 @@ export default class HttpClient {
      * wrapper of electron-fetch function
      * @param {string} url
      * @param {import('electron-fetch').RequestInit} init
-     * @param {boolean} excludeMobile
      */
-    async post(url, init, excludeMobile = false) {
-        let headers;
-        if (excludeMobile) {
-            headers = this.mergeHeadersWeb({
-                'Content-Type': 'application/x-www-form-urlencoded',
-                'Content-Length': Buffer.byteLength(init.body)
-            }, init.headers);
-        } else {
-            headers = this.mergeHeaders({
-                'Content-Type': 'application/x-www-form-urlencoded',
-                'Content-Length': Buffer.byteLength(init.body)
-            }, init.headers);
-        }
-        init.headers = headers;
+    async post(url, init) {
+        init.headers = this.mergeHeaders({
+            'Content-Type': 'application/x-www-form-urlencoded',
+            'Content-Length': Buffer.byteLength(init.body)
+        }, init.headers);
 
         const res = await fetch(url, init);
         this.handleResponse(res);
@@ -200,7 +164,7 @@ export default class HttpClient {
             body.csrf_token = __csrf;
         }
         init.body = qs.stringify(encodeWeb(body));
-        return this.post(url, init, true);
+        return this.post(url, init);
     }
 
     /**
@@ -240,10 +204,10 @@ export default class HttpClient {
         }
         // default eapi cookies
         body.header = Object.assign({
-            os: 'pc',
-            osver: 'linux',
-            appver: '2.0.3.131777',
-            channel: 'netease'
+            os: 'android',
+            osver: '10.0.0',
+            appver: '8.10.20',
+            mobilename: 'linux'
         }, this.getCookie());
         /** @type {import('electron-fetch').RequestInit} */
         let init = {
@@ -254,7 +218,7 @@ export default class HttpClient {
         // encrypt request payload
         init.body = qs.stringify(encodeEApi(new URL(url).pathname, body));
         init.headers = this.mergeHeaders({
-            'Cookie': 'os=pc; osver=linux; appver=2.0.3.131777; channel=netease',
+            'Cookie': 'os=android; osver=10.0.0; appver=2.0.3.131777; mobilename=linux',
             'Content-Type': 'application/x-www-form-urlencoded',
             'Content-Length': Buffer.byteLength(init.body)
         });
