@@ -2,16 +2,16 @@
     <mu-dialog :open="show"
         dialog-class="nav-login-dlg"
         @close="$emit('update:show', false)">
-        <mu-tabs :value="loginType"
+        <mu-tabs :value.sync="type"
             inverse
             full-width
-            @change="handleTabChange">
-            <mu-tab value="app">应用内登录</mu-tab>
+            @change="prepareLoginMethod">
+            <mu-tab value="pwd">密码登录</mu-tab>
             <mu-tab value="web">网页登录</mu-tab>
         </mu-tabs>
         <div class="login-types">
-            <div v-show="loginType === 'web'">
-                <mu-stepper :active-step="webLoginStep"
+            <div v-if="type === 'web'">
+                <mu-stepper :active-step="web.step"
                     orientation="vertical">
                     <mu-step>
                         <mu-step-label>进行网页登录</mu-step-label>
@@ -28,7 +28,7 @@
                         <mu-step-content>
                             <div class="web-login-step-2-content">
                                 <mu-button flat
-                                    @click="webLoginStep = 0">上一步</mu-button>
+                                    @click="web.step = 0">上一步</mu-button>
                                 <mu-button color="primary"
                                     @click="handleWebLoginComplete()">完成</mu-button>
                             </div>
@@ -36,60 +36,44 @@
                     </mu-step>
                 </mu-stepper>
             </div>
-            <div v-show="loginType === 'app'">
+            <div v-else-if="type === 'pwd'">
                 <mu-text-field label="邮箱 / 手机号码"
                     ref="inputUsr"
-                    v-model="inputUsr"
-                    :error-text="errMsgUsr"
+                    v-model="pwd.usr"
+                    :error-text="pwd.usrMsg"
                     full-width
                     label-float></mu-text-field>
                 <mu-text-field label="密码"
                     ref="inputPwd"
                     type="password"
-                    v-model="inputPwd"
-                    :error-text="errMsgPwd"
+                    v-model="pwd.pwd"
+                    :error-text="pwd.pwdMsg"
                     full-width
                     label-float></mu-text-field>
-                <div v-if="needCaptcha">
+                <div v-if="pwd.needsCaptcha">
                     <mu-text-field label="验证码"
                         ref="inputCaptcha"
                         class="text-field-captcha"
-                        v-model="inputCaptcha"
-                        :error-text="errMsgCaptcha"
+                        v-model="pwd.captcha"
+                        :error-text="pwd.captchaMsg"
                         label-float></mu-text-field>
-                    <img :src="`https://music.163.com/captcha?id=${captchaId}`"
+                    <img :src="`https://music.163.com/captcha?id=${pwd.captchaId}`"
                         class="captcha-img">
                 </div>
                 <mu-button full-width
                     color="primary"
-                    @click="handleLogin()"
-                    :disabled="loginPending">登录</mu-button>
+                    @click="handlePasswordLogin()"
+                    :disabled="pwd.pending">登录</mu-button>
             </div>
         </div>
     </mu-dialog>
 </template>
 
 <script>
-import Api from '@/api/ipc';
-import { encm } from '@/util/globals';
-
 import { mapActions } from 'vuex';
 
-function initData() {
-    return {
-        webLoginStep: 0,
-        loginType: 'app',
-        loginPending: false,
-        inputUsr: '',
-        inputPwd: '',
-        errMsgUsr: '',
-        errMsgPwd: '',
-        needCaptcha: false,
-        captchaId: null,
-        inputCaptcha: '',
-        errMsgCaptcha: ''
-    };
-}
+import Api from '@/api/ipc';
+import { encm } from '@/util/globals';
 
 export default {
     props: {
@@ -98,88 +82,125 @@ export default {
             required: true
         }
     },
-    data: initData,
+    data: () => ({
+        type: 'pwd',
+        pwd: {
+            usr: '',
+            usrMsg: '',
+            pwd: '',
+            pwdMsg: '',
+            needsCaptcha: false,
+            captchaId: null,
+            captcha: '',
+            captchaMsg: '',
+            pending: false
+        },
+        web: {
+            step: 0
+        }
+    }),
     methods: {
+        resetData() {
+            this.pwd = {
+                usr: '',
+                usrMsg: '',
+                pwd: '',
+                pwdMsg: '',
+                needsCaptcha: false,
+                captchaId: null,
+                captcha: '',
+                captchaMsg: '',
+                pending: false
+            };
+            this.web = {
+                step: 0
+            };
+        },
         ...mapActions([
             'login',
             'restoreUserInfo'
         ]),
-        handleTabChange(val) {
-            this.loginType = val;
-        },
-        async handleLogin() {
-            this.errMsgUsr = '';
-            this.errMsgPwd = '';
-            this.errMsgCaptcha = '';
-            if (!this.inputUsr) {
+        async handlePasswordLogin() {
+            this.pwd.usrMsg = '';
+            this.pwd.pwdMsg = '';
+            this.pwd.captchaMsg = '';
+            if (!this.pwd.usr) {
                 this.$refs.inputUsr.$el.querySelector('input').focus();
-                return this.errMsgUsr = '邮箱 / 手机号码 不能为空';
+                return this.pwd.usrMsg = '邮箱 / 手机号码 不能为空';
             }
-            if (!this.inputPwd) {
+            if (!this.pwd.pwd) {
                 this.$refs.inputPwd.$el.querySelector('input').focus();
-                return this.errMsgPwd = '密码不能为空';
+                return this.pwd.pwdMsg = '密码不能为空';
             }
-            if (this.needCaptcha && this.captchaId && !this.inputCaptcha) {
+            if (this.pwd.needsCaptcha && this.pwd.captchaId && !this.pwd.captcha) {
                 this.$refs.inputCaptcha.$el.querySelector('input').focus();
-                return this.errMsgCaptcha = '请输入验证码';
+                return this.pwd.captchaMsg = '请输入验证码';
             }
-            this.loginPending = true;
-            if (this.needCaptcha) {
-                const { code, result, captchaId } = await Api.verifyCaptcha(this.captchaId, this.inputCaptcha);
-                this.captchaId = captchaId;
-                this.inputCaptcha = '';
+            this.pwd.pending = true;
+            if (this.pwd.needsCaptcha) {
+                const { code, result, captchaId } = await Api.verifyCaptcha(this.pwd.captchaId, this.pwd.captcha);
+                this.pwd.captchaId = captchaId;
+                this.pwd.captcha = '';
                 if (code !== 200) {
-                    this.errMsgCaptcha = `${code}：提交验证码失败`;
-                    this.loginPending = false;
+                    this.pwd.captchaMsg = `${code}：提交验证码失败`;
+                    this.pwd.pending = false;
                     return;
                 }
                 if (result !== true) {
-                    this.errMsgCaptcha = '验证码错误';
-                    this.loginPending = false;
+                    this.pwd.captchaMsg = '验证码错误';
+                    this.pwd.pending = false;
                     return;
                 }
-                this.needCaptcha = false;
+                this.pwd.needsCaptcha = false;
             }
             let phone = '';
             let countrycode = '86';
-            const match = this.inputUsr.match(/^\+?(?<countrycode>\d*)\s(?<phone>\d*)$/);
+            const match = this.pwd.usr.match(/^\+?(?<countrycode>\d*)\s(?<phone>\d*)$/);
             if (match) {
                 phone = match.groups.phone;
                 countrycode = match.groups.countrycode;
             }
-            let resp = await this.login({ acc: phone || this.inputUsr, pwd: this.inputPwd, countrycode });
+            let resp = await this.login({ acc: phone || this.pwd.usr, pwd: this.pwd.pwd, countrycode });
             switch (resp.code) {
                 case 200:
                     this.$emit('update:show', false);
                     break;
+                case 400:
+                    this.$alert(`密码登录可能被风控，请尝试“网页登录”。错误信息：“\n${resp.message}”`, {
+                        title: '登录失败'
+                    });
+                    break;
                 case 415:
                     this.$refs.inputCaptcha.$el.querySelector('input').focus();
-                    this.errMsgCaptcha = '登录过于频繁，请输入验证码';
-                    this.captchaId = resp.captchaId;
-                    this.needCaptcha = true;
+                    this.pwd.captchaMsg = '登录过于频繁，请输入验证码';
+                    this.pwd.captchaId = resp.captchaId;
+                    this.pwd.needsCaptcha = true;
                     break;
                 case 501:
                     this.$refs.inputUsr.$el.querySelector('input').select();
-                    this.errMsgUsr = '用户不存在';
+                    this.pwd.usrMsg = '用户不存在';
                     break;
                 case 502:
                     this.$refs.inputPwd.$el.querySelector('input').select();
-                    this.errMsgPwd = '密码错误';
+                    this.pwd.pwdMsg = '密码错误';
                     break;
                 default:
-                    this.errMsgUsr = resp.msg || resp.message;
+                    this.pwd.usrMsg = resp.msg || resp.message;
             }
-            this.loginPending = false;
+            this.pwd.pending = false;
         },
         bindKeybordEvent() {
             this.$refs.inputPwd.$el.querySelector('input').onkeydown = e => {
-                if (e.key === 'Enter') this.handleLogin();
+                if (e.key === 'Enter') this.handlePasswordLogin();
             };
             setTimeout(() => this.$refs.inputUsr.$el.querySelector('input').focus(), 200);
         },
+        removeKeyboardEvent() {
+            this.$refs.inputPwd.$el.querySelector('input').onkeydown = null;
+        },
         openLoginWeb() {
             encm.send('showLoginWindow');
-            setTimeout(() => this.webLoginStep = 1, 1000);
+            setTimeout(() => this.web.step = 1, 1000);
         },
         async handleWebLoginComplete() {
             try {
@@ -193,15 +214,27 @@ export default {
                 const msg = e ? e.msg : '';
                 this.$toast.message(msg || '根本没有登录成功啊喂 (╯‵□′)╯︵┻━┻');
             }
-            this.webLoginStep = 0;
+            this.web.step = 0;
+        },
+        prepareLoginMethod() {
+            switch (this.type) {
+                case 'pwd':
+                    this.$nextTick(this.bindKeybordEvent);
+                    break;
+            }
         }
     },
     watch: {
         show(val) {
             if (val === true) {
-                this.$nextTick(this.bindKeybordEvent);
+                this.prepareLoginMethod();
             } else {
-                Object.assign(this.$data, initData());
+                this.resetData();
+                switch (this.type) {
+                    case 'pwd':
+                        this.removeKeyboardEvent();
+                        break;
+                }
             }
         }
     }
