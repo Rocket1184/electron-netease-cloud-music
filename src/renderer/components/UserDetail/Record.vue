@@ -12,6 +12,7 @@
             </mu-sub-header>
             <CenteredLoading v-if="loading"></CenteredLoading>
             <TrackList v-else
+                ref="trackList"
                 :tracks="tracks"></TrackList>
         </template>
         <CenteredTip v-else
@@ -28,8 +29,13 @@ import TrackList from '@/components/TrackList/TrackList.vue';
 import CenteredLoading from '@/components/CenteredLoading.vue';
 import CenteredTip from '@/components/CenteredTip.vue';
 
+/**
+ * @typedef {{ songs: Models.Track[], score: number[], playCount: number[] }} PlayRecord
+ */
+
 export default {
     props: {
+        /** @type {Vue.PropOptions<Types.UserInfoRes>} */
         user: {
             type: Object,
             required: true
@@ -42,8 +48,18 @@ export default {
     data() {
         return {
             loading: false,
-            all: [],
-            week: [],
+            /** @type {PlayRecord} */
+            all: {
+                songs: [],
+                score: [],
+                playCount: []
+            },
+            /** @type {PlayRecord} */
+            week: {
+                songs: [],
+                score: [],
+                playCount: []
+            },
             type: 'all'
         };
     },
@@ -62,7 +78,7 @@ export default {
         },
         /** @returns {Models.Track[]} */
         tracks() {
-            return this[this.type];
+            return this[this.type].songs;
         }
     },
     methods: {
@@ -70,20 +86,38 @@ export default {
             this.loading = true;
             const res = await Api.getUserPlayRecord(this.user.profile.userId, this.type === 'week' ? 1 : 0);
             if (res.code === 200) {
-                this[this.type] = (res.allData || res.weekData || []).map(r => new Track(r.song));
+                const data = (res.allData ?? res.weekData ?? []);
+                const record = {
+                    songs: [],
+                    score: [],
+                    playCount: []
+                };
+                for (const d of data) {
+                    record.songs.push(new Track(d.song));
+                    record.score.push(d.score);
+                    record.playCount.push(d.score);
+                }
+                this[this.type] = record;
             }
             this.loading = false;
         },
         handleTypeChange(type) {
             this.type = type;
-            if (this[this.type].length === 0) {
-                this.getPlayRecord();
-            }
+            this.getPlayRecord();
         }
     },
     mounted() {
         if (!this.recordVisible) return;
         this.getPlayRecord();
+    },
+    updated() {
+        const trackList = this.$refs.trackList;
+        if (!trackList) return;
+        const rows = trackList.$el.getElementsByClassName('track-row');
+        const score = this[this.type].score;
+        for (let i = 0; i < rows.length; i++) {
+            rows[i].style.setProperty('--score', `${score[i]}%`);
+        }
     },
     components: {
         TrackList,
@@ -112,6 +146,13 @@ export default {
     }
     .statistics {
         margin-left: auto;
+    }
+    .tracklist {
+        --bkg-color: color-mix(in srgb, var(--primary-color, currentColor) 20%, transparent);
+        .track-row {
+            --score: 50%;
+            background-image: linear-gradient(90deg, var(--bkg-color) var(--score), transparent var(--score));
+        }
     }
 }
 </style>

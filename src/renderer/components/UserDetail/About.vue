@@ -32,11 +32,13 @@ import TypeBadge from './TypeBadge.vue';
 
 export default {
     props: {
+        /** @type {Vue.PropOptions<Types.UserInfoRes>} */
         user: {
             required: true
         }
     },
     computed: {
+        /** @returns {string} */
         age() {
             const b = this.user.profile.birthday;
             if (b <= -2209017600000) return null;
@@ -47,16 +49,17 @@ export default {
             const y = Math.floor(dt.getUTCFullYear() % 100 / 10) * 10;
             return `${y || '00'} 后 ${a}座`;
         },
+        /** @returns {string} */
         city() {
             const code = this.user.profile.city;
             if (code <= 100) return null;
             let result = '';
             const c0 = 100000;
-            const c1 = Math.floor(code / 10000) * 10000;
+            const c1 = Math.trunc(code / 10000) * 10000;
             const r1 = districts[c0][c1];
             if (!r1) return result;
             result += r1;
-            const c2 = Math.floor(code / 100) * 100;
+            const c2 = Math.trunc(code / 100) * 100;
             const r2 = districts[c1][c2];
             if (!r2) return result;
             result += ' ' + r2;
