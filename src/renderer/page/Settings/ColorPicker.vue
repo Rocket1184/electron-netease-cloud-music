@@ -4,34 +4,35 @@
         :width="500"
         :open="open"
         @close="handleClose">
-        <transition :name="transitionName"
-            mode="out-in">
-            <div :key="activeGroup"
-                class="buttons-wrapper">
-                <template v-if="activeGroup < 0">
-                    <mu-button v-for="(group, index) in ColorGroups"
-                        fab
-                        :color="group.primary"
-                        :key="group.primary"
-                        @click="handleGroup(index)">
-                    </mu-button>
-                </template>
-                <template v-else>
-                    <mu-button class="color-picker__back"
-                        fab
-                        color="transparent"
-                        textColor="grey"
-                        @click="handleGroup(-1)">
-                        <mu-icon value="arrow_back"></mu-icon>
-                    </mu-button>
-                    <mu-button v-for="color in ColorGroups[activeGroup].varieties"
-                        fab
-                        :key="color"
-                        :color="color"
-                        @click="handleSelect(color)"></mu-button>
-                </template>
-            </div>
-        </transition>
+        <div class="slide-anim-container">
+            <transition :name="transitionName">
+                <div :key="activeGroup"
+                    class="buttons-wrapper">
+                    <template v-if="activeGroup < 0">
+                        <mu-button v-for="(group, index) in ColorGroups"
+                            fab
+                            :color="group.primary"
+                            :key="group.primary"
+                            @click="handleGroup(index)">
+                        </mu-button>
+                    </template>
+                    <template v-else>
+                        <mu-button class="color-picker__back"
+                            fab
+                            color="transparent"
+                            textColor="grey"
+                            @click="handleGroup(-1)">
+                            <mu-icon value="arrow_back"></mu-icon>
+                        </mu-button>
+                        <mu-button v-for="color in ColorGroups[activeGroup].varieties"
+                            fab
+                            :key="color"
+                            :color="color"
+                            @click="handleSelect(color)"></mu-button>
+                    </template>
+                </div>
+            </transition>
+        </div>
         <template #actions>
             <mu-button flat
                 color="primary"
@@ -102,8 +103,10 @@ export default {
 
 <style lang="less">
 .color-picker {
+    .slide-anim-container {
+        min-height: 192px;
+    }
     .buttons-wrapper {
-        height: 192px;
         .color-picker__back {
             vertical-align: top;
         }

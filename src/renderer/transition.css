@@ -4,12 +4,16 @@
     position: relative;
 }
 
+.slide-left-leave-active,
+.slide-right-leave-active {
+    position: absolute;
+    width: 100%;
+}
+
 .slide-left-enter-active,
 .slide-left-leave-active,
 .slide-right-enter-active,
 .slide-right-leave-active {
-    position: absolute;
-    width: 100%;
     transition-duration: 0.3s;
     transition-property: transform, opacity;
     transition-timing-function: cubic-bezier(0.55, 0, 0.1, 1);

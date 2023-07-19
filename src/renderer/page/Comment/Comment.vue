@@ -15,9 +15,8 @@
                 <span>写评论</span>
             </mu-button>
         </mu-tabs>
-        <div class="list-wrapper">
-            <transition mode="out-in"
-                :name="transitionName">
+        <div class="list-wrapper slide-anim-container">
+            <transition :name="transitionName">
                 <keep-alive>
                     <CommentList :key="tab"
                         :thread="thread"
