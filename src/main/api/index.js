@@ -67,6 +67,28 @@ export function login(acc, pwd, countrycode = '86') {
     }
 }
 
+/**
+ * 获取扫码登录 key
+ * @param {number} [type = 1]
+ * @returns {Promise<Types.QRCodeUnikeyRes>}
+ */
+export function getQRLoginKey(type = 1) {
+    return client.postW('/login/qrcode/unikey', { type });
+}
+
+/**
+ * 检查扫码登录状态
+ * - `800` 二维码过期
+ * - `801` 等待扫码
+ * - `802` 授权中
+ * - `803` 授权登录成功
+ * @param {string} key
+ * @param {number} [type = 1]
+ */
+export function checkQRLoginStatus(key, type = 1) {
+    return client.postW('/login/qrcode/client/login', { key, type });
+}
+
 export function refreshLogin() {
     return client.postW('/login/token/refresh');
 }

@@ -56,6 +56,11 @@ namespace Types {
         eventCount: number;
         playlistCount: number;
         playlistBeSubscribedCount: number;
+        allAuthTypes?: {
+            type: number;
+            desc: string;
+            tags: any;
+        }[];
         // 歌手的官方账号才有？
         artistId?: number;
         artistName?: string;
@@ -87,6 +92,10 @@ namespace Types {
     export interface VerifyCaptchaRes extends ApiRes {
         result: boolean;
         captchaId?: string;
+    }
+
+    export interface QRCodeUnikeyRes extends ApiRes {
+        unikey: string;
     }
 
     export interface MyProfileRes extends ApiRes {
