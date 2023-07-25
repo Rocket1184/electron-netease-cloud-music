@@ -15,6 +15,8 @@ import { initTheme, setTheme } from './util/theme';
 import DblclickRipple from './util/dblclick-ripple';
 import './style.css';
 import './transition.css';
+// because we upgraded vue-resize manually
+import 'vue-resize/dist/vue-resize.css';
 import 'vue-virtual-scroller/dist/vue-virtual-scroller.css';
 
 Vue.use(Router);
