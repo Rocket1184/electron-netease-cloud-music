@@ -1,7 +1,6 @@
 <template functional>
-    <router-link tag="div"
-        class="action-item"
-        :to="props.to">
+    <router-link :to="props.to"
+        class="action-item">
         <div class="item-icon mu-primary-text-color">
             <mu-icon :value="props.icon"
                 :size="48"></mu-icon>
@@ -44,6 +43,7 @@ export default {
         transition: 0.5s;
     }
     .item-desc {
+        color: var(--text-color);
         text-align: center;
         margin: 8px 0 0 0;
     }

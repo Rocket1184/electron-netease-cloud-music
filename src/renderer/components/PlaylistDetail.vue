@@ -7,11 +7,11 @@
                 <div class="info">
                     <div class="name">
                         <span>{{ playlist.name }}</span>
-                        <span v-if="playlist.updateFrequency" class="small">{{ playlist.updateFrequency }}</span>
+                        <span v-if="playlist.updateFrequency"
+                            class="small">{{ playlist.updateFrequency }}</span>
                     </div>
                     <div class="creation-info">
                         <router-link class="creator"
-                            tag="div"
                             :to="{ name: 'user', params: { id: playlist.creator.id } }">
                             <mu-avatar class="avatar">
                                 <img :src="creatorAvatarSrc">
@@ -31,13 +31,17 @@
                             :value="shouldSubscribed ? 'star' : 'star_border'"></mu-icon>
                         <span>{{btnSubscribeText}}</span>
                     </mu-button>
-                    <mu-button flat
-                        small
-                        :to="{ name: 'comment', params: { type: 'playlist', id: playlist.id } }">
-                        <mu-icon left
-                            value="comment"></mu-icon>
-                        <span>{{btnCommentText}}</span>
-                    </mu-button>
+                    <router-link :to="{ name: 'comment', params: { type: 'playlist', id: playlist.id } }"
+                        v-slot="{ navigate }"
+                        custom>
+                        <mu-button flat
+                            small
+                            @click="navigate">
+                            <mu-icon left
+                                value="comment"></mu-icon>
+                            <span>{{btnCommentText}}</span>
+                        </mu-button>
+                    </router-link>
                 </div>
                 <div class="intro">
                     <mu-list dense

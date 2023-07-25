@@ -45,16 +45,20 @@
                         value="bookmark_border"></mu-icon>
                     <span>收藏</span>
                 </mu-button>
-                <mu-button flat
-                    small
-                    color="black"
-                    :to="commentRoute"
-                    replace>
-                    <mu-icon left
-                        :size="18"
-                        value="comment"></mu-icon>
-                    <span>评论 ({{ commentCount }})</span>
-                </mu-button>
+                <router-link :to="commentRoute"
+                    v-slot="{ navigate }"
+                    custom>
+                    <mu-button flat
+                        small
+                        color="black"
+                        @click="navigate"
+                        replace>
+                        <mu-icon left
+                            :size="18"
+                            value="comment"></mu-icon>
+                        <span>评论 ({{ commentCount }})</span>
+                    </mu-button>
+                </router-link>
                 <mu-button flat
                     small
                     color="black"
@@ -99,16 +103,19 @@
         <div class="info">
             <div class="title">
                 <span class="name">{{ playing.name }}</span>
-                <mu-button v-if="playing.mv"
-                    icon
-                    small
-                    color="primary"
-                    class="btn-mv"
-                    title="查看 MV"
+                <router-link v-if="playing.mv"
                     :to="{ name: 'video', params: { id: playing.mv } }"
-                    replace>
-                    <mu-icon value="music_video"></mu-icon>
-                </mu-button>
+                    v-slot="{ navigate }"
+                    replace
+                    custom>
+                    <mu-button icon
+                        small
+                        color="primary"
+                        class="btn-mv"
+                        title="查看 MV"
+                        @click="navigate">
+                        <mu-icon value="music_video"></mu-icon>
+                    </mu-button></router-link>
             </div>
             <p class="source">
                 <template v-if="isDjRadioProgram">
@@ -380,6 +387,9 @@ export default {
                 ctx.drawImage(bm, 0, 0, size, size, -30, -30, w + 60, h + 60);
             });
         },
+        /** 
+         * @param {ImageBitmapSource} bms
+         */
         async determineBrightness(bms) {
             const b = await workerExecute('determineBrightness', bms);
             // globalAlpha = 0.9;  brightness(0.75)
@@ -395,6 +405,7 @@ export default {
             const thread = source.djradio ? `A_DJ_1_${source.djradio.id}` : `R_SO_4_${id}`;
             const resp = await Api.getCommentThreadInfoE(thread);
             if (resp.code === 200) {
+                if (id !== this.threadInfoId) return;
                 this.threadLiked = resp.liked;
                 this.commentCount = resp.commentCount;
             }

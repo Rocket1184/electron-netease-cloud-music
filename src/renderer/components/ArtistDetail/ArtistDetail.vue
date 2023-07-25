@@ -10,17 +10,20 @@
                             v-for="alia in artist.detail.alias"
                             :key="alia">{{alia}}</span>
                     </span>
-                    <mu-button flat
-                        small
-                        class="shadow account"
-                        color="white"
-                        v-if="accountRoute"
+                    <router-link v-if="accountRoute"
                         :to="accountRoute"
-                        @click="handleFollow">
-                        <mu-icon left
-                            value="person_outline"></mu-icon>
-                        <span class="shaodw">个人主页</span>
-                    </mu-button>
+                        v-slot="{ navigate }"
+                        custom>
+                        <mu-button flat
+                            small
+                            class="shadow account"
+                            color="white"
+                            @click="navigate">
+                            <mu-icon left
+                                value="person_outline"></mu-icon>
+                            <span class="shaodw">个人主页</span>
+                        </mu-button>
+                    </router-link>
                     <mu-button flat
                         small
                         class="shadow"

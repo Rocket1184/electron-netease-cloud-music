@@ -5,9 +5,8 @@
             <span class="by">by</span>
             <router-link v-for="u in video.creator"
                 :key="u.id"
-                class="creator"
                 :to="{ name: 'user', params: { id: u.id } }"
-                tag="a">{{u.name}}</router-link>
+                class="creator">{{u.name}}</router-link>
         </div>
         <video ref="videoEl"
             :src="videoSrc"
@@ -31,25 +30,30 @@
                     :color="statistic.subscribed ? 'amber': ''"></mu-icon>
                 <span>{{btnFavText}}</span>
             </mu-button>
-            <mu-button flat
-                small
-                :to="{ name: 'comment', params: { type: 'video', id: video.id } }">
-                <mu-icon left
-                    value="comment"></mu-icon>
-                <span>{{btnCommentText}}</span>
-            </mu-button>
+            <router-link :to="{ name: 'comment', params: { type: 'video', id: video.id } }"
+                v-slot="{ navigate }"
+                custom>
+                <mu-button flat
+                    small
+                    @click="navigate">
+                    <mu-icon left
+                        value="comment"></mu-icon>
+                    <span>{{btnCommentText}}</span>
+                </mu-button>
+            </router-link>
         </div>
     </div>
 </template>
 
 <script>
-import { mapActions, mapState } from 'vuex';
+import { mapActions } from 'vuex';
 
 import Api from '@/api/ipc';
 import { sizeImg, HiDpiPx } from '@/util/image';
 
 export default {
     props: {
+        /** @type {Vue.PropOptions<Models.Video>} */
         video: {
             required: true
         }
@@ -72,18 +76,23 @@ export default {
         };
     },
     computed: {
-        ...mapState(['user']),
+        /** @returns {import('@/store/modules/user').State} */
+        user() { return this.$store.state.user; },
+        /** @returns {string} */
         videoPoster() {
             return sizeImg(this.video.picUrl, HiDpiPx(720), HiDpiPx(405));
         },
+        /** @returns {string} */
         btnLikeText() {
             const t = this.threadInfo.liked ? '已赞' : '赞';
             return `${t} (${this.threadInfo.likedCount})`;
         },
+        /** @returns {string} */
         btnFavText() {
             const t = this.statistic.subscribed ? '已收藏' : '收藏';
             return `${t} (${this.statistic.subscribeCount})`;
         },
+        /** @returns {string} */
         btnCommentText() {
             return `评论 (${this.threadInfo.commentCount})`;
         }

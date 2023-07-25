@@ -1,7 +1,6 @@
 <template functional>
     <router-link :to="props.to"
         :title="props.title"
-        tag="div"
         class="scroll-item">
         <div class="cover">
             <img class="img"
@@ -90,6 +89,7 @@ export default {
         }
     }
     .caption {
+        color: var(--text-color);
         height: 42px;
         display: -webkit-box;
         -webkit-line-clamp: 2;

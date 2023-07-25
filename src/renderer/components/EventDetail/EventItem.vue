@@ -17,14 +17,18 @@
                     value="thumb_up"></mu-icon>
                 <span>{{ event.info.likedCount }}</span>
             </mu-button>
-            <mu-button flat
-                small
-                :to="{ name: 'comment', params: { type: 'event', id: `${event.id}_${event.user.userId}` } }">
-                <mu-icon left
-                    size="16"
-                    value="comment"></mu-icon>
-                <span>{{ event.info.commentCount }}</span>
-            </mu-button>
+            <router-link :to="{ name: 'comment', params: { type: 'event', id: `${event.id}_${event.user.userId}` } }"
+                v-slot="{ navigate }"
+                custom>
+                <mu-button flat
+                    small
+                    @click="navigate">
+                    <mu-icon left
+                        size="16"
+                        value="comment"></mu-icon>
+                    <span>{{ event.info.commentCount }}</span>
+                </mu-button>
+            </router-link>
         </div>
     </div>
 </template>
@@ -34,15 +38,18 @@ import EventContent from './EventContent.vue';
 
 export default {
     props: {
+        /** @type {Vue.PropOptions<Types.Event>} */
         event: {
             type: Object,
             required: true
         }
     },
     computed: {
+        /** @return {any} */
         json() {
             return JSON.parse(this.event.json);
         },
+        /** @return {any?} */
         forwardJson() {
             if (!this.json.event) return null;
             return JSON.parse(this.json.event.json);

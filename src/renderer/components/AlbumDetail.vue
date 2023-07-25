@@ -7,8 +7,7 @@
                 <div class="info">
                     <div class="name">{{ album.name }}</div>
                     <div class="creation-info">
-                        <router-link tag="div"
-                            class="creator"
+                        <router-link class="creator"
                             :to="{ name: 'artist', params: { id: album.artist.id } }">
                             <mu-avatar class="avatar">
                                 <img :src="creatorAvatarSrc">
@@ -27,13 +26,17 @@
                             :value="dynamicDetail.isSub ? 'star' : 'star_border'"></mu-icon>
                         <span>{{btnSubscribeText}}</span>
                     </mu-button>
-                    <mu-button flat
-                        small
-                        :to="{ name: 'comment', params: { type: 'album', id: album.id } }">
-                        <mu-icon left
-                            value="comment"></mu-icon>
-                        <span>{{btnCommentText}}</span>
-                    </mu-button>
+                    <router-link :to="{ name: 'comment', params: { type: 'album', id: album.id } }"
+                        v-slot="{ navigate }"
+                        custom>
+                        <mu-button flat
+                            small
+                            @click="navigate">
+                            <mu-icon left
+                                value="comment"></mu-icon>
+                            <span>{{btnCommentText}}</span>
+                        </mu-button>
+                    </router-link>
                 </div>
                 <div class="intro">
                     <mu-list dense
@@ -229,6 +232,7 @@ export default {
                             flex-shrink: 0;
                         }
                         .creator-name {
+                            color: var(--text-color);
                             margin: 0 1em;
                             white-space: nowrap;
                             overflow: hidden;

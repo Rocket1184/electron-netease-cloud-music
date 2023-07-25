@@ -8,7 +8,6 @@
                     <div class="name">{{djradio.name}}</div>
                     <div class="creation-info">
                         <router-link class="creator"
-                            tag="div"
                             :to="{ name: 'user', params: { id: djradio.dj.userId } }">
                             <mu-avatar class="avatar">
                                 <img :src="creatorAvatarSrc">
@@ -62,7 +61,7 @@
 </template>
 
 <script>
-import { mapActions, mapState } from 'vuex';
+import { mapActions } from 'vuex';
 import throttle from 'lodash/throttle';
 
 import { getDjRadioProgram } from '@/api/typed';
@@ -74,6 +73,7 @@ import { shortDate } from '@/util/formatter';
 
 export default {
     props: {
+        /** @type {Vue.PropOptions<Models.DjRadio>} */
         djradio: {
             required: true
         }
@@ -89,21 +89,27 @@ export default {
         };
     },
     computed: {
-        ...mapState(['user']),
+        /** @returns {import('@/store/modules/user').State} */
+        user() { return this.$store.state.user; },
+        /** @returns {string} */
         creatorAvatarSrc() {
             return sizeImg(this.djradio.dj.avatarUrl, HiDpiPx(40));
         },
+        /** @returns {string} */
         coverSrc() {
             return sizeImg(this.djradio.picUrl, HiDpiPx(160));
         },
+        /** @returns {string} */
         createTime() {
             return shortDate(this.djradio.createTime);
         },
+        /** @returns {string} */
         btnSubscribeText() {
             const t = this.shouldSubscribed ? '已订阅' : '订阅';
             const n = this.djradio.subCount + this.subsCntOffset;
             return `${t} (${n})`;
         },
+        /** @returns {string} */
         djradioDesc() {
             return this.djradio.desc || '暂无';
         }

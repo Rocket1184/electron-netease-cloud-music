@@ -5,9 +5,8 @@
             <span class="by">by</span>
             <router-link v-for="ar in mv.creator"
                 :key="ar.id"
-                class="creator"
                 :to="{ name: 'artist', params: { id: ar.id } }"
-                tag="a">{{ar.name}}</router-link>
+                class="creator">{{ar.name}}</router-link>
         </div>
         <video ref="videoEl"
             :src="mvSrc"
@@ -31,25 +30,29 @@
                     :color="shouldSub ? 'amber': ''"></mu-icon>
                 <span>{{btnFavText}}</span>
             </mu-button>
-            <mu-button flat
-                small
-                :to="{ name: 'comment', params: { type: 'mv', id: mv.id } }">
-                <mu-icon left
-                    value="comment"></mu-icon>
-                <span>{{btnCommentText}}</span>
-            </mu-button>
+            <router-link :to="{ name: 'comment', params: { type: 'mv', id: mv.id } }"
+                v-slot="{ navigate }"
+                custom>
+                <mu-button flat
+                    small
+                    @click="navigate">
+                    <mu-icon left
+                        value="comment"></mu-icon>
+                    <span>{{btnCommentText}}</span>
+                </mu-button></router-link>
         </div>
     </div>
 </template>
 
 <script>
-import { mapActions, mapState } from 'vuex';
+import { mapActions } from 'vuex';
 
 import Api from '@/api/ipc';
 import { sizeImg, HiDpiPx } from '@/util/image';
 
 export default {
     props: {
+        /** @type {Vue.PropOptions<Models.Video>} */
         mv: {
             required: true
         }
@@ -67,27 +70,34 @@ export default {
         };
     },
     computed: {
-        ...mapState(['user']),
+        /** @returns {import('@/store/modules/user').State} */
+        user() { return this.$store.state.user; },
+        /** @returns {string} */
         mvPoster() {
             return sizeImg(this.mv.picUrl, HiDpiPx(720), HiDpiPx(405));
         },
+        /** @returns {string} */
         mvSrc() {
             const src = Object.entries(this.mv.brs).sort((a, b) => b[0] - a[0])[0][1];
             return src.replace(/^http:/, 'https:');
         },
+        /** @returns {string} */
         btnLikeText() {
             const t = this.threadInfo.liked ? '已赞' : '赞';
             return `${t} (${this.threadInfo.likedCount})`;
         },
+        /** @returns {boolean} */
         shouldSub() {
             if (this.internalShouldSub === null) return this.mv.subed;
             return this.internalShouldSub;
         },
+        /** @returns {string} */
         btnFavText() {
             const t = this.shouldSub ? '已收藏' : '收藏';
             const n = this.mv.subCount + this.subCntOffset;
             return `${t} (${n})`;
         },
+        /** @returns {string} */
         btnCommentText() {
             return `评论 (${this.threadInfo.commentCount})`;
         }

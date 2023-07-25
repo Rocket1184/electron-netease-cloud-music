@@ -17,15 +17,19 @@
                 class="user-desc">{{ description }}</div>
             <div class="user-follows">{{ follows }}</div>
             <div class="user-buttons">
-                <mu-button v-if="isSelf"
-                    flat
-                    small
-                    color="white"
-                    :to="{ path: '/editprofile' }">
-                    <mu-icon left
-                        value="edit"></mu-icon>
-                    编辑资料
-                </mu-button>
+                <router-link v-if="isSelf"
+                    :to="{ path: '/editprofile' }"
+                    v-slot="{ navigate }"
+                    custom>
+                    <mu-button flat
+                        small
+                        color="white"
+                        @click="navigate">
+                        <mu-icon left
+                            value="edit"></mu-icon>
+                        编辑资料
+                    </mu-button>
+                </router-link>
                 <mu-button v-else
                     flat
                     small
@@ -35,16 +39,19 @@
                         :value="followBtn.icon"></mu-icon>
                     {{ followBtn.text }}
                 </mu-button>
-                <mu-button v-if="user.profile.artistId"
-                    flat
-                    small
-                    color="white"
-                    class="user-artist"
-                    :to="{ name: 'artist', params: { id: user.profile.artistId } }">
-                    查看歌手页
-                    <mu-icon right
-                        value="chevron_right"></mu-icon>
-                </mu-button>
+                <router-link v-if="user.profile.artistId"
+                    :to="{ name: 'artist', params: { id: user.profile.artistId } }"
+                    v-slot="{ navigate }"
+                    custom>
+                    <mu-button flat
+                        small
+                        color="white"
+                        class="user-artist"
+                        @click="navigate">
+                        查看歌手页
+                        <mu-icon right
+                            value="chevron_right"></mu-icon>
+                    </mu-button></router-link>
             </div>
         </div>
         <mu-tabs inverse

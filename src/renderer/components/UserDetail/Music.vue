@@ -4,31 +4,45 @@
         <template v-else>
             <template v-if="radios.length">
                 <mu-sub-header v-if="radios.length > 0">主播电台</mu-sub-header>
-                <AvatarListItem v-for="r in radios"
+                <router-link v-for="r in radios"
+                    :to="{ name: 'djradio', params: { id: r.id } }"
                     :key="'r' + r.id"
-                    :img="r.picUrl"
-                    :title="r.name"
-                    :subTitle="r.desc"
-                    :titleTag="r.category"
-                    :to="{ name: 'djradio', params: { id: r.id } }"></AvatarListItem>
+                    v-slot="{ navigate }"
+                    custom>
+                    <AvatarListItem :img="r.picUrl"
+                        :title="r.name"
+                        :subTitle="r.desc"
+                        :titleTag="r.category"
+                        @click="navigate"></AvatarListItem>
+                </router-link>
             </template>
             <!-- <mu-sub-header>音乐专栏</mu-sub-header> -->
-            <mu-sub-header>创建的歌单</mu-sub-header>
-            <!-- TODO: 歌单分页展示，或者上 RecycleScroller -->
-            <AvatarListItem v-for="p in listCreated"
-                :key="'p' + p.id"
-                :img="p.coverImgUrl"
-                :title="p.name"
-                :subTitle="formatPlaylistSubtitle(p)"
-                :to="{ name: 'playlist', params: { id: p.id } }"></AvatarListItem>
+            <template v-if="listCreated.length">
+                <mu-sub-header>创建的歌单</mu-sub-header>
+                <!-- TODO: 歌单分页展示，或者上 RecycleScroller -->
+                <router-link v-for="p in listCreated"
+                    :key="'p' + p.id"
+                    :to="{ name: 'playlist', params: { id: p.id } }"
+                    v-slot="{ navigate }"
+                    custom>
+                    <AvatarListItem :img="p.coverImgUrl"
+                        :title="p.name"
+                        :subTitle="formatPlaylistSubtitle(p)"
+                        @click="navigate"></AvatarListItem>
+                </router-link>
+            </template>
             <template v-if="listCollected.length">
                 <mu-sub-header>收藏的歌单</mu-sub-header>
-                <AvatarListItem v-for="p in listCollected"
+                <router-link v-for="p in listCollected"
                     :key="p.id"
-                    :img="p.coverImgUrl"
-                    :title="p.name"
-                    :subTitle="formatPlaylistSubtitle(p)"
-                    :to="{ name: 'playlist', params: { id: p.id } }"></AvatarListItem>
+                    :to="{ name: 'playlist', params: { id: p.id } }"
+                    v-slot="{ navigate }"
+                    custom>
+                    <AvatarListItem :img="p.coverImgUrl"
+                        :title="p.name"
+                        :subTitle="formatPlaylistSubtitle(p)"
+                        @click="navigate"></AvatarListItem>
+                </router-link>
             </template>
         </template>
     </mu-list>

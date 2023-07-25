@@ -22,12 +22,13 @@ import { sizeImg, HiDpiPx } from '@/util/image';
 
 export default {
     props: {
+        /** @type {Vue.PropOptions<any>} */
         json: {
-            type: Object,
             required: true
         }
     },
     computed: {
+        /** @returns {{ img: string, title: string, subTitle: string, route?: import('vue-router').Route, author?: Models.Profile }} */
         share() {
             const j = this.json;
             if (!j) return null;

@@ -3,7 +3,6 @@
         <router-link v-for="v in list"
             :key="v.id"
             :to="{ name:'video', params:{ id: v.id } }"
-            tag="div"
             class="v-item">
             <div class="v-cover"
                 :style="bkgImgStyle(v.picUrl)">
@@ -103,6 +102,7 @@ export default {
             }
         }
         .name {
+            color: var(--text-color);
             overflow: hidden;
             text-overflow: ellipsis;
             display: -webkit-box;

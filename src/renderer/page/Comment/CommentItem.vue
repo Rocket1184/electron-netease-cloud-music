@@ -8,9 +8,8 @@
         <div class="text">
             <div class="info">
                 <div class="user">
-                    <router-link class="nickname"
-                        :to="{ name: 'user', params: { id: comment.user.userId } }"
-                        tag="a">{{ comment.user.nickname }}</router-link>
+                    <router-link :to="{ name: 'user', params: { id: comment.user.userId } }"
+                        class="nickname">{{ comment.user.nickname }}</router-link>
                     <div class="time"> {{longDate(comment.time)}}</div>
                 </div>
                 <div class="actions">
@@ -55,9 +54,8 @@
                     <div class="text">
                         <div class="info">
                             <div class="user">
-                                <router-link class="nickname"
-                                    :to="{ name: 'user', params: { id: reply.user.userId } }"
-                                    tag="a">{{ reply.user.nickname }}</router-link>
+                                <router-link :to="{ name: 'user', params: { id: reply.user.userId } }"
+                                    class="nickname">{{ reply.user.nickname }}</router-link>
                             </div>
                         </div>
                         <div class="content">

@@ -71,7 +71,7 @@
 </template>
 
 <script>
-import { mapActions, mapState } from 'vuex';
+import { mapActions } from 'vuex';
 
 import { workerExecute } from '@/worker/message';
 
@@ -84,6 +84,7 @@ export default {
             type: Number,
             required: true
         },
+        /** @type {Vue.PropOptions<Models.DjRadioProgram[]} */
         programs: {
             type: Array,
             required: true
@@ -98,10 +99,15 @@ export default {
         };
     },
     computed: {
-        ...mapState(['ui', 'playlist']),
+        /** @returns {import('@/store/modules/ui').State} */
+        ui() { return this.$store.state.ui; },
+        /** @returns {import('@/store/modules/playlist').State}*/
+        playing() { return this.$store.state.playlist; },
+        /** @returns {Models.DjRadioProgram[]} */
         programsToShow() {
             return this.filteredPrograms || this.programs;
         },
+        /** @returns {string} */
         btnPlayText() {
             return `播放全部 (${this.total})`;
         }

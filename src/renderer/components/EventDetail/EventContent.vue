@@ -49,23 +49,29 @@ const ShareFieldNames = ['歌曲', '专辑', '歌单', ' MV', '视频', '电台'
 
 export default {
     props: {
+        /** @type {Vue.PropOptions<Types.Event>} */
         event: {
             required: true
         },
+        /** @type {Vue.PropOptions<any>} */
         json: {
             required: true
         }
     },
     computed: {
+        /** @returns {string} */
         avatar() {
             return sizeImg(this.event.user.avatarUrl, HiDpiPx(40));
         },
+        /** @returns {string} */
         time() {
             return shortDate(this.event.eventTime);
         },
+        /** @returns {string[]} */
         pics() {
             return this.event.pics.map(p => sizeImg(p.pcSquareUrl, HiDpiPx(100)));
         },
+        /** @returns {string?} */
         shareType() {
             if (this.json.event) return '转发：';
             for (let i = 0; i < ShareFields.length; i++) {
@@ -76,6 +82,7 @@ export default {
             }
             return null;
         },
+        /** @returns {boolean} */
         hasShare() {
             return ShareFields.some(f => f in this.json);
         }
