@@ -46,7 +46,7 @@ export function filterDjRadioPrograms(w, programs) {
 MethodMap.set('filterDjRadioPrograms', filterDjRadioPrograms);
 
 const oscvs = new OffscreenCanvas(64, 64);
-const oscvsCtx = oscvs.getContext('2d');
+const oscvsCtx = oscvs.getContext('2d', { willReadFrequently: true });
 
 /**
  * @param {ImageBitmapSource} bms
