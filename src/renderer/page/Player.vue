@@ -46,13 +46,13 @@
                     <span>收藏</span>
                 </mu-button>
                 <router-link :to="commentRoute"
+                    replace
                     v-slot="{ navigate }"
                     custom>
                     <mu-button flat
                         small
                         color="black"
-                        @click="navigate"
-                        replace>
+                        @click="navigate">
                         <mu-icon left
                             :size="18"
                             value="comment"></mu-icon>
