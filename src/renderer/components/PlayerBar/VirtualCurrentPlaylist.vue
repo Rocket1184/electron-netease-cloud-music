@@ -110,9 +110,11 @@ const RouteName = {
 export default {
     data() {
         return {
+            /** @type {Models.Track[]} */
             filteredList: [],
             showFindInput: false,
             findInput: '',
+            /** @type {Map<number, number>} */
             indexMap: new Map()
         };
     },
@@ -123,15 +125,18 @@ export default {
         playing() { return this.$store.getters.playing; },
         /** @returns {import('@/store/getters').QueueGetter}*/
         queue() { return this.$store.getters.queue; },
+        /** @returns {boolean} */
         queueEmpty() {
             return this.queue.list.length === 0;
         },
+        /** @returns {Models.Track[]} */
         listToShow() {
             if (this.showFindInput === true && this.findInput.length > 0) {
                 return this.filteredList;
             }
             return this.queue.list;
         },
+        /** @returns {string} */
         titleText() {
             if (this.ui.radioMode) return '私人 FM';
             if (this.showFindInput && this.findInput) return `找到 ${this.filteredList.length} 首`;
@@ -175,6 +180,7 @@ export default {
                 if (m.result === true) this.clearPlaylist();
             });
         },
+        /** @param {number} index */
         handleListClick(index) {
             let i = index;
             if (this.indexMap.size > 0 && this.indexMap.has(index)) {
@@ -182,6 +188,7 @@ export default {
             }
             this.playTrackIndex(i);
         },
+        /** @param {Models.Track} track */
         sourceTipText(track) {
             return `来自${SourceName[track.source.name]}`;
         },
@@ -214,6 +221,7 @@ export default {
             }
             this.$emit('navigate');
         },
+        /** @param {number} index */
         handleRemove(index) {
             let start = index;
             if (this.filteredList.length > 0) {
@@ -226,6 +234,7 @@ export default {
             }
             this.removeTrackFromPlaylist({ start, count: 1 });
         },
+        /** @param {number} index */
         scrollTo(index) {
             if (this.queueEmpty) return;
             const top = this.$refs.scroller.$el.scrollTop;
@@ -233,12 +242,11 @@ export default {
             if (top > offset || top + 324 < offset) {
                 this.$refs.scroller.$el.scrollTo(0, offset - 144);
             }
-        }
-    },
-    watch: {
-        findInput(val) {
-            if (val.length > 0) {
-                workerExecute('filterTracks', val, this.queue.list).then(res => {
+        },
+        updateFilteredList() {
+            const kw = this.findInput;
+            if (kw.length > 0) {
+                workerExecute('filterTracks', kw, this.queue.list).then(res => {
                     this.filteredList = res.result;
                     this.indexMap = res.indexMap;
                 });
@@ -246,6 +254,14 @@ export default {
                 this.filteredList = [];
                 this.indexMap.clear();
             }
+        }
+    },
+    watch: {
+        findInput() {
+            this.updateFilteredList();
+        },
+        ['queue.list']() {
+            this.updateFilteredList();
         }
     },
     components: {
