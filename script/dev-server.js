@@ -38,11 +38,6 @@ const compileCfg = require('./webpack.config.renderer');
 
 /** @type {import('webpack-dev-server').Configuration} */
 const wdsConf = {
-    static: {
-        // serve '/login/html'
-        directory: absPath('/src/renderer'),
-        publicPath: '/',
-    },
     hot: true,
     liveReload: false,
     port: config.devPort,

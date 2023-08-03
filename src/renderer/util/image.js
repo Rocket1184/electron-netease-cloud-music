@@ -5,6 +5,11 @@
  */
 export function sizeImg(url, width, height = width) {
     if (!url) return '';
+    if (process.env.NODE_ENV === 'development') {
+        if (url.startsWith('http://localhost:')) {
+            return url;
+        }
+    }
     if (url.startsWith('http:')) url = 'https' + url.slice(4);
     return `${url}?param=${width.toFixed(0)}y${height.toFixed(0)}`;
 }
