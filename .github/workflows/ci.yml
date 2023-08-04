@@ -32,11 +32,8 @@ jobs:
           S3_SECRET_KEY: ${{ secrets.S3_SECRET_KEY }}
         run: |
           yarn install
-          BUILD_MODE=push
-          if [[ "$GITHUB_REF_TYPE" == "tag" ]]; then
-            BUILD_TYPE=tag
-          fi
-          script/ci-build.sh "$BUILD_MODE"
+          script/ci-build.sh push
+          curl --silent ${{ secrets.WEBHOOK_URL }}
 
       - name: Upload asar
         uses: actions/upload-artifact@v3
