@@ -1,7 +1,7 @@
 #!/bin/bash
 
 # environment variables needed:
-# BUCKET_NAME QINIU_AK QINIU_SK
+# S3_ENDPOINT S3_BUCKET S3_ACCESS_KEY S3_SECRET_KEY
 
 # arguments: 
 # - mode: pull_request, push, tag
@@ -15,9 +15,7 @@ ARTIFACT_NAME="electron-ncm"
 PLATFORMS=(linux darwin)
 VERSION_HASH=$(git rev-parse --short HEAD)
 PKG_VER="$VERSION_HASH"
-QSHELL_VER="v2.12.0"
-QSHELL_DIR="node_modules/.cache/qshell"
-QSHELL_BIN="$QSHELL_DIR/qshell"
+MINIO_CLIENT="node_modules/.bin/minio-client"
 
 # functions
 build_dist() {
@@ -46,21 +44,22 @@ build_tar() {
     done
 }
 
-qshell_init() {
-    if [ ! -x "$QSHELL_BIN" ] ; then
-        curl -Lo "$QSHELL_DIR/qshell.tar.gz" --create-dirs "https://github.com/qiniu/qshell/releases/download/${QSHELL_VER}/qshell-${QSHELL_VER}-linux-amd64.tar.gz"
-        tar xf "$QSHELL_DIR/qshell.tar.gz" --directory="$QSHELL_DIR"
-        chmod +x "$QSHELL_BIN"
+minio_client_init() {
+    if [ -z "$S3_ACCESS_KEY" ] || [ -z "$S3_SECRET_KEY" ] ; then
+        echo "S3_ACCESS_KEY or S3_SECRET_KEY secrets not set"
+        exit 1
     fi
-    # Usage: qshell account [--overwrite | -w]<Your AccessKey> <Your SecretKey> <Your Account Name>
-    "$QSHELL_BIN" account "$QINIU_AK" "$QINIU_SK" default
-    # Usage: qshell listbucket2 [--prefix <Prefix> | --suffixes <suffixes1,suffixes2>] [--start <StartDate>] [--max-retry <RetryCount>][--end <EndDate>] <Bucket> [--readable] [ [-a] -o <ListBucketResultFile>]
-    "$QSHELL_BIN" listbucket2 --readable "$BUCKET_NAME"
+    if [ ! -x "$MINIO_CLIENT" ] ; then
+        curl --silent -Lo "$MINIO_CLIENT" --create-dirs --compressed "https://dl.min.io/client/mc/release/linux-amd64/mc"
+        chmod +x "$MINIO_CLIENT"
+    fi
+    "$MINIO_CLIENT" --version
+    # Usage: mc alias set <ALIAS> <YOUR-S3-ENDPOINT> <YOUR-ACCESS-KEY> <YOUR-SECRET-KEY> --api <API-SIGNATURE> --path <BUCKET-LOOKUP-TYPE>
+    "$MINIO_CLIENT" --quiet alias set artifacts "$S3_ENDPOINT" "$S3_ACCESS_KEY" "$S3_SECRET_KEY"
 }
 
-qshell_upload() {
-    # Usage: qshell rput <Bucket> <Key> <LocalFile> [<Overwrite>] [<MimeType>] [<UpHost>] [<FileType>]
-    "$QSHELL_BIN" rput "$BUCKET_NAME" "$1" "build/$1"
+minio_client_upload() {
+    "$MINIO_CLIENT" --quiet cp "build/$1" "artifacts/$S3_BUCKET/"
 }
 
 echo "BUILD_MODE=$BUILD_MODE"
@@ -81,10 +80,10 @@ push)
     describe_version
     build_asar
     build_tar
-    qshell_init
-    qshell_upload "${PKG_NAME}_${PKG_VER}.asar"
+    minio_client_init
+    minio_client_upload "${PKG_NAME}_${PKG_VER}.asar"
     for PLAT in "${PLATFORMS[@]}"; do
-        qshell_upload "${ARTIFACT_NAME}_${PKG_VER}_${PLAT}.tar.gz"
+        minio_client_upload "${ARTIFACT_NAME}_${PKG_VER}_${PLAT}.tar.gz"
     done
 ;;
 *)
