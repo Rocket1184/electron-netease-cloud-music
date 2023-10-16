@@ -135,7 +135,7 @@ export default {
         },
         findTrackInPlaylist(track) {
             const id = track.id;
-            return this.playlist.list.findIndex(t => t.id === id);
+            return this.playing.list.findIndex(t => t.id === id);
         },
         handleQueue(index) {
             if (this.ui.radioMode) {
@@ -168,7 +168,7 @@ export default {
             this.insertTrackIntoPlaylist({
                 tracks: [program.mainSong],
                 source: this.getProgramSource(program),
-                index: this.playlist.index
+                index: this.playing.index
             });
             const newIndex = this.findTrackInPlaylist(program.mainSong);
             this.playTrackIndex(newIndex);
