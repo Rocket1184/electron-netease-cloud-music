@@ -102,7 +102,7 @@ export default {
         /** @returns {import('@/store/modules/ui').State} */
         ui() { return this.$store.state.ui; },
         /** @returns {import('@/store/modules/playlist').State}*/
-        playing() { return this.$store.state.playlist; },
+        playlist() { return this.$store.state.playlist; },
         /** @returns {Models.DjRadioProgram[]} */
         programsToShow() {
             return this.filteredPrograms || this.programs;
