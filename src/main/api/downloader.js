@@ -1,7 +1,7 @@
 
 import fs, { promises as fsp } from 'fs';
 import * as path from 'path';
-import { homedir } from 'os';
+import { app } from 'electron';
 import { getPicUrl, getMusicUrlE } from './index';
 import fetch from 'electron-fetch';
 import ID3 from './media/id3';
@@ -45,7 +45,7 @@ class Downloader {
      */
     constructor(cache, dist) {
         this.cache = cache;
-        this.dist = dist || path.join(homedir(), 'Music', 'ElectronNCM');
+        this.dist = dist || path.join(app.getPath('music'), 'ElectronNCM');
     }
 
     /**
