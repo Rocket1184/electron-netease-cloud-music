@@ -1,0 +1,22 @@
+{
+    "dest": "build_pack/deb/",
+    "src": "build/Electron-NCM-linux-x64",
+    "icon": {
+        "128x128": "assets/icons/icon.png",
+        "256x256": "assets/icons/icon.png",
+        "512x512": "assets/icons/icon.png",
+        "scalable": "assets/icons/icon.svg"
+    },
+    "name": "Electron NCM",
+    "version": "0.9.38",
+    "arch": "amd64",
+    "description": "UNOFFICIAL client for music.163.com",
+    "maintainer": "rocka <i@rocka.me> (https://rocka.me)",
+    "categories": [
+      "Music"
+    ],
+    "lintianOverrides": [
+      "changelog-file-missing-in-native-package"
+    ]
+  }
+  
