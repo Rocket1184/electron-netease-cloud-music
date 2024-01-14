@@ -176,7 +176,10 @@
                     <p>歌词加载中 ...</p>
                 </div>
                 <div v-show="!ui.lyricLoading"
-                    class="scroller-wrapper">
+                    class="scroller-wrapper"
+                    @mousewheel="handleMouseScroll"
+                    @mouseenter="lyricMouseIn = true"
+                    @mouseleave="lyricMouseIn = false">
                     <div class="scroller"
                         :style="lyricScrollerStyle">
                         <template v-if="lyricToShow">
@@ -259,7 +262,9 @@ export default {
             commentCount: '...',
             currentLyricIndex: -1,
             moreMenuOpen: false,
-            dlgShareOpen: false
+            dlgShareOpen: false,
+            lyricScrollOffset: 0,
+            lyricMouseIn: false,
         };
     },
     computed: {
@@ -324,10 +329,10 @@ export default {
             }
             if (this.currentLyricIndex === -1 || !this.$refs.lyric || this.$refs.lyric.length === 0) {
                 // initial state
-                return 'transform: translateY(164px)';
+                return `transform: translateY(${129 + this.lyricScrollOffset}px)`;
             }
             const currentLyricElem = this.$refs.lyric[this.currentLyricIndex];
-            const offset = 150 - currentLyricElem.offsetTop - currentLyricElem.clientHeight;
+            const offset = 150 - currentLyricElem.offsetTop - currentLyricElem.clientHeight + this.lyricScrollOffset;
             return `transform: translateY(${offset}px);`;
         }
     },
@@ -459,6 +464,24 @@ export default {
                 this.$toast.message('已复制分享内容到粘贴版');
             });
         },
+        handleMouseScroll(e) {
+            if (typeof this.ui.lyric.txtLyric === 'string' || !this.$refs.lyric || this.$refs.lyric.length === 0) {
+                return;
+            }
+            const currentLyricElem = this.$refs.lyric[Math.max(this.currentLyricIndex, 0)];
+            const lastElem = this.$refs.lyric[this.$refs.lyric.length - 1];
+            const currentToTopOffset = currentLyricElem.offsetTop;
+            const currentToBottomOffset = currentLyricElem.offsetTop - lastElem.offsetTop;
+            const willingOffset = this.lyricScrollOffset - 0.3 * e.deltaY;
+            if (willingOffset > currentToTopOffset) {
+                this.lyricScrollOffset = currentToTopOffset;
+            }
+            else if (willingOffset < currentToBottomOffset) {
+                this.lyricScrollOffset = currentToBottomOffset;
+            } else {
+                this.lyricScrollOffset = willingOffset;
+            }
+        },
         async handleDownload() {
             if (this.ui.downloaded) {
                 return;
@@ -507,7 +530,16 @@ export default {
         ['ui.lyric']() {
             // reset lyric position
             this.currentLyricIndex = -1;
-        }
+        },
+        ['currentLyricIndex'](val, oldVal) {
+            if (this.lyricMouseIn && this.lyricScrollOffset !== 0) {
+                const lyrics = this.$refs.lyric;
+                const diff = lyrics[oldVal].offsetTop - lyrics[val].offsetTop;
+                this.lyricScrollOffset -= diff;
+            } else {
+                this.lyricScrollOffset = 0;
+            }
+        },
     },
     mounted() {
         this.paintBkgCanvas();
@@ -524,6 +556,7 @@ export default {
         }
     },
     deactivated() {
+        this.lyricMouseIn = false;
         this.isActive = false;
     }
 };
