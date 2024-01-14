@@ -922,11 +922,12 @@ export function clearRadio({ commit, dispatch }) {
  */
 export async function getRadio({ commit }) {
     const resp = await Api.getRadioE();
+    const tracks = [];
     if (resp.code === 200) {
         const a = { source: { name: 'radio' } };
-        const tracks = resp.data.map(t => new Track(t, a));
-        commit(types.APPEND_RADIO, { tracks });
+        tracks.push(...resp.data.map(t => new Track(t, a)));
     }
+    commit(types.APPEND_RADIO, { tracks });
 }
 
 /**
