@@ -29,16 +29,22 @@ const mutations = {
     [types.CLEAR_RADIO](state) {
         state.list = [];
         state.index = 0;
+        trackIdSet.clear();
     },
     [types.APPEND_RADIO](state, /** @type {{ tracks: Models.Track[] }} */ { tracks }) {
-        const toAppend = [];
+        if (tracks.length === 0) {
+            tracks.push(state.list[0]);
+        }
         for (const t of tracks) {
-            if (!trackIdSet.has(t.id)) {
+            if (trackIdSet.has(t.id)) {
+                const duplicate = state.list.map(s => s.id).indexOf(t.id);
+                state.list.splice(duplicate, 1);
+                if (duplicate < state.index) state.index--;
+            } else {
                 trackIdSet.add(t.id);
-                toAppend.push(t);
             }
         }
-        state.list.push.apply(state.list, toAppend);
+        state.list.push.apply(state.list, tracks);
         if (state.list.length > RADIO_MAX_SIZE) {
             const removeCount = state.list.length - RADIO_MAX_SIZE;
             const removed = state.list.splice(0, removeCount);
