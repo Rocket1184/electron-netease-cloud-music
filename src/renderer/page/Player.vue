@@ -176,7 +176,10 @@
                     <p>歌词加载中 ...</p>
                 </div>
                 <div v-show="!ui.lyricLoading"
-                    class="scroller-wrapper" @mousewheel="handleMouseScroll">
+                    class="scroller-wrapper" 
+                    @mousewheel="handleMouseScroll" 
+                    @mouseenter="lyricMouseIn=true"
+                    @mouseleave="lyricMouseIn=false">
                     <div class="scroller"
                         :style="lyricScrollerStyle">
                         <template v-if="lyricToShow">
@@ -261,6 +264,7 @@ export default {
             moreMenuOpen: false,
             dlgShareOpen: false,
             lyricScrollOffset: 0,
+            lyricMouseIn: false,
         };
     },
     computed: {
@@ -325,7 +329,7 @@ export default {
             }
             if (this.currentLyricIndex === -1 || !this.$refs.lyric || this.$refs.lyric.length === 0) {
                 // initial state
-                return 'transform: translateY(164px)';
+                return `transform: translateY(${164 + this.lyricScrollOffset}px)`;
             }
             const currentLyricElem = this.$refs.lyric[this.currentLyricIndex];
             const offset = 150 - currentLyricElem.offsetTop - currentLyricElem.clientHeight + this.lyricScrollOffset;
@@ -464,19 +468,19 @@ export default {
             if (typeof this.ui.lyric.txtLyric === 'string') {
                 return;
             }
-            const currentLyricElem = this.$refs.lyric[this.currentLyricIndex];
+            const currentLyricElem = this.$refs.lyric[Math.max(this.currentLyricIndex,0)];
             const lastElem = this.$refs.lyric[this.$refs.lyric.length - 1];
             const currentToTopOffset = 14 + currentLyricElem.offsetTop + currentLyricElem.clientHeight;
             const currentToBottomOffset = currentLyricElem.offsetTop + currentLyricElem.clientHeight - lastElem.offsetTop - lastElem.clientHeight;
             const willingOffset = this.lyricScrollOffset - 0.3 * e.deltaY;
             if (willingOffset > currentToTopOffset) {
-                this.lyricScrollOffset = currentToTopOffset
+                this.lyricScrollOffset = currentToTopOffset;
             }
             else if (willingOffset < currentToBottomOffset) {
-                this.lyricScrollOffset = currentToBottomOffset
+                this.lyricScrollOffset = currentToBottomOffset;
             }
             else {
-                this.lyricScrollOffset = willingOffset
+                this.lyricScrollOffset = willingOffset;
             }
         },
         async handleDownload() {
@@ -528,8 +532,14 @@ export default {
             // reset lyric position
             this.currentLyricIndex = -1;
         },
-        ['currentLyricIndex']() {
-            this.lyricScrollOffset = 0;
+        ['currentLyricIndex'](o, n) {
+            if (this.lyricMouseIn) {
+                let lyrics = this.$refs.lyric;
+                let diff = lyrics[n].offsetTop - lyrics[o].offsetTop;
+                this.lyricScrollOffset -= diff;
+            } else {
+                this.lyricScrollOffset = 0;
+            }
         },
     },
     mounted() {
