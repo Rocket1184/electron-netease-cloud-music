@@ -329,7 +329,7 @@ export default {
             }
             if (this.currentLyricIndex === -1 || !this.$refs.lyric || this.$refs.lyric.length === 0) {
                 // initial state
-                return `transform: translateY(${164 + this.lyricScrollOffset}px)`;
+                return `transform: translateY(${129 + this.lyricScrollOffset}px)`;
             }
             const currentLyricElem = this.$refs.lyric[this.currentLyricIndex];
             const offset = 150 - currentLyricElem.offsetTop - currentLyricElem.clientHeight + this.lyricScrollOffset;
@@ -465,13 +465,13 @@ export default {
             });
         },
         handleMouseScroll(e) {
-            if (typeof this.ui.lyric.txtLyric === 'string') {
+            if (typeof this.ui.lyric.txtLyric === 'string' || !this.$refs.lyric || this.$refs.lyric.length === 0) {
                 return;
             }
             const currentLyricElem = this.$refs.lyric[Math.max(this.currentLyricIndex,0)];
             const lastElem = this.$refs.lyric[this.$refs.lyric.length - 1];
-            const currentToTopOffset = 14 + currentLyricElem.offsetTop + currentLyricElem.clientHeight;
-            const currentToBottomOffset = currentLyricElem.offsetTop + currentLyricElem.clientHeight - lastElem.offsetTop - lastElem.clientHeight;
+            const currentToTopOffset = currentLyricElem.offsetTop;
+            const currentToBottomOffset = currentLyricElem.offsetTop - lastElem.offsetTop;
             const willingOffset = this.lyricScrollOffset - 0.3 * e.deltaY;
             if (willingOffset > currentToTopOffset) {
                 this.lyricScrollOffset = currentToTopOffset;
@@ -534,8 +534,8 @@ export default {
         },
         ['currentLyricIndex'](o, n) {
             if (this.lyricMouseIn) {
-                let lyrics = this.$refs.lyric;
-                let diff = lyrics[n].offsetTop - lyrics[o].offsetTop;
+                const lyrics = this.$refs.lyric;
+                const diff = lyrics[n].offsetTop - lyrics[o].offsetTop;
                 this.lyricScrollOffset -= diff;
             } else {
                 this.lyricScrollOffset = 0;
