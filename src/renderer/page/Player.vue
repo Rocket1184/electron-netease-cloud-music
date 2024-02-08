@@ -176,10 +176,10 @@
                     <p>歌词加载中 ...</p>
                 </div>
                 <div v-show="!ui.lyricLoading"
-                    class="scroller-wrapper" 
-                    @mousewheel="handleMouseScroll" 
-                    @mouseenter="lyricMouseIn=true"
-                    @mouseleave="lyricMouseIn=false">
+                    class="scroller-wrapper"
+                    @mousewheel="handleMouseScroll"
+                    @mouseenter="lyricMouseIn = true"
+                    @mouseleave="lyricMouseIn = false">
                     <div class="scroller"
                         :style="lyricScrollerStyle">
                         <template v-if="lyricToShow">
@@ -468,7 +468,7 @@ export default {
             if (typeof this.ui.lyric.txtLyric === 'string' || !this.$refs.lyric || this.$refs.lyric.length === 0) {
                 return;
             }
-            const currentLyricElem = this.$refs.lyric[Math.max(this.currentLyricIndex,0)];
+            const currentLyricElem = this.$refs.lyric[Math.max(this.currentLyricIndex, 0)];
             const lastElem = this.$refs.lyric[this.$refs.lyric.length - 1];
             const currentToTopOffset = currentLyricElem.offsetTop;
             const currentToBottomOffset = currentLyricElem.offsetTop - lastElem.offsetTop;
@@ -478,8 +478,7 @@ export default {
             }
             else if (willingOffset < currentToBottomOffset) {
                 this.lyricScrollOffset = currentToBottomOffset;
-            }
-            else {
+            } else {
                 this.lyricScrollOffset = willingOffset;
             }
         },
@@ -532,10 +531,10 @@ export default {
             // reset lyric position
             this.currentLyricIndex = -1;
         },
-        ['currentLyricIndex'](o, n) {
-            if (this.lyricMouseIn) {
+        ['currentLyricIndex'](val, oldVal) {
+            if (this.lyricMouseIn && this.lyricScrollOffset !== 0) {
                 const lyrics = this.$refs.lyric;
-                const diff = lyrics[n].offsetTop - lyrics[o].offsetTop;
+                const diff = lyrics[oldVal].offsetTop - lyrics[val].offsetTop;
                 this.lyricScrollOffset -= diff;
             } else {
                 this.lyricScrollOffset = 0;
@@ -557,6 +556,7 @@ export default {
         }
     },
     deactivated() {
+        this.lyricMouseIn = false;
         this.isActive = false;
     }
 };
