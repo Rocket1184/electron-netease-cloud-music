@@ -45,6 +45,7 @@ thumbs.db
 # Build dist
 build
 dist
+build_pack
 
 # npm lock file
 package-lock.json
