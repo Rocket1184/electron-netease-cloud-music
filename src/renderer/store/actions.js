@@ -9,6 +9,8 @@ import { browserWindow } from '@/util/globals';
 import * as types from './mutation-types';
 import { LOOP_MODE } from './modules/playlist';
 
+import defaultCoverImg from 'assets/img/cloud_default.webp';
+
 /**
  * @typedef {object} ActionContext
  * @property {import('vuex').Commit} commit
@@ -56,7 +58,7 @@ export function restoreUiState({ commit }) {
     try {
         const obj = JSON.parse(localStorage.getItem('ui'));
         commit(types.RESTORE_UI_STATE, obj);
-    } catch (e) {
+    } catch {
         localStorage.removeItem('ui');
     }
 }
@@ -91,8 +93,8 @@ export async function restoreUserInfo({ commit, dispatch }, payload) {
     if (payload) {
         cookie = payload;
     } else {
-        try { cookie = JSON.parse(localStorage.getItem('cookie')); } catch (e) { /* noop */ }
-        try { commit(types.SET_USER_INFO, JSON.parse(localStorage.getItem('user'))); } catch (e) { /* noop */ }
+        try { cookie = JSON.parse(localStorage.getItem('cookie')); } catch { /* noop */ }
+        try { commit(types.SET_USER_INFO, JSON.parse(localStorage.getItem('user'))); } catch { /* noop */ }
     }
     if (cookie) {
         commit(types.SET_LOGIN_PENDING, true);
@@ -272,7 +274,7 @@ export async function search({ state, commit }, { keyword, type, limit = 20, off
             items: []
         };
         switch (type) {
-            case 'song':
+            case 'song': {
                 const { songCount, songs } = resp.result;
                 result.total = songCount ?? songs?.length ?? 0;
                 if (result.total > 0) {
@@ -280,14 +282,16 @@ export async function search({ state, commit }, { keyword, type, limit = 20, off
                     result.items = songs.map(i => new Track(i, { source }));
                 }
                 break;
-            case 'artist':
+            }
+            case 'artist': {
                 const { artistCount, artists } = resp.result;
                 result.total = artistCount ?? artists?.length ?? 0;
                 if (result.total > 0) {
                     result.items = artists;
                 }
                 break;
-            case 'album':
+            }
+            case 'album': {
                 const { albumCount, albums } = resp.result;
                 // sometimes, albumCount is `0` but album.length != 0
                 result.total = albumCount ?? albums?.length ?? 0;
@@ -295,26 +299,31 @@ export async function search({ state, commit }, { keyword, type, limit = 20, off
                     result.items = albums;
                 }
                 break;
-            case 'playlist':
+            }
+            case 'playlist': {
                 const { playlistCount, playlists } = resp.result;
                 result.total = playlistCount ?? playlists?.length ?? 0;
                 if (result.total > 0) {
                     result.items = playlists;
                 }
                 break;
-            case 'video':
+            }
+            case 'video': {
                 const { videoCount, videos } = resp.result;
                 result.total = videoCount ?? videos?.length ?? 0;
                 if (result.total > 0) {
                     result.items = videos.map(v => new Video(v));
                 }
                 break;
-            case 'user':
+            }
+            case 'user': {
                 const { userprofileCount, userprofiles } = resp.result;
                 result.total = userprofileCount ?? userprofiles?.length ?? 0;
                 if (result.total > 0) {
                     result.items = userprofiles;
                 }
+                break;
+            }
         }
         commit(types.SET_SEARCH_RESULT, result);
     } else {
@@ -352,7 +361,7 @@ export async function updateUiCoverImgSrc({ commit, getters }) {
     if (getters.queue.list.length !== 0) {
         const id = getters.playing.album.pic;
         if (id === -1) {
-            img = require('assets/img/cloud_default.webp');
+            img = defaultCoverImg;
         } else {
             const resp = await Api.getPicUrl(id);
             img = resp.code === 200 ? resp.url : '';

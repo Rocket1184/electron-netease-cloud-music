@@ -1,4 +1,3 @@
-
 import {
     getMIMEType,
     getJPEGSize,
@@ -9,8 +8,8 @@ import {
     uint24toBuffer,
     uint32toBuffer,
     uint32toBufferR
-} from "./utils";
-import { getVersionName } from "..";
+} from './utils';
+import { getVersionName } from '../index';
 
 /**
  * @typedef FLACMetadataBlock

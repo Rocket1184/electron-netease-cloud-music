@@ -78,7 +78,7 @@ const mutations = {
     [types.SET_RANDOM_PLAYLIST_INDEX](state, /** @type {number} */ payload) {
         state.randomIndex = payload;
     },
-     // eslint-disable-next-line no-unused-vars
+    // eslint-disable-next-line no-unused-vars
     [types.INSERT_TRACK_INTO_RANDOM_PLAYLIST](state, /** @type {{ start: number, count: number }} */ { start, count }) {
         const { index, randomIndex, randomList } = state;
         // queued track(s) should be played right after current track.

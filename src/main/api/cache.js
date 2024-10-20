@@ -26,7 +26,7 @@ class Cache {
                 const externalData = fs.readFileSync(this.mapPath, 'utf8');
                 const data = JSON.parse(externalData);
                 this.external = new Map(data);
-            } catch (e) {
+            } catch {
                 this.external = new Map();
             }
 
@@ -130,7 +130,7 @@ class Cache {
         try {
             await fsp.access(this.fullPath(fileName));
             return true;
-        } catch (e) {
+        } catch {
             return false;
         }
     }

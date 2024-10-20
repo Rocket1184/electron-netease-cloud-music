@@ -1444,7 +1444,7 @@ export function getUserEvents(id, time = -1, limit = 20, getcounts = true) {
  * @returns {Promise<Types.UserTopEventsRes>}
  */
 export function getUserTopEvents(userId) {
-    return client.postE(`/event/top/get`, { userId });
+    return client.postE('/event/top/get', { userId });
 }
 
 /**
@@ -1452,7 +1452,7 @@ export function getUserTopEvents(userId) {
  * @param {number} userId
  */
 export function getUserCollege(userId) {
-    return client.postE(`/college/usercollege/get`, { userId });
+    return client.postE('/college/usercollege/get', { userId });
 }
 
 /**
@@ -1468,7 +1468,7 @@ export function getLikedSongIds() {
  * @returns {Promise<Types.PrivateCloudListRes>}
  */
 export function getPrivateCloudList(limit = 500, offset = 0) {
-    return client.postE(`/v1/cloud/get`, { limit, offset });
+    return client.postE('/v1/cloud/get', { limit, offset });
 }
 
 /**
@@ -1476,5 +1476,5 @@ export function getPrivateCloudList(limit = 500, offset = 0) {
  * @param {number[]} songIds
  */
 export function removePrivateCloudItem(songIds) {
-    return client.postE(`/cloud/del`, { songIds });
+    return client.postE('/cloud/del', { songIds });
 }

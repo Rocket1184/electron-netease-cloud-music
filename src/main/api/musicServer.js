@@ -53,7 +53,7 @@ class MusicServer {
                         range[1] = parseInt(ranges[1]);
                         range[1] = range[1] < 16 ? 16 : range[1];
                     }
-                } catch (e) {
+                } catch {
                     // ignore it
                 }
             }
@@ -99,7 +99,7 @@ class MusicServer {
         // check unexpected request method or url
         if (req.method !== 'GET' || location.pathname !== '/music') {
             d('What a Terrible Failure');
-            res.writeHead(418, `I'm a teapot`);
+            res.writeHead(418, "I'm a teapot");
             res.end('@see https://tools.ietf.org/html/rfc2324');
             return;
         }
@@ -126,7 +126,7 @@ class MusicServer {
                 d('ignoreCache set, delete cache for music id=%d', id);
                 try {
                     await this.cache.rm(fileName);
-                } catch (e) { /* nothing happened */ }
+                } catch { /* nothing happened */ }
             } else {
                 const filePath = this.cache.fullPath(fileName);
                 d('Hit cache for music id=%d', id);

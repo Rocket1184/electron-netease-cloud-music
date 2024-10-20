@@ -17,7 +17,7 @@ const d = debug('Downloader');
  */
 function escapeSlash(text) {
     if (process.platform === 'win32') {
-        return text.replace(/[<>:"\/\\\|\?\*]/g, ' ');
+        return text.replace(/[<>:"/\\|?*]/g, ' ');
     }
     return text.replace(/\//g, ' ');
 }

@@ -53,7 +53,7 @@ function readFile() {
 export async function set(target) {
     try {
         await fsp.access(configDir);
-    } catch (e) {
+    } catch {
         fsp.mkdir(configDir);
     }
     return writeFile(target);
@@ -65,7 +65,7 @@ export async function get() {
         await fsp.access(configPath);
         const json = JSON.parse(await readFile());
         settings = trimSettings(json);
-    } catch (e) {
+    } catch {
         set(defaultSettings);
     }
     return settings;

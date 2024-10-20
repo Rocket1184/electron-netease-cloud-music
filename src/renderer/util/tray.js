@@ -78,7 +78,7 @@ function subscribeHandler(mutation, state) {
         case SET_USER_FAVOR_TRACKS:
             sendTrackMeta(state, track);
             break;
-        case SET_AUDIO_VOLUME:
+        case SET_AUDIO_VOLUME: {
             const { mute, volume } = mutation.payload;
             if (typeof mute === 'boolean') {
                 send('mute', mute);
@@ -89,6 +89,7 @@ function subscribeHandler(mutation, state) {
                 }
             }
             break;
+        }
         case RESTORE_UI_STATE:
             sendMute(state);
             break;
@@ -121,7 +122,7 @@ export function injectStore(store) {
                 await store.dispatch('favoriteTrack', { id, favorite: shouldFav });
             }
             store.dispatch('updateFavoriteTrackIds');
-        } catch (e) { /* that's embarrassing */ }
+        } catch { /* that's embarrassing */ }
     });
     TrayEmitter.on('dislike', id => {
         const time = Math.trunc(document.querySelector('audio').currentTime * 1000);

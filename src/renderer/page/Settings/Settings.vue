@@ -173,7 +173,7 @@ export default {
                     switch (key) {
                         case 'themePrimaryColor':
                         case 'themeSecondaryColor':
-                        case 'themeVariety':
+                        case 'themeVariety': {
                             const variety = state.settings.themeVariety === 'auto'
                                 ? (this.darkMediaQuery.matches ? 'dark' : 'light')
                                 : state.settings.themeVariety;
@@ -182,6 +182,7 @@ export default {
                                 secondary: state.settings.themeSecondaryColor
                             }, variety);
                             break;
+                        }
                         case 'windowBorder':
                             this.$nextTick(() => this.recreateWindow());
                             break;

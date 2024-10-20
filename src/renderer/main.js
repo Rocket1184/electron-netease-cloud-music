@@ -19,6 +19,9 @@ import './transition.css';
 import 'vue-resize/dist/vue-resize.css';
 import 'vue-virtual-scroller/dist/vue-virtual-scroller.css';
 
+import * as tray from '@/util/tray';
+import * as mpris from '@/util/mpris';
+
 Vue.use(Router);
 Vue.use(MuseUI);
 Vue.use(Toast);
@@ -50,9 +53,9 @@ try {
         primary: settings.themePrimaryColor,
         secondary: settings.themeSecondaryColor
     }, themeVariety);
-} catch (e) { sessionStorage.removeItem('settings'); }
+} catch { sessionStorage.removeItem('settings'); }
 
-require('@/util/tray').injectStore(store);
+tray.injectStore(store);
 
 function restoreUserInfoOnline() {
     store.dispatch('restoreUserInfo').catch(e => {
@@ -116,9 +119,8 @@ darkMediaQuery.addEventListener('change', e => {
 
 if (isLinux) {
     app.$once('audio-ready', audio => {
-        const m = require('@/util/mpris');
-        m.injectStore(store);
-        m.bindAudioElement(audio);
+        mpris.injectStore(store);
+        mpris.bindAudioElement(audio);
     });
 }
 

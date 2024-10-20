@@ -91,7 +91,7 @@ import { mapActions } from 'vuex';
 import Routes from '@/routes';
 import SearchBox from './SearchBox.vue';
 import LoginDialog from './LoginDialog.vue';
-import { bkgImg, sizeImg, HiDpiPx } from "@/util/image";
+import { bkgImg, sizeImg, HiDpiPx } from '@/util/image';
 import { isDarwin, browserWindow } from '@/util/globals';
 import { UPDATE_SETTINGS, SET_USER_SIGN_STATUS } from '@/store/mutation-types';
 

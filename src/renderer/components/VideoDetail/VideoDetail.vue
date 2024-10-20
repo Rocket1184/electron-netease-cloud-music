@@ -1,6 +1,6 @@
 <template>
     <component ref="detailCompo"
-        :is="compoName"
+        :is="compo"
         v-bind="bindProp"></component>
 </template>
 
@@ -18,8 +18,8 @@ export default {
         }
     },
     computed: {
-        compoName() {
-            return this.video.type === 0 ? 'MV' : 'Video';
+        compo() {
+            return this.video.type === 0 ? MV : Video;
         },
         bindProp() {
             return this.video.type === 0 ? { mv: this.video } : { video: this.video };
@@ -80,10 +80,6 @@ export default {
         this._vid.removeEventListener('auxclick', this.toggleMute);
         this._vid.removeEventListener('wheel', this.onMouseWheel);
         this._vid = null;
-    },
-    components: {
-        MV,
-        Video
     }
 };
 </script>

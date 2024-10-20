@@ -115,7 +115,7 @@ function subscribeHandler(mutation, state) {
         case RESTORE_UI_STATE:
             ipcSend('volume', mutation.payload.audioVolume);
             break;
-        case SET_AUDIO_VOLUME:
+        case SET_AUDIO_VOLUME: {
             let { volume, mute } = mutation.payload;
             if (mute === true) {
                 volume = 0;
@@ -124,6 +124,7 @@ function subscribeHandler(mutation, state) {
             }
             debounceVolume(volume);
             break;
+        }
         case SET_LOOP_MODE_LIST:
         case SET_LOOP_MODE_SINGLE:
         case SET_LOOP_MODE_RANDOM:

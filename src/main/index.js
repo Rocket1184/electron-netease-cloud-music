@@ -145,7 +145,7 @@ app.on('activate', () => {
 
 ipcMain.on('Settings', async (event, /** @type {string} */ type, ...args) => {
     switch (type) {
-        case 'recreateWindow':
+        case 'recreateWindow': {
             // prevent App quit
             shouldAppQuit = false;
             // ensure window can be closed
@@ -159,7 +159,8 @@ ipcMain.on('Settings', async (event, /** @type {string} */ type, ...args) => {
             }
             shouldAppQuit = settings.exitOnWindowClose;
             break;
-        case 'showTrayIcon':
+        }
+        case 'showTrayIcon': {
             if (args[0] === true) {
                 const settings = await Settings.get();
                 appTray = new AppTray(settings.trayIconVariety);
@@ -171,12 +172,14 @@ ipcMain.on('Settings', async (event, /** @type {string} */ type, ...args) => {
                 }
             }
             break;
-        case 'trayIconVariety':
+        }
+        case 'trayIconVariety': {
             if (appTray) {
                 appTray.setColor(args[0]);
             }
             break;
-        case 'exitOnWindowClose':
+        }
+        case 'exitOnWindowClose': {
             if (IsDarwin) return;
             shouldAppQuit = args[0];
             if (args[0] === true) {
@@ -185,6 +188,7 @@ ipcMain.on('Settings', async (event, /** @type {string} */ type, ...args) => {
                 mainWindow.on('close', preventQuitHandler);
             }
             break;
+        }
     }
 });
 

@@ -25,6 +25,7 @@ installHooks(store);
 export default store;
 
 // store hot reload
+/* eslint-disable */
 if (process.env.NODE_ENV === 'development' && module.hot) {
     let { unsubscribeAll } = require('./hooks');
     module.hot.accept([
@@ -44,3 +45,4 @@ if (process.env.NODE_ENV === 'development' && module.hot) {
         unsubscribeAll = hooks.unsubscribeAll;
     });
 }
+/* eslint-enable */
