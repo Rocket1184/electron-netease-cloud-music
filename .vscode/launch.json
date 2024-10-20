@@ -5,7 +5,6 @@
             "type": "node",
             "request": "attach",
             "name": "Attach Main",
-            "protocol": "inspector",
             "port": 5858,
             "showAsyncStacks": true,
             "sourceMaps": true

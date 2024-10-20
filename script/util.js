@@ -1,8 +1,7 @@
 'use strict';
 
-const fs = require('fs');
-const path = require('path');
-const fsPromises = fs.promises;
+const fsPromises = require('node:fs/promises');
+const path = require('node:path');
 
 const isDev = process.env.NODE_ENV === 'development';
 

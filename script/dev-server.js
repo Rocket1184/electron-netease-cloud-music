@@ -2,7 +2,8 @@
 
 process.env.NODE_ENV = 'development';
 
-const { exec } = require('child_process');
+const { exec } = require('node:child_process');
+
 const webpack = require('webpack');
 const WebpackDevServer = require('webpack-dev-server');
 

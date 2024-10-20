@@ -26,7 +26,7 @@ let cfg = {
                     options: {
                         babelrc: false,
                         plugins: [
-                            '@babel/plugin-proposal-class-properties',
+                            '@babel/plugin-transform-class-properties',
                             ['@babel/plugin-proposal-decorators', { decoratorsBeforeExport: true }]
                         ]
                     }

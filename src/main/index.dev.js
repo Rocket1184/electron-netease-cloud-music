@@ -21,7 +21,7 @@ require('@babel/register')({
         (filename) => filename.startsWith(srcMainDir)
     ],
     plugins: [
-        '@babel/plugin-proposal-class-properties',
+        '@babel/plugin-transform-class-properties',
         '@babel/plugin-transform-modules-commonjs',
         ['@babel/plugin-proposal-decorators', { decoratorsBeforeExport: true }]
     ]
@@ -32,9 +32,9 @@ const { devPort, version } = require('../../script/config');
 
 // Install `vue-devtools`
 app.on('ready', () => {
-    const { default: install, VUEJS_DEVTOOLS } = require('electron-devtools-installer');
+    const { installExtension, VUEJS_DEVTOOLS } = require('@tomjs/electron-devtools-installer');
     // eslint-disable-next-line no-console
-    install(VUEJS_DEVTOOLS.id).catch(console.log);
+    installExtension(VUEJS_DEVTOOLS).catch(console.log);
 });
 
 // App version (non-public api)
