@@ -1,28 +1,27 @@
-name: CI
+name: Build
 
 on:
   push:
-    branches: [master]
-
-defaults:
-  run:
-    shell: bash
+  pull_request:
 
 jobs:
   build:
     runs-on: ubuntu-latest
     steps:
-
       - name: Checkout source code
-        uses: actions/checkout@v3
+        uses: actions/checkout@v4
         with:
           fetch-depth: 0
 
       - name: Setup Node.js
-        uses: actions/setup-node@v3
+        uses: actions/setup-node@v4
         with:
           node-version: latest
           cache: yarn
+
+      - name: Install dependencies
+        run: |
+          yarn install
 
       - name: Build
         env:
@@ -31,12 +30,15 @@ jobs:
           S3_ACCESS_KEY: ${{ secrets.S3_ACCESS_KEY }}
           S3_SECRET_KEY: ${{ secrets.S3_SECRET_KEY }}
         run: |
-          yarn install
-          script/ci-build.sh push
-          curl --silent ${{ secrets.WEBHOOK_URL }}
+          script/ci-build.sh ${{ github.event_name }}
 
       - name: Upload asar
-        uses: actions/upload-artifact@v3
+        uses: actions/upload-artifact@v4
         with:
           name: asar
           path: build/*.asar
+
+      - name: Notify webhook
+        if: github.event_name == 'push' && github.ref_name == 'master'
+        run: |
+          curl --silent ${{ secrets.WEBHOOK_URL }}

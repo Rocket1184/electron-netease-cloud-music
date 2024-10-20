@@ -14,7 +14,7 @@ function clean() {
  * @param {string} argv
  */
 function build(argv) {
-    require('electron-packager')({
+    require('@electron/packager')({
         name: config.productName,
         executableName: config.name,
         arch: 'x64',
