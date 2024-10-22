@@ -189,7 +189,7 @@ export default {
             }
             this.pwd.pending = false;
         },
-        bindKeybordEvent() {
+        bindKeyboardEvent() {
             this.$refs.inputPwd.$el.querySelector('input').onkeydown = e => {
                 if (e.key === 'Enter') this.handlePasswordLogin();
             };
@@ -219,7 +219,7 @@ export default {
         prepareLoginMethod() {
             switch (this.type) {
                 case 'pwd':
-                    this.$nextTick(this.bindKeybordEvent);
+                    this.$nextTick(this.bindKeyboardEvent);
                     break;
             }
         }

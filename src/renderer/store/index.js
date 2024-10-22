@@ -1,7 +1,7 @@
 import Vue from 'vue';
 import Vuex from 'vuex';
 
-import * as modules from './modules';
+import * as modules from './modules/index';
 import * as actions from './actions';
 import * as getters from './getters';
 import { installHooks } from './hooks';

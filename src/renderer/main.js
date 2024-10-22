@@ -7,20 +7,20 @@ import Message from 'muse-ui-message';
 import { RecycleScroller } from 'vue-virtual-scroller/dist/vue-virtual-scroller.esm';
 
 import App from './App.vue';
-import store from './store';
+import store from './store/index';
 import { UPDATE_SETTINGS } from './store/mutation-types';
 import routes from './routes';
 import { encm, isLinux } from './util/globals';
 import { initTheme, setTheme } from './util/theme';
 import DblclickRipple from './util/dblclick-ripple';
+import * as tray from './util/tray';
+import * as mpris from './util/mpris';
+
 import './style.css';
 import './transition.css';
 // because we upgraded vue-resize manually
 import 'vue-resize/dist/vue-resize.css';
 import 'vue-virtual-scroller/dist/vue-virtual-scroller.css';
-
-import * as tray from '@/util/tray';
-import * as mpris from '@/util/mpris';
 
 Vue.use(Router);
 Vue.use(MuseUI);

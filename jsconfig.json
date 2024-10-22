@@ -1,6 +1,7 @@
 {
     "compilerOptions": {
-        "baseUrl": ".",
+        "target": "ESNext",
+        "moduleResolution": "Bundler",
         "experimentalDecorators": true,
         "paths": {
             "@/*": [

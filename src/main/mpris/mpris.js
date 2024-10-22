@@ -207,7 +207,7 @@ class MediaPlayer2Player extends Interface {
     }
 
     _Volume = 1.0;
-    _ThrottledVloume = throttle(value => this.emitter.emit('dbus:volume', Math.trunc(value * 100)), 100);
+    _ThrottledVolume = throttle(value => this.emitter.emit('dbus:volume', Math.trunc(value * 100)), 100);
 
     @property({ signature: 'd', access: ACCESS_READWRITE })
     get Volume() { return this._Volume; }
@@ -216,7 +216,7 @@ class MediaPlayer2Player extends Interface {
         if (Math.abs(this._Volume - value) < 0.01) return;
         this._Volume = value;
         d('set property: Volume %o', this._Volume);
-        this._ThrottledVloume(value);
+        this._ThrottledVolume(value);
     }
 
     setVolume(value) {

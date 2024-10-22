@@ -173,5 +173,6 @@ export function encodePicUrl(id) {
     }
     const hash = crypto.createHash('md5');
     const md5 = hash.update(bytes).digest('base64');
-    return md5.replace(/\//g, '_').replace(/\+/g, '-');
+    // node's base64url would omit padding char '='
+    return md5.replaceAll('/', '_').replaceAll('+', '-');
 }
