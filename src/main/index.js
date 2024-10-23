@@ -61,7 +61,6 @@ function createMainWindow(settings, url = MainURL) {
             spellcheck: false,
             autoplayPolicy: 'no-user-gesture-required',
             disableBlinkFeatures: 'MediaSession,MediaSessionPosition,MediaSessionSeeking', // this disables `navigator.mediaSession`
-            additionalArguments: [`--initial-settings=${JSON.stringify(settings)}`]
         }
     });
 
@@ -88,7 +87,7 @@ function createMainWindow(settings, url = MainURL) {
             break;
     }
 
-    win.loadURL(url);
+    win.loadURL(`${url}#/?initial_settings=${encodeURIComponent(JSON.stringify(settings))}`);
     if (IsDev) {
         win.webContents.openDevTools();
     }

@@ -44,6 +44,7 @@ try {
         settings = JSON.parse(previousSettings);
     } else {
         settings = encm.initialSettings;
+        sessionStorage.setItem('settings', JSON.stringify(settings));
     }
     store.commit(UPDATE_SETTINGS, settings);
     const themeVariety = settings.themeVariety === 'auto'

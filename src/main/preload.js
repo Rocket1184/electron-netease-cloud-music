@@ -3,10 +3,15 @@
 const { contextBridge, ipcRenderer } = require('electron');
 const { versions, platform } = process;
 
-let settings = {};
+let settings;
 try {
-    const arg = '--initial-settings=';
-    settings = JSON.parse(process.argv.find(v => v.startsWith(arg)).slice(arg.length));
+    const url = new URL(location.href);
+    const arg = '#/?initial_settings=';
+    if (url.hash.startsWith(arg)) {
+        settings = JSON.parse(decodeURIComponent(url.hash.slice(arg.length)));
+        url.hash = '';
+        history.replaceState(null, '', url);
+    }
 } catch { /* ignore */ }
 
 contextBridge.exposeInMainWorld('encm', {
