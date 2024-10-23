@@ -4,7 +4,7 @@ import MuseUI from 'muse-ui';
 import 'muse-ui/dist/muse-ui.css';
 import Toast from 'muse-ui-toast';
 import Message from 'muse-ui-message';
-import { RecycleScroller } from 'vue-virtual-scroller/dist/vue-virtual-scroller.esm';
+import { RecycleScroller } from 'vue-virtual-scroller';
 
 import App from './App.vue';
 import store from './store/index';

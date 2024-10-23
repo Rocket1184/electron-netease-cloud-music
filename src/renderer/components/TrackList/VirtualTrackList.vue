@@ -17,6 +17,8 @@
         <CenteredLoading v-if="loading"></CenteredLoading>
         <template v-else-if="trackDetails.length !== 0">
             <RecycleScroller page-mode
+                skip-hover
+                :buffer="0"
                 :items="tracksToShow"
                 :item-size="40"
                 key-field="id">
