@@ -3,6 +3,7 @@ import * as types from '../mutation-types';
 const DefaultSettings = {
     autoPlay: false,
     autoSign: false,
+    autoRefreshLogin: false,
     bitRate: 'l',
     bitRateDownload: 'ex',
     filterRcmd: false,

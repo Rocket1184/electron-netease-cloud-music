@@ -11,6 +11,7 @@ const configPath = path.join(configDir, 'settings.json');
 export const defaultSettings = {
     autoPlay: false,
     autoSign: false,
+    autoRefreshLogin: false,
     bitRate: 'l',
     bitRateDownload: 'ex',
     filterRcmd: false,

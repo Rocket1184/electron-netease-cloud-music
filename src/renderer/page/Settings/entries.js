@@ -163,6 +163,11 @@ export const Entries = [
             },
             {
                 type: 'toggle',
+                title: '自动刷新登录状态',
+                prop: 'autoRefreshLogin'
+            },
+            {
+                type: 'toggle',
                 title: '精简个性推荐',
                 prop: 'filterRcmd'
             },

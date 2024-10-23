@@ -88,7 +88,7 @@ export async function storeCredential({ state }) {
  * @param {ActionContext} param0
  * @param {any} [payload]
  */
-export async function restoreUserInfo({ commit, dispatch }, payload) {
+export async function restoreUserInfo({ state, commit, dispatch }, payload) {
     let cookie;
     if (payload) {
         cookie = payload;
@@ -99,7 +99,16 @@ export async function restoreUserInfo({ commit, dispatch }, payload) {
     if (cookie) {
         commit(types.SET_LOGIN_PENDING, true);
         Api.updateCookie(cookie);
-        const resp = await Api.refreshLogin();
+        /** @type {Types.ApiRes} */
+        let resp;
+        if (state.settings.autoRefreshLogin) {
+            resp = await Api.refreshLogin();
+        } else {
+            resp = await Api.getMyProfile();
+            if (resp.code !== 200 || resp.profile == null) {
+                resp = await Api.refreshLogin();
+            }
+        }
         commit(types.SET_LOGIN_PENDING, false);
         if (resp.code === 200) {
             dispatch('getUserInfo').then(() => {

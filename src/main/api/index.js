@@ -89,6 +89,9 @@ export function checkQRLoginStatus(key, type = 1) {
     return client.postW('/login/qrcode/client/login', { key, type });
 }
 
+/**
+ * @returns {Promise<Types.ApiRes>}
+ */
 export function refreshLogin() {
     return client.postW('/login/token/refresh');
 }
