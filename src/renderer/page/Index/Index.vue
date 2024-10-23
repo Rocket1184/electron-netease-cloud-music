@@ -77,6 +77,7 @@ export default {
                 { title: '歌单', icon: 'playlist_play', to: { path: '/goodie' } },
                 { title: '排行榜', icon: 'equalizer', to: { path: '/top' } }
             ],
+            isRecommendPlaylist: false,
             /** @type {Types.RecommendPlaylist[]} */
             playlist: [],
             /** @type {Types.NewAlbumAlbum[]} */
@@ -97,7 +98,8 @@ export default {
             return algBlockList.includes(item.alg);
         },
         async getPlaylists() {
-            if (this.user.loginPending || this.user.loginValid) {
+            this.isRecommendPlaylist = this.user.loginPending || this.user.loginValid;
+            if (this.isRecommendPlaylist) {
                 const res = await Api.getRecommendPlaylist();
                 if (res.code === 200) {
                     if (this.settings.filterRcmd) {
@@ -152,7 +154,7 @@ export default {
                 type === SET_LOGIN_VALID &&
                 (
                     payload === false ||  // clear personalized data on logout
-                    (payload === true && this.playlist.length > 0) // get personalized data on login
+                    (payload === true && this.playlist.length > 0 && !this.isRecommendPlaylist) // get personalized data on login
                 )
             ) {
                 this.fetchData();
