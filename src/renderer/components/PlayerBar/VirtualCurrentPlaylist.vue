@@ -108,11 +108,18 @@ const RouteName = {
 };
 
 export default {
+    props: {
+        shown: {
+            type: Boolean,
+            default: false
+        }
+    },
     data() {
         return {
             /** @type {Models.Track[]} */
             filteredList: [],
             showFindInput: false,
+            savedScrollTop: 0,
             findInput: '',
             /** @type {Map<number, number>} */
             indexMap: new Map()
@@ -155,6 +162,7 @@ export default {
         toggleFindInput() {
             this.showFindInput = !this.showFindInput;
             if (this.showFindInput === true) {
+                this.savedScrollTop = this.$refs.scroller.$el.scrollTop;
                 const input = this.$refs.findInput.$el.getElementsByTagName('input')[0];
                 if (input) {
                     this.$nextTick(() => input.focus());
@@ -163,6 +171,11 @@ export default {
                 this.findInput = '';
                 this.indexMap.clear();
                 this.filteredList = [];
+                const scrollTop = this.savedScrollTop;
+                this.$nextTick(() => {
+                    this.$refs.scroller.$el.scrollTo(0, scrollTop);
+                });
+                this.savedScrollTop = 0;
             }
         },
         handleCollectAll() {
@@ -257,6 +270,13 @@ export default {
         }
     },
     watch: {
+        shown(val) {
+            if (val && !this.showFindInput) {
+                this.$nextTick(() => {
+                    this.scrollTo(this.queue.index);
+                });
+            }
+        },
         findInput() {
             this.updateFilteredList();
         },

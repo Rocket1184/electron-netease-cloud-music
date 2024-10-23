@@ -82,7 +82,7 @@
                             color="secondary"
                             :inputValue="currentListShown"></mu-checkbox>
                         <template #content>
-                            <CurrentPlaylist ref="list"
+                            <CurrentPlaylist :shown="currentListShown"
                                 @navigate="handleSourceNavigate"></CurrentPlaylist>
                         </template>
                     </mu-menu>
@@ -380,16 +380,6 @@ export default {
         },
         iconPlayPause() {
             return this.ui.paused ? 'play_arrow' : 'pause';
-        }
-    },
-    watch: {
-        currentListShown(val) {
-            // scroll current playlist to playing item when open
-            if (val === true) {
-                setTimeout(() => {
-                    this.$refs.list.scrollTo(this.queue.index);
-                }, 100);
-            }
         }
     },
     mounted() {
