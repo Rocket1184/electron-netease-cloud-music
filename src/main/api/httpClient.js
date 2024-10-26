@@ -195,9 +195,10 @@ export default class HttpClient {
      * @param {string} url
      * @param {object} data
      * @param {boolean} putCacheKey
+     * @param {boolean} useInterfaceUrl
      */
-    async postE(url, data = {}, putCacheKey = false, interfaceUrl = false) {
-        if (interfaceUrl){
+    async postE(url, data = {}, putCacheKey = false, useInterfaceUrl = false) {
+        if (useInterfaceUrl){
 	    url = `https://interface.music.163.com/eapi${url}`;
 	} else {
 	    url = `https://music.163.com/eapi${url}`;

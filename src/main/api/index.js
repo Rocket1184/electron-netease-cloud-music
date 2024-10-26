@@ -64,11 +64,11 @@ export function login(acc, pwd, countrycode = '86') {
     };
     if (/^\d*$/.test(acc)) {
         postBody.type = 1;
-        return client.postE('/w/login/cellphone', { phone: acc, countrycode, ...postBody });
+        return client.postE('/w/login/cellphone', { phone: acc, countrycode, ...postBody }, false, true);
         // return client.postW('/login/cellphone', { phone: acc, countrycode, ...postBody });
     } else {
         postBody.type = 0;
-        return client.postE('/w/login', { username: acc, ...postBody });
+        return client.postE('/w/login', { username: acc, ...postBody }, false, true);
         // return client.postW('/login', { username: acc, ...postBody });
     }
 }
