@@ -196,8 +196,12 @@ export default class HttpClient {
      * @param {object} data
      * @param {boolean} putCacheKey
      */
-    async postE(url, data = {}, putCacheKey = false) {
-        url = `https://music.163.com/eapi${url}`;
+    async postE(url, data = {}, putCacheKey = false, interfaceUrl = false) {
+        if (interfaceUrl){
+	    url = `https://interface.music.163.com/eapi${url}`;
+	} else {
+	    url = `https://music.163.com/eapi${url}`;
+	}
         let body = Object.assign({ e_r: 'true' }, data);
         if (putCacheKey) {
             body['cache_key'] = getCacheKey(body);
@@ -218,7 +222,7 @@ export default class HttpClient {
         // encrypt request payload
         init.body = qs.stringify(encodeEApi(new URL(url).pathname, body));
         init.headers = this.mergeHeaders({
-            'Cookie': 'os=android; osver=10.0.0; appver=2.0.3.131777; mobilename=linux',
+            'Cookie': 'os=android; osver=10.0.0; appver=8.0.0; mobilename=linux',
             'Content-Type': 'application/x-www-form-urlencoded',
             'Content-Length': Buffer.byteLength(init.body)
         });

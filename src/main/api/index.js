@@ -58,22 +58,30 @@ export function login(acc, pwd, countrycode = '86') {
     const password = crypto.createHash('md5').update(pwd).digest('hex');
     const postBody = {
         password,
-        rememberLogin: true,
+        remember: true,
+        type: 0,
+        https: true
     };
     if (/^\d*$/.test(acc)) {
-        return client.postW('/login/cellphone', { phone: acc, countrycode, ...postBody });
+        postBody.type = 1;
+        return client.postE('/w/login/cellphone', { phone: acc, countrycode, ...postBody });
+        // return client.postW('/login/cellphone', { phone: acc, countrycode, ...postBody });
     } else {
-        return client.postW('/login', { username: acc, ...postBody });
+        postBody.type = 0;
+        return client.postE('/w/login', { username: acc, ...postBody });
+        // return client.postW('/login', { username: acc, ...postBody });
     }
 }
+
 
 /**
  * 获取扫码登录 key
  * @param {number} [type = 1]
  * @returns {Promise<Types.QRCodeUnikeyRes>}
  */
-export function getQRLoginKey(type = 1) {
-    return client.postW('/login/qrcode/unikey', { type });
+export function getQRLoginKey(type = 3) {
+    return client.postE('/login/qrcode/unikey', { type });
+    // return client.postW('/login/qrcode/unikey', { type });
 }
 
 /**
@@ -86,7 +94,8 @@ export function getQRLoginKey(type = 1) {
  * @param {number} [type = 1]
  */
 export function checkQRLoginStatus(key, type = 1) {
-    return client.postW('/login/qrcode/client/login', { key, type });
+    return client.postE('/login/qrcode/client/login', { key, type });
+    // return client.postW('/login/qrcode/client/login', { key, type });
 }
 
 /**
