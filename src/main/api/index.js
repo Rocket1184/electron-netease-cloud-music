@@ -305,31 +305,38 @@ export async function getMusicUrlE(idOrIds, quality) {
         ids,
         br: QualityMap[quality],
     });
-    let statusCode = 0;
+    let statusCode;
     if (res.code !== 200 || res.data[0].code !== 200) {
         statusCode = 2;
         d('Cannot get music URL from Netease!');
     } else if (res.data[0].fee === 1 && res.data[0].payed === 0) {
         statusCode = 13;
         d('This music requires VIP privillege that we don\'t have.');
+    } else {
+        return res;
     }
-    if (statusCode != 0) {
-        try {
+    try {
+        const settings = await Settings.get();
+        if (settings.enableUnblock == true) {
             d('Trying get from other source using UnblockNeteaseMusic...');
-            let unmData = await match(ids[0], ['qq', 'kuwo', 'kugou']);
+            const unmData = await match(ids[0], ['qq', 'kugou', 'kuwo']);
             res.data[0].size = unmData.size;
             res.data[0].br = unmData.br;
             res.data[0].url = unmData.url;
             res.data[0].isUnm = true;
-        } catch(e) {
-            console.log(e);
+        } else {
+            throw res;
+        }
+    } catch(e) {
+        if (e instanceof Error) {
+            console.error(e);
             d('UnblockNeteaseMusic cannot find any fit music source for this music!');
-            if(statusCode==13){
-                d('Fallback to this music\'s trial version.');
-                res.data[0].isTrial = true;
-            } else {
-                throw e;
-            }
+        }
+        if (statusCode == 13) {
+            d('Fallback to this music\'s trial version.');
+            res.data[0].isTrial = true;
+        } else {
+            throw e;
         }
     }
     return res;

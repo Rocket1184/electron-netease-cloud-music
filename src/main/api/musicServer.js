@@ -179,7 +179,7 @@ class MusicServer {
             });
             musicRes.body.on('end', () => {
                 const md5 = checksum.digest('hex');
-                if (music.isTrial != true && (md5 === music.md5.toLowerCase() || music.isUnm == true)) {
+                if (music.isTrial != true && (music.isUnm == true || md5 === music.md5.toLowerCase())) {
                     d('Finish downloading music id=%d, md5=%s', id, md5);
                 } else {
                     d('Download music id=%d hash mismatch or it\'s trial version, delete it ...', id);
