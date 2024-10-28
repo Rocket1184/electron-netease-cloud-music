@@ -102,11 +102,11 @@ export function checkQRLoginStatus(key, type = 1) {
  * @returns {Promise<Types.ApiRes>}
  */
 export function refreshLogin() {
-    return client.postW('/login/token/refresh');
+    return client.postE('/login/token/refresh');
 }
 
 export async function logout() {
-    const resp = await client.postW('/logout');
+    const resp = await client.postE('/logout');
     if (resp.code === 200) {
         client.updateCookie();
     }
