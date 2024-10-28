@@ -43,6 +43,7 @@
   },
   "dependencies": {
     "@rocka/muse-ui": "^3.0.10",
+    "@unblockneteasemusic/server": "^0.27.8-patch.1",
     "cookiejar": "^2.1.4",
     "dbus-next": "^0.10.2",
     "debug": "^4.3.7",

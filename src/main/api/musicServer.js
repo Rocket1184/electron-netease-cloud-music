@@ -83,7 +83,6 @@ class MusicServer {
     async getMusicUrl(id, quality) {
         const res = await getMusicUrlE(id, quality);
         d('res: %o', res);
-        if (res.code !== 200 || res.data[0].code !== 200) throw res;
         return res.data[0];
     }
 
@@ -151,7 +150,12 @@ class MusicServer {
         try {
             const music = await this.getMusicUrl(Number.parseInt(id, 10), quality);
             d('Got URL for music id=%d', id);
-            const musicRes = await this.cache.fetch(music.url.replace(/^http:/, 'https:'));
+            let musicRes;
+            if(music.isUnm == true){
+                musicRes = await this.cache.fetch(music.url);
+            } else {
+                musicRes = await this.cache.fetch(music.url.replace(/^http:/, 'https:'));
+            }
             // TODO: write file only md5 matches
             musicRes.body.pipe(fs.createWriteStream(this.cache.internalPath(fileName)));
 
@@ -175,10 +179,10 @@ class MusicServer {
             });
             musicRes.body.on('end', () => {
                 const md5 = checksum.digest('hex');
-                if (md5 === music.md5.toLowerCase()) {
+                if (music.isTrial != true && (md5 === music.md5.toLowerCase() || music.isUnm == true)) {
                     d('Finish downloading music id=%d, md5=%s', id, md5);
                 } else {
-                    d('Download music id=%d hash mismatch, delete it ...', id);
+                    d('Download music id=%d hash mismatch or it\'s trial version, delete it ...', id);
                     this.cache.rm(fileName);
                 }
                 res.end();

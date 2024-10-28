@@ -57,12 +57,18 @@ class Downloader {
     async download(metadata, quality) {
         d('Started to download id=%d, quality=%s', metadata.id, quality);
         try {
-
-            const urlRes = await getMusicUrlE(metadata.id, quality);
-            if (urlRes.code !== 200 || urlRes.data[0].code !== 200) {
+            let urlRes;
+            try {
+                urlRes = await getMusicUrlE(metadata.id, quality);
+            } catch(e) {
                 throw new Error('获取下载链接失败');
             }
-            const dlUrl = urlRes.data[0].url.replace(/^http:/, 'https:');
+            let dlUrl;
+            if (urlRes.data[0].isUnm == true){
+                dlUrl = urlRes.data[0].url;
+            } else {
+                dlUrl = urlRes.data[0].url.replace(/^http:/, 'https:');
+            }
             const dlRes = await fetch(dlUrl);
             if (dlRes.status !== 200) {
                 throw new Error(`下载失败 ${dlRes.status}`);
