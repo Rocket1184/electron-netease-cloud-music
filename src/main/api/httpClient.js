@@ -1,6 +1,3 @@
-import { URL } from 'url';
-import qs from 'querystring';
-
 import debug from 'debug';
 import fetch from 'electron-fetch';
 import { CookieJar, CookieAccessInfo } from 'cookiejar';
@@ -9,10 +6,15 @@ import { encodeWeb, encodeLinux, encodeEApi, decodeEApi, getCacheKey } from './c
 
 const d = debug('HTTP');
 
+/**
+ * @typedef {import('electron-fetch').RequestInit} RequestInit
+ * @typedef {import('electron-fetch').Response} Response
+ */
+
 export default class HttpClient {
 
-    static DesktopUserAgent = 'Mozilla/5.0 (Linux) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/110.0.0.0 Safari/537.36';
-    static MobileUserAgent = 'Mozilla/5.0 (Linux; Android 10) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/110.0.0.0 Mobile Safari/537.36';
+    static DesktopUserAgent = 'Mozilla/5.0 (Linux) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/120.0.0.0 Safari/537.36';
+    static MobileUserAgent = 'Mozilla/5.0 (Linux; Android 10) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/120.0.0.0 Mobile Safari/537.36';
 
     constructor() {
         this.clientHeaders = {
@@ -27,6 +29,7 @@ export default class HttpClient {
 
     initCookieJar() {
         this.cookieJar = new CookieJar();
+        this.cookieJar.setCookie('__remember_me=true');
     }
 
     /**
@@ -48,12 +51,7 @@ export default class HttpClient {
     getCookie(key) {
         const cookies = this.cookieJar.getCookies(CookieAccessInfo.All);
         if (!key) {
-            /**
-             * @type {Record<string, string>}
-             */
-            let result = {};
-            cookies.forEach(c => result[c.name] = c.value);
-            return result;
+            return Object.fromEntries(cookies.map(c => [c.name, c.value]));
         }
         return cookies.find(c => c.name === key)?.value ?? '';
     }
@@ -79,7 +77,7 @@ export default class HttpClient {
 
     /**
      * update cookiejar with 'set-cookie' headers
-     * @param {import('electron-fetch').Response} res electron-fetch's `Response` object
+     * @param {Response} res electron-fetch's `Response` object
      */
     handleResponse(res) {
         /** @type {Record<string, string[]>} */
@@ -108,14 +106,10 @@ export default class HttpClient {
 
     async get(config) {
         let url = typeof config === 'string' ? config : config.url;
-        /** @type {import('electron-fetch').RequestInit} */
-        let init = {
-            method: 'GET'
-        };
-
-        init.headers = this.mergeHeaders(config.headers);
-
-        const res = await fetch(url, init);
+        const res = await fetch(url, {
+            method: 'GET',
+            headers: this.mergeHeaders(config.headers)
+        });
         this.handleResponse(res);
         let data;
         if (res.headers.get('content-type').includes('application/json')) {
@@ -130,17 +124,18 @@ export default class HttpClient {
     /**
      * wrapper of electron-fetch function
      * @param {string} url
-     * @param {import('electron-fetch').RequestInit} init
+     * @param {RequestInit} init
+     * @param {(r: Response) => Promise<any>} [decode]
      */
-    async post(url, init) {
+    async post(url, init, decode) {
+        init.method = 'POST';
         init.headers = this.mergeHeaders({
             'Content-Type': 'application/x-www-form-urlencoded',
             'Content-Length': Buffer.byteLength(init.body)
         }, init.headers);
-
         const res = await fetch(url, init);
         this.handleResponse(res);
-        const data = await res.json();
+        const data = await (decode ? decode(res) : res.json());
         this.logResponse(url, 'POST', res.status, data);
         return data;
     }
@@ -152,19 +147,15 @@ export default class HttpClient {
      */
     postW(url, data = {}) {
         url = `https://music.163.com/weapi${url}`;
-        /** @type {import('electron-fetch').RequestInit} */
-        let init = {
-            method: 'POST',
-            body: ''
-        };
-        let body = data;
+        let body = Object.assign({}, data);
         const __csrf = this.getCookie('__csrf');
         if (__csrf) {
             url += `?csrf_token=${__csrf}`;
             body.csrf_token = __csrf;
         }
-        init.body = qs.stringify(encodeWeb(body));
-        return this.post(url, init);
+        return this.post(url, {
+            body: encodeWeb(body)
+        });
     }
 
     /**
@@ -179,25 +170,16 @@ export default class HttpClient {
             url: `http://music.163.com/api${url}`,
             params: data
         };
-        /** @type {import('electron-fetch').RequestInit} */
-        let init = {
-            method: 'POST',
+        return this.post('https://music.163.com/api/linux/forward', {
             headers: {
                 Cookie: 'os=pc; osver=linux; appver=2.0.3.131777; channel=netease'
             },
-            body: qs.stringify(encodeLinux(body))
-        };
-        return this.post('https://music.163.com/api/linux/forward', init);
+            body: encodeLinux(body)
+        });
     }
 
-    static EapiDefaultCookies = {
-        os: 'android',
-        osver: '10.0.0',
-        appver: '8.20.30',
-        mobilename: 'linux'
-    };
-    static EapiDefaultCookieString = Object.entries(HttpClient.EapiDefaultCookies)
-        .map(([k, v]) => `${k}=${v}`).join('; ');
+    /** @type {(r: Response) => Promise<any>} */
+    static decodeEApiResponse = async r => JSON.parse(decodeEApi(await r.buffer()));
 
     /**
      * eapi request
@@ -216,26 +198,11 @@ export default class HttpClient {
         if (putCacheKey) {
             body['cache_key'] = getCacheKey(body);
         }
-        // default eapi cookies
-        body['header'] = Object.assign({}, HttpClient.EapiDefaultCookies, this.getCookie());
-        /** @type {import('electron-fetch').RequestInit} */
-        let init = {
-            method: 'POST',
-            headers: {},
-            body: ''
-        };
-        // encrypt request payload
-        init.body = qs.stringify(encodeEApi(new URL(url).pathname, body));
-        init.headers = this.mergeHeaders({
-            'Cookie': HttpClient.EapiDefaultCookieString,
-            'Content-Type': 'application/x-www-form-urlencoded',
-            'Content-Length': Buffer.byteLength(init.body)
-        });
-        const res = await fetch(url, init);
-        this.handleResponse(res);
-        const buf = await res.buffer();
-        const json = JSON.parse(decodeEApi(buf));
-        this.logResponse(url, 'POST', res.status, json);
-        return json;
+        return this.post(url, {
+            headers: {
+                Cookie: 'os=android; osver=10.0.0; appver=8.20.30; mobilename=linux'
+            },
+            body: encodeEApi(new URL(url).pathname, body)
+        }, HttpClient.decodeEApiResponse);
     }
 }

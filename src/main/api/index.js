@@ -1,6 +1,7 @@
-import path from 'path';
-import crypto from 'crypto';
-import qs from 'querystring';
+import path from 'node:path';
+import crypto from 'node:crypto';
+import qs from 'node:querystring';
+
 import { app } from 'electron';
 
 import { Lrc } from 'lrc-kit';
