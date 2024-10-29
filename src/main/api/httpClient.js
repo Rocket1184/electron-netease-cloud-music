@@ -190,25 +190,34 @@ export default class HttpClient {
         return this.post('https://music.163.com/api/linux/forward', init);
     }
 
+    static EapiDefaultCookies = {
+        os: 'android',
+        osver: '10.0.0',
+        appver: '8.20.30',
+        mobilename: 'linux'
+    };
+    static EapiDefaultCookieString = Object.entries(HttpClient.EapiDefaultCookies)
+        .map(([k, v]) => `${k}=${v}`).join('; ');
+
     /**
      * eapi request
      * @param {string} url
      * @param {object} data
      * @param {boolean} putCacheKey
+     * @param {boolean} useInterfaceUrl
      */
-    async postE(url, data = {}, putCacheKey = false) {
-        url = `https://music.163.com/eapi${url}`;
+    async postE(url, data = {}, putCacheKey = false, useInterfaceUrl = false) {
+        if (useInterfaceUrl) {
+            url = `https://interface.music.163.com/eapi${url}`;
+        } else {
+            url = `https://music.163.com/eapi${url}`;
+        }
         let body = Object.assign({ e_r: 'true' }, data);
         if (putCacheKey) {
             body['cache_key'] = getCacheKey(body);
         }
         // default eapi cookies
-        body.header = Object.assign({
-            os: 'android',
-            osver: '10.0.0',
-            appver: '8.10.20',
-            mobilename: 'linux'
-        }, this.getCookie());
+        body['header'] = Object.assign({}, HttpClient.EapiDefaultCookies, this.getCookie());
         /** @type {import('electron-fetch').RequestInit} */
         let init = {
             method: 'POST',
@@ -218,7 +227,7 @@ export default class HttpClient {
         // encrypt request payload
         init.body = qs.stringify(encodeEApi(new URL(url).pathname, body));
         init.headers = this.mergeHeaders({
-            'Cookie': 'os=android; osver=10.0.0; appver=2.0.3.131777; mobilename=linux',
+            'Cookie': HttpClient.EapiDefaultCookieString,
             'Content-Type': 'application/x-www-form-urlencoded',
             'Content-Length': Buffer.byteLength(init.body)
         });

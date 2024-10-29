@@ -58,12 +58,16 @@ export function login(acc, pwd, countrycode = '86') {
     const password = crypto.createHash('md5').update(pwd).digest('hex');
     const postBody = {
         password,
-        rememberLogin: true,
+        remember: true,
+        type: 0,
+        https: true
     };
     if (/^\d*$/.test(acc)) {
-        return client.postW('/login/cellphone', { phone: acc, countrycode, ...postBody });
+        postBody.type = 1;
+        return client.postE('/w/login/cellphone', { phone: acc, countrycode, ...postBody }, false, true);
     } else {
-        return client.postW('/login', { username: acc, ...postBody });
+        postBody.type = 0;
+        return client.postE('/w/login', { username: acc, ...postBody }, false, true);
     }
 }
 
@@ -72,8 +76,8 @@ export function login(acc, pwd, countrycode = '86') {
  * @param {number} [type = 1]
  * @returns {Promise<Types.QRCodeUnikeyRes>}
  */
-export function getQRLoginKey(type = 1) {
-    return client.postW('/login/qrcode/unikey', { type });
+export function getQRLoginKey(type = 3) {
+    return client.postE('/login/qrcode/unikey', { type });
 }
 
 /**
@@ -86,18 +90,18 @@ export function getQRLoginKey(type = 1) {
  * @param {number} [type = 1]
  */
 export function checkQRLoginStatus(key, type = 1) {
-    return client.postW('/login/qrcode/client/login', { key, type });
+    return client.postE('/login/qrcode/client/login', { key, type });
 }
 
 /**
  * @returns {Promise<Types.ApiRes>}
  */
 export function refreshLogin() {
-    return client.postW('/login/token/refresh');
+    return client.postE('/login/token/refresh');
 }
 
 export async function logout() {
-    const resp = await client.postW('/logout');
+    const resp = await client.postE('/logout');
     if (resp.code === 200) {
         client.updateCookie();
     }
@@ -117,7 +121,7 @@ export function verifyCaptcha(id, captcha) {
  * @returns {Promise<Types.MyProfileRes>}
  */
 export function getMyProfile() {
-    return client.postW('/nuser/account/get');
+    return client.postE('/nuser/account/get');
 }
 
 /**
@@ -635,7 +639,7 @@ export function postDailyTaskE(type, adid = 0) {
  * @returns {Promise<Types.GetDailyTaskRes>}
  */
 export function getDailyTask() {
-    return client.postW('/point/getDailyTask');
+    return client.postE('/point/getDailyTask');
 }
 
 /**
