@@ -65,14 +65,11 @@ export function login(acc, pwd, countrycode = '86') {
     if (/^\d*$/.test(acc)) {
         postBody.type = 1;
         return client.postE('/w/login/cellphone', { phone: acc, countrycode, ...postBody }, false, true);
-        // return client.postW('/login/cellphone', { phone: acc, countrycode, ...postBody });
     } else {
         postBody.type = 0;
         return client.postE('/w/login', { username: acc, ...postBody }, false, true);
-        // return client.postW('/login', { username: acc, ...postBody });
     }
 }
-
 
 /**
  * 获取扫码登录 key
@@ -81,7 +78,6 @@ export function login(acc, pwd, countrycode = '86') {
  */
 export function getQRLoginKey(type = 3) {
     return client.postE('/login/qrcode/unikey', { type });
-    // return client.postW('/login/qrcode/unikey', { type });
 }
 
 /**
@@ -95,7 +91,6 @@ export function getQRLoginKey(type = 3) {
  */
 export function checkQRLoginStatus(key, type = 1) {
     return client.postE('/login/qrcode/client/login', { key, type });
-    // return client.postW('/login/qrcode/client/login', { key, type });
 }
 
 /**
@@ -126,7 +121,7 @@ export function verifyCaptcha(id, captcha) {
  * @returns {Promise<Types.MyProfileRes>}
  */
 export function getMyProfile() {
-    return client.postW('/nuser/account/get');
+    return client.postE('/nuser/account/get');
 }
 
 /**
@@ -644,7 +639,7 @@ export function postDailyTaskE(type, adid = 0) {
  * @returns {Promise<Types.GetDailyTaskRes>}
  */
 export function getDailyTask() {
-    return client.postW('/point/getDailyTask');
+    return client.postE('/point/getDailyTask');
 }
 
 /**
