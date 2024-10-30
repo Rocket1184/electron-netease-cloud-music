@@ -4,7 +4,7 @@
 # S3_ENDPOINT S3_BUCKET S3_ACCESS_KEY S3_SECRET_KEY
 
 # arguments: 
-# - mode: pull_request, push, tag
+# - mode: pull_request, push, release
 
 BUILD_MODE="${1:-push}"
 
@@ -70,7 +70,7 @@ pull_request)
     describe_version
     build_asar
 ;;
-tag)
+release)
     PKG_VER=$(git describe --tags --abbrev=0)
     build_dist
     build_asar

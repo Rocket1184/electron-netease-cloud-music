@@ -21,6 +21,8 @@ process.on('SIGINT', () => {
 
 const electron = exec([
     'electron',
+    '--ozone-platform-hint=auto',
+    '--enable-wayland-ime',
     absPath('/src/main/index.dev.js'),
     '--inspect=5858',
     '--remote-debugging-port=5959'

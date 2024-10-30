@@ -7,8 +7,8 @@
  * @see https://github.com/surmon-china/simple-netease-cloud-music
  */
 
-import crypto from 'crypto';
-import qs from 'querystring';
+import crypto from 'node:crypto';
+import qs from 'node:querystring';
 
 const WeApi = {
     pk: BigInt('0x' + '010001'),
@@ -54,10 +54,10 @@ export function encodeWeb(payload) {
     const secKey = crypto.randomFillSync(Buffer.alloc(12)).toString('base64');
     const params = WeApi.aes(encJson, secKey);
     const encSecKey = WeApi.rsa(secKey);
-    return {
+    return qs.stringify({
         params,
         encSecKey
-    };
+    });
 }
 
 /**
@@ -68,9 +68,9 @@ export function encodeLinux(payload) {
     const json = JSON.stringify(payload);
     const cipher = crypto.createCipheriv('aes-128-ecb', 'rFgB&h#%2?^eDg:Q', null);
     const b64 = cipher.update(json, 'utf8', 'hex') + cipher.final('hex');
-    return {
+    return qs.stringify({
         eparams: b64.toUpperCase()
-    };
+    });
 }
 
 /**
@@ -128,9 +128,9 @@ export function encodeEApi(uri, data) {
      * ```
      */
     const encText = cipher.update(text, 'utf8', 'hex') + cipher.final('hex');
-    return {
+    return qs.stringify({
         params: encText.toUpperCase()
-    };
+    });
 }
 
 /**
