@@ -13,6 +13,12 @@ function clearLegacyLyricCache() {
     });
 }
 
+function clearLegacyMusicCache() {
+    const dataPath = app.getPath('userData');
+    fs.rmSync(path.join(dataPath, 'musicCache'), {recursive: true, force: true});
+}
+
 export default function migrate() {
     clearLegacyLyricCache();
+    clearLegacyMusicCache();
 }
