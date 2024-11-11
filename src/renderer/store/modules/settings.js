@@ -19,7 +19,8 @@ const DefaultSettings = {
     themeVariety: 'auto',
     autoReplacePlaylist: false,
     lyricTranslation: 'translation',
-    titleBarShowsTrackName: true
+    titleBarShowsTrackName: true,
+    enableUnblock: true
 };
 
 /**
