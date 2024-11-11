@@ -310,12 +310,12 @@ export async function getMusicUrlE(idOrIds, quality) {
         ids,
         br: QualityMap[quality],
     });
-    let statusCode;
+    let canTrial;
     if (res.code !== 200 || res.data[0].code !== 200) {
-        statusCode = 2;
+        canTrial = false;
         d('Cannot get music URL from Netease!');
     } else if (res.data[0].fee === 1 && res.data[0].payed === 0) {
-        statusCode = 13;
+        canTrial = true;
         d('This music requires VIP privillege that we don\'t have.');
     } else {
         return res;
@@ -334,10 +334,10 @@ export async function getMusicUrlE(idOrIds, quality) {
         }
     } catch(e) {
         if (e instanceof Error) {
-            console.error(e);
+            d(e);
             d('UnblockNeteaseMusic cannot find any fit music source for this music!');
         }
-        if (statusCode == 13) {
+        if (canTrial == true) {
             d('Fallback to this music\'s trial version.');
             res.data[0].isTrial = true;
         } else {
