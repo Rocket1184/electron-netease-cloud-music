@@ -284,7 +284,10 @@ export default {
             this.nextLoopMode();
             switch (this.queue.loopMode) {
                 case LOOP_MODE.LIST:
-                    this.$toast.message('列表顺序播放');
+                    this.$toast.message('列表顺序');
+                    break;
+                case LOOP_MODE.LOOP:
+                    this.$toast.message('列表循环');
                     break;
                 case LOOP_MODE.SINGLE:
                     this.$toast.message('单曲循环');
@@ -370,6 +373,8 @@ export default {
         iconLoopMode() {
             switch (this.queue.loopMode) {
                 case LOOP_MODE.LIST:
+                    return 'list';
+                case LOOP_MODE.LOOP:
                     return 'repeat';
                 case LOOP_MODE.SINGLE:
                     return 'repeat_one';

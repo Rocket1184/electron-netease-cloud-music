@@ -463,16 +463,21 @@ export async function playTrackOffset({ commit, dispatch, state, getters }, payl
         const nextRandomIndex = (randomIndex + randomList.length + payload) % randomList.length;
         commit(types.SET_RANDOM_PLAYLIST_INDEX, nextRandomIndex);
         nextIndex = randomList[nextRandomIndex];
+    } else if (loopMode === LOOP_MODE.LIST) {
+        const next = index + payload;
+        nextIndex = next >= list.length ? -1 : next;
     } else {
         nextIndex = (index + list.length + payload) % list.length;
     }
-    if (state.ui.radioMode === true) {
-        commit(types.SET_RADIO_INDEX, nextIndex);
-    } else {
-        commit(types.SET_PLAYLIST_INDEX, nextIndex);
+    if (nextIndex >= 0) {
+        if (state.ui.radioMode === true) {
+            commit(types.SET_RADIO_INDEX, nextIndex);
+        } else {
+            commit(types.SET_PLAYLIST_INDEX, nextIndex);
+        }
+        await dispatch('updateUiTrack');
+        dispatch('playAudio');
     }
-    await dispatch('updateUiTrack');
-    dispatch('playAudio');
 }
 
 /**
@@ -643,6 +648,9 @@ export function nextLoopMode({ commit, state }) {
             commit(types.SET_LOOP_MODE_RANDOM);
             break;
         case LOOP_MODE.RANDOM:
+            commit(types.SET_LOOP_MODE_LOOP);
+            break;
+        case LOOP_MODE.LOOP:
             commit(types.SET_LOOP_MODE_LIST);
             break;
     }
