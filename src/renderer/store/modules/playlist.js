@@ -8,7 +8,8 @@ import * as types from '../mutation-types';
 export const LOOP_MODE = {
     LIST: 0,
     SINGLE: 1,
-    RANDOM: 2
+    RANDOM: 2,
+    LOOP: 3,
 };
 
 const state = {
@@ -38,14 +39,17 @@ const mutations = {
     [types.SET_PLAYLIST_INDEX](state, payload) {
         state.index = payload;
     },
-    [types.SET_LOOP_MODE_LIST](state) {
-        state.loopMode = LOOP_MODE.LIST;
+    [types.SET_LOOP_MODE_LOOP](state) {
+        state.loopMode = LOOP_MODE.LOOP;
     },
     [types.SET_LOOP_MODE_SINGLE](state) {
         state.loopMode = LOOP_MODE.SINGLE;
     },
     [types.SET_LOOP_MODE_RANDOM](state) {
         state.loopMode = LOOP_MODE.RANDOM;
+    },
+    [types.SET_LOOP_MODE_LIST](state) {
+        state.loopMode = LOOP_MODE.LIST;
     },
     [types.RESTORE_PLAYLIST](state, { index, loopMode, list }) {
         state.index = index || 0;

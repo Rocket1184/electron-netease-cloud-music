@@ -10,9 +10,9 @@ import {
     RESTORE_PLAYLIST,
     SET_AUDIO_VOLUME,
     SET_AUDIO_PAUSED,
-    SET_LOOP_MODE_LIST,
+    SET_LOOP_MODE_LOOP,
     SET_LOOP_MODE_SINGLE,
-    SET_LOOP_MODE_RANDOM
+    SET_LOOP_MODE_RANDOM, SET_LOOP_MODE_LIST,
 } from '@/store/mutation-types';
 import { LOOP_MODE } from '@/store/modules/playlist';
 
@@ -75,6 +75,7 @@ function sendLoopMode(mode) {
     let loop = 'Playlist';
     switch (mode) {
         case LOOP_MODE.LIST:
+        case LOOP_MODE.LOOP:
             shuffle = false;
             break;
         case LOOP_MODE.SINGLE:
@@ -90,8 +91,8 @@ function sendLoopMode(mode) {
 
 /**
  * Vuex mutation subscribe handler
- * @param {import('vuex').MutationPayload} mutation 
- * @param {import('@/store').State} state 
+ * @param {import('vuex').MutationPayload} mutation
+ * @param {import('@/store').State} state
  */
 function subscribeHandler(mutation, state) {
     const queue = state.ui.radioMode === true ? state.radio : state.playlist;
@@ -125,6 +126,7 @@ function subscribeHandler(mutation, state) {
             debounceVolume(volume);
             break;
         }
+        case SET_LOOP_MODE_LOOP:
         case SET_LOOP_MODE_LIST:
         case SET_LOOP_MODE_SINGLE:
         case SET_LOOP_MODE_RANDOM:
@@ -134,7 +136,7 @@ function subscribeHandler(mutation, state) {
 }
 
 /**
- * @param {import('@/store').Store} store 
+ * @param {import('@/store').Store} store
  */
 export function injectStore(store) {
     // ensure 'PlaybackStatus' is 'Stopped' when this module loads
@@ -164,13 +166,13 @@ export function injectStore(store) {
         switch (loop) {
             case 'None':
                 // TODO: add 'None' loop mode
-                store.commit(SET_LOOP_MODE_LIST);
+                store.commit(SET_LOOP_MODE_LOOP);
                 break;
             case 'Track':
                 store.commit(SET_LOOP_MODE_SINGLE);
                 break;
             case 'Playlist':
-                store.commit(SET_LOOP_MODE_LIST);
+                store.commit(SET_LOOP_MODE_LOOP);
                 break;
         }
     });
@@ -184,7 +186,7 @@ export function injectStore(store) {
                 break;
             case false:
                 if (loopMode === LOOP_MODE.RANDOM) {
-                    store.commit(SET_LOOP_MODE_LIST);
+                    store.commit(SET_LOOP_MODE_LOOP);
                 }
                 break;
         }
