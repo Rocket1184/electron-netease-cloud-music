@@ -151,7 +151,7 @@ class MusicServer {
             const music = await this.getMusicUrl(Number.parseInt(id, 10), quality);
             d('Got URL for music id=%d', id);
             let musicRes;
-            if(music.isUnm == true){
+            if (music.isUnm == true) {
                 musicRes = await this.cache.fetch(music.url);
             } else {
                 musicRes = await this.cache.fetch(music.url.replace(/^http:/, 'https:'));

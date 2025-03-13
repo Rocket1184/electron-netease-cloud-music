@@ -28,7 +28,7 @@ export const defaultSettings = {
     autoReplacePlaylist: false,
     lyricTranslation: 'translation',
     titleBarShowsTrackName: true,
-    enableUnblock: true
+    enableUnblock: false
 };
 
 /**

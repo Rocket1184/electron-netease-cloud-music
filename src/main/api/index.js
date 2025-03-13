@@ -306,6 +306,7 @@ export async function getMusicUrlE(idOrIds, quality) {
     let ids;
     if (Array.isArray(idOrIds)) ids = idOrIds;
     else ids = [idOrIds];
+    /** @type {Types.MusicUrlRes} */
     let res = await client.postE('/song/enhance/player/url', {
         ids,
         br: QualityMap[quality],
@@ -316,7 +317,7 @@ export async function getMusicUrlE(idOrIds, quality) {
         d('Cannot get music URL from Netease!');
     } else if (res.data[0].fee === 1 && res.data[0].payed === 0) {
         canTrial = true;
-        d('This music requires VIP privillege that we don\'t have.');
+        d("This music requires VIP privillege that we don't have.");
     } else {
         return res;
     }
@@ -332,13 +333,12 @@ export async function getMusicUrlE(idOrIds, quality) {
         } else {
             throw res;
         }
-    } catch(e) {
+    } catch (e) {
         if (e instanceof Error) {
-            d(e);
-            d('UnblockNeteaseMusic cannot find any fit music source for this music!');
+            d(`UnblockNeteaseMusic cannot find any fit music source for this music: ${e}`);
         }
         if (canTrial == true) {
-            d('Fallback to this music\'s trial version.');
+            d("Fallback to this music's trial version.");
             res.data[0].isTrial = true;
         } else {
             throw e;

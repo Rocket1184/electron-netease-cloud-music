@@ -20,7 +20,7 @@ const DefaultSettings = {
     autoReplacePlaylist: false,
     lyricTranslation: 'translation',
     titleBarShowsTrackName: true,
-    enableUnblock: true
+    enableUnblock: false
 };
 
 /**

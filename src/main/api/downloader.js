@@ -60,11 +60,11 @@ class Downloader {
             let urlRes;
             try {
                 urlRes = await getMusicUrlE(metadata.id, quality);
-            } catch(e) {
-                throw new Error('获取下载链接失败');
+            } catch (e) {
+                throw new Error(`获取下载链接失败: ${e}`);
             }
             let dlUrl;
-            if (urlRes.data[0].isUnm == true){
+            if (urlRes.data[0].isUnm == true) {
                 dlUrl = urlRes.data[0].url;
             } else {
                 dlUrl = urlRes.data[0].url.replace(/^http:/, 'https:');

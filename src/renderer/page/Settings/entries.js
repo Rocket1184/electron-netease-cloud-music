@@ -153,7 +153,7 @@ export const Entries = [
             },
             {
                 type: 'toggle',
-                title: '启用UnblockNeteaseMusic',
+                title: '启用 UnblockNeteaseMusic',
                 prop: 'enableUnblock'
             }
         ]
