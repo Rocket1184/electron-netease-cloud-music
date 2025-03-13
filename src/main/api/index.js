@@ -6,6 +6,8 @@ import { app } from 'electron';
 
 import { Lrc } from 'lrc-kit';
 import { decodeHTML } from 'entities';
+import debug from 'debug';
+import match from '@unblockneteasemusic/server';
 
 import Cache from './cache';
 import migrate from './migrate';
@@ -16,6 +18,7 @@ import MusicServer from './musicServer';
 import { getDiskUsage, clearDirectory } from '../util/fs';
 import Downloader from './downloader';
 
+const d = debug('API');
 const BaseURL = 'https://music.163.com';
 const client = new HttpClient();
 
@@ -298,15 +301,50 @@ export function getMusicUrlL(idOrIds, quality) {
  * @param {Types.MusicQuality} quality
  * @returns {Promise<Types.MusicUrlRes>}
  */
-export function getMusicUrlE(idOrIds, quality) {
+export async function getMusicUrlE(idOrIds, quality) {
     if (!QualityMap[quality]) throw new Error(`Quality type '${quality}' is not in [ex,h,m,l]`);
     let ids;
     if (Array.isArray(idOrIds)) ids = idOrIds;
     else ids = [idOrIds];
-    return client.postE('/song/enhance/player/url', {
+    /** @type {Types.MusicUrlRes} */
+    let res = await client.postE('/song/enhance/player/url', {
         ids,
         br: QualityMap[quality],
     });
+    let canTrial;
+    if (res.code !== 200 || res.data[0].code !== 200) {
+        canTrial = false;
+        d('Cannot get music URL from Netease!');
+    } else if (res.data[0].fee === 1 && res.data[0].payed === 0) {
+        canTrial = true;
+        d("This music requires VIP privillege that we don't have.");
+    } else {
+        return res;
+    }
+    try {
+        const settings = await Settings.get();
+        if (settings.enableUnblock == true) {
+            d('Trying get from other source using UnblockNeteaseMusic...');
+            const unmData = await match(ids[0], ['qq', 'kugou', 'kuwo']);
+            res.data[0].size = unmData.size;
+            res.data[0].br = unmData.br;
+            res.data[0].url = unmData.url;
+            res.data[0].isUnm = true;
+        } else {
+            throw res;
+        }
+    } catch (e) {
+        if (e instanceof Error) {
+            d(`UnblockNeteaseMusic cannot find any fit music source for this music: ${e}`);
+        }
+        if (canTrial == true) {
+            d("Fallback to this music's trial version.");
+            res.data[0].isTrial = true;
+        } else {
+            throw e;
+        }
+    }
+    return res;
 }
 
 /**

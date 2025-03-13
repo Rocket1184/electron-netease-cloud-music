@@ -150,6 +150,11 @@ export const Entries = [
                     { label: '翻译', value: 'translation' },
                     { label: '罗马音', value: 'romaji' }
                 ]
+            },
+            {
+                type: 'toggle',
+                title: '启用 UnblockNeteaseMusic',
+                prop: 'enableUnblock'
             }
         ]
     },
