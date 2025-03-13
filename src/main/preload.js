@@ -1,16 +1,18 @@
 'use strict';
 
+/* global window */
+
 const { contextBridge, ipcRenderer } = require('electron');
 const { versions, platform } = process;
 
 let settings;
 try {
-    const url = new URL(location.href);
+    const url = new URL(window.location.href);
     const arg = '#/?initial_settings=';
     if (url.hash.startsWith(arg)) {
         settings = JSON.parse(decodeURIComponent(url.hash.slice(arg.length)));
         url.hash = '';
-        history.replaceState(null, '', url);
+        window.history.replaceState(null, '', url);
     }
 } catch { /* ignore */ }
 

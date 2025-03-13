@@ -65,7 +65,8 @@ export default [
             parser: vue.parser,
             parserOptions: {
                 sourceType: 'module'
-            }
+            },
+            globals: globals.browser
         },
         rules: {
             'vue/multi-word-component-names': 'off', // TODO turn on this
