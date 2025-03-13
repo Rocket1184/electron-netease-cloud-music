@@ -23,9 +23,10 @@ const BaseURL = 'https://music.163.com';
 const client = new HttpClient();
 
 const dataPath = app.getPath('userData');
+const cachePath = app.getPath('cache');
 const CachePath = {
     all: dataPath,
-    music: path.join(dataPath, 'musicCache')
+    music: path.join(cachePath, 'electron-netease-cloud-music' ,'musicCache')
 };
 const musicCache = new Cache(CachePath.music, dataPath);
 migrate();
