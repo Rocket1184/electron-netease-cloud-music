@@ -19,6 +19,7 @@ MINIO_CLIENT="node_modules/.bin/minio-client"
 
 # functions
 build_dist() {
+    yarn run lint || exit 1
     yarn run dist
 }
 
